@@ -1,0 +1,57 @@
+name: Golang Tests
+concurrency:
+  group: Golang-Tests-${{ github.workflow }}-${{ github.head_ref || github.event.workflow_run.head_branch || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  merge_group:
+  pull_request:
+    branches:
+      - main
+      - "release/**"
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read # needed to checkout the repo on private repos (no-op on public)
+
+env:
+  GO_VERSION: "1.26.4"
+
+jobs:
+  detect-modules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      modules: ${{ steps.set-modules.outputs.modules }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - id: set-modules
+        run: echo "modules=$(find . -name 'go.mod' -exec dirname {} \; | jq -Rc '[.,inputs]')" >> "$GITHUB_OUTPUT"
+
+  golang:
+    needs: detect-modules
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        modules: ${{ fromJSON(needs.detect-modules.outputs.modules) }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # ratchet:actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # zizmor: ignore[cache-poisoning]
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: "**/go.sum"
+
+      - run: go mod tidy
+        working-directory: ${{ matrix.modules }}
+      - run: git diff --exit-code go.mod go.sum
+        working-directory: ${{ matrix.modules }}
+
+      - run: go test ./...
+        working-directory: ${{ matrix.modules }}

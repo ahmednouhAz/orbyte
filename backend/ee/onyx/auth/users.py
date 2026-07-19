@@ -1,0 +1,73 @@
+import os
+import secrets
+from datetime import datetime
+from datetime import timezone
+
+import jwt
+from fastapi import Depends
+from fastapi import HTTPException
+from fastapi import Request
+from fastapi import status
+
+from ee.onyx.configs.app_configs import SUPER_CLOUD_API_KEY
+from ee.onyx.configs.app_configs import SUPER_USERS
+from ee.onyx.server.seeding import get_seed_config
+from onyx.auth.permissions import require_permission
+from onyx.configs.app_configs import AUTH_TYPE
+from onyx.configs.app_configs import USER_AUTH_SECRET
+from onyx.db.enums import Permission
+from onyx.db.models import User
+from onyx.utils.logger import setup_logger
+
+logger = setup_logger()
+
+
+def verify_auth_setting() -> None:
+    # All the Auth flows are valid for EE version, but warn about deprecated 'disabled'
+    raw_auth_type = (os.environ.get("AUTH_TYPE") or "").lower()
+    if raw_auth_type == "disabled":
+        logger.warning(
+            "AUTH_TYPE='disabled' is no longer supported. Using 'basic' instead. Please update your configuration."
+        )
+    logger.notice("Using Auth Type: %s", AUTH_TYPE.value)
+
+
+def get_default_admin_user_emails_() -> list[str]:
+    seed_config = get_seed_config()
+    if seed_config and seed_config.admin_user_emails:
+        return seed_config.admin_user_emails
+    return []
+
+
+async def current_cloud_superuser(
+    request: Request,
+    user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+) -> User:
+    if not SUPER_CLOUD_API_KEY:
+        logger.warning("SUPER_CLOUD_API_KEY is not configured; rejecting request")
+        raise HTTPException(status_code=401, detail="Invalid API key")
+
+    api_key = request.headers.get("Authorization", "").replace("Bearer ", "")
+    if not secrets.compare_digest(api_key, SUPER_CLOUD_API_KEY):
+        raise HTTPException(status_code=401, detail="Invalid API key")
+
+    if user and user.email not in SUPER_USERS:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied. User must be a cloud superuser to perform this action.",
+        )
+    return user
+
+
+def generate_anonymous_user_jwt_token(tenant_id: str) -> str:
+    payload = {
+        "tenant_id": tenant_id,
+        # Token does not expire
+        "iat": datetime.now(timezone.utc),  # Issued at time
+    }
+
+    return jwt.encode(payload, USER_AUTH_SECRET, algorithm="HS256")
+
+
+def decode_anonymous_user_jwt_token(token: str) -> dict:
+    return jwt.decode(token, USER_AUTH_SECRET, algorithms=["HS256"])
