@@ -3,7 +3,6 @@ import useSWR from "swr";
 import { errorHandlingFetcher, skipRetryOnAuthError } from "@/lib/fetcher";
 import { initiateOAuthFlow } from "@/lib/oauth/api";
 import { OAuthTokenStatus, ToolSnapshot } from "@/lib/tools/interfaces";
-import { SWR_KEYS } from "@/lib/swr-keys";
 
 export interface ToolAuthStatus {
   // whether or not the user has EVER auth'd
@@ -13,22 +12,22 @@ export interface ToolAuthStatus {
 }
 
 export function useToolOAuthStatus(agentId?: number) {
+  // Custom/OpenAPI Actions (the only tool type that ever set oauth_config_id)
+  // have been removed from this deployment, along with the
+  // /api/user-oauth-token/status endpoint this hook used to poll. No tool
+  // can have an OAuth config anymore, so the fetch is skipped entirely
+  // (passing `null` as the SWR key disables the request) rather than
+  // hitting a route that no longer exists.
   const {
     data: oauthTokenStatuses = [],
     isLoading: loading,
     error: swrError,
     mutate,
-  } = useSWR<OAuthTokenStatus[]>(
-    SWR_KEYS.oauthTokenStatus,
-    errorHandlingFetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 60_000,
-      onErrorRetry: skipRetryOnAuthError,
-      onError: (err) =>
-        console.error("[useToolOAuthStatus] fetch failed:", err),
-    }
-  );
+  } = useSWR<OAuthTokenStatus[]>(null, errorHandlingFetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 60_000,
+    onErrorRetry: skipRetryOnAuthError,
+  });
 
   const error: string | null = swrError
     ? swrError instanceof Error

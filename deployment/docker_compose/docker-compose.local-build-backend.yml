@@ -1,0 +1,21 @@
+# Local override: build api_server and background from local ../../backend
+# source instead of pulling the published onyxdotapp/onyx-backend image.
+# Companion to docker-compose.local-build.yml (which covers web_server).
+#   docker compose -f docker-compose.yml -f docker-compose.onyx-lite.yml \
+#     -f docker-compose.local-build.yml -f docker-compose.local-build-backend.yml \
+#     build api_server background
+#   ... up -d
+
+services:
+  api_server:
+    image: !reset null
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+  background:
+    image: !reset null
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
