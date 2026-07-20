@@ -16,7 +16,6 @@ from onyx.server.query_and_chat.streaming_models import GeneratedImage
 from onyx.server.query_and_chat.streaming_models import Packet
 from onyx.tools.models import SearchToolUsage
 from onyx.tools.models import ToolCallKickoff
-from onyx.tools.tool_implementations.custom.base_tool_types import ToolResultType
 
 
 class StreamingError(BaseModel):
@@ -27,11 +26,6 @@ class StreamingError(BaseModel):
     )
     is_retryable: bool = True  # Hint to frontend if retry might help
     details: dict | None = None  # Additional context (tool name, model name, etc.)
-
-
-class CustomToolResponse(BaseModel):
-    response: ToolResultType
-    tool_name: str
 
 
 class CreateChatSessionID(BaseModel):

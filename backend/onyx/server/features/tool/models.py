@@ -54,24 +54,3 @@ class ToolSnapshot(BaseModel):
         )
 
 
-class Header(BaseModel):
-    key: str
-    value: str
-
-
-class CustomToolCreate(BaseModel):
-    name: str
-    description: str | None = None
-    definition: dict[str, Any]
-    custom_headers: list[Header] | None = None
-    passthrough_auth: bool
-    oauth_config_id: int | None = None
-
-
-class CustomToolUpdate(BaseModel):
-    name: str | None = None
-    description: str | None = None
-    definition: dict[str, Any] | None = None
-    custom_headers: list[Header] | None = None
-    passthrough_auth: bool | None = None
-    oauth_config_id: int | None = None

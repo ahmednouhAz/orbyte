@@ -1,13 +1,9 @@
-import { SvgArrowUpRight, SvgFilterPlus, SvgUserSync } from "@opal/icons";
-import { ContentAction } from "@opal/layouts";
-import { Button } from "@opal/components";
+import { SvgFilterPlus } from "@opal/icons";
 import { Hoverable } from "@opal/core";
 import { Section } from "@/layouts/general-layouts";
 import Card from "@/refresh-components/cards/Card";
 import IconButton from "@/refresh-components/buttons/IconButton";
 import Text from "@/refresh-components/texts/Text";
-import Link from "next/link";
-import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import { useAuthTypeMetadata } from "@/lib/auth/hooks";
 import { AuthType } from "@/lib/auth/types";
 import InviteOnlyCard from "./InviteOnlyCard";
@@ -61,40 +57,13 @@ function StatCell({ value, label, onFilter }: StatCellProps) {
 }
 
 // ---------------------------------------------------------------------------
-// SCIM card
-// ---------------------------------------------------------------------------
-
-function ScimCard() {
-  return (
-    <Card gap={0.5} padding={0.75}>
-      <ContentAction
-        icon={SvgUserSync}
-        title="SCIM Sync"
-        description="Users are synced from your identity provider."
-        sizePreset="main-ui"
-        variant="section"
-        padding="fit"
-        rightChildren={
-          <Link href={ADMIN_ROUTES.SCIM.path}>
-            <Button prominence="tertiary" rightIcon={SvgArrowUpRight} size="sm">
-              Manage
-            </Button>
-          </Link>
-        }
-      />
-    </Card>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Stats bar — layout varies by SCIM / invite-only status
+// Stats bar — layout varies by invite-only status
 // ---------------------------------------------------------------------------
 
 type UsersSummaryProps = {
   activeUsers: number | null;
   pendingInvites: number | null;
   requests: number | null;
-  showScim: boolean;
   onFilterActive?: () => void;
   onFilterInvites?: () => void;
   onFilterRequests?: () => void;
@@ -104,16 +73,12 @@ export default function UsersSummary({
   activeUsers,
   pendingInvites,
   requests,
-  showScim,
   onFilterActive,
   onFilterInvites,
   onFilterRequests,
 }: UsersSummaryProps) {
   const { authTypeMetadata } = useAuthTypeMetadata();
-  const showInviteOnly =
-    !showScim &&
-    (authTypeMetadata?.authType === AuthType.BASIC ||
-      authTypeMetadata?.authType === AuthType.GOOGLE_OAUTH);
+  const showInviteOnly = authTypeMetadata?.authType === AuthType.BASIC;
   const showRequests = requests !== null && requests > 0;
 
   const statsCard = (
@@ -140,11 +105,7 @@ export default function UsersSummary({
     </Card>
   );
 
-  const rightCard = showScim ? (
-    <ScimCard />
-  ) : showInviteOnly ? (
-    <InviteOnlyCard />
-  ) : null;
+  const rightCard = showInviteOnly ? <InviteOnlyCard /> : null;
 
   if (rightCard) {
     return (

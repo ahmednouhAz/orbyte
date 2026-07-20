@@ -23,7 +23,6 @@ from onyx.file_store.models import maybe_materialize_lazy_content
 from onyx.server.query_and_chat.placement import Placement
 from onyx.server.query_and_chat.streaming_models import CustomToolErrorInfo
 from onyx.server.query_and_chat.streaming_models import GeneratedImage
-from onyx.tools.tool_implementations.images.models import FinalImageGenerationResponse
 from onyx.tools.tool_implementations.memory.models import MemoryToolResponse
 
 TOOL_CALL_MSG_FUNC_NAME = "function_name"
@@ -87,10 +86,8 @@ class ToolResponse(BaseModel):
     # Rich response is for the objects that are returned but not directly used by the LLM
     # these typically need to be saved to the database to load things in the UI (usually both)
     rich_response: (
-        # This comes from image generation, image needs to be saved and the packet about it's location needs to be emitted
-        FinalImageGenerationResponse
         # This comes from internal search / web search, search docs need to be saved, already emitted by the tool
-        | SearchDocsResponse
+        SearchDocsResponse
         # This comes from the memory tool, memory needs to be persisted to the database
         | MemoryToolResponse
         # This comes from open url, web content needs to be saved, maybe this can be consolidated too

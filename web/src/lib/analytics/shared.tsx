@@ -8,10 +8,9 @@
  */
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef, Suspense, type ReactElement } from "react";
+import { useEffect, Suspense, type ReactElement } from "react";
 import { usePostHog } from "posthog-js/react";
 import { useReportWebVitals } from "next/web-vitals";
-import { useCustomAnalyticsScript } from "@/lib/analytics/hooks";
 import { useSettings } from "@/lib/settings/hooks";
 import { initPostHog } from "@/app/providers";
 
@@ -92,32 +91,5 @@ export function PostHogPageTracker(): ReactElement {
   );
 }
 
-// ─── CustomAnalyticsScript ─────────────────────────────────────────────────
-
-/**
- * Injects an admin-configured JS analytics snippet into `document.head`.
- *
- * Enterprise Edition feature. Reads a raw JavaScript string stored server-side
- * and appends it as a `<script>` tag once on mount. This gives EE customers a
- * bring-your-own analytics escape hatch (e.g. Segment, Heap, Mixpanel)
- * without requiring a code change or redeployment.
- *
- * The injection is guarded by a ref so it only runs once, even if the value
- * identity changes across re-renders.
- */
-export function CustomAnalyticsScript(): null {
-  const customAnalyticsScript = useCustomAnalyticsScript();
-  const injectedRef = useRef(false);
-
-  useEffect(() => {
-    if (!customAnalyticsScript || injectedRef.current) return;
-    injectedRef.current = true;
-
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.textContent = customAnalyticsScript;
-    document.head.appendChild(script);
-  }, [customAnalyticsScript]);
-
-  return null;
-}
+// NOTE: the admin-configured "custom analytics script" feature
+// (`CustomAnalyticsScript`) has been removed from this deployment.

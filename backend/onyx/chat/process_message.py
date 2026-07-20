@@ -129,7 +129,6 @@ from onyx.tools.constants import SEARCH_TOOL_ID
 from onyx.tools.models import ChatFile
 from onyx.tools.models import SearchToolUsage
 from onyx.tools.tool_constructor import construct_tools
-from onyx.tools.tool_constructor import CustomToolConfig
 from onyx.tools.tool_constructor import FileReaderToolConfig
 from onyx.tools.tool_constructor import SearchToolConfig
 from onyx.utils.logger import setup_logger
@@ -1231,12 +1230,6 @@ def _run_models(
                         setup.persona, setup.new_msg_req.internal_search_filters
                     ),
                     auto_detect_filters=auto_detect_search_filters,
-                ),
-                custom_tool_config=CustomToolConfig(
-                    chat_session_id=setup.chat_session.id,
-                    message_id=setup.user_message.id,
-                    additional_headers=setup.custom_tool_additional_headers,
-                    mcp_headers=setup.mcp_headers,
                 ),
                 file_reader_tool_config=FileReaderToolConfig(
                     user_file_ids=setup.available_files.user_file_ids,

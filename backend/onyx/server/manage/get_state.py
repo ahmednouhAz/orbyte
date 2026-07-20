@@ -17,9 +17,6 @@ from onyx.configs.constants import DEV_VERSION_PATTERN
 from onyx.configs.constants import PUBLIC_API_TAGS
 from onyx.configs.constants import STABLE_VERSION_PATTERN
 from onyx.db.auth import get_user_count
-from onyx.db.engine.sql_engine import get_session_with_shared_schema
-from onyx.db.enums import SSOProviderType
-from onyx.db.sso_provider import fetch_sso_providers
 from onyx.server.manage.models import AllVersions
 from onyx.server.manage.models import AuthTypeResponse
 from onyx.server.manage.models import ContainerVersions
@@ -27,39 +24,15 @@ from onyx.server.manage.models import SSOProviderOption
 from onyx.server.manage.models import VersionResponse
 from onyx.server.models import StatusResponse
 from onyx.server.security.store import get_security_settings
-from shared_configs.configs import MULTI_TENANT
 
 router = APIRouter()
 
-# GOOGLE_OAUTH and OIDC share the /auth/oidc router. SAML has its own. Keep in
-# sync with the router prefixes in oidc_multi.py and saml_multi.py.
-_SSO_AUTHORIZE_ROUTER = {
-    SSOProviderType.GOOGLE_OAUTH: "oidc",
-    SSOProviderType.OIDC: "oidc",
-    SSOProviderType.SAML: "saml",
-}
-
 
 def _fetch_sso_provider_options() -> list[SSOProviderOption]:
-    # Single-tenant BASIC only. /auth/type runs before any tenant context, so a
-    # multi-tenant lookup has no tenant to key on, and only a BASIC deployment
-    # renders the provider buttons (legacy oidc/saml auto-redirect to the one IdP
-    # and never consume this list), so the query is pure overhead elsewhere.
-    if MULTI_TENANT or AUTH_TYPE != AuthType.BASIC:
-        return []
-    with get_session_with_shared_schema() as db_session:
-        return [
-            SSOProviderOption(
-                name=provider.name,
-                display_name=provider.display_name,
-                provider_type=provider.provider_type,
-                authorize_url=(
-                    f"/api/auth/{_SSO_AUTHORIZE_ROUTER[provider.provider_type]}"
-                    f"/{provider.name}/authorize"
-                ),
-            )
-            for provider in fetch_sso_providers(db_session, enabled_only=True)
-        ]
+    # SSO (Google OAuth / OIDC / SAML) has been removed from this deployment —
+    # Basic (local email/password) auth only, so there are never any SSO
+    # provider buttons to render.
+    return []
 
 
 @router.get("/health", tags=PUBLIC_API_TAGS)

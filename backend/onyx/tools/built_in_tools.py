@@ -5,15 +5,8 @@ from onyx.tools.tool_implementations.coding_agent.coding_agent_tool import (
     CodingAgentTool,
 )
 from onyx.tools.tool_implementations.file_reader.file_reader_tool import FileReaderTool
-from onyx.tools.tool_implementations.images.image_generation_tool import (
-    ImageGenerationTool,
-)
-from onyx.tools.tool_implementations.knowledge_graph.knowledge_graph_tool import (
-    KnowledgeGraphTool,
-)
 from onyx.tools.tool_implementations.memory.memory_tool import MemoryTool
 from onyx.tools.tool_implementations.open_url.open_url_tool import OpenURLTool
-from onyx.tools.tool_implementations.python.python_tool import PythonTool
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 from onyx.tools.tool_implementations.web_search.web_search_tool import WebSearchTool
 from onyx.utils.logger import setup_logger
@@ -23,11 +16,8 @@ logger = setup_logger()
 
 BUILT_IN_TOOL_TYPES = Union[
     SearchTool,
-    ImageGenerationTool,
     WebSearchTool,
-    KnowledgeGraphTool,
     OpenURLTool,
-    PythonTool,
     FileReaderTool,
     MemoryTool,
     CodingAgentTool,
@@ -35,17 +25,14 @@ BUILT_IN_TOOL_TYPES = Union[
 
 BUILT_IN_TOOL_MAP: dict[str, Type[BUILT_IN_TOOL_TYPES]] = {
     SearchTool.__name__: SearchTool,
-    ImageGenerationTool.__name__: ImageGenerationTool,
     WebSearchTool.__name__: WebSearchTool,
-    KnowledgeGraphTool.__name__: KnowledgeGraphTool,
     OpenURLTool.__name__: OpenURLTool,
-    PythonTool.__name__: PythonTool,
     FileReaderTool.__name__: FileReaderTool,
     MemoryTool.__name__: MemoryTool,
     CodingAgentTool.__name__: CodingAgentTool,
 }
 
-STOPPING_TOOLS_NAMES: list[str] = [ImageGenerationTool.NAME]
+STOPPING_TOOLS_NAMES: list[str] = []
 CITEABLE_TOOLS_NAMES: list[str] = [
     SearchTool.NAME,
     WebSearchTool.NAME,

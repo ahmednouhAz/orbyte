@@ -1,5 +1,4 @@
 import { ProjectsProvider } from "@/providers/ProjectsContext";
-import { VoiceModeProvider } from "@/providers/VoiceModeProvider";
 
 export interface LayoutProps {
   children: React.ReactNode;
@@ -12,9 +11,5 @@ export interface LayoutProps {
  * Sidebar and chrome are handled by sub-layouts / individual pages.
  */
 export default function Layout({ children }: LayoutProps) {
-  return (
-    <ProjectsProvider>
-      <VoiceModeProvider>{children}</VoiceModeProvider>
-    </ProjectsProvider>
-  );
+  return <ProjectsProvider>{children}</ProjectsProvider>;
 }

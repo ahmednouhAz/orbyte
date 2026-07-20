@@ -15,7 +15,6 @@ from onyx.tools.models import ChatFile
 from onyx.tools.models import ChatMinimalTextMessage
 from onyx.tools.models import OpenURLToolOverrideKwargs
 from onyx.tools.models import ParallelToolCallResponse
-from onyx.tools.models import PythonToolOverrideKwargs
 from onyx.tools.models import SearchToolOverrideKwargs
 from onyx.tools.models import ToolCallException
 from onyx.tools.models import ToolCallKickoff
@@ -31,7 +30,6 @@ from onyx.tools.tool_implementations.coding_agent.coding_agent_tool import (
 from onyx.tools.tool_implementations.memory.memory_tool import MemoryTool
 from onyx.tools.tool_implementations.memory.memory_tool import MemoryToolOverrideKwargs
 from onyx.tools.tool_implementations.open_url.open_url_tool import OpenURLTool
-from onyx.tools.tool_implementations.python.python_tool import PythonTool
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 from onyx.tools.tool_implementations.web_search.web_search_tool import WebSearchTool
 from onyx.tracing.framework.create import function_span
@@ -345,7 +343,6 @@ def run_tool_calls(
             SearchToolOverrideKwargs
             | WebSearchToolOverrideKwargs
             | OpenURLToolOverrideKwargs
-            | PythonToolOverrideKwargs
             | MemoryToolOverrideKwargs
             | CodingAgentToolOverrideKwargs
             | None
@@ -391,10 +388,6 @@ def run_tool_calls(
             )
             starting_citation_num += 100
 
-        elif isinstance(tool, PythonTool):
-            override_kwargs = PythonToolOverrideKwargs(
-                chat_files=chat_files or [],
-            )
         elif isinstance(tool, CodingAgentTool):
             override_kwargs = CodingAgentToolOverrideKwargs()
         elif isinstance(tool, MemoryTool):

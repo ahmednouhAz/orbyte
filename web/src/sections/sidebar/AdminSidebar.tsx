@@ -4,18 +4,11 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSettings } from "@/lib/settings/hooks";
 import { SidebarLayouts, useSidebarState } from "@opal/layouts";
-import { useCustomAnalyticsEnabled } from "@/lib/hooks/useCustomAnalyticsEnabled";
 import { useUser } from "@/providers/UserProvider";
 import { UserRole } from "@/lib/types";
 import { Settings, Tier } from "@/lib/settings/types";
-import { tierAtLeast } from "@/lib/tiers";
 import { Divider, InputTypeIn, SidebarTab } from "@opal/components";
-import { SvgArrowUpCircle, SvgSearch, SvgX } from "@opal/icons";
-import {
-  useBillingInformation,
-  useLicense,
-  hasActiveSubscription,
-} from "@/lib/billing";
+import { SvgSearch, SvgX } from "@opal/icons";
 import { ADMIN_ROUTES, sidebarItem } from "@/lib/admin-routes";
 import { NEXT_PUBLIC_CLOUD_ENABLED } from "@/lib/constants";
 import useFilter from "@/hooks/useFilter";
@@ -50,10 +43,7 @@ function buildItems(
   isCurator: boolean,
   enableCloud: boolean,
   tier: Tier | undefined,
-  settings: Settings | null,
-  customAnalyticsEnabled: boolean,
-  hasSubscription: boolean,
-  hooksEnabled: boolean
+  settings: Settings | null
 ): SidebarItemEntry[] {
   const items: SidebarItemEntry[] = [];
 
@@ -130,36 +120,13 @@ export default function AdminSidebar() {
     }
   }, [focusSearch, folded]);
   const pathname = usePathname();
-  const { customAnalyticsEnabled } = useCustomAnalyticsEnabled();
   const { user } = useUser();
   const settings = useSettings();
   const tier = settings?.tier;
-  const { data: billingData, isLoading: billingLoading } =
-    useBillingInformation();
-  const { data: licenseData, isLoading: licenseLoading } = useLicense();
   const isCurator =
     user?.role === UserRole.CURATOR || user?.role === UserRole.GLOBAL_CURATOR;
-  // Default to true while loading to avoid flashing "Upgrade Plan"
-  const hasSubscriptionOrLicense =
-    billingLoading || licenseLoading
-      ? true
-      : Boolean(
-        (billingData && hasActiveSubscription(billingData)) ||
-        licenseData?.has_license
-      );
-  // Hooks are ENTERPRISE-only and only available for self-hosted single-tenant.
-  const hooksEnabled =
-    tierAtLeast(tier, Tier.ENTERPRISE) && (settings?.hooks_enabled ?? false);
 
-  const allItems = buildItems(
-    isCurator,
-    NEXT_PUBLIC_CLOUD_ENABLED,
-    tier,
-    settings,
-    customAnalyticsEnabled,
-    hasSubscriptionOrLicense,
-    hooksEnabled
-  );
+  const allItems = buildItems(isCurator, NEXT_PUBLIC_CLOUD_ENABLED, tier, settings);
 
   const itemExtractor = useCallback((item: SidebarItemEntry) => item.name, []);
 

@@ -34,9 +34,6 @@ from onyx.server.kg.models import KGConfig
 from onyx.server.kg.models import KGConfig as KGConfigAPIModel
 from onyx.server.kg.models import SourceAndEntityTypeView
 from onyx.server.kg.models import SourceStatistics
-from onyx.tools.tool_implementations.knowledge_graph.knowledge_graph_tool import (
-    KnowledgeGraphTool,
-)
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 
 admin_router = APIRouter(prefix="/admin/kg")
@@ -101,9 +98,10 @@ def enable_or_disable_kg(
     enable_kg(enable_req=req)
     populate_missing_default_entity_types__commit(db_session=db_session)
 
-    # Get the search and knowledge graph tools
+    # Get the search tool. The Knowledge Graph tool itself is dead code
+    # (its construction path is disabled in tool_constructor.py) and has been
+    # removed, so the KG Beta persona below is search-only.
     search_tool = get_builtin_tool(db_session=db_session, tool_type=SearchTool)
-    kg_tool = get_builtin_tool(db_session=db_session, tool_type=KnowledgeGraphTool)
 
     # Check if we have a previously created persona
     kg_config_settings = get_kg_config_settings()
@@ -139,7 +137,7 @@ def enable_or_disable_kg(
         datetime_aware=False,
         is_public=False,
         document_set_ids=[],
-        tool_ids=[search_tool.id, kg_tool.id],
+        tool_ids=[search_tool.id],
         starter_messages=None,
         users=[user.id],
         groups=[],

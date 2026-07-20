@@ -58,12 +58,8 @@ from onyx.tools.tool_implementations.coding_agent.coding_agent_tool import (
     CodingAgentTool,
 )
 from onyx.tools.tool_implementations.file_reader.file_reader_tool import FileReaderTool
-from onyx.tools.tool_implementations.images.image_generation_tool import (
-    ImageGenerationTool,
-)
 from onyx.tools.tool_implementations.memory.memory_tool import MemoryTool
 from onyx.tools.tool_implementations.open_url.open_url_tool import OpenURLTool
-from onyx.tools.tool_implementations.python.python_tool import PythonTool
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 from onyx.tools.tool_implementations.web_search.web_search_tool import WebSearchTool
 from onyx.utils.logger import setup_logger
@@ -628,18 +624,6 @@ def translate_assistant_message_to_packets(
                             )
                         )
 
-                    elif tool.in_code_tool_id == ImageGenerationTool.__name__:
-                        if tool_call.generated_images:
-                            images = [
-                                GeneratedImage(**img)
-                                for img in tool_call.generated_images
-                            ]
-                            turn_tool_packets.extend(
-                                create_image_generation_packets(
-                                    images, turn_num, tab_index=tool_call.tab_index
-                                )
-                            )
-
                     elif tool.in_code_tool_id == FileReaderTool.__name__:
                         turn_tool_packets.extend(
                             create_file_reader_packets(
@@ -702,41 +686,6 @@ def translate_assistant_message_to_packets(
                                     index=memory_data.get("index"),
                                 )
                             )
-
-                    elif tool.in_code_tool_id == PythonTool.__name__:
-                        code = cast(
-                            str,
-                            tool_call.tool_call_arguments.get("code", ""),
-                        )
-                        stdout = ""
-                        stderr = ""
-                        file_ids: list[str] = []
-                        if tool_call.tool_call_response:
-                            try:
-                                response_data = json.loads(tool_call.tool_call_response)
-                                stdout = response_data.get("stdout", "")
-                                stderr = response_data.get("stderr", "")
-                                generated_files = response_data.get(
-                                    "generated_files", []
-                                )
-                                file_ids = [
-                                    f.get("file_link", "").split("/")[-1]
-                                    for f in generated_files
-                                    if f.get("file_link")
-                                ]
-                            except (json.JSONDecodeError, KeyError):
-                                # Fall back to raw response as stdout
-                                stdout = tool_call.tool_call_response
-                        turn_tool_packets.extend(
-                            create_python_tool_packets(
-                                code=code,
-                                stdout=stdout,
-                                stderr=stderr,
-                                file_ids=file_ids,
-                                turn_index=turn_num,
-                                tab_index=tool_call.tab_index,
-                            )
-                        )
 
                     else:
                         # Custom tool or unknown tool

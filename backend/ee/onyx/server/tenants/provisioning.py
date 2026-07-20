@@ -32,7 +32,6 @@ from onyx.configs.app_configs import VERTEXAI_DEFAULT_CREDENTIALS
 from onyx.configs.app_configs import VERTEXAI_DEFAULT_LOCATION
 from onyx.db.engine.sql_engine import get_session_with_shared_schema
 from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.image_generation import create_default_image_gen_config_from_api_key
 from onyx.db.llm import fetch_existing_llm_provider_by_name_and_type
 from onyx.db.llm import fetch_existing_llm_provider_by_type_nameless
 from onyx.db.llm import update_default_provider
@@ -370,14 +369,6 @@ def configure_default_api_keys(db_session: Session) -> None:
             is_auto_mode=True,
         )
         _upsert(openai_provider, default_model_name)
-
-        # Create default image generation config using the OpenAI API key
-        try:
-            create_default_image_gen_config_from_api_key(
-                db_session, OPENAI_DEFAULT_API_KEY
-            )
-        except Exception as e:
-            logger.error("Failed to create default image gen config: %s", e)
     else:
         logger.info(
             "Skipping OpenAI default provider configuration "

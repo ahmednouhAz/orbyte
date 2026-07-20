@@ -1,9 +1,6 @@
 import { IconFunctionComponent } from "@opal/types";
 import {
-  SvgActions,
   SvgActivity,
-  SvgAudio,
-  SvgShareWebhook,
   SvgBarChart,
   SvgBookOpen,
   SvgBubbleText,
@@ -16,10 +13,7 @@ import {
   SvgFiles,
   SvgGlobe,
   SvgHistory,
-  SvgImage,
-  SvgMcp,
   SvgOnyxOctagon,
-  SvgPaintBrush,
   SvgPlug,
   SvgProgressBars,
   SvgSearchMenu,
@@ -30,9 +24,7 @@ import {
   SvgUser,
   SvgUserCheck,
   SvgUserKey,
-  SvgUserSync,
   SvgUsers,
-  SvgWallet,
   SvgZoomIn,
   SvgDiscord,
   SvgSlack,
@@ -98,18 +90,6 @@ export const ADMIN_ROUTES = {
     title: "Discord Integration",
     sidebarLabel: "Discord Integration",
   },
-  MCP_ACTIONS: {
-    path: "/admin/actions/mcp",
-    icon: SvgMcp,
-    title: "MCP Actions",
-    sidebarLabel: "MCP Actions",
-  },
-  OPENAPI_ACTIONS: {
-    path: "/admin/actions/open-api",
-    icon: SvgActions,
-    title: "OpenAPI Actions",
-    sidebarLabel: "OpenAPI Actions",
-  },
   STANDARD_ANSWERS: {
     path: "/admin/standard-answer",
     icon: SvgClipboard,
@@ -139,18 +119,6 @@ export const ADMIN_ROUTES = {
     icon: SvgGlobe,
     title: "Web Search",
     sidebarLabel: "Web Search",
-  },
-  IMAGE_GENERATION: {
-    path: "/admin/configuration/image-generation",
-    icon: SvgImage,
-    title: "Image Generation",
-    sidebarLabel: "Image Generation",
-  },
-  VOICE: {
-    path: "/admin/configuration/voice",
-    icon: SvgAudio,
-    title: "Voice",
-    sidebarLabel: "Voice",
   },
   CODE_INTERPRETER: {
     path: "/admin/configuration/code-interpreter",
@@ -194,12 +162,6 @@ export const ADMIN_ROUTES = {
     title: "Users & Requests",
     sidebarLabel: "Users",
   },
-  API_KEYS: {
-    path: "/admin/service-accounts",
-    icon: SvgUserKey,
-    title: "Service Accounts",
-    sidebarLabel: "Service Accounts",
-  },
   TOKEN_RATE_LIMITS: {
     path: "/admin/token-rate-limits",
     icon: SvgProgressBars,
@@ -224,36 +186,6 @@ export const ADMIN_ROUTES = {
     title: "Query History",
     sidebarLabel: "Query History",
   },
-  CUSTOM_ANALYTICS: {
-    path: "/admin/performance/custom-analytics",
-    icon: SvgBarChart,
-    title: "Custom Analytics",
-    sidebarLabel: "Custom Analytics",
-  },
-  THEME: {
-    path: "/admin/theme",
-    icon: SvgPaintBrush,
-    title: "Appearance & Theming",
-    sidebarLabel: "Appearance & Theming",
-  },
-  BILLING: {
-    path: "/admin/billing",
-    icon: SvgWallet,
-    title: "Plans & Billing",
-    sidebarLabel: "Plans & Billing",
-  },
-  HOOKS: {
-    path: "/admin/hooks",
-    icon: SvgShareWebhook,
-    title: "Hook Extensions",
-    sidebarLabel: "Hook Extensions",
-  },
-  SCIM: {
-    path: "/admin/scim",
-    icon: SvgUserSync,
-    title: "SCIM",
-    sidebarLabel: "SCIM",
-  },
   OAUTH_TEST: {
     path: "/admin/oauth-test",
     icon: SvgUserKey,
@@ -271,12 +203,6 @@ export const ADMIN_ROUTES = {
     icon: SvgShield,
     title: "Security & Hardening",
     sidebarLabel: "Security & Hardening",
-  },
-  SSO_PROVIDERS: {
-    path: "/admin/sso-providers",
-    icon: SvgUserKey,
-    title: "SSO Providers",
-    sidebarLabel: "SSO Providers",
   },
   // Prefix-only entries used for layout matching — not rendered as sidebar
   // items or page headers.

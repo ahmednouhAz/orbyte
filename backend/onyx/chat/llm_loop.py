@@ -55,14 +55,11 @@ from onyx.tools.interface import Tool
 from onyx.tools.models import ChatFile
 from onyx.tools.models import CustomToolCallSummary
 from onyx.tools.models import MemoryToolResponseSnapshot
-from onyx.tools.models import PythonToolRichResponse
 from onyx.tools.models import ToolCallInfo
 from onyx.tools.models import ToolCallKickoff
 from onyx.tools.models import ToolResponse
-from onyx.tools.tool_implementations.images.models import FinalImageGenerationResponse
 from onyx.tools.tool_implementations.memory.models import MemoryToolResponse
 from onyx.tools.tool_implementations.open_url.open_url_tool import OpenURLTool
-from onyx.tools.tool_implementations.python.python_tool import PythonTool
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 from onyx.tools.tool_implementations.web_search.utils import extract_url_snippet_map
 from onyx.tools.tool_implementations.web_search.web_search_tool import WebSearchTool
@@ -992,18 +989,6 @@ def run_llm_loop(
                 if tool_call.tool_name == SearchTool.NAME:
                     has_called_search_tool = True
 
-                # Track if code interpreter generated files with download links
-                if (
-                    tool_call.tool_name == PythonTool.NAME
-                    and not code_interpreter_file_generated
-                ):
-                    try:
-                        parsed = json.loads(tool_response.llm_facing_response)
-                        if parsed.get("generated_files"):
-                            code_interpreter_file_generated = True
-                    except (json.JSONDecodeError, AttributeError):
-                        pass
-
                 tools_by_name = {tool.name: tool for tool in final_tools}
 
                 # Add the results to the chat history. Even though tools may run in parallel,
@@ -1051,19 +1036,11 @@ def run_llm_loop(
                                 if cf.filename not in existing_filenames
                             )
 
-                # Extract generated_images if this is an image generation tool response
+                # Image generation and Python/code-interpreter tools have been
+                # removed from this deployment, so no tool response can ever
+                # populate these anymore.
                 generated_images = None
-                if isinstance(
-                    tool_response.rich_response, FinalImageGenerationResponse
-                ):
-                    generated_images = tool_response.rich_response.generated_images
-
-                # Extract generated_files if this is a code interpreter response
                 generated_files = None
-                if isinstance(tool_response.rich_response, PythonToolRichResponse):
-                    generated_files = (
-                        tool_response.rich_response.generated_files or None
-                    )
 
                 # Persist memory if this is a memory tool response
                 memory_snapshot: MemoryToolResponseSnapshot | None = None

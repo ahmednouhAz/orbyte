@@ -8,7 +8,6 @@ import { PHProvider } from "./providers";
 import {
   PostHogPageTracker,
   PostHogRuntimeInitializer,
-  CustomAnalyticsScript,
   WebVitals,
 } from "@/lib/analytics/shared";
 import Script from "next/script";
@@ -128,7 +127,6 @@ export default function Layout({ children }: LayoutProps) {
                   <AuthenticationShell>
                     <AppProvider>
                       <PostHogRuntimeInitializer />
-                      <CustomAnalyticsScript />
                       <PostHogPageTracker />
                       <div id={MODAL_ROOT_ID} className="h-screen w-screen">
                         <ProductGatingWrapper>{children}</ProductGatingWrapper>

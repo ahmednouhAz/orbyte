@@ -4,9 +4,6 @@ import { useState } from "react";
 import { SvgExternalLink, SvgUser, SvgUserPlus } from "@opal/icons";
 import { Button, MessageCard } from "@opal/components";
 import { SettingsLayouts } from "@opal/layouts";
-import { useScimToken } from "@/hooks/useScimToken";
-import { useTierAtLeast } from "@/hooks/useTierAtLeast";
-import { Tier } from "@/lib/settings/types";
 import useUserCounts from "@/hooks/useUserCounts";
 import { UserStatus } from "@/lib/types";
 import type { StatusFilter } from "./interfaces";
@@ -20,11 +17,6 @@ import InviteUsersModal from "./InviteUsersModal";
 // ---------------------------------------------------------------------------
 
 function UsersContent() {
-  const enterpriseTier = useTierAtLeast(Tier.ENTERPRISE);
-
-  const { data: scimToken } = useScimToken();
-  const showScim = enterpriseTier && !!scimToken;
-
   const { activeCount, invitedCount, pendingCount, roleCounts, statusCounts } =
     useUserCounts();
 
@@ -44,7 +36,6 @@ function UsersContent() {
         activeUsers={activeCount}
         pendingInvites={invitedCount}
         requests={pendingCount}
-        showScim={showScim}
         onFilterActive={() => toggleStatus(UserStatus.ACTIVE)}
         onFilterInvites={() => toggleStatus(UserStatus.INVITED)}
         onFilterRequests={() => toggleStatus(UserStatus.REQUESTED)}
