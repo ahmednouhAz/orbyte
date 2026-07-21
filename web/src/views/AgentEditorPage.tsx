@@ -30,12 +30,9 @@ import {
   MAX_CHARACTERS_AGENT_DESCRIPTION,
 } from "@/lib/constants";
 import {
-  IMAGE_GENERATION_TOOL_ID,
   WEB_SEARCH_TOOL_ID,
-  PYTHON_TOOL_ID,
   SEARCH_TOOL_ID,
   OPEN_URL_TOOL_ID,
-  CODING_AGENT_TOOL_ID,
 } from "@/app/app/components/tools/constants";
 import Text from "@/refresh-components/texts/Text";
 import SimpleCollapsible from "@/refresh-components/SimpleCollapsible";
@@ -49,7 +46,6 @@ import { ProjectFile, UserFileStatus } from "@/lib/projects/types";
 import { Popover, PopoverMenu } from "@opal/components";
 import LineItem from "@/refresh-components/buttons/LineItem";
 import {
-  SvgActions,
   SvgExpand,
   SvgEye,
   SvgEyeOff,
@@ -74,14 +70,9 @@ import { createAgent, updateAgent } from "@/lib/agents/svc";
 import InputChipField from "@/refresh-components/inputs/InputChipField";
 import { AgentUpsertParameters } from "@/lib/agents/types";
 import { useMcpServersForPersonaEditor } from "@/lib/agents/hooks";
-import useOpenApiTools from "@/hooks/useOpenApiTools";
 import { useAvailableTools } from "@/hooks/useAvailableTools";
 import { getActionIcon } from "@/lib/tools/mcpUtils";
-import {
-  AgentEditorMCPServer,
-  MCPTool,
-  ToolSnapshot,
-} from "@/lib/tools/interfaces";
+import { AgentEditorMCPServer, MCPTool } from "@/lib/tools/interfaces";
 import { InputTypeIn } from "@opal/components";
 import useFilter from "@/hooks/useFilter";
 import EnabledCount from "@/refresh-components/EnabledCount";
@@ -276,27 +267,6 @@ function AgentIconEditor({ existingAgent }: AgentIconEditorProps) {
         </Popover.Content>
       </Popover>
     </>
-  );
-}
-
-interface OpenApiToolCardProps {
-  tool: ToolSnapshot;
-}
-
-function OpenApiToolCard({ tool }: OpenApiToolCardProps) {
-  const toolFieldName = `openapi_tool_${tool.id}`;
-
-  return (
-    <Card border="solid" rounding="lg">
-      <InputHorizontal
-        icon={SvgActions}
-        title={tool.display_name || tool.name}
-        description={tool.description}
-        withLabel={toolFieldName}
-      >
-        <SwitchField name={toolFieldName} />
-      </InputHorizontal>
-    </Card>
   );
 }
 
@@ -623,10 +593,6 @@ export default function AgentEditorPage({
   const { mcpServers, isLoading: isMcpLoading } = useMcpServersForPersonaEditor(
     existingAgent?.id
   );
-  const { openApiTools: openApiToolsRaw, isLoading: isOpenApiLoading } =
-    useOpenApiTools();
-
-  const openApiTools = openApiToolsRaw ?? [];
 
   // Check if the *BUILT-IN* tools are available.
   // The built-in tools are:
@@ -638,25 +604,12 @@ export default function AgentEditorPage({
   const searchTool = availableTools?.find(
     (t) => t.in_code_tool_id === SEARCH_TOOL_ID
   );
-  const imageGenTool = availableTools?.find(
-    (t) => t.in_code_tool_id === IMAGE_GENERATION_TOOL_ID
-  );
   const webSearchTool = availableTools?.find(
     (t) => t.in_code_tool_id === WEB_SEARCH_TOOL_ID
   );
   const openURLTool = availableTools?.find(
     (t) => t.in_code_tool_id === OPEN_URL_TOOL_ID
   );
-  const codeInterpreterTool = availableTools?.find(
-    (t) => t.in_code_tool_id === PYTHON_TOOL_ID
-  );
-  const codingAgentTool = availableTools?.find(
-    (t) => t.in_code_tool_id === CODING_AGENT_TOOL_ID
-  );
-  const isImageGenerationAvailable = !!imageGenTool;
-  const imageGenerationDisabledTooltip = isImageGenerationAvailable
-    ? undefined
-    : "Image generation requires a configured model. If you have access, set one up under Settings > Image Generation, or ask an admin.";
 
   // Include inaccessible attached tools so edits preserve them.
   const mcpServersWithTools = mcpServers.map((server) => {
@@ -725,12 +678,6 @@ export default function AgentEditorPage({
     // For new agents, default to false for optional tools to avoid
     // "Tool not available" errors when the tool isn't configured.
     // For existing agents, preserve the current tool configuration.
-    image_generation:
-      !!imageGenTool &&
-      (existingAgent?.tools?.some(
-        (tool) => tool.in_code_tool_id === IMAGE_GENERATION_TOOL_ID
-      ) ??
-        false),
     web_search:
       !!webSearchTool &&
       (existingAgent?.tools?.some(
@@ -741,18 +688,6 @@ export default function AgentEditorPage({
       !!openURLTool &&
       (existingAgent?.tools?.some(
         (tool) => tool.in_code_tool_id === OPEN_URL_TOOL_ID
-      ) ??
-        false),
-    code_interpreter:
-      !!codeInterpreterTool &&
-      (existingAgent?.tools?.some(
-        (tool) => tool.in_code_tool_id === PYTHON_TOOL_ID
-      ) ??
-        false),
-    coding_agent:
-      !!codingAgentTool &&
-      (existingAgent?.tools?.some(
-        (tool) => tool.in_code_tool_id === CODING_AGENT_TOOL_ID
       ) ??
         false),
     // MCP servers - dynamically add fields for each server with nested tool fields
@@ -781,14 +716,6 @@ export default function AgentEditorPage({
           },
         ];
       })
-    ),
-
-    // OpenAPI tools - add a boolean field for each tool
-    ...Object.fromEntries(
-      openApiTools.map((openApiTool) => [
-        `openapi_tool_${openApiTool.id}`,
-        existingAgent?.tools?.some((t) => t.id === openApiTool.id) ?? false,
-      ])
     ),
 
     // Sharing
@@ -852,14 +779,6 @@ export default function AgentEditorPage({
         Yup.object(), // Allow any nested tool fields as booleans
       ])
     ),
-
-    // OpenAPI tools - add boolean validation for each tool
-    ...Object.fromEntries(
-      openApiTools.map((openApiTool) => [
-        `openapi_tool_${openApiTool.id}`,
-        Yup.boolean(),
-      ])
-    ),
   });
 
   async function handleSubmit(values: typeof initialValues) {
@@ -884,22 +803,12 @@ export default function AgentEditorPage({
           toolIds.push(searchTool.id);
         }
       }
-      if (values.image_generation && imageGenTool) {
-        toolIds.push(imageGenTool.id);
-      }
       if (values.web_search && webSearchTool) {
         toolIds.push(webSearchTool.id);
       }
       if (values.open_url && openURLTool) {
         toolIds.push(openURLTool.id);
       }
-      if (values.code_interpreter && codeInterpreterTool) {
-        toolIds.push(codeInterpreterTool.id);
-      }
-      if (values.coding_agent && codingAgentTool) {
-        toolIds.push(codingAgentTool.id);
-      }
-
       // Collect enabled MCP tool IDs
       mcpServers.forEach((server) => {
         const serverFieldName = `mcp_server_${server.id}`;
@@ -920,14 +829,6 @@ export default function AgentEditorPage({
               }
             }
           });
-        }
-      });
-
-      // Collect enabled OpenAPI tool IDs
-      openApiTools.forEach((openApiTool) => {
-        const toolFieldName = `openapi_tool_${openApiTool.id}`;
-        if ((values as any)[toolFieldName] === true) {
-          toolIds.push(openApiTool.id);
         }
       });
 
@@ -1145,7 +1046,7 @@ export default function AgentEditorPage({
   // initialValues on mount — if tools haven't loaded yet, the initial values
   // won't include MCP tool fields. Later, toggling those fields would make
   // the form permanently dirty since they have no baseline to compare against.
-  if (isToolsLoading || isMcpLoading || isOpenApiLoading) {
+  if (isToolsLoading || isMcpLoading) {
     return null;
   }
 
@@ -1589,25 +1490,6 @@ export default function AgentEditorPage({
                             gap={0.5}
                             alignItems="stretch"
                           >
-                            <Disabled
-                              disabled={!isImageGenerationAvailable}
-                              tooltip={imageGenerationDisabledTooltip}
-                            >
-                              <Card border="solid" rounding="lg">
-                                <InputHorizontal
-                                  withLabel="image_generation"
-                                  title="Image Generation"
-                                  description="Generate and manipulate images using AI-powered tools."
-                                  disabled={!isImageGenerationAvailable}
-                                >
-                                  <SwitchField
-                                    name="image_generation"
-                                    disabled={!isImageGenerationAvailable}
-                                  />
-                                </InputHorizontal>
-                              </Card>
-                            </Disabled>
-
                             <Disabled disabled={!webSearchTool}>
                               <Card border="solid" rounding="lg">
                                 <InputHorizontal
@@ -1640,43 +1522,10 @@ export default function AgentEditorPage({
                               </Card>
                             </Disabled>
 
-                            <Disabled disabled={!codeInterpreterTool}>
-                              <Card border="solid" rounding="lg">
-                                <InputHorizontal
-                                  withLabel="code_interpreter"
-                                  title="Code Interpreter"
-                                  description="Generate and run code."
-                                  disabled={!codeInterpreterTool}
-                                >
-                                  <SwitchField
-                                    name="code_interpreter"
-                                    disabled={!codeInterpreterTool}
-                                  />
-                                </InputHorizontal>
-                              </Card>
-                            </Disabled>
-
-                            <Disabled disabled={!codingAgentTool}>
-                              <Card border="solid" rounding="lg">
-                                <InputHorizontal
-                                  withLabel="coding_agent"
-                                  title="Coding Agent"
-                                  description="Investigate a GitHub repository and answer questions about its code."
-                                  disabled={!codingAgentTool}
-                                >
-                                  <SwitchField
-                                    name="coding_agent"
-                                    disabled={!codingAgentTool}
-                                  />
-                                </InputHorizontal>
-                              </Card>
-                            </Disabled>
-
                             {/* Tools */}
                             <>
-                              {/* render the divider if there is at least one mcp-server or open-api-tool */}
-                              {(mcpServers.length > 0 ||
-                                openApiTools.length > 0) && (
+                              {/* render the divider if there is at least one mcp-server */}
+                              {mcpServers.length > 0 && (
                                 <Divider
                                   paddingPerpendicular="xs"
                                   paddingParallel="fit"
@@ -1696,18 +1545,6 @@ export default function AgentEditorPage({
                                       />
                                     )
                                   )}
-                                </GeneralLayouts.Section>
-                              )}
-
-                              {/* OpenAPI tools */}
-                              {openApiTools.length > 0 && (
-                                <GeneralLayouts.Section gap={0.5}>
-                                  {openApiTools.map((tool) => (
-                                    <OpenApiToolCard
-                                      key={tool.id}
-                                      tool={tool}
-                                    />
-                                  ))}
                                 </GeneralLayouts.Section>
                               )}
                             </>

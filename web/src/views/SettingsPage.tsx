@@ -953,7 +953,6 @@ function ChatPreferencesSettings() {
     updateUserPasteAsTile,
     updateUserDefaultModel,
     updateUserDefaultAppMode,
-    updateUserVoiceSettings,
   } = useUser();
   const businessTier = useTierAtLeast(Tier.BUSINESS);
   const searchUiEnabled = useIsSearchModeAvailable();
@@ -973,43 +972,6 @@ function ChatPreferencesSettings() {
     onSuccess: () => toast.success("Preferences saved"),
     onError: () => toast.error("Failed to save preferences"),
   });
-  const [draftVoicePlaybackSpeed, setDraftVoicePlaybackSpeed] = useState(
-    user?.preferences.voice_playback_speed ?? 1
-  );
-
-  useEffect(() => {
-    setDraftVoicePlaybackSpeed(user?.preferences.voice_playback_speed ?? 1);
-  }, [user?.preferences.voice_playback_speed]);
-
-  const saveVoiceSettings = useCallback(
-    async (settings: {
-      auto_send?: boolean;
-      auto_playback?: boolean;
-      playback_speed?: number;
-    }) => {
-      try {
-        await updateUserVoiceSettings(settings);
-        toast.success("Preferences saved");
-      } catch {
-        toast.error("Failed to save preferences");
-      }
-    },
-    [updateUserVoiceSettings]
-  );
-
-  const commitVoicePlaybackSpeed = useCallback(() => {
-    const currentSpeed = user?.preferences.voice_playback_speed ?? 1;
-    if (Math.abs(currentSpeed - draftVoicePlaybackSpeed) < 0.001) {
-      return;
-    }
-    void saveVoiceSettings({
-      playback_speed: draftVoicePlaybackSpeed,
-    });
-  }, [
-    draftVoicePlaybackSpeed,
-    saveVoiceSettings,
-    user?.preferences.voice_playback_speed,
-  ]);
 
   // Wrapper to save memories and return success/failure
   const handleSaveMemories = useCallback(
@@ -1230,72 +1192,6 @@ function ChatPreferencesSettings() {
           </InputHorizontal>
 
           {user?.preferences?.shortcut_enabled && <PromptShortcuts />}
-        </Card>
-      </Section>
-
-      <Section gap={0.75}>
-        <Content
-          title="Voice"
-          sizePreset="main-content"
-          variant="section"
-          width="full"
-        />
-        <Card>
-          <InputHorizontal
-            title="Auto-Send on Pause"
-            description="Automatically send voice input when you stop speaking."
-            withLabel
-          >
-            <Switch
-              checked={user?.preferences.voice_auto_send ?? false}
-              onCheckedChange={(checked) => {
-                void saveVoiceSettings({ auto_send: checked });
-              }}
-            />
-          </InputHorizontal>
-
-          <InputHorizontal
-            title="Auto-Playback"
-            description="Automatically play voice responses."
-            withLabel
-          >
-            <Switch
-              checked={user?.preferences.voice_auto_playback ?? false}
-              onCheckedChange={(checked) => {
-                void saveVoiceSettings({ auto_playback: checked });
-              }}
-            />
-          </InputHorizontal>
-
-          <InputHorizontal
-            title="Playback Speed"
-            description="Adjust the speed of voice playback."
-            withLabel
-          >
-            <div className="flex items-center gap-3">
-              <input
-                type="range"
-                min="0.5"
-                max="2"
-                step="0.1"
-                value={draftVoicePlaybackSpeed}
-                onChange={(e) => {
-                  setDraftVoicePlaybackSpeed(parseFloat(e.target.value));
-                }}
-                onMouseUp={commitVoicePlaybackSpeed}
-                onTouchEnd={commitVoicePlaybackSpeed}
-                onKeyUp={(e) => {
-                  if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-                    commitVoicePlaybackSpeed();
-                  }
-                }}
-                className="w-24 h-2 rounded-lg appearance-none cursor-pointer bg-background-neutral-02"
-              />
-              <span className="text-sm text-text-02 w-10">
-                {draftVoicePlaybackSpeed.toFixed(1)}x
-              </span>
-            </div>
-          </InputHorizontal>
         </Card>
       </Section>
     </Section>

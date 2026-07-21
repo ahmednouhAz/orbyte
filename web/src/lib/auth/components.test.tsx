@@ -33,7 +33,6 @@ jest.mock("@/providers/UserProvider", () => ({
       passwordRequireDigit: false,
       passwordRequireSpecialChar: false,
       hasUsers: true,
-      oauthEnabled: false,
     },
   }),
 }));

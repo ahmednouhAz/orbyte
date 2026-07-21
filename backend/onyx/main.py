@@ -78,6 +78,8 @@ from onyx.server.features.input_prompt.api import (
     admin_router as admin_input_prompt_router,
 )
 from onyx.server.features.input_prompt.api import basic_router as input_prompt_router
+from onyx.server.features.join_link.api import public_router as join_link_public_router
+from onyx.server.features.join_link.api import router as join_link_router
 from onyx.server.features.notifications.api import router as notification_router
 from onyx.server.features.password.api import router as password_router
 from onyx.server.features.persona.api import admin_agents_router
@@ -89,6 +91,7 @@ from onyx.server.features.search.api import router as search_api_router
 from onyx.server.features.skill.api import user_router as skill_router
 from onyx.server.features.tool.api import admin_router as admin_tool_router
 from onyx.server.features.tool.api import router as tool_router
+from onyx.server.features.user_group.api import router as user_group_router
 from onyx.server.features.web_search.api import router as web_search_router
 from onyx.server.federated.api import router as federated_router
 from onyx.server.kg.api import admin_router as kg_admin_router
@@ -494,6 +497,9 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
     include_router_with_global_prefix_prepended(application, build_router)
     include_router_with_global_prefix_prepended(application, build_admin_router)
     include_router_with_global_prefix_prepended(application, document_set_router)
+    include_router_with_global_prefix_prepended(application, user_group_router)
+    include_router_with_global_prefix_prepended(application, join_link_router)
+    include_router_with_global_prefix_prepended(application, join_link_public_router)
     include_router_with_global_prefix_prepended(application, hierarchy_router)
     include_router_with_global_prefix_prepended(application, search_api_router)
     include_router_with_global_prefix_prepended(application, search_settings_router)

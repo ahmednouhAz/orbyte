@@ -45,7 +45,8 @@ async function createGroup(
 async function updateGroup(
   groupId: number,
   userIds: string[],
-  ccPairIds: number[]
+  ccPairIds: number[],
+  curatorIds?: string[]
 ): Promise<void> {
   const res = await fetch(`${USER_GROUP_URL}/${groupId}`, {
     method: "PATCH",
@@ -53,6 +54,7 @@ async function updateGroup(
     body: JSON.stringify({
       user_ids: userIds,
       cc_pair_ids: ccPairIds,
+      ...(curatorIds ? { curator_ids: curatorIds } : {}),
     }),
   });
   if (!res.ok) {

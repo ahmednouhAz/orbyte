@@ -16,7 +16,6 @@ const baseAuthMetadata = (authType: AuthType): AuthTypeMetadata => ({
   passwordRequireDigit: false,
   passwordRequireSpecialChar: false,
   hasUsers: true,
-  oauthEnabled: false,
 });
 
 const fakeUser = { id: "user-1" } as User;

@@ -533,6 +533,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         user_create: schemas.UC | UserCreate,
         safe: bool = False,
         request: Optional[Request] = None,
+        join_token: str | None = None,
     ) -> User:
         # Check for disposable emails FIRST so obvious throwaway domains are
         # rejected before hitting Google's siteverify API. Cheap local check.
@@ -608,17 +609,21 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         token = CURRENT_TENANT_ID_CONTEXTVAR.set(tenant_id)
         try:
             async with get_async_session_context_manager(tenant_id) as db_session:
-                # Check invite list based on deployment mode
+                # Check invite list based on deployment mode. A valid group
+                # join-link token is its own authorization (the token IS the
+                # invite), so it bypasses the whitelist check the same way
+                # SAML/OIDC already do inside verify_email_is_invited.
                 if MULTI_TENANT:
                     # Multi-tenant: Only require invite for existing tenants
                     # New tenant creation (first user) doesn't require an invite
                     user_count = await get_user_count()
-                    if user_count > 0:
+                    if user_count > 0 and not join_token:
                         # Tenant already has users - require invite for new users
                         verify_email_is_invited(user_create.email)
                 else:
                     # Single-tenant: Check invite list (skips if SAML/OIDC or no list configured)
-                    verify_email_is_invited(user_create.email)
+                    if not join_token:
+                        verify_email_is_invited(user_create.email)
                 if MULTI_TENANT:
                     tenant_user_db = SQLAlchemyUserAdminDB[User, uuid.UUID](
                         db_session, User, OAuthAccount

@@ -74,7 +74,6 @@ class AuthTypeResponse(BaseModel):
     password_require_special_char: bool = False
     # whether there are any users in the system
     has_users: bool = True
-    oauth_enabled: bool = False
     # Enabled DB-backed SSO providers, one login button each. Empty on cloud and
     # on instances with no provider rows, so the page falls back to auth_type.
     sso_providers: list[SSOProviderOption] = []

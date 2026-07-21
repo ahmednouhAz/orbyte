@@ -4823,6 +4823,42 @@ class UserGroup(Base):
     )
 
 
+class GroupJoinLink(Base):
+    """A shareable, group-scoped self-registration link. Lets an org onboard
+    new members without email delivery — the token itself is the invite."""
+
+    __tablename__ = "group_join_link"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    token_hash: Mapped[str] = mapped_column(
+        String(64), unique=True, nullable=False
+    )  # SHA256 = 64 hex chars
+
+    user_group_id: Mapped[int] = mapped_column(
+        ForeignKey("user_group.id", ondelete="CASCADE"), nullable=False
+    )
+    created_by: Mapped[UUID | None] = mapped_column(
+        ForeignKey("user.id", ondelete="SET NULL"), nullable=True
+    )
+
+    # If False, the link is single-use (rejected once use_count reaches 1).
+    is_reusable: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    use_count: Mapped[int] = mapped_column(Integer, server_default=text("0"), nullable=False)
+
+    expires_at: Mapped[datetime.datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )  # NULL = no expiration
+    revoked_at: Mapped[datetime.datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )  # NULL = active
+
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    user_group: Mapped["UserGroup"] = relationship("UserGroup")
+
+
 """Tables related to Token Rate Limiting
 NOTE: `TokenRateLimit` is partially an MIT feature (global rate limit)
 """

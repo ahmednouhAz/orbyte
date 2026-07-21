@@ -10,13 +10,10 @@ export interface MinimalUserGroupSnapshot {
   name: string;
 }
 
-// TODO (@raunakab):
-// Refactor this hook to live inside of a special `ee` directory.
-
 export default function useShareableGroups() {
   const settings = useSettings();
-  const isPaidEnterpriseFeaturesEnabled =
-    !settings.isLoading && settings.enterprise !== null;
+  // Groups is a first-party Orbyte feature, not gated behind an EE license.
+  const isPaidEnterpriseFeaturesEnabled = !settings.isLoading;
 
   const { data, error, isLoading } = useSWR<MinimalUserGroupSnapshot[]>(
     isPaidEnterpriseFeaturesEnabled ? SWR_KEYS.shareableGroups : null,

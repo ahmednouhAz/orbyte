@@ -1,42 +1,18 @@
 "use client";
 
-import { errorHandlingFetcher } from "@/lib/fetcher";
 import { MCPServersResponse } from "@/lib/tools/interfaces";
-import useSWR from "swr";
-import { SWR_KEYS } from "@/lib/swr-keys";
 
 /**
- * Fetches MCP (Model Context Protocol) servers configuration.
- *
- * MCP servers provide additional tools and capabilities to agents through
- * the Model Context Protocol.
- *
- * @returns Object containing:
- *   - mcpData: MCPServersResponse data or null if not loaded
- *   - isLoading: Boolean indicating if data is being fetched
- *   - error: Any error that occurred during fetch
- *   - mutateMcpServers: Function to manually revalidate the data
- *
- * @example
- * const { mcpData, isLoading } = useMcpServers();
- * if (isLoading) return <Spinner />;
- * return <MCPServersList servers={mcpData} />;
+ * MCP (Model Context Protocol) server support was removed from the backend.
+ * This stub keeps the return shape stable for existing consumers (which
+ * already treat an empty server list as a normal state) without hitting a
+ * route that no longer exists.
  */
 export default function useMcpServers() {
-  const {
-    data: mcpData,
-    error,
-    isLoading: isMcpLoading,
-    mutate: mutateMcpServers,
-  } = useSWR<MCPServersResponse>(
-    SWR_KEYS.adminMcpServers,
-    errorHandlingFetcher
-  );
-
   return {
-    mcpData: mcpData ?? null,
-    isLoading: isMcpLoading,
-    error,
-    mutateMcpServers,
+    mcpData: null as MCPServersResponse | null,
+    isLoading: false,
+    error: undefined,
+    mutateMcpServers: () => {},
   };
 }

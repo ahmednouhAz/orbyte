@@ -179,7 +179,6 @@ export default function MultiModelPanel({
           <AgentMessage
             {...agentMessageProps}
             hideFooter={isNonPreferredInSelection}
-            disableTTS
           />
         </div>
       )}

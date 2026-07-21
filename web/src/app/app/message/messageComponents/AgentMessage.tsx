@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  useRef,
-  RefObject,
-  useMemo,
-  useEffect,
-  useLayoutEffect,
-} from "react";
+import React, { useRef, RefObject, useMemo } from "react";
 import { Packet, StopReason } from "@/app/app/services/streamingModels";
 import CustomToolAuthCard from "@/app/app/message/messageComponents/CustomToolAuthCard";
 import { FullChatState } from "@/app/app/message/messageComponents/interfaces";
@@ -22,9 +16,6 @@ import { LlmDescriptor, LlmManager } from "@/lib/hooks";
 import { Message } from "@/app/app/interfaces";
 import Text from "@/refresh-components/texts/Text";
 import { AgentTimeline } from "@/app/app/message/messageComponents/timeline/AgentTimeline";
-import { useVoiceMode } from "@/providers/VoiceModeProvider";
-import { getTextContent } from "@/app/app/services/packetUtils";
-import { removeThinkingTokens } from "@/app/app/services/thinkingTokens";
 import { cn } from "@opal/utils";
 
 // Type for the regeneration factory function passed from ChatUI
@@ -52,8 +43,6 @@ export interface AgentMessageProps {
   processingDurationSeconds?: number;
   /** Hide the feedback/toolbar footer (used in multi-model non-preferred panels) */
   hideFooter?: boolean;
-  /** Skip TTS streaming (used in multi-model where voice doesn't apply) */
-  disableTTS?: boolean;
   /** When on, drop the message's reading-width padding so it sits flush with the chat edge. */
   fullWidthChat?: boolean;
 }
@@ -105,7 +94,6 @@ const AgentMessage = React.memo(function AgentMessage({
   parentMessage,
   processingDurationSeconds,
   hideFooter,
-  disableTTS,
   fullWidthChat,
 }: AgentMessageProps) {
   const markdownRef = useRef<HTMLDivElement>(null);
@@ -200,83 +188,6 @@ const AgentMessage = React.memo(function AgentMessage({
     otherMessagesCanSwitchTo,
     onMessageSelection,
   });
-
-  // Streaming TTS integration
-  const { streamTTS, resetTTS, stopTTS } = useVoiceMode();
-  const ttsCompletedRef = useRef(false);
-  const hasStreamedIncompleteRef = useRef(false);
-  const hasObservedPacketGrowthRef = useRef(false);
-  const lastSeenPacketCountRef = useRef(packetCount ?? rawPackets.length);
-  const streamTTSRef = useRef(streamTTS);
-
-  // Keep streamTTS ref in sync without triggering effect re-runs
-  useEffect(() => {
-    streamTTSRef.current = streamTTS;
-  }, [streamTTS]);
-
-  // Stream TTS as text content arrives - only for messages still streaming
-  // Uses ref for streamTTS to avoid re-triggering when its identity changes
-  // Note: packetCount is used instead of rawPackets because the array is mutated in place
-  useLayoutEffect(() => {
-    const effectivePacketCount = packetCount ?? rawPackets.length;
-    if (effectivePacketCount > lastSeenPacketCountRef.current) {
-      hasObservedPacketGrowthRef.current = true;
-    }
-    lastSeenPacketCountRef.current = effectivePacketCount;
-
-    // Skip if we've already finished TTS for this message
-    if (ttsCompletedRef.current) return;
-
-    // Multi-model: skip TTS entirely
-    if (disableTTS) return;
-
-    // If user cancelled generation, do not send more text to TTS.
-    if (stopPacketSeen && stopReason === StopReason.USER_CANCELLED) {
-      ttsCompletedRef.current = true;
-      return;
-    }
-
-    const textContent = removeThinkingTokens(getTextContent(rawPackets));
-    if (!(typeof textContent === "string" && textContent.length > 0)) return;
-
-    // Only autoplay messages that were observed streaming in this lifecycle.
-    // Prevents historical, already-complete chats from re-triggering read-aloud on mount.
-    if (!isComplete) {
-      if (!hasObservedPacketGrowthRef.current) {
-        return;
-      }
-      hasStreamedIncompleteRef.current = true;
-      streamTTSRef.current(textContent, false, nodeId);
-      return;
-    }
-
-    if (hasStreamedIncompleteRef.current) {
-      streamTTSRef.current(textContent, true, nodeId);
-      ttsCompletedRef.current = true;
-    }
-  }, [packetCount, isComplete, rawPackets, nodeId, stopPacketSeen, stopReason]); // packetCount triggers on new packets since rawPackets is mutated in place
-
-  // Stop TTS immediately when user cancels generation.
-  useEffect(() => {
-    if (stopPacketSeen && stopReason === StopReason.USER_CANCELLED) {
-      stopTTS({ manual: true });
-    }
-  }, [stopPacketSeen, stopReason, stopTTS]);
-
-  // Reset TTS completed flag when nodeId changes (new message)
-  useEffect(() => {
-    ttsCompletedRef.current = false;
-    hasStreamedIncompleteRef.current = false;
-    hasObservedPacketGrowthRef.current = false;
-    lastSeenPacketCountRef.current = packetCount ?? rawPackets.length;
-  }, [nodeId]);
-
-  // Reset TTS when component unmounts or nodeId changes
-  useEffect(() => {
-    return () => {
-      resetTTS();
-    };
-  }, [nodeId, resetTTS]);
 
   return (
     <div

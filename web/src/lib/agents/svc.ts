@@ -116,8 +116,7 @@ export async function uploadFile(file: File): Promise<string | null> {
 
 /**
  * Updates the agent's sharing settings (users, groups, public flag, labels).
- * Group sharing is EE-only — groupIds are silently dropped when enterprise
- * features are disabled. Returns an error string on failure, null on success.
+ * Returns an error string on failure, null on success.
  */
 export async function updateAgentSharedStatus(
   agentId: number,

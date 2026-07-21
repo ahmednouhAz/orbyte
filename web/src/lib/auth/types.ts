@@ -27,7 +27,6 @@ export interface AuthTypeMetadata {
   passwordRequireDigit: boolean;
   passwordRequireSpecialChar: boolean;
   hasUsers: boolean;
-  oauthEnabled: boolean;
   // DB-backed SSO providers, one login button each. Absent on the client-hook
   // path that does not fetch them. The login page treats absent as none.
   ssoProviders?: SSOProviderOption[];

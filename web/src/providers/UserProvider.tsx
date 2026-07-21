@@ -51,11 +51,6 @@ interface UserContextType {
   updateUserChatBackground: (chatBackground: string | null) => Promise<void>;
   updateUserDefaultModel: (defaultModel: string | null) => Promise<void>;
   updateUserDefaultAppMode: (mode: "CHAT" | "SEARCH") => Promise<void>;
-  updateUserVoiceSettings: (settings: {
-    auto_send?: boolean;
-    auto_playback?: boolean;
-    playback_speed?: number;
-  }) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -492,50 +487,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateUserVoiceSettings = async (settings: {
-    auto_send?: boolean;
-    auto_playback?: boolean;
-    playback_speed?: number;
-  }) => {
-    try {
-      setUpToDateUser((prevUser) => {
-        if (prevUser) {
-          return {
-            ...prevUser,
-            preferences: {
-              ...prevUser.preferences,
-              voice_auto_send:
-                settings.auto_send ?? prevUser.preferences.voice_auto_send,
-              voice_auto_playback:
-                settings.auto_playback ??
-                prevUser.preferences.voice_auto_playback,
-              voice_playback_speed:
-                settings.playback_speed ??
-                prevUser.preferences.voice_playback_speed,
-            },
-          };
-        }
-        return prevUser;
-      });
-
-      const response = await fetch("/api/voice/settings", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(settings),
-      });
-
-      if (!response.ok) {
-        await refreshUser();
-        throw new Error("Failed to update voice settings");
-      }
-    } catch (error) {
-      console.error("Error updating voice settings:", error);
-      throw error;
-    }
-  };
-
   const refreshUser = async () => {
     await mutateUser();
   };
@@ -555,7 +506,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         updateUserChatBackground,
         updateUserDefaultModel,
         updateUserDefaultAppMode,
-        updateUserVoiceSettings,
         toggleAgentPinnedStatus,
         isAdmin: upToDateUser?.role === UserRole.ADMIN,
         // Curator status applies for either global or basic curator

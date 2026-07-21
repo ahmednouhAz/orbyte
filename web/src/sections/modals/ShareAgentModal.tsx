@@ -145,8 +145,8 @@ export default function ShareAgentModal({
   const shareableUsers = shareableUsersData ?? [];
   const transferableUsers = transferableUsersData ?? [];
   const shareableGroups = shareableGroupsData ?? [];
-  const isPaidEnterpriseFeaturesEnabled =
-    !settings.isLoading && settings.enterprise !== null;
+  // Groups is a first-party Orbyte feature, not gated behind an EE license.
+  const isPaidEnterpriseFeaturesEnabled = !settings.isLoading;
 
   const initialValues = useMemo(
     () =>

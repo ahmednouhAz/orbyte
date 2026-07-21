@@ -13,8 +13,6 @@ import { SWR_KEYS } from "@/lib/swr-keys";
  * Use this for displaying group lists in sharing dialogs, admin panels, or permission
  * management interfaces.
  *
- * Note: This hook only returns data if enterprise features are enabled. In non-enterprise
- * environments, it returns an empty array.
  *
  * @returns Object containing:
  *   - data: Array of UserGroup objects, or undefined while loading
@@ -37,8 +35,8 @@ import { SWR_KEYS } from "@/lib/swr-keys";
  */
 export default function useGroups() {
   const settings = useSettings();
-  const isPaidEnterpriseFeaturesEnabled =
-    !settings.isLoading && settings.enterprise !== null;
+  // Groups is a first-party Orbyte feature, not gated behind an EE license.
+  const isPaidEnterpriseFeaturesEnabled = !settings.isLoading;
 
   const { data, error, isLoading } = useSWR<UserGroup[]>(
     isPaidEnterpriseFeaturesEnabled ? SWR_KEYS.adminUserGroups : null,

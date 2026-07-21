@@ -455,50 +455,26 @@ export function useLabels() {
 }
 
 // ── MCP servers for agent editor ──────────────────────────────────────────────
+// MCP server support was removed from the backend. These stubs keep the
+// return shape stable for existing consumers (which already treat an empty
+// server list as a normal state) without hitting routes that no longer exist.
 
 /** Fetches the list of MCP servers for display in the agent editor's tool selector. */
 export function useMcpServersForAgentEditor() {
-  const {
-    data: mcpData,
-    error,
-    isLoading,
-    mutate: mutateMcpServers,
-  } = useSWR<MCPServersResponse>(SWR_KEYS.mcpServers, errorHandlingFetcher);
-
   return {
-    mcpData: mcpData ?? null,
-    isLoading,
-    error,
-    mutateMcpServers,
+    mcpData: null as MCPServersResponse | null,
+    isLoading: false,
+    error: undefined,
+    mutateMcpServers: () => {},
   };
 }
 
-export function useMcpServersForPersonaEditor(personaId: number | undefined) {
-  const accessible = useMcpServersForAgentEditor();
-  const {
-    data: attachedData,
-    error: attachedError,
-    isLoading: attachedIsLoading,
-  } = useSWR<MCPServersResponse>(
-    personaId ? SWR_KEYS.personaMcpServers(personaId) : null,
-    errorHandlingFetcher
-  );
-
-  const mcpServers = useMemo<AgentEditorMCPServer[]>(() => {
-    const accessibleServers = accessible.mcpData?.mcp_servers ?? [];
-    const accessibleIds = new Set(accessibleServers.map((server) => server.id));
-    return [
-      ...accessibleServers.map((server) => ({ ...server, can_attach: true })),
-      ...(attachedData?.mcp_servers ?? [])
-        .filter((server) => !accessibleIds.has(server.id))
-        .map((server) => ({ ...server, can_attach: false })),
-    ];
-  }, [accessible.mcpData, attachedData]);
-
+export function useMcpServersForPersonaEditor(
+  _personaId: number | undefined
+) {
   return {
-    mcpServers,
-    isLoading:
-      accessible.isLoading || (personaId !== undefined && attachedIsLoading),
-    error: accessible.error || attachedError,
+    mcpServers: [] as AgentEditorMCPServer[],
+    isLoading: false,
+    error: undefined,
   };
 }

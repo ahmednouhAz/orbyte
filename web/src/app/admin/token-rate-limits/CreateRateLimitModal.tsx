@@ -7,6 +7,7 @@ import Modal from "@/refresh-components/Modal";
 import { Form, Formik } from "formik";
 import { SelectorFormField, TextFormField } from "@/components/Field";
 import { UserGroup } from "@/lib/types";
+import { SWR_KEYS } from "@/lib/swr-keys";
 import { Scope } from "./types";
 import { toast } from "@opal/layouts";
 import { SvgSettings } from "@opal/icons";
@@ -38,7 +39,7 @@ export default function CreateRateLimitModal({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/manage/admin/user-group");
+        const response = await fetch(SWR_KEYS.adminUserGroups);
         const data = await response.json();
         const options = data.map((userGroup: UserGroup) => ({
           name: userGroup.name,

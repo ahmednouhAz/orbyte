@@ -24,6 +24,7 @@ from onyx.db.models import Document
 from onyx.db.models import DocumentByConnectorCredentialPair
 from onyx.db.models import DocumentSet as DocumentSetDBModel
 from onyx.db.models import DocumentSet__ConnectorCredentialPair
+from onyx.db.models import DocumentSet__User
 from onyx.db.models import DocumentSet__UserGroup
 from onyx.db.models import FederatedConnector__DocumentSet
 from onyx.db.models import User
@@ -205,14 +206,32 @@ def get_document_sets_by_ids(
 
 
 def make_doc_set_private(
-    document_set_id: int,  # noqa: ARG001
+    document_set_id: int,
     user_ids: list[UUID] | None,
     group_ids: list[int] | None,
-    db_session: Session,  # noqa: ARG001
+    db_session: Session,
 ) -> None:
-    # May cause error if someone switches down to MIT from EE
-    if user_ids or group_ids:
-        raise NotImplementedError("Onyx MIT does not support private Document Sets")
+    db_session.execute(
+        delete(DocumentSet__User).where(
+            DocumentSet__User.document_set_id == document_set_id
+        )
+    )
+    db_session.execute(
+        delete(DocumentSet__UserGroup).where(
+            DocumentSet__UserGroup.document_set_id == document_set_id
+        )
+    )
+
+    for user_id in user_ids or []:
+        db_session.add(
+            DocumentSet__User(document_set_id=document_set_id, user_id=user_id)
+        )
+    for group_id in group_ids or []:
+        db_session.add(
+            DocumentSet__UserGroup(
+                document_set_id=document_set_id, user_group_id=group_id
+            )
+        )
 
 
 def _check_if_cc_pairs_are_owned_by_groups(

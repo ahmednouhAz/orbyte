@@ -34,10 +34,6 @@ interface UserPreferences {
   default_app_mode: "AUTO" | "CHAT" | "SEARCH";
   // Input preferences
   paste_as_tile?: boolean;
-  // Voice preferences
-  voice_auto_send?: boolean;
-  voice_auto_playback?: boolean;
-  voice_playback_speed?: number;
 }
 
 export interface MemoryItem {

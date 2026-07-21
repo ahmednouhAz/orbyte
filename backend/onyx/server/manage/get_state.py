@@ -11,7 +11,6 @@ from onyx import __version__
 from onyx.auth.users import anonymous_user_enabled
 from onyx.auth.users import user_needs_to_be_verified
 from onyx.configs.app_configs import AUTH_TYPE
-from onyx.configs.app_configs import OAUTH_ENABLED
 from onyx.configs.constants import AuthType
 from onyx.configs.constants import DEV_VERSION_PATTERN
 from onyx.configs.constants import PUBLIC_API_TAGS
@@ -73,7 +72,6 @@ async def get_auth_type(response: Response) -> AuthTypeResponse:
         password_require_digit=security.password_require_digit,
         password_require_special_char=security.password_require_special_char,
         has_users=has_users,
-        oauth_enabled=OAUTH_ENABLED,
         sso_providers=await run_in_threadpool(_fetch_sso_provider_options),
     )
 

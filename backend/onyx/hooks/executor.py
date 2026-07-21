@@ -4,9 +4,8 @@ HookSkipped and HookSoftFailed are real classes kept here because
 process_message.py (CE code) uses isinstance checks against them.
 
 execute_hook is the public entry point. It dispatches to _execute_hook_impl
-via fetch_versioned_implementation so that:
-  - CE: onyx.hooks.executor._execute_hook_impl → no-op, returns HookSkipped()
-  - EE: ee.onyx.hooks.executor._execute_hook_impl → real HTTP call
+via fetch_versioned_implementation, which always resolves to this CE no-op
+(the EE Hooks/Webhooks implementation was removed) and returns HookSkipped().
 """
 
 from typing import Any

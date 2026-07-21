@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import useSWR, { useSWRConfig } from "swr";
 import useGroupMemberCandidates from "./useGroupMemberCandidates";
-import { Table, Button, Divider } from "@opal/components";
+import { Table, Button, Divider, Switch } from "@opal/components";
 import { IllustrationContent, InputHorizontal, toast } from "@opal/layouts";
 import {
   SvgUsers,
@@ -41,6 +41,8 @@ import { SWR_KEYS } from "@/lib/swr-keys";
 import SharedGroupResources from "@/views/admin/GroupsPage/SharedGroupResources";
 import TokenLimitSection from "./TokenLimitSection";
 import type { TokenLimit } from "./TokenLimitSection";
+import JoinLinksSection from "./JoinLinksSection";
+import { useUser } from "@/providers/UserProvider";
 
 const addModeColumns = memberTableColumns;
 
@@ -55,6 +57,7 @@ interface EditGroupPageProps {
 function EditGroupPage({ groupId }: EditGroupPageProps) {
   const router = useRouter();
   const { mutate } = useSWRConfig();
+  const { isAdmin } = useUser();
   const settings = useSettings();
   const isEnterpriseTier = tierAtLeast(settings.tier, Tier.ENTERPRISE);
   const tokenLimitsDisabledTooltip = markdown(
@@ -93,6 +96,7 @@ function EditGroupPage({ groupId }: EditGroupPageProps) {
   // Form state
   const [groupName, setGroupName] = useState("");
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [selectedCuratorIds, setSelectedCuratorIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isSubmittingRef = useRef(false);
@@ -124,6 +128,7 @@ function EditGroupPage({ groupId }: EditGroupPageProps) {
     if (group && !initialized) {
       setGroupName(group.name);
       setSelectedUserIds(group.users.map((u) => u.id));
+      setSelectedCuratorIds(group.curator_ids);
       setSelectedCcPairIds(group.cc_pairs.map((cc) => cc.id));
       const docSetIds = group.document_sets.map((ds) => ds.id);
       setSelectedDocSetIds(docSetIds);
@@ -160,11 +165,38 @@ function EditGroupPage({ groupId }: EditGroupPageProps) {
 
   const handleRemoveMember = useCallback((userId: string) => {
     setSelectedUserIds((prev) => prev.filter((id) => id !== userId));
+    setSelectedCuratorIds((prev) => prev.filter((id) => id !== userId));
+  }, []);
+
+  const handleToggleCurator = useCallback((userId: string) => {
+    setSelectedCuratorIds((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
+    );
   }, []);
 
   const memberColumns = useMemo(
     () => [
       ...baseColumns,
+      ...(isAdmin
+        ? [
+            tc.column("id", {
+              header: "Curator",
+              weight: 10,
+              enableSorting: false,
+              cell: (_value: unknown, row: MemberRow) => {
+                const userId = row.id ?? row.email;
+                return (
+                  <Switch
+                    checked={selectedCuratorIds.includes(userId)}
+                    onCheckedChange={() => handleToggleCurator(userId)}
+                  />
+                );
+              },
+            }),
+          ]
+        : []),
       tc.actions({
         showSorting: false,
         showColumnVisibility: false,
@@ -180,7 +212,7 @@ function EditGroupPage({ groupId }: EditGroupPageProps) {
         ),
       }),
     ],
-    [handleRemoveMember]
+    [handleRemoveMember, handleToggleCurator, isAdmin, selectedCuratorIds]
   );
 
   // IDs of members not visible in the add-mode table (e.g. inactive users).
@@ -232,7 +264,12 @@ function EditGroupPage({ groupId }: EditGroupPageProps) {
       }
 
       // Update members and cc_pairs
-      await updateGroup(groupId, selectedUserIds, selectedCcPairIds);
+      await updateGroup(
+        groupId,
+        selectedUserIds,
+        selectedCcPairIds,
+        selectedCuratorIds
+      );
 
       // Update agent sharing (add/remove this group from changed agents)
       await updateAgentGroupSharing(
@@ -462,6 +499,8 @@ function EditGroupPage({ groupId }: EditGroupPageProps) {
                 disabled={!isEnterpriseTier}
                 disabledTooltip={tokenLimitsDisabledTooltip}
               />
+
+              <JoinLinksSection groupId={groupId} />
 
               {/* Delete This Group */}
               <Card>

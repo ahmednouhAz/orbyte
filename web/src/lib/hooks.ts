@@ -852,7 +852,7 @@ export function useLlmManager(
 }
 
 /*
-EE Only APIs
+Groups
 */
 
 export const useUserGroups = (): {
@@ -863,8 +863,8 @@ export const useUserGroups = (): {
 } => {
   const settings = useSettings();
   const isLoading = settings.isLoading;
-  const isPaidEnterpriseFeaturesEnabled =
-    !isLoading && settings.enterprise !== null;
+  // Groups is a first-party Orbyte feature, not gated behind an EE license.
+  const isPaidEnterpriseFeaturesEnabled = !isLoading;
 
   const swrResponse = useSWR<UserGroup[]>(
     isPaidEnterpriseFeaturesEnabled ? SWR_KEYS.adminUserGroups : null,

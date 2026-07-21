@@ -15,7 +15,7 @@ import { AuthType } from "@/lib/auth/types";
 const PROTECTED_ROUTES = ["/admin", "/agents", "/connector"];
 
 // Public route prefixes (no authentication required)
-const PUBLIC_ROUTES = ["/auth", "/anonymous", "/_next", "/api"];
+const PUBLIC_ROUTES = ["/auth", "/anonymous", "/_next", "/api", "/join"];
 
 // The CSP is emitted here, not in next.config.js `headers()` (which is baked
 // into the build), so WEB_FRAME_PROTECTION_ENABLED is read at runtime and
@@ -105,8 +105,9 @@ export const config = {
 };
 
 // Enterprise Edition specific routes (ONLY these get /ee rewriting)
+// NOTE: Groups is a first-party Orbyte feature now (own MIT-tier backend at
+// /manage/admin/groups), not EE-gated — intentionally excluded from this list.
 const EE_ROUTES = [
-  "/admin/groups",
   "/admin/performance/usage",
   "/admin/performance/query-history",
   "/admin/standard-answer",

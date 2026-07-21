@@ -20,7 +20,6 @@ export const SWR_KEYS = {
   customAnalyticsScript: "/api/enterprise-settings/custom-analytics-script",
   authType: "/api/auth/type",
   adminSecuritySettings: "/api/admin/security",
-  adminSsoProviders: "/api/admin/sso/provider",
 
   // ── Agents / Personas ─────────────────────────────────────────────────────
   personas: "/api/persona",
@@ -36,15 +35,11 @@ export const SWR_KEYS = {
   llmProvidersForPersona: (personaId: number) =>
     `/api/llm/persona/${personaId}/providers`,
   adminLlmProviders: "/api/admin/llm/provider",
-  llmProvidersWithImageGen: "/api/admin/llm/provider?include_image_gen=true",
   customProviderNames: "/api/admin/llm/custom-provider-names",
   wellKnownLlmProviders: "/api/admin/llm/built-in/options",
   wellKnownLlmProvider: (providerEndpoint: string) =>
     `/api/admin/llm/built-in/options/${providerEndpoint}`,
   llmContextualCost: "/api/admin/llm/provider-contextual-cost",
-
-  // ── Image Generation ──────────────────────────────────────────────────────
-  imageGenConfig: "/api/admin/image-generation/config",
 
   // ── Documents ─────────────────────────────────────────────────────────────
   documentSets: "/api/manage/document-set",
@@ -113,15 +108,12 @@ export const SWR_KEYS = {
   adminApiKeys: "/api/admin/api-key",
 
   // ── Groups ────────────────────────────────────────────────────────────────
-  adminUserGroups: "/api/manage/admin/user-group",
-  shareableGroups: "/api/manage/user-groups/minimal",
+  adminUserGroups: "/api/manage/admin/groups",
+  shareableGroups: "/api/manage/groups/minimal",
   scimToken: "/api/admin/enterprise-settings/scim/token",
-
-  // ── MCP Servers ───────────────────────────────────────────────────────────
-  adminMcpServers: "/api/admin/mcp/servers",
-  mcpServers: "/api/mcp/servers",
-  personaMcpServers: (personaId: number) =>
-    `/api/mcp/servers/persona/${personaId}`,
+  groupJoinLinks: (groupId: number) =>
+    `/api/manage/admin/groups/${groupId}/join-links`,
+  joinLinkLookup: (token: string) => `/api/join-link/${token}`,
 
   // ── Skills ────────────────────────────────────────────────────────────────
   userSkills: "/api/skills",
@@ -130,13 +122,8 @@ export const SWR_KEYS = {
 
   // ── Tools ─────────────────────────────────────────────────────────────────
   tools: "/api/tool",
-  openApiTools: "/api/tool/openapi",
   oauthTokenStatus: "/api/user-oauth-token/status",
   adminOAuthTestClaims: "/api/admin/oauth-test/claims",
-
-  // ── Voice ─────────────────────────────────────────────────────────────────
-  voiceProviders: "/api/admin/voice/providers",
-  voiceStatus: "/api/voice/status",
 
   // ── Build (Craft) ─────────────────────────────────────────────────────────
   buildUserLibraryTree: "/api/build/user-library/tree",
@@ -184,12 +171,6 @@ export const SWR_KEYS = {
 
   // ── License & Billing ─────────────────────────────────────────────────────
   license: "/api/license",
-  billingInformationCloud: "/api/tenants/billing-information",
-  billingInformationSelfHosted: "/api/admin/billing/billing-information",
-
-  // ── Admin ─────────────────────────────────────────────────────────────────
-  hooks: "/api/admin/hooks",
-  hookSpecs: "/api/admin/hooks/specs",
 
   // ── Slack Bots ────────────────────────────────────────────────────────────
   slackChannels: "/api/manage/admin/slack-app/channel",
@@ -205,9 +186,6 @@ export const SWR_KEYS = {
   // ── Query History (EE) ────────────────────────────────────────────────────
   adminChatSessionHistory: "/api/admin/chat-session-history",
   adminChatSession: (id: string) => `/api/admin/chat-session-history/${id}`,
-
-  // ── MCP Server (per-ID) ───────────────────────────────────────────────────
-  adminMcpServer: (id: number) => `/api/admin/mcp/servers/${id}`,
 
   // ── Document Processing ───────────────────────────────────────────────────
   unstructuredApiKeySet: "/api/search-settings/unstructured-api-key-set",

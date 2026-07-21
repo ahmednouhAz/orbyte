@@ -40,7 +40,6 @@ import {
   SvgArrowUp,
   SvgGlobe,
   SvgHourglass,
-  SvgMicrophone,
   SvgPaperclip,
   SvgPlus,
   SvgSearch,
@@ -53,10 +52,6 @@ import { Popover } from "@opal/components";
 import { useQueryController } from "@/providers/QueryControllerProvider";
 import { Section } from "@/layouts/general-layouts";
 import { Spacer } from "@opal/components";
-import MicrophoneButton from "@/sections/input/MicrophoneButton";
-import Waveform from "@/components/voice/Waveform";
-import { useVoiceMode } from "@/providers/VoiceModeProvider";
-import { useVoiceStatus } from "@/hooks/useVoiceStatus";
 import {
   useCurrentQueuedMessages,
   useCurrentLatestMessageRenderComplete,
@@ -121,14 +116,6 @@ const AppInputBar = React.memo(
     currentTabUrl,
     onToggleTabReading,
   }: AppInputBarProps) => {
-    const [isRecording, setIsRecording] = useState(false);
-    const [recordingCycleCount, setRecordingCycleCount] = useState(0);
-    const [isMuted, setIsMuted] = useState(false);
-    const [audioLevel, setAudioLevel] = useState(0);
-    const stopRecordingRef = useRef<(() => Promise<string | null>) | null>(
-      null
-    );
-    const setMutedRef = useRef<((muted: boolean) => void) | null>(null);
     const queuedMessages = useCurrentQueuedMessages();
     const latestMessageRenderComplete = useCurrentLatestMessageRenderComplete();
     const enqueueCurrentMessage = useChatSessionStore(
@@ -137,7 +124,7 @@ const AppInputBar = React.memo(
     const removeCurrentQueuedMessage = useChatSessionStore(
       (state) => state.removeCurrentQueuedMessage
     );
-    const { user, isAdmin } = useUser();
+    const { user } = useUser();
     const isAutoSending = useRef(false);
     const inputWrapperRef = useRef<HTMLDivElement>(null);
     const {
@@ -181,22 +168,6 @@ const AppInputBar = React.memo(
     const isClassifying = state.phase === "classifying";
     const isSearchActive =
       state.phase === "searching" || state.phase === "search-results";
-    const {
-      stopTTS,
-      isTTSPlaying,
-      isManualTTSPlaying,
-      isTTSLoading,
-      isAwaitingAutoPlaybackStart,
-      isTTSMuted,
-      toggleTTSMute,
-    } = useVoiceMode();
-    const { sttEnabled } = useVoiceStatus();
-    // Show mic button: always if STT configured, or greyed-out for admins to prompt setup
-    const showMicButton = sttEnabled || isAdmin;
-    const isVoicePlaybackActive =
-      isTTSPlaying || isTTSLoading || isAwaitingAutoPlaybackStart;
-    const isVoicePlaybackControllable = isVoicePlaybackActive && !isRecording;
-    const isTTSActuallySpeaking = isTTSPlaying || isManualTTSPlaying;
     const appFocus = useAppFocus();
     const isNewSession = appFocus.isNewSession();
     const appMode = state.phase === "idle" ? state.appMode : undefined;
@@ -252,32 +223,15 @@ const AppInputBar = React.memo(
       saveChatDraft(message);
     }, [message, chatDraftLoaded, saveChatDraft]);
 
-    const handleRecordingChange = useCallback((nextIsRecording: boolean) => {
-      setIsRecording((prevIsRecording) => {
-        if (!prevIsRecording && nextIsRecording) {
-          setRecordingCycleCount((count) => count + 1);
-        }
-        return nextIsRecording;
-      });
-    }, []);
-
-    // Wrapper for onSubmit that stops TTS first to prevent overlapping voices
-    const handleSubmit = useCallback(
-      (text: string) => {
-        stopTTS();
-        onSubmit(text);
-      },
-      [stopTTS, onSubmit]
-    );
     const submitMessage = useCallback(
       (text: string) => {
         if (!text.trim()) {
           return;
         }
-        handleSubmit(text);
+        onSubmit(text);
         clearChatDraft();
       },
-      [handleSubmit, clearChatDraft]
+      [onSubmit, clearChatDraft]
     );
 
     // Expose reset and focus methods to parent via ref
@@ -302,10 +256,6 @@ const AppInputBar = React.memo(
         setMessage(initialMessage);
       }
     }, [initialMessage]); // eslint-disable-line react-hooks/exhaustive-deps
-    const shouldShowRecordingWaveformBelow =
-      isRecording &&
-      !isVoicePlaybackActive &&
-      (isNewSession || recordingCycleCount === 1);
 
     useEffect(() => {
       if (isNewSession && !initialMessage) {
@@ -384,7 +334,6 @@ const AppInputBar = React.memo(
       if (!wasReady && isReady && queuedMessages.length > 0) {
         const nextMessage = queuedMessages[0]!.text;
         isAutoSending.current = true;
-        stopTTS();
         onSubmit(nextMessage);
         isAutoSending.current = false;
         removeCurrentQueuedMessage(0);
@@ -395,7 +344,6 @@ const AppInputBar = React.memo(
       latestMessageRenderComplete,
       queuedMessages,
       removeCurrentQueuedMessage,
-      stopTTS,
       onSubmit,
     ]);
 
@@ -712,41 +660,9 @@ const AppInputBar = React.memo(
 
         {/* Bottom right controls */}
         <div className="flex flex-row items-center gap-1">
-          {showMicButton &&
-            (sttEnabled ? (
-              <MicrophoneButton
-                onTranscription={(text) => setMessage(text)}
-                disabled={disabled || chatState === "streaming"}
-                autoSend={user?.preferences?.voice_auto_send ?? false}
-                autoListen={user?.preferences?.voice_auto_playback ?? false}
-                isNewSession={isNewSession}
-                chatState={chatState}
-                onRecordingChange={handleRecordingChange}
-                stopRecordingRef={stopRecordingRef}
-                currentMessage={message}
-                onRecordingStart={() => { }}
-                onAutoSend={(text) => {
-                  submitMessage(text);
-                }}
-                onMuteChange={setIsMuted}
-                setMutedRef={setMutedRef}
-                onAudioLevel={setAudioLevel}
-              />
-            ) : (
-              <Button
-                disabled
-                icon={SvgMicrophone}
-                aria-label="Set up voice"
-                prominence="tertiary"
-                tooltip="Voice not configured. Set up in admin settings."
-              />
-            ))}
-
           <Button
             disabled={
-              (chatState === "input" &&
-                !isVoicePlaybackControllable &&
-                !message) ||
+              (chatState === "input" && !message) ||
               hasUploadingFiles ||
               hasIndexingFiles ||
               isClassifying
@@ -763,7 +679,7 @@ const AppInputBar = React.memo(
                 : (chatState !== "input" || awaitingPreferredSelection) &&
                   message.trim()
                   ? SvgArrowUp
-                  : chatState === "streaming" || isVoicePlaybackControllable
+                  : chatState === "streaming"
                     ? SvgStop
                     : SvgArrowUp
             }
@@ -779,10 +695,7 @@ const AppInputBar = React.memo(
                   clearChatDraft();
                 }
               } else if (chatState == "streaming") {
-                stopTTS({ manual: true });
                 stopGenerating();
-              } else if (isVoicePlaybackControllable) {
-                stopTTS({ manual: true });
               } else if (message) {
                 submitMessage(message);
               }
@@ -819,32 +732,6 @@ const AppInputBar = React.memo(
               // modes. See the corresponding note there for details.
             )}
           >
-            {/* Voice waveform overlay (positioned outside normal flow to avoid resizing input) */}
-            {isTTSActuallySpeaking ? (
-              <div className="absolute bottom-full mb-1 left-1 z-10">
-                <Waveform
-                  variant="speaking"
-                  isActive={isTTSActuallySpeaking}
-                  isMuted={isTTSMuted}
-                  onMuteToggle={toggleTTSMute}
-                />
-              </div>
-            ) : isRecording &&
-              !isVoicePlaybackActive &&
-              !shouldShowRecordingWaveformBelow ? (
-              <div className="absolute bottom-full mb-1 left-1 right-1 z-10">
-                <Waveform
-                  variant="recording"
-                  isActive={isRecording}
-                  isMuted={isMuted}
-                  audioLevel={audioLevel}
-                  onMuteToggle={() => {
-                    setMutedRef.current?.(!isMuted);
-                  }}
-                />
-              </div>
-            ) : null}
-
             {/* Attached Files */}
             <div
               ref={filesWrapperRef}
@@ -909,13 +796,9 @@ const AppInputBar = React.memo(
                       data-placeholder={
                         queuedMessages.length > 0 && !message
                           ? "Press up to edit queued messages"
-                          : isRecording
-                            ? "Listening..."
-                            : isVoicePlaybackActive
-                              ? "Orbyte is speaking..."
-                              : isSearchMode
-                                ? "Search connected sources"
-                                : "How can I help you today?"
+                          : isSearchMode
+                            ? "Search connected sources"
+                            : "How can I help you today?"
                       }
                       data-empty={!message ? "" : undefined}
                       onKeyDown={(event) => {
@@ -1030,20 +913,6 @@ const AppInputBar = React.memo(
 
             {chatControls}
 
-            {/* First recording cycle waveform below input */}
-            {shouldShowRecordingWaveformBelow && (
-              <div className="absolute top-full mt-1 left-1 right-1 z-10">
-                <Waveform
-                  variant="recording"
-                  isActive={isRecording}
-                  isMuted={isMuted}
-                  audioLevel={audioLevel}
-                  onMuteToggle={() => {
-                    setMutedRef.current?.(!isMuted);
-                  }}
-                />
-              </div>
-            )}
             {tilePopover && (
               <PasteTilePopover
                 text={tilePopover.text}

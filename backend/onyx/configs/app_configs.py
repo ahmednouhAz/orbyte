@@ -214,7 +214,10 @@ CAPTCHA_COOKIE_TTL_SECONDS = int(os.environ.get("CAPTCHA_COOKIE_TTL_SECONDS", "1
 BILLING_CACHE_TTL_SECONDS = int(os.environ.get("BILLING_CACHE_TTL_SECONDS", "86400"))
 
 # OAuth Login Flow
-# Used for both Google OAuth2 and OIDC flows
+# NOTE: Google OAuth / OIDC / SAML login were removed (Basic auth only), but
+# these two are still read by the historical seed migration
+# (alembic/versions/1fc2904131a3_...) and by unit tests that monkeypatch
+# them — kept for that reason even though no live login flow reads them.
 OAUTH_CLIENT_ID = (
     os.environ.get("OAUTH_CLIENT_ID", os.environ.get("GOOGLE_OAUTH_CLIENT_ID")) or ""
 )
@@ -223,52 +226,9 @@ OAUTH_CLIENT_SECRET = (
     or ""
 )
 
-# Whether Google OAuth is enabled (requires both client ID and secret)
-OAUTH_ENABLED = bool(OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET)
-
-# Default scopes requested when signing in with Google (AUTH_TYPE=google_oauth
-# or AUTH_TYPE=cloud, and the BASIC + OAuth fallback path). These are the
-# minimum required to identify the user via OpenID Connect.
-GOOGLE_LOGIN_BASE_SCOPES = ["openid", "email", "profile"]
-
-# Applicable for Google OAuth login, allows you to override the scopes that
-# are requested from Google. Mirrors OIDC_SCOPE_OVERRIDE; useful when the
-# access token needs to be passed through to tool calls that require
-# additional Google API scopes.
-GOOGLE_OAUTH_SCOPE_OVERRIDE: list[str] | None = None
-_GOOGLE_OAUTH_SCOPE_OVERRIDE = os.environ.get("GOOGLE_OAUTH_SCOPE_OVERRIDE")
-
-if _GOOGLE_OAUTH_SCOPE_OVERRIDE:
-    try:
-        GOOGLE_OAUTH_SCOPE_OVERRIDE = [
-            scope.strip() for scope in _GOOGLE_OAUTH_SCOPE_OVERRIDE.split(",")
-        ]
-    except Exception:
-        logger.exception(
-            "Error configuring Google OAuth login scopes: %s",
-            _GOOGLE_OAUTH_SCOPE_OVERRIDE,
-        )
-
-# OpenID Connect configuration URL for OIDC integrations
+# OpenID Connect configuration URL — same "kept for the seed migration" reason
+# as OAUTH_CLIENT_ID/SECRET above.
 OPENID_CONFIG_URL = os.environ.get("OPENID_CONFIG_URL") or ""
-
-# Applicable for OIDC Auth, allows you to override the scopes that
-# are requested from the OIDC provider. Currently used when passing
-# over access tokens to tool calls and the tool needs more scopes
-OIDC_SCOPE_OVERRIDE: list[str] | None = None
-_OIDC_SCOPE_OVERRIDE = os.environ.get("OIDC_SCOPE_OVERRIDE")
-
-if _OIDC_SCOPE_OVERRIDE:
-    try:
-        OIDC_SCOPE_OVERRIDE = [
-            scope.strip() for scope in _OIDC_SCOPE_OVERRIDE.split(",")
-        ]
-    except Exception:
-        pass
-
-# Enables PKCE for OIDC login flow. Disabled by default to preserve
-# backwards compatibility for existing OIDC deployments.
-OIDC_PKCE_ENABLED = os.environ.get("OIDC_PKCE_ENABLED", "").lower() == "true"
 
 # Opt-in: capture IdP claims at OAuth login and enrich the chat experience
 # with the user's directory profile (country, department, job title, ...) —
@@ -307,41 +267,6 @@ if _IDP_PROFILE_CLAIM_MAP_RAW:
         logging.getLogger(__name__).warning(
             "IDP_PROFILE_CLAIM_MAP is not valid JSON — ignoring it"
         )
-
-# Applicable for SAML Auth
-SAML_CONF_DIR = os.environ.get("SAML_CONF_DIR") or "/app/onyx/configs/saml_config"
-
-# Native mobile (Expo / React Native) SSO bridge. The app completes OAuth in the
-# system browser (reusing the existing registered IdP callback), then the backend
-# returns a single-use, PKCE-bound one-time code over a custom-scheme deep link —
-# never a token. The app swaps the code for the session token at
-# /auth/mobile/sso/exchange.
-MOBILE_SSO_CODE_PREFIX = "mobile_sso_code:"
-# Lifetime of the one-time code; intentionally short — it only has to survive the
-# system-browser -> app handoff plus the immediate exchange call. A non-positive
-# TTL would make Redis reject the SET, breaking every exchange — fail fast at boot.
-MOBILE_SSO_CODE_TTL_SECONDS = int(os.environ.get("MOBILE_SSO_CODE_TTL_SECONDS") or 60)
-if MOBILE_SSO_CODE_TTL_SECONDS < 1:
-    raise ValueError("MOBILE_SSO_CODE_TTL_SECONDS must be >= 1")
-# Deep-link URIs the SSO completion is allowed to 302 to. Defaults to the app's
-# custom scheme; override (comma-separated) to add Universal/App Links later.
-_DEFAULT_MOBILE_REDIRECT_URIS = frozenset({"onyx://auth/callback"})
-_MOBILE_ALLOWED_REDIRECT_URIS_RAW = os.environ.get("MOBILE_ALLOWED_REDIRECT_URIS", "")
-MOBILE_ALLOWED_REDIRECT_URIS: frozenset[str] = frozenset(
-    uri.strip() for uri in _MOBILE_ALLOWED_REDIRECT_URIS_RAW.split(",") if uri.strip()
-)
-if not MOBILE_ALLOWED_REDIRECT_URIS:
-    # An override that was set but parsed empty (e.g. just commas/whitespace) is a
-    # misconfig — warn rather than silently rejecting every mobile redirect. An
-    # unset value is the normal default, so don't warn there.
-    if _MOBILE_ALLOWED_REDIRECT_URIS_RAW.strip():
-        logger.warning(
-            "MOBILE_ALLOWED_REDIRECT_URIS=%r parsed to an empty set; "
-            "falling back to default %s",
-            _MOBILE_ALLOWED_REDIRECT_URIS_RAW,
-            _DEFAULT_MOBILE_REDIRECT_URIS,
-        )
-    MOBILE_ALLOWED_REDIRECT_URIS = _DEFAULT_MOBILE_REDIRECT_URIS
 
 # JWT Public Key URL for JWT token verification
 JWT_PUBLIC_KEY_URL: str | None = os.getenv("JWT_PUBLIC_KEY_URL", None)
@@ -1727,23 +1652,6 @@ _API_KEY_HASH_ROUNDS_RAW = os.environ.get("API_KEY_HASH_ROUNDS")
 API_KEY_HASH_ROUNDS = (
     int(_API_KEY_HASH_ROUNDS_RAW) if _API_KEY_HASH_ROUNDS_RAW else None
 )
-
-#####
-# MCP Server Configs
-#####
-MCP_SERVER_ENABLED = os.environ.get("MCP_SERVER_ENABLED", "").lower() == "true"
-MCP_SERVER_HOST = os.environ.get("MCP_SERVER_HOST", "0.0.0.0")  # noqa: S104 — server bind address; intentional default for containerized deployment
-MCP_SERVER_PORT = int(os.environ.get("MCP_SERVER_PORT") or 8090)
-
-# CORS origins for MCP clients (comma-separated)
-# Local dev: "http://localhost:*"
-# Production: "https://trusted-client.com,https://another-client.com"
-MCP_SERVER_CORS_ORIGINS = [
-    origin.strip()
-    for origin in os.environ.get("MCP_SERVER_CORS_ORIGINS", "").split(",")
-    if origin.strip()
-]
-
 
 POD_NAME = os.environ.get("POD_NAME")
 POD_NAMESPACE = os.environ.get("POD_NAMESPACE")

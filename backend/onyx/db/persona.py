@@ -271,6 +271,61 @@ def apply_persona_user_share_diff(
             )
 
 
+def apply_persona_group_share_diff(
+    persona_id: int,
+    desired_shares: dict[int, PersonaSharePermission],
+    db_session: Session,
+) -> None:
+    """Reconcile persona__user_group rows to ``desired_shares``: delete missing,
+    update changed levels in place, insert genuinely new groups."""
+    existing_rows = (
+        db_session.query(Persona__UserGroup)
+        .filter(Persona__UserGroup.persona_id == persona_id)
+        .all()
+    )
+    existing_by_group = {row.user_group_id: row for row in existing_rows}
+
+    for group_id, row in existing_by_group.items():
+        if group_id not in desired_shares:
+            db_session.delete(row)
+        elif row.permission != desired_shares[group_id]:
+            row.permission = desired_shares[group_id]
+
+    for group_id, permission in desired_shares.items():
+        if group_id in existing_by_group:
+            continue
+        db_session.add(
+            Persona__UserGroup(
+                persona_id=persona_id, user_group_id=group_id, permission=permission
+            )
+        )
+
+
+def resolve_desired_group_shares(
+    persona_id: int,
+    group_ids: list[int] | None,
+    group_shares: dict[int, PersonaSharePermission] | None,
+    db_session: Session,
+) -> dict[int, PersonaSharePermission] | None:
+    """Merge the legacy id-list and leveled-share inputs into one desired map.
+    Legacy ids keep an existing row's level (new rows default to VIEWER) so
+    pre-permission callers can't downgrade editors."""
+    if group_shares is not None:
+        return dict(group_shares)
+    if group_ids is None:
+        return None
+    existing = {
+        row.user_group_id: row.permission
+        for row in db_session.query(Persona__UserGroup)
+        .filter(Persona__UserGroup.persona_id == persona_id)
+        .all()
+    }
+    return {
+        group_id: existing.get(group_id, PersonaSharePermission.VIEWER)
+        for group_id in set(group_ids)
+    }
+
+
 def resolve_desired_user_shares(
     persona_id: int,
     user_ids: list[UUID] | None,
@@ -333,16 +388,12 @@ def update_persona_access(
             persona_id, desired_user_shares, creator_user_id, db_session
         )
 
-    # MIT doesn't support group-based sharing, so we allow clearing (no-op since
-    # there shouldn't be any) but raise an error if trying to add actual groups.
-    if group_ids is not None or group_shares is not None:
+    desired_group_shares = resolve_desired_group_shares(
+        persona_id, group_ids, group_shares, db_session
+    )
+    if desired_group_shares is not None:
         needs_sync = True
-        db_session.query(Persona__UserGroup).filter(
-            Persona__UserGroup.persona_id == persona_id
-        ).delete(synchronize_session="fetch")
-
-        if group_ids or group_shares:
-            raise NotImplementedError("Onyx MIT does not support group-based sharing")
+        apply_persona_group_share_diff(persona_id, desired_group_shares, db_session)
 
     # When sharing changes, user file ACLs need to be updated in the vector DB
     if needs_sync:
@@ -1626,7 +1677,14 @@ def validate_persona_tools(tools: list[Tool], db_session: Session) -> None:
 
     for tool in tools:
         if tool.in_code_tool_id is not None:
-            tool_cls = get_built_in_tool_by_id(tool.in_code_tool_id)
+            try:
+                tool_cls = get_built_in_tool_by_id(tool.in_code_tool_id)
+            except KeyError:
+                # Tool ID no longer exists in this deployment's built-in
+                # registry (e.g. ImageGenerationTool, PythonTool,
+                # KnowledgeGraphTool were removed) — treat the same as
+                # "not available" rather than crashing with a KeyError.
+                raise ValueError(f"Tool {tool.in_code_tool_id} is not available")
             if not tool_cls.is_available(db_session):
                 raise ValueError(f"Tool {tool.in_code_tool_id} is not available")
 

@@ -30,7 +30,7 @@ import useAppFocus from "@/hooks/useAppFocus";
 import { useSettings } from "@/lib/settings/hooks";
 import UserAvatar from "@/refresh-components/avatars/UserAvatar";
 import { useNotificationSummary } from "@/hooks/useNotifications";
-import { SvgOnyxLogo } from "@opal/logos";
+import { SvgOnyxLogoTyped } from "@opal/logos";
 import { markdown } from "@opal/utils";
 
 interface SettingsPopoverProps {
@@ -168,17 +168,14 @@ function SettingsPopover({
           />
         ),
         null,
-        <div key="version" className="p-2">
+        <div key="version" className="flex flex-col items-center gap-1 p-2">
+          <SvgOnyxLogoTyped className="w-[70%] h-auto" />
           <Content
             sizePreset="secondary"
             variant="body"
             color="muted"
-            orientation="reverse"
-            icon={SvgOnyxLogo}
             title={markdown(
-              `[Orbyte ${
-                settings.version ?? "dev"
-              }](https://docs.onyx.app/changelog)`
+              `[v${settings.version ?? "dev"}](https://docs.onyx.app/changelog)`
             )}
           />
         </div>,

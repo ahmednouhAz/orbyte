@@ -147,7 +147,20 @@ def _construct_tools_impl(
             # (in-code) tool is silently skipped.
             continue
 
-        tool_cls = get_built_in_tool_by_id(db_tool_model.in_code_tool_id)
+        try:
+            tool_cls = get_built_in_tool_by_id(db_tool_model.in_code_tool_id)
+        except KeyError:
+            # This persona (often a pre-existing seeded/default one) still has
+            # a DB row referencing a built-in tool that has since been removed
+            # from this deployment (e.g. ImageGenerationTool, PythonTool,
+            # KnowledgeGraphTool). Skip it rather than crash the whole chat
+            # turn — the persona simply loses access to that specific tool.
+            logger.debug(
+                "Skipping unknown/removed built-in tool id %s on persona %s",
+                db_tool_model.in_code_tool_id,
+                persona.id,
+            )
+            continue
 
         try:
             tool_is_available = tool_cls.is_available(db_session)

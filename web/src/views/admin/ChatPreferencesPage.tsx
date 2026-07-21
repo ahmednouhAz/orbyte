@@ -16,7 +16,6 @@ import InputTextArea from "@/refresh-components/inputs/InputTextArea";
 import InputSelect from "@/refresh-components/inputs/InputSelect";
 import {
   SvgAddLines,
-  SvgActions,
   SvgExpand,
   SvgFold,
   SvgExternalLink,
@@ -40,11 +39,8 @@ import { QueryHistoryType, Settings, toSettings } from "@/lib/settings/types";
 import { useAvailableTools } from "@/hooks/useAvailableTools";
 import {
   SEARCH_TOOL_ID,
-  IMAGE_GENERATION_TOOL_ID,
   WEB_SEARCH_TOOL_ID,
-  PYTHON_TOOL_ID,
   OPEN_URL_TOOL_ID,
-  CODING_AGENT_TOOL_ID,
 } from "@/app/app/components/tools/constants";
 import {
   EmptyMessageCard,
@@ -59,7 +55,6 @@ import Modal from "@/refresh-components/Modal";
 import GenericConfirmModal from "@/sections/modals/GenericConfirmModal";
 import { Switch } from "@opal/components";
 import { useMcpServersForAgentEditor } from "@/lib/agents/hooks";
-import useOpenApiTools from "@/hooks/useOpenApiTools";
 import { getActionIcon } from "@/lib/tools/mcpUtils";
 import { Disabled, Hoverable } from "@opal/core";
 import useFilter from "@/hooks/useFilter";
@@ -686,31 +681,20 @@ export default function ChatPreferencesPage() {
   const searchTool = availableTools.find(
     (t) => t.in_code_tool_id === SEARCH_TOOL_ID
   );
-  const imageGenTool = availableTools.find(
-    (t) => t.in_code_tool_id === IMAGE_GENERATION_TOOL_ID
-  );
   const webSearchTool = availableTools.find(
     (t) => t.in_code_tool_id === WEB_SEARCH_TOOL_ID
   );
   const openURLTool = availableTools.find(
     (t) => t.in_code_tool_id === OPEN_URL_TOOL_ID
   );
-  const codeInterpreterTool = availableTools.find(
-    (t) => t.in_code_tool_id === PYTHON_TOOL_ID
-  );
-  const codingAgentTool = availableTools.find(
-    (t) => t.in_code_tool_id === CODING_AGENT_TOOL_ID
-  );
 
   // Connectors
   const { ccPairs } = useCCPairs();
   const uniqueSources = Array.from(new Set(ccPairs.map((p) => p.source)));
 
-  // MCP servers and OpenAPI tools
+  // MCP servers
   const { mcpData } = useMcpServersForAgentEditor();
-  const { openApiTools: openApiToolsRaw } = useOpenApiTools();
   const mcpServers = mcpData?.mcp_servers ?? [];
-  const openApiTools = openApiToolsRaw ?? [];
 
   const mcpServersWithTools = mcpServers.map((server) => ({
     server,
@@ -1084,33 +1068,6 @@ export default function ChatPreferencesPage() {
                         </Card>
                       )}
 
-                      <Disabled
-                        disabled={!imageGenTool}
-                        tooltip="Image generation requires a configured model. Set one up under Configuration > Image Generation, or ask an admin."
-                      >
-                        <Card border="solid" rounding="lg">
-                          <InputHorizontal
-                            title="Image Generation"
-                            description="Generate and manipulate images using AI-powered tools."
-                            disabled={!imageGenTool}
-                            withLabel
-                          >
-                            <Switch
-                              checked={
-                                imageGenTool
-                                  ? isToolEnabled(imageGenTool.id)
-                                  : false
-                              }
-                              onCheckedChange={(checked) =>
-                                imageGenTool &&
-                                void toggleTool(imageGenTool.id, checked)
-                              }
-                              disabled={!imageGenTool}
-                            />
-                          </InputHorizontal>
-                        </Card>
-                      </Disabled>
-
                       <Disabled disabled={!webSearchTool}>
                         <Card border="solid" rounding="lg">
                           <InputHorizontal
@@ -1159,65 +1116,17 @@ export default function ChatPreferencesPage() {
                         </Card>
                       </Disabled>
 
-                      <Disabled disabled={!codeInterpreterTool}>
-                        <Card border="solid" rounding="lg">
-                          <InputHorizontal
-                            title="Code Interpreter"
-                            description="Generate and run code."
-                            disabled={!codeInterpreterTool}
-                            withLabel
-                          >
-                            <Switch
-                              checked={
-                                codeInterpreterTool
-                                  ? isToolEnabled(codeInterpreterTool.id)
-                                  : false
-                              }
-                              onCheckedChange={(checked) =>
-                                codeInterpreterTool &&
-                                void toggleTool(codeInterpreterTool.id, checked)
-                              }
-                              disabled={!codeInterpreterTool}
-                            />
-                          </InputHorizontal>
-                        </Card>
-                      </Disabled>
-
-                      <Disabled disabled={!codingAgentTool}>
-                        <Card border="solid" rounding="lg">
-                          <InputHorizontal
-                            title="Coding Agent"
-                            description="Investigate a GitHub repository and answer questions about its code."
-                            disabled={!codingAgentTool}
-                            withLabel
-                          >
-                            <Switch
-                              checked={
-                                codingAgentTool
-                                  ? isToolEnabled(codingAgentTool.id)
-                                  : false
-                              }
-                              onCheckedChange={(checked) =>
-                                codingAgentTool &&
-                                void toggleTool(codingAgentTool.id, checked)
-                              }
-                              disabled={!codingAgentTool}
-                            />
-                          </InputHorizontal>
-                        </Card>
-                      </Disabled>
                     </Section>
 
-                    {/* Separator between built-in tools and MCP/OpenAPI tools */}
-                    {(mcpServersWithTools.length > 0 ||
-                      openApiTools.length > 0) && (
+                    {/* Separator between built-in tools and MCP tools */}
+                    {mcpServersWithTools.length > 0 && (
                       <Divider
                         paddingPerpendicular="sm"
                         paddingParallel="fit"
                       />
                     )}
 
-                    {/* MCP Servers & OpenAPI Tools */}
+                    {/* MCP Servers */}
                     <Section gap={0.5}>
                       {mcpServersWithTools.map(({ server, tools }) => (
                         <MCPServerCard
@@ -1228,23 +1137,6 @@ export default function ChatPreferencesPage() {
                           onToggleTool={toggleTool}
                           onToggleTools={toggleTools}
                         />
-                      ))}
-                      {openApiTools.map((tool) => (
-                        <Card key={tool.id} border="solid" rounding="lg">
-                          <InputHorizontal
-                            icon={SvgActions}
-                            title={tool.display_name || tool.name}
-                            description={tool.description}
-                            withLabel
-                          >
-                            <Switch
-                              checked={isToolEnabled(tool.id)}
-                              onCheckedChange={(checked) =>
-                                toggleTool(tool.id, checked)
-                              }
-                            />
-                          </InputHorizontal>
-                        </Card>
                       ))}
                     </Section>
                   </SimpleCollapsible.Content>

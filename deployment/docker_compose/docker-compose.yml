@@ -23,7 +23,7 @@
 #    - Replace env_file with explicit environment variables
 #
 # 4. AUTHENTICATION:
-#    - Select an authentication method like Basic, Google OAuth, OIDC, or SAML
+#    - Basic (local email/password) is the only supported auth method
 #
 # 5. CA CERTIFICATES:
 #    - Uncomment custom CA certificate volumes if needed
