@@ -53,37 +53,45 @@ the API server, background workers, and the web server).
   Any Ollama-compatible model works; `qwen2.5:14b-instruct` is a good default
   for general chat and RAG on a single machine with a decent GPU.
 
-### Start the stack
+### Build and start the stack
 
-From `deployment/docker_compose`:
-
-```bash
-docker compose up -d
-```
-
-This pulls the pre-built images and starts the full stack. Visit
-`http://localhost:3000` once the containers are up — the first account you
-register automatically becomes the admin.
-
-### Building from source changes
-
-If you've made local changes and want them reflected in the running app,
-build the images from source instead of pulling pre-built ones:
+There is no separately published "Orbyte" image registry. The services that
+actually contain this codebase — `api_server`, `background`, and
+`web_server` — always build directly from this repository's `backend/` and
+`web/` source, so anyone who clones this repo and runs the command below
+gets the real, current Orbyte app, not any external build of it. From
+`deployment/docker_compose`:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.local-build.yml -f docker-compose.local-build-backend.yml up -d --build
+docker compose up -d --build
 ```
 
-- `docker-compose.local-build.yml` builds the web server from source.
-- `docker-compose.local-build-backend.yml` builds the API server and
-  background workers from source.
+Visit `http://localhost:3000` once the containers are up — the first account
+you register automatically becomes the admin.
 
-After rebuilding, confirm the new image was actually used (Docker's build
-cache can silently reuse a stale image):
+A few supporting services still pull pre-built images rather than compiling
+from source, because their code isn't part of this repository (or hasn't
+been modified from upstream) and building them locally is a large,
+unnecessary cost:
 
-```bash
-docker images <image_name> --format "{{.CreatedAt}}"
-```
+- `inference_model_server` / `indexing_model_server` — unmodified ML/embedding
+  code; building from source means installing several GB of torch/CUDA
+  dependencies for no behavioral difference.
+- `code-interpreter` — its source lives outside this repository entirely.
+
+If you ever do modify `backend/model_server`, uncomment the `build:` block
+already present (commented out) next to that service in `docker-compose.yml`.
+
+> **Note:** Docker's build cache can silently reuse a stale image even after
+> `--build` reports success. If a change to `api_server`, `background`, or
+> `web_server` doesn't seem to show up, confirm the image was actually
+> rebuilt:
+>
+> ```bash
+> docker images <image_name> --format "{{.CreatedAt}}"
+> ```
+>
+> and rebuild with `docker compose build --no-cache <service>` if it wasn't.
 
 ### Connecting your LLM
 

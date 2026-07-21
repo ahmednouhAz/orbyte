@@ -39,10 +39,9 @@ name: onyx
 
 services:
   api_server:
-    image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
-# build:
-#   context: ../../backend
-#   dockerfile: Dockerfile
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
     command: >
       /bin/sh -c "alembic upgrade head &&
       echo \"Starting Onyx Api Server\" &&
@@ -118,10 +117,9 @@ services:
       - file-system:/app/file-system
 
   background:
-    image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
-# build:
-#   context: ../../backend
-#   dockerfile: Dockerfile
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
     command: >
       /bin/sh -c "
       if [ -f /etc/ssl/certs/custom-ca.crt ]; then
@@ -187,18 +185,9 @@ services:
     #   - ${CA_CERT_PATH:-./custom-ca.crt}:/etc/ssl/certs/custom-ca.crt:ro
 
   web_server:
-    image: ${ONYX_WEB_SERVER_IMAGE:-onyxdotapp/onyx-web-server:${IMAGE_TAG:-latest}}
-# build:
-#   context: ../../web
-#   dockerfile: Dockerfile
-#       args:
-#         - NEXT_PUBLIC_DISABLE_LOGOUT=${NEXT_PUBLIC_DISABLE_LOGOUT:-}
-#         - NEXT_PUBLIC_FORGOT_PASSWORD_ENABLED=${NEXT_PUBLIC_FORGOT_PASSWORD_ENABLED:-}
-#         # Enterprise Edition only
-#         - NEXT_PUBLIC_THEME=${NEXT_PUBLIC_THEME:-}
-#         # DO NOT TURN ON unless you have EXPLICIT PERMISSION from Onyx.
-#         - NEXT_PUBLIC_DO_NOT_USE_TOGGLE_OFF_DANSWER_POWERED=${NEXT_PUBLIC_DO_NOT_USE_TOGGLE_OFF_DANSWER_POWERED:-false}
-#         - NODE_OPTIONS=${NODE_OPTIONS:-"--max-old-space-size=4096"}
+    build:
+      context: ../../web
+      dockerfile: Dockerfile
     env_file:
       - path: .env
         required: false
@@ -225,9 +214,13 @@ services:
 
   inference_model_server:
     image: ${ONYX_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
-# build:
-#   context: ../../backend
-#   dockerfile: Dockerfile.model_server
+    # This service ships unmodified upstream ML/embedding code (no Orbyte-specific
+    # changes), so it's pulled pre-built rather than compiled from source on every
+    # clone -- building it locally means installing ~3GB of torch/CUDA wheels and
+    # downloading embedding model weights. Uncomment below to build from source instead.
+    # build:
+    #   context: ../../backend
+    #   dockerfile: Dockerfile.model_server
     # GPU Support: Uncomment the following lines to enable GPU support
     # Requires nvidia-container-toolkit to be installed on the host
     # deploy:
@@ -268,9 +261,11 @@ services:
 
   indexing_model_server:
     image: ${ONYX_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
-# build:
-#   context: ../../backend
-#   dockerfile: Dockerfile.model_server
+    # See note on inference_model_server above -- unmodified upstream ML code,
+    # pulled pre-built rather than compiled from source.
+    # build:
+    #   context: ../../backend
+    #   dockerfile: Dockerfile.model_server
     # GPU Support: Uncomment the following lines to enable GPU support
     # Requires nvidia-container-toolkit to be installed on the host
     # deploy:
