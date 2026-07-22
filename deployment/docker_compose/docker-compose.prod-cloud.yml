@@ -1,4 +1,4 @@
-name: onyx
+name: orbyte
 
 services:
   api_server:
@@ -8,8 +8,8 @@ services:
       dockerfile: Dockerfile.cloud
     command: >
       /bin/sh -c "alembic -n schema_private upgrade head &&
-      echo \"Starting Onyx Api Server\" &&
-      uvicorn onyx.main:app --host 0.0.0.0 --port 8080"
+      echo \"Starting Orbyte Api Server\" &&
+      uvicorn orbyte.main:app --host 0.0.0.0 --port 8080"
     depends_on:
       - relational_db
       - opensearch
@@ -103,7 +103,7 @@ services:
         max-size: "50m"
         max-file: "6"
 
-  # Uncomment the block below to enable the MCP server for Onyx.
+  # Uncomment the block below to enable the MCP server for Orbyte.
   # mcp_server:
   #   image: onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}
   #   build:
@@ -114,7 +114,7 @@ services:
   #       echo 'MCP server is disabled (MCP_SERVER_ENABLED=false), skipping...';
   #       exit 0;
   #     else
-  #       exec python -m onyx.mcp_server_main;
+  #       exec python -m orbyte.mcp_server_main;
   #     fi"
   #   env_file:
   #     - path: .env
@@ -140,7 +140,7 @@ services:
   #       max-size: "50m"
   #       max-file: "6"
   #   volumes:
-  #     - mcp_server_logs:/var/log/onyx
+  #     - mcp_server_logs:/var/log/orbyte
 
   relational_db:
     image: postgres:15.2-alpine
@@ -292,7 +292,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set a strong value in .env, not minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set a strong value in .env, not minioadmin}
-      MINIO_DEFAULT_BUCKETS: ${S3_FILE_STORE_BUCKET_NAME:-onyx-file-store-bucket}
+      MINIO_DEFAULT_BUCKETS: ${S3_FILE_STORE_BUCKET_NAME:-orbyte-file-store-bucket}
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"

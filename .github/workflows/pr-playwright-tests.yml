@@ -478,7 +478,7 @@ jobs:
       - name: Start Docker containers (lite)
         run: |
           cd deployment/docker_compose
-          docker compose -f docker-compose.yml -f docker-compose.onyx-lite.yml -f docker-compose.dev.yml up -d --wait
+          docker compose -f docker-compose.yml -f docker-compose.orbyte-lite.yml -f docker-compose.dev.yml up -d --wait
         id: start_docker
 
       - name: Seed dev license

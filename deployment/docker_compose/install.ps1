@@ -1,4 +1,4 @@
-# Onyx Installer for Windows
+# Orbyte Installer for Windows
 # Usage: .\install.ps1 [OPTIONS]
 # Remote (with params):
 #   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/onyx-dot-app/onyx/main/deployment/docker_compose/install.ps1))) -Lite -NoPrompt
@@ -32,8 +32,8 @@ function Invoke-NativeQuiet {
 
 $script:ExpectedDockerRamGB = 10
 $script:ExpectedDiskGB = 32
-$script:InstallRoot = if ($env:INSTALL_PREFIX) { $env:INSTALL_PREFIX } else { "onyx_data" }
-$script:LiteComposeFile = "docker-compose.onyx-lite.yml"
+$script:InstallRoot = if ($env:INSTALL_PREFIX) { $env:INSTALL_PREFIX } else { "orbyte_data" }
+$script:LiteComposeFile = "docker-compose.orbyte-lite.yml"
 $script:GitHubRawUrl = "https://raw.githubusercontent.com/onyx-dot-app/onyx/main/deployment/docker_compose"
 $script:NginxBaseUrl = "https://raw.githubusercontent.com/onyx-dot-app/onyx/main/deployment/data/nginx"
 $script:CurrentStep = 0
@@ -46,7 +46,7 @@ $script:IsWindowsServer = (Get-CimInstance Win32_OperatingSystem).ProductType -n
 # ── Output Helpers ───────────────────────────────────────────────────────────
 
 function Print-Success  { param([string]$Message) Write-Host "[OK] $Message" -ForegroundColor Green }
-function Print-OnyxError{ param([string]$Message) Write-Host "[X]  $Message" -ForegroundColor Red }
+function Print-OrbyteError{ param([string]$Message) Write-Host "[X]  $Message" -ForegroundColor Red }
 function Print-Info     { param([string]$Message) Write-Host "[i]  $Message" -ForegroundColor Yellow }
 function Print-Warning  { param([string]$Message) Write-Host "[!]  $Message" -ForegroundColor Yellow }
 
@@ -103,7 +103,7 @@ function Prompt-DeploymentMode {
     } else {
         $script:LiteMode = $true
         Print-Info "Selected: Lite mode"
-        if (-not (Ensure-OnyxFile $LiteOverlayPath "$($script:GitHubRawUrl)/$($script:LiteComposeFile)" $script:LiteComposeFile)) { exit 1 }
+        if (-not (Ensure-OrbyteFile $LiteOverlayPath "$($script:GitHubRawUrl)/$($script:LiteComposeFile)" $script:LiteComposeFile)) { exit 1 }
     }
 }
 
@@ -121,7 +121,7 @@ function Get-NativeVersionString {
 
 # ── Download Helpers ─────────────────────────────────────────────────────────
 
-function Download-OnyxFile {
+function Download-OrbyteFile {
     param([string]$Url, [string]$Output)
     for ($attempt = 1; $attempt -le 3; $attempt++) {
         try {
@@ -135,20 +135,20 @@ function Download-OnyxFile {
     }
 }
 
-function Ensure-OnyxFile {
+function Ensure-OrbyteFile {
     param([string]$Path, [string]$Url, [string]$Description)
     if ($Local) {
         if (Test-Path $Path) { Print-Success "Using existing $Description"; return $true }
-        Print-OnyxError "Required file missing: $Description ($Path)"
+        Print-OrbyteError "Required file missing: $Description ($Path)"
         return $false
     }
     Print-Info "Downloading $Description..."
     try {
-        Download-OnyxFile -Url $Url -Output $Path
+        Download-OrbyteFile -Url $Url -Output $Path
         Print-Success "$Description downloaded"
         return $true
     } catch {
-        Print-OnyxError "Failed to download $Description"
+        Print-OrbyteError "Failed to download $Description"
         return $false
     }
 }
@@ -263,9 +263,9 @@ function Get-DockerMemoryMB {
     return 0
 }
 
-function Test-OnyxHealth {
+function Test-OrbyteHealth {
     param([int]$Port)
-    Print-Info "Checking Onyx service health..."
+    Print-Info "Checking Orbyte service health..."
     Write-Host "Containers are healthy, waiting for database migrations and service initialization to finish."
     for ($attempt = 1; $attempt -le 600; $attempt++) {
         try {
@@ -274,7 +274,7 @@ function Test-OnyxHealth {
         } catch { }
         $m = [math]::Floor($attempt / 60); $s = $attempt % 60
         $dots = "." * (($attempt % 3) + 1); $pad = " " * (3 - $dots.Length)
-        Write-Host -NoNewline "`rChecking Onyx service${dots}${pad} (${m}m ${s}s elapsed)"
+        Write-Host -NoNewline "`rChecking Orbyte service${dots}${pad} (${m}m ${s}s elapsed)"
         Start-Sleep -Seconds 1
     }
     Write-Host ""; return $false
@@ -309,52 +309,52 @@ function Write-Utf8NoBom {
 
 # ── Help / Shutdown / Delete ─────────────────────────────────────────────────
 
-function Show-OnyxHelp {
-    $help = "Onyx Installation Script for Windows`n"
+function Show-OrbyteHelp {
+    $help = "Orbyte Installation Script for Windows`n"
     $help += "`nUsage: .\install.ps1 [OPTIONS]`n"
     $help += "`nOptions:"
-    $help += "`n  -IncludeCraft  Enable Onyx Craft (AI-powered web app building)"
-    $help += "`n  -Lite          Deploy Onyx Lite (no Vespa, Redis, or model servers)"
+    $help += "`n  -IncludeCraft  Enable Orbyte Craft (AI-powered web app building)"
+    $help += "`n  -Lite          Deploy Orbyte Lite (no Vespa, Redis, or model servers)"
     $help += "`n  -Local         Use existing config files instead of downloading from GitHub"
-    $help += "`n  -Shutdown      Stop (pause) Onyx containers"
-    $help += "`n  -DeleteData    Remove all Onyx data (containers, volumes, and files)"
+    $help += "`n  -Shutdown      Stop (pause) Orbyte containers"
+    $help += "`n  -DeleteData    Remove all Orbyte data (containers, volumes, and files)"
     $help += "`n  -NoPrompt      Run non-interactively with defaults (for CI/automation)"
     $help += "`n  -DryRun        Show what would be done without making changes"
     $help += "`n  -ShowVerbose   Show detailed output for debugging"
     $help += "`n  -Help          Show this help message"
     $help += "`n`nExamples:"
-    $help += "`n  .\install.ps1                    # Install Onyx"
-    $help += "`n  .\install.ps1 -Lite              # Install Onyx Lite"
+    $help += "`n  .\install.ps1                    # Install Orbyte"
+    $help += "`n  .\install.ps1 -Lite              # Install Orbyte Lite"
     $help += "`n  .\install.ps1 -IncludeCraft      # Install with Craft enabled"
-    $help += "`n  .\install.ps1 -Shutdown          # Pause Onyx services"
-    $help += "`n  .\install.ps1 -DeleteData        # Completely remove Onyx"
+    $help += "`n  .\install.ps1 -Shutdown          # Pause Orbyte services"
+    $help += "`n  .\install.ps1 -DeleteData        # Completely remove Orbyte"
     $help += "`n  .\install.ps1 -Local             # Re-run using existing config"
     $help += "`n  .\install.ps1 -NoPrompt          # Non-interactive install"
     Write-Host $help
 }
 
-function Invoke-OnyxShutdown {
-    Write-Host "`n=== Shutting down Onyx ===`n" -ForegroundColor Cyan
+function Invoke-OrbyteShutdown {
+    Write-Host "`n=== Shutting down Orbyte ===`n" -ForegroundColor Cyan
     $deployDir = Join-Path $script:InstallRoot "deployment"
     if (-not (Test-Path (Join-Path $deployDir "docker-compose.yml"))) {
-        Print-Warning "Onyx deployment not found. Nothing to shutdown."
+        Print-Warning "Orbyte deployment not found. Nothing to shutdown."
         return
     }
-    if (-not (Initialize-ComposeCommand)) { Print-OnyxError "Docker Compose not found."; exit 1 }
+    if (-not (Initialize-ComposeCommand)) { Print-OrbyteError "Docker Compose not found."; exit 1 }
     $stopArgs = @("stop")
     $result = Invoke-Compose -AutoDetect @stopArgs
-    if ($result -ne 0) { Print-OnyxError "Failed to stop containers"; exit 1 }
-    Print-Success "Onyx containers stopped (paused)"
+    if ($result -ne 0) { Print-OrbyteError "Failed to stop containers"; exit 1 }
+    Print-Success "Orbyte containers stopped (paused)"
 }
 
-function Invoke-OnyxDeleteData {
-    Write-Host "`n=== WARNING: This will permanently delete all Onyx data ===`n" -ForegroundColor Red
-    Print-Warning "This action will remove all Onyx containers, volumes, files, and user data."
+function Invoke-OrbyteDeleteData {
+    Write-Host "`n=== WARNING: This will permanently delete all Orbyte data ===`n" -ForegroundColor Red
+    Print-Warning "This action will remove all Orbyte containers, volumes, files, and user data."
     if (Test-Interactive) {
         $confirm = Prompt-OrDefault "Type 'DELETE' to confirm" ""
         if ($confirm -ne "DELETE") { Print-Info "Operation cancelled."; return }
     } else {
-        Print-OnyxError "Cannot confirm destructive operation in non-interactive mode."
+        Print-OrbyteError "Cannot confirm destructive operation in non-interactive mode."
         exit 1
     }
     $deployDir = Join-Path $script:InstallRoot "deployment"
@@ -362,13 +362,13 @@ function Invoke-OnyxDeleteData {
         $downArgs = @("down", "-v")
         $result = Invoke-Compose -AutoDetect @downArgs
         if ($result -eq 0) { Print-Success "Containers and volumes removed" }
-        else { Print-OnyxError "Failed to remove containers" }
+        else { Print-OrbyteError "Failed to remove containers" }
     }
     if (Test-Path $script:InstallRoot) {
         Remove-Item -Recurse -Force $script:InstallRoot
         Print-Success "Data directories removed"
     }
-    Print-Success "All Onyx data has been permanently deleted!"
+    Print-Success "All Orbyte data has been permanently deleted!"
 }
 
 # ── Docker Daemon ────────────────────────────────────────────────────────────
@@ -388,14 +388,14 @@ function Wait-ForDockerDaemon {
         if ($currentError) {
             if ($currentError -eq $lastError) { $unchangedErrorCount++ } else { $unchangedErrorCount = 0; $lastError = $currentError }
             if ($unchangedErrorCount -ge 5) {
-                Write-Host ""; Print-OnyxError "Docker daemon is not starting. Persistent error after ${waited}s:"
+                Write-Host ""; Print-OrbyteError "Docker daemon is not starting. Persistent error after ${waited}s:"
                 Write-Host "    $lastError" -ForegroundColor Red; return $false
             }
         }
         $dots = "." * (($waited / 3 % 3) + 1); $pad = " " * (3 - $dots.Length)
         Write-Host -NoNewline "`rWaiting for Docker daemon${dots}${pad} (${waited}s elapsed)"
     }
-    Write-Host ""; Print-OnyxError "Docker daemon did not respond within ${MaxWait} seconds."
+    Write-Host ""; Print-OrbyteError "Docker daemon did not respond within ${MaxWait} seconds."
     if ($lastError) { Print-Info "Last error: $lastError" }
     return $false
 }
@@ -445,7 +445,7 @@ function Register-DockerService {
     $dockerdPath = $null
     foreach ($c in $candidates) { if (Test-Path $c) { $dockerdPath = $c; break } }
     if (-not $dockerdPath) {
-        Print-OnyxError "Could not find dockerd.exe to register as a service."
+        Print-OrbyteError "Could not find dockerd.exe to register as a service."
         return $false
     }
     Print-Info "Found dockerd at: $dockerdPath"
@@ -455,7 +455,7 @@ function Register-DockerService {
         Invoke-NativeQuiet { sc.exe create docker binPath= "`"$dockerdPath`" --run-service" start= auto }
     }
     if (-not (Get-Service docker -ErrorAction SilentlyContinue)) {
-        Print-OnyxError "Failed to register Docker as a Windows service."
+        Print-OrbyteError "Failed to register Docker as a Windows service."
         return $false
     }
     Print-Success "Docker service registered"
@@ -564,7 +564,7 @@ function Install-DockerEngine {
                 Sort-Object href -Descending | Select-Object -First 1
             if (-not $latestZip) { throw "Could not find Docker zip" }
             $zipPath = Join-Path $env:TEMP "docker-ce.zip"
-            Download-OnyxFile -Url "https://download.docker.com/win/static/stable/x86_64/$($latestZip.href)" -Output $zipPath
+            Download-OrbyteFile -Url "https://download.docker.com/win/static/stable/x86_64/$($latestZip.href)" -Output $zipPath
             Expand-Archive -Path $zipPath -DestinationPath $env:ProgramFiles -Force
             Remove-Item -Force $zipPath -ErrorAction SilentlyContinue
             $dockerPath = Join-Path $env:ProgramFiles "docker"
@@ -580,15 +580,15 @@ function Install-DockerEngine {
     }
 
     if (-not $installed) {
-        Print-OnyxError "Could not install Docker Engine on Windows Server."
+        Print-OrbyteError "Could not install Docker Engine on Windows Server."
         Print-Info "Install manually: https://docs.docker.com/engine/install/binaries/#install-server-and-client-binaries-on-windows"
         exit 1
     }
 
     try { Start-Service docker -ErrorAction Stop; Print-Success "Docker service started" }
-    catch { Print-OnyxError "Failed to start Docker service: $_"; exit 1 }
+    catch { Print-OrbyteError "Failed to start Docker service: $_"; exit 1 }
     Install-ComposePlugin
-    if (-not (Wait-ForDockerDaemon -MaxWait 30)) { Print-OnyxError "Docker installed but daemon not responding."; exit 1 }
+    if (-not (Wait-ForDockerDaemon -MaxWait 30)) { Print-OrbyteError "Docker installed but daemon not responding."; exit 1 }
     Print-Success "Docker Engine installed and running on Windows Server"
 }
 
@@ -600,7 +600,7 @@ function Install-ComposePlugin {
     $dest = Join-Path $env:ProgramFiles "docker\cli-plugins"
     New-Item -ItemType Directory -Force -Path $dest | Out-Null
     try {
-        Download-OnyxFile -Url "https://github.com/docker/compose/releases/latest/download/docker-compose-windows-x86_64.exe" -Output (Join-Path $dest "docker-compose.exe")
+        Download-OrbyteFile -Url "https://github.com/docker/compose/releases/latest/download/docker-compose-windows-x86_64.exe" -Output (Join-Path $dest "docker-compose.exe")
         Print-Success "Docker Compose plugin installed"
     } catch {
         Print-Warning "Failed to install Docker Compose plugin: $_"
@@ -643,13 +643,13 @@ function Install-DockerDesktop {
         Print-Info "Downloading Docker Desktop installer directly..."
         $installerPath = Join-Path $env:TEMP "DockerDesktopInstaller_$([System.IO.Path]::GetRandomFileName().Split('.')[0]).exe"
         try {
-            Download-OnyxFile -Url "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe" -Output $installerPath
+            Download-OrbyteFile -Url "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe" -Output $installerPath
             $proc = Start-Process -FilePath $installerPath -ArgumentList "install", "--quiet", "--accept-license" -Wait -PassThru -NoNewWindow
             if ($proc.ExitCode -eq 0) {
                 Print-Success "Docker Desktop installed via direct download"; $installed = $true
             } elseif ($proc.ExitCode -eq 3) {
                 Print-Warning "Prerequisites not met."
-                if (-not $wslReady) { Print-OnyxError "WSL2 is required. Run: wsl --install --no-distribution, then reboot." }
+                if (-not $wslReady) { Print-OrbyteError "WSL2 is required. Run: wsl --install --no-distribution, then reboot." }
                 else { Print-Info "A reboot may be needed. Restart and re-run this script." }
             } else {
                 Print-Warning "Installer exited with code $($proc.ExitCode)."
@@ -660,18 +660,18 @@ function Install-DockerDesktop {
     }
 
     if (-not $installed) {
-        Print-OnyxError "Could not install Docker Desktop automatically."
+        Print-OrbyteError "Could not install Docker Desktop automatically."
         Print-Info "Install manually: https://docs.docker.com/desktop/install/windows-install/"
         exit 1
     }
 
     Refresh-PathFromRegistry
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-        Print-OnyxError "Docker installed but 'docker' command not available. Restart your terminal and re-run."
+        Print-OrbyteError "Docker installed but 'docker' command not available. Restart your terminal and re-run."
         exit 1
     }
     if (-not (Start-DockerDaemon)) {
-        Print-OnyxError "Docker Desktop installed but could not be started. Launch it from the Start Menu and re-run."
+        Print-OrbyteError "Docker Desktop installed but could not be started. Launch it from the Start Menu and re-run."
         exit 1
     }
     Print-Success "Docker Desktop installed and running"
@@ -679,8 +679,8 @@ function Install-DockerDesktop {
 
 function Invoke-WslInstall {
     Print-Info "Native Docker on Windows Server only supports Windows containers."
-    Print-Info "Onyx will be installed via WSL2 (Windows Subsystem for Linux)."
-    if (-not (Confirm-Action "Onyx via WSL2 (installs WSL2 + Ubuntu + Docker inside Linux)")) { exit 1 }
+    Print-Info "Orbyte will be installed via WSL2 (Windows Subsystem for Linux)."
+    if (-not (Confirm-Action "Orbyte via WSL2 (installs WSL2 + Ubuntu + Docker inside Linux)")) { exit 1 }
     if (-not (Test-IsAdmin)) { Invoke-ElevatedRelaunch }
 
     # Free memory by stopping the Windows Docker service (not needed once we use WSL2)
@@ -698,7 +698,7 @@ function Invoke-WslInstall {
         $totalGB = [math]::Round($os.TotalVisibleMemorySize / 1MB, 1)
         Print-Info "System memory: ${totalGB}GB total, ${freeGB}GB free"
         if ($totalGB -lt 4) {
-            Print-OnyxError "Onyx requires at least 4GB RAM (Lite mode) or 10GB RAM (Standard mode)."
+            Print-OrbyteError "Orbyte requires at least 4GB RAM (Lite mode) or 10GB RAM (Standard mode)."
             Print-Info "This machine has ${totalGB}GB total. Consider using a larger instance."
             exit 1
         }
@@ -712,12 +712,12 @@ function Invoke-WslInstall {
         try {
             $proc = Start-Process wsl -ArgumentList "--install", "--no-distribution" -Wait -PassThru -NoNewWindow
             if ($proc.ExitCode -ne 0) {
-                Print-OnyxError "WSL2 installation failed (code $($proc.ExitCode)). A reboot may be needed."
+                Print-OrbyteError "WSL2 installation failed (code $($proc.ExitCode)). A reboot may be needed."
                 Print-Info "After rebooting, re-run this script."
                 exit 1
             }
         } catch {
-            Print-OnyxError "Could not install WSL2: $_"
+            Print-OrbyteError "Could not install WSL2: $_"
             exit 1
         }
     }
@@ -729,7 +729,7 @@ function Invoke-WslInstall {
         Print-Info "Installing Ubuntu in WSL2..."
         $proc = Start-Process wsl -ArgumentList "--install", "-d", "Ubuntu" -Wait -PassThru -NoNewWindow
         if ($proc.ExitCode -ne 0) {
-            Print-OnyxError "Ubuntu installation failed. Try manually: wsl --install -d Ubuntu"
+            Print-OrbyteError "Ubuntu installation failed. Try manually: wsl --install -d Ubuntu"
             Print-Info "If this is a memory error, this machine needs at least 4GB RAM."
             exit 1
         }
@@ -751,12 +751,12 @@ function Invoke-WslInstall {
     $wslExit = $LASTEXITCODE
 
     if ($wslExit -eq 0) {
-        Print-Success "Onyx installation complete (via WSL2)"
-        # Determine the port Onyx is running on inside WSL
-        Print-Info "Onyx should be accessible at http://localhost:3000"
+        Print-Success "Orbyte installation complete (via WSL2)"
+        # Determine the port Orbyte is running on inside WSL
+        Print-Info "Orbyte should be accessible at http://localhost:3000"
         Print-Info "WSL2 automatically forwards ports to the Windows host."
     } else {
-        Print-OnyxError "Installation inside WSL2 exited with code $wslExit"
+        Print-OrbyteError "Installation inside WSL2 exited with code $wslExit"
         Print-Info "You can debug by running: wsl -d Ubuntu"
     }
     exit $wslExit
@@ -769,26 +769,26 @@ function Install-Docker {
 # ── Main Installation Flow ───────────────────────────────────────────────────
 
 function Main {
-    if ($Help) { Show-OnyxHelp; return }
-    if ($PSVersionTable.PSVersion.Major -lt 5) { Print-OnyxError "PowerShell 5+ required (found $($PSVersionTable.PSVersion))"; exit 1 }
+    if ($Help) { Show-OrbyteHelp; return }
+    if ($PSVersionTable.PSVersion.Major -lt 5) { Print-OrbyteError "PowerShell 5+ required (found $($PSVersionTable.PSVersion))"; exit 1 }
     if ($script:LiteMode -and $script:IncludeCraftMode) {
-        Print-OnyxError "-Lite and -IncludeCraft cannot be used together."
+        Print-OrbyteError "-Lite and -IncludeCraft cannot be used together."
         exit 1
     }
     if ($script:LiteMode) { $script:ExpectedDockerRamGB = 4; $script:ExpectedDiskGB = 16 }
-    if ($Shutdown)   { Invoke-OnyxShutdown; return }
-    if ($DeleteData) { Invoke-OnyxDeleteData; return }
+    if ($Shutdown)   { Invoke-OrbyteShutdown; return }
+    if ($DeleteData) { Invoke-OrbyteDeleteData; return }
 
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) { Install-Docker }
 
     # Banner
     $edition = if ($script:IsWindowsServer) { "Windows Server" } else { "Windows Desktop" }
     Write-Host "`n   ____`n  / __ \`n | |  | |_ __  _   ___  __`n | |  | | '_ \| | | \ \/ /`n | |__| | | | | |_| |>  < `n  \____/|_| |_|\__, /_/\_\`n                __/ |`n               |___/" -ForegroundColor Cyan
-    Write-Host "Welcome to Onyx Installation Script (Windows)"
+    Write-Host "Welcome to Orbyte Installation Script (Windows)"
     Write-Host "=============================================="
     Print-Success "$edition detected"
     Write-Host "This script will:" -ForegroundColor Yellow
-    Write-Host "1. Download deployment files for Onyx into a new '$($script:InstallRoot)' directory"
+    Write-Host "1. Download deployment files for Orbyte into a new '$($script:InstallRoot)' directory"
     Write-Host "2. Check your system resources (Docker, memory, disk space)"
     Write-Host "3. Guide you through deployment options (version, authentication)"
 
@@ -817,9 +817,9 @@ function Main {
     if (-not (Initialize-ComposeCommand)) {
         if ($script:IsWindowsServer) {
             Install-ComposePlugin
-            if (-not (Initialize-ComposeCommand)) { Print-OnyxError "Docker Compose could not be installed."; exit 1 }
+            if (-not (Initialize-ComposeCommand)) { Print-OrbyteError "Docker Compose could not be installed."; exit 1 }
         } else {
-            Print-OnyxError "Docker Compose is not installed. Docker Desktop includes it."
+            Print-OrbyteError "Docker Compose is not installed. Docker Desktop includes it."
             Print-Info "Visit: https://docs.docker.com/desktop/install/windows-install/"
             exit 1
         }
@@ -831,15 +831,15 @@ function Main {
     if ($LASTEXITCODE -ne 0) {
         $label = if ($script:IsWindowsServer) { "Docker service" } else { "Docker Desktop" }
         Print-Info "Docker daemon is not running. Starting $label..."
-        if (-not (Start-DockerDaemon)) { Print-OnyxError "Could not start Docker. Start it manually and re-run."; exit 1 }
+        if (-not (Start-DockerDaemon)) { Print-OrbyteError "Could not start Docker. Start it manually and re-run."; exit 1 }
     }
     Print-Success "Docker daemon is running"
     if ($script:IsWindowsServer) { Fix-DockerCredStore }
 
-    # Verify Docker is running Linux containers (Onyx images are Linux-based)
+    # Verify Docker is running Linux containers (Orbyte images are Linux-based)
     $osType = ((Invoke-NativeQuiet -PassThru { docker info --format '{{.OSType}}' }) -join "").Trim()
     if ($osType -eq "windows") {
-        Print-Warning "Docker is running in Windows containers mode, but Onyx requires Linux containers."
+        Print-Warning "Docker is running in Windows containers mode, but Orbyte requires Linux containers."
         $switchCli = Join-Path $env:ProgramFiles "Docker\Docker\DockerCli.exe"
         $switched = $false
         if (Test-Path $switchCli) {
@@ -888,7 +888,7 @@ function Main {
         $resourceWarning = $true
     }
     if ($resourceWarning) {
-        Print-Warning "Onyx recommends at least $($script:ExpectedDockerRamGB)GB RAM and $($script:ExpectedDiskGB)GB disk for standard mode."
+        Print-Warning "Orbyte recommends at least $($script:ExpectedDockerRamGB)GB RAM and $($script:ExpectedDiskGB)GB disk for standard mode."
         Print-Warning "Lite mode requires less (1-4GB RAM, 8-16GB disk) but has no vector database."
         $reply = (Prompt-OrDefault "Do you want to continue anyway? (Y/n)" "y").Trim().ToLower()
         if ($reply -notmatch '^y') { Print-Info "Installation cancelled."; exit 1 }
@@ -905,10 +905,10 @@ function Main {
 
     # ── Step 4: Download Config Files ─────────────────────────────────────
     if ($Local) { Print-Step "Verifying existing configuration files" }
-    else { Print-Step "Downloading Onyx configuration files" }
+    else { Print-Step "Downloading Orbyte configuration files" }
 
     $composeDest = Join-Path $deploymentDir "docker-compose.yml"
-    if (-not (Ensure-OnyxFile $composeDest "$($script:GitHubRawUrl)/docker-compose.yml" "docker-compose.yml")) { exit 1 }
+    if (-not (Ensure-OrbyteFile $composeDest "$($script:GitHubRawUrl)/docker-compose.yml" "docker-compose.yml")) { exit 1 }
 
     if ($composeVersion -ne "unknown" -and (Compare-SemVer $composeVersion "2.24.0") -lt 0) {
         Print-Warning "Docker Compose $composeVersion is older than 2.24.0 (required for env_file format)."
@@ -919,14 +919,14 @@ function Main {
 
     $liteOverlayPath = Join-Path $deploymentDir $script:LiteComposeFile
     if ($script:LiteMode) {
-        if (-not (Ensure-OnyxFile $liteOverlayPath "$($script:GitHubRawUrl)/$($script:LiteComposeFile)" $script:LiteComposeFile)) { exit 1 }
+        if (-not (Ensure-OrbyteFile $liteOverlayPath "$($script:GitHubRawUrl)/$($script:LiteComposeFile)" $script:LiteComposeFile)) { exit 1 }
     }
 
     $envTemplateDest = Join-Path $deploymentDir "env.template"
-    if (-not (Ensure-OnyxFile $envTemplateDest "$($script:GitHubRawUrl)/env.template" "env.template")) { exit 1 }
-    if (-not (Ensure-OnyxFile (Join-Path $script:InstallRoot "data\nginx\app.conf.template") "$($script:NginxBaseUrl)/app.conf.template" "nginx/app.conf.template")) { exit 1 }
-    if (-not (Ensure-OnyxFile (Join-Path $script:InstallRoot "data\nginx\run-nginx.sh") "$($script:NginxBaseUrl)/run-nginx.sh" "nginx/run-nginx.sh")) { exit 1 }
-    if (-not (Ensure-OnyxFile (Join-Path $script:InstallRoot "README.md") "$($script:GitHubRawUrl)/README.md" "README.md")) { exit 1 }
+    if (-not (Ensure-OrbyteFile $envTemplateDest "$($script:GitHubRawUrl)/env.template" "env.template")) { exit 1 }
+    if (-not (Ensure-OrbyteFile (Join-Path $script:InstallRoot "data\nginx\app.conf.template") "$($script:NginxBaseUrl)/app.conf.template" "nginx/app.conf.template")) { exit 1 }
+    if (-not (Ensure-OrbyteFile (Join-Path $script:InstallRoot "data\nginx\run-nginx.sh") "$($script:NginxBaseUrl)/run-nginx.sh" "nginx/run-nginx.sh")) { exit 1 }
+    if (-not (Ensure-OrbyteFile (Join-Path $script:InstallRoot "README.md") "$($script:GitHubRawUrl)/README.md" "README.md")) { exit 1 }
 
     $gitkeep = Join-Path $script:InstallRoot "data\nginx\local\.gitkeep"
     if (-not (Test-Path $gitkeep)) { New-Item -ItemType File -Force -Path $gitkeep | Out-Null }
@@ -942,7 +942,7 @@ function Main {
         $psArgs = @("ps", "-q")
         try { $running = @(Invoke-Compose -AutoDetect @psArgs 2>$null | Where-Object { $_ }) } catch { }
         if ($running.Count -gt 0) {
-            Print-OnyxError "Onyx services are currently running!"
+            Print-OrbyteError "Orbyte services are currently running!"
             Print-Info "Run '.\install.ps1 -Shutdown' first, then re-run this script."
             exit 1
         }
@@ -958,7 +958,7 @@ function Main {
 
         Prompt-DeploymentMode -LiteOverlayPath $liteOverlayPath
         if ($script:LiteMode -and $script:IncludeCraftMode) {
-            Print-OnyxError "-IncludeCraft cannot be used with Lite mode."
+            Print-OrbyteError "-IncludeCraft cannot be used with Lite mode."
             exit 1
         }
 
@@ -973,7 +973,7 @@ function Main {
         # ENABLE_CRAFT is a runtime flag, so enabling it doesn't require a new tag.
         if ($script:IncludeCraftMode) {
             Set-EnvFileValue -Path $envFile -Key "ENABLE_CRAFT" -Value "true" -Uncomment
-            Print-Success "Onyx Craft enabled (ENABLE_CRAFT=true)"
+            Print-Success "Orbyte Craft enabled (ENABLE_CRAFT=true)"
         }
         if ($script:LiteMode) {
             $profiles = Get-EnvFileValue -Path $envFile -Key "COMPOSE_PROFILES"
@@ -985,7 +985,7 @@ function Main {
         Print-Info "No existing .env file found. Setting up new deployment..."
         Prompt-DeploymentMode -LiteOverlayPath $liteOverlayPath
         if ($script:LiteMode -and $script:IncludeCraftMode) {
-            Print-OnyxError "-IncludeCraft cannot be used with Lite mode."
+            Print-OrbyteError "-IncludeCraft cannot be used with Lite mode."
             exit 1
         }
         if ($script:LiteMode) { $script:ExpectedDockerRamGB = 4; $script:ExpectedDiskGB = 16 }
@@ -1002,9 +1002,9 @@ function Main {
         Print-Success "Generated secure USER_AUTH_SECRET"
         if ($script:IncludeCraftMode) {
             Set-EnvFileValue -Path $envFile -Key "ENABLE_CRAFT" -Value "true" -Uncomment
-            Print-Success "Onyx Craft enabled"
+            Print-Success "Orbyte Craft enabled"
         } else {
-            Print-Info "Onyx Craft disabled (use -IncludeCraft to enable)"
+            Print-Info "Orbyte Craft disabled (use -IncludeCraft to enable)"
         }
         Print-Success ".env file created"
         Print-Info "You can customize .env later for OAuth/SAML, AI models, domain settings, and Craft."
@@ -1034,11 +1034,11 @@ function Main {
         $pinnedBase = "https://raw.githubusercontent.com/onyx-dot-app/onyx/$currentImageTag/deployment"
         Print-Info "Fetching config files matching tag $currentImageTag..."
         try {
-            Download-OnyxFile "$pinnedBase/docker_compose/docker-compose.yml" $composeDest
-            try { Download-OnyxFile "$pinnedBase/data/nginx/app.conf.template" (Join-Path $script:InstallRoot "data\nginx\app.conf.template") } catch {}
-            try { Download-OnyxFile "$pinnedBase/data/nginx/run-nginx.sh" (Join-Path $script:InstallRoot "data\nginx\run-nginx.sh") } catch {}
+            Download-OrbyteFile "$pinnedBase/docker_compose/docker-compose.yml" $composeDest
+            try { Download-OrbyteFile "$pinnedBase/data/nginx/app.conf.template" (Join-Path $script:InstallRoot "data\nginx\app.conf.template") } catch {}
+            try { Download-OrbyteFile "$pinnedBase/data/nginx/run-nginx.sh" (Join-Path $script:InstallRoot "data\nginx\run-nginx.sh") } catch {}
             if ($script:LiteMode) {
-                try { Download-OnyxFile "$pinnedBase/docker_compose/$($script:LiteComposeFile)" $liteOverlayPath } catch {}
+                try { Download-OrbyteFile "$pinnedBase/docker_compose/$($script:LiteComposeFile)" $liteOverlayPath } catch {}
             }
             Print-Success "Config files updated to match $currentImageTag"
         } catch {
@@ -1051,16 +1051,16 @@ function Main {
     Print-Info "This may take several minutes depending on your internet connection..."
 
     $pullArgs = @("pull"); if (-not $ShowVerbose) { $pullArgs += "--quiet" }
-    if ((Invoke-Compose @pullArgs) -ne 0) { Print-OnyxError "Failed to download Docker images"; exit 1 }
+    if ((Invoke-Compose @pullArgs) -ne 0) { Print-OrbyteError "Failed to download Docker images"; exit 1 }
     Print-Success "Docker images downloaded successfully"
 
     # ── Step 8: Start Services ────────────────────────────────────────────
-    Print-Step "Starting Onyx services"
+    Print-Step "Starting Orbyte services"
     Print-Info "Launching containers..."
     $upArgs = @("up", "-d")
     if ($useLatest) { $upArgs += @("--pull", "always", "--force-recreate") }
     $upResult = Invoke-Compose @upArgs
-    if ($upResult -ne 0) { Print-OnyxError "Failed to start Onyx services"; exit 1 }
+    if ($upResult -ne 0) { Print-OrbyteError "Failed to start Orbyte services"; exit 1 }
 
     # ── Step 9: Container Health ──────────────────────────────────────────
     Print-Step "Verifying container health"
@@ -1076,14 +1076,14 @@ function Main {
         $restarts = 0; try { $restarts = [int](& docker inspect --format '{{.RestartCount}}' $cid 2>$null) } catch { }
         $status = & docker inspect --format '{{.State.Status}}' $cid 2>$null
         if ($status -eq "running" -and $restarts -gt 2) {
-            Print-OnyxError "$name is in a restart loop (restarted $restarts times)"; $restartIssues = $true
+            Print-OrbyteError "$name is in a restart loop (restarted $restarts times)"; $restartIssues = $true
         } elseif ($status -eq "running") { Print-Success "$name is healthy" }
-        elseif ($status -eq "restarting") { Print-OnyxError "$name is stuck restarting"; $restartIssues = $true }
+        elseif ($status -eq "restarting") { Print-OrbyteError "$name is stuck restarting"; $restartIssues = $true }
         else { Print-Warning "$name status: $status" }
     }
 
     if ($restartIssues) {
-        Print-OnyxError "Some containers are experiencing issues!"
+        Print-OrbyteError "Some containers are experiencing issues!"
         $cmd = if ($script:ComposeCmdType -eq "plugin") { "docker compose" } else { "docker-compose" }
         Print-Info "Check logs: cd `"$(Join-Path $script:InstallRoot 'deployment')`" && $cmd $((Get-ComposeFileArgs) -join ' ') logs"
         Print-Info "For help, contact: founders@onyx.app"
@@ -1095,19 +1095,19 @@ function Main {
     Print-Success "All containers are running successfully!"
     $port = if ($env:HOST_PORT) { $env:HOST_PORT } else { 3000 }
 
-    if (Test-OnyxHealth -Port $port) {
+    if (Test-OrbyteHealth -Port $port) {
         Write-Host "============================================" -ForegroundColor Green
-        Write-Host "   Onyx service is ready!                   " -ForegroundColor Green
+        Write-Host "   Orbyte service is ready!                   " -ForegroundColor Green
         Write-Host "============================================" -ForegroundColor Green
     } else {
         Print-Warning "Health check timed out after 10 minutes"
         Print-Info "Containers are running, but the web service may still be initializing."
         Write-Host "============================================" -ForegroundColor Yellow
-        Write-Host "   Onyx containers are running              " -ForegroundColor Yellow
+        Write-Host "   Orbyte containers are running              " -ForegroundColor Yellow
         Write-Host "============================================" -ForegroundColor Yellow
     }
 
-    Print-Info "Access Onyx at: http://localhost:$port"
+    Print-Info "Access Orbyte at: http://localhost:$port"
     Print-Info "Visit http://localhost:$port/auth/signup to create your admin account"
     Print-Info "The first user created will automatically have admin privileges"
 

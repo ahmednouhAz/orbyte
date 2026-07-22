@@ -1,4 +1,4 @@
-# Onyx Craft Docker-sandbox overlay. Layer on top of docker-compose.yml.
+# Orbyte Craft Docker-sandbox overlay. Layer on top of docker-compose.yml.
 # install.sh --include-craft wires this in automatically.
 #
 # Trust boundary: api_server, background, and sandbox-proxy all bind-mount
@@ -8,13 +8,13 @@ services:
   api_server:
     environment:
       - SANDBOX_BACKEND=${SANDBOX_BACKEND:-docker}
-      # Public Onyx URL; Internal compose hostnames don't resolve from the
+      # Public Orbyte URL; Internal compose hostnames don't resolve from the
       # sandbox bridge.
       - SANDBOX_API_SERVER_URL=${SANDBOX_API_SERVER_URL:-}
       - SANDBOX_CONTAINER_IMAGE=${SANDBOX_CONTAINER_IMAGE:-onyxdotapp/sandbox:${IMAGE_TAG:-latest}}
       # Pinned: Must match the compose `networks:` block + install.sh literal.
       # An env_file leak would point Python at a non-existent network.
-      - SANDBOX_DOCKER_NETWORK=onyx_craft_sandbox
+      - SANDBOX_DOCKER_NETWORK=orbyte_craft_sandbox
       - SANDBOX_DOCKER_MEMORY_LIMIT=${SANDBOX_DOCKER_MEMORY_LIMIT:-2g}
       - SANDBOX_DOCKER_CPU_LIMIT=${SANDBOX_DOCKER_CPU_LIMIT:-1.0}
       - ENABLE_OPENCODE_DEBUGGING=${ENABLE_OPENCODE_DEBUGGING:-false}
@@ -32,7 +32,7 @@ services:
     networks:
       # Bridge join lets api_server proxy the Next.js preview iframe.
       - default
-      - onyx_craft_sandbox
+      - orbyte_craft_sandbox
     # service_healthy, not service_started: The proxy binds its listener only
     # after initial sync, so service_started would race startup provisions.
     depends_on:
@@ -47,7 +47,7 @@ services:
       - SANDBOX_API_SERVER_URL=${SANDBOX_API_SERVER_URL:-}
       - SANDBOX_CONTAINER_IMAGE=${SANDBOX_CONTAINER_IMAGE:-onyxdotapp/sandbox:${IMAGE_TAG:-latest}}
       # See api_server above re: Pinned env_file-override vars.
-      - SANDBOX_DOCKER_NETWORK=onyx_craft_sandbox
+      - SANDBOX_DOCKER_NETWORK=orbyte_craft_sandbox
       - SANDBOX_DOCKER_MEMORY_LIMIT=${SANDBOX_DOCKER_MEMORY_LIMIT:-2g}
       - SANDBOX_DOCKER_CPU_LIMIT=${SANDBOX_DOCKER_CPU_LIMIT:-1.0}
       - ENABLE_OPENCODE_DEBUGGING=${ENABLE_OPENCODE_DEBUGGING:-false}
@@ -59,7 +59,7 @@ services:
       - ${SANDBOX_DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
     networks:
       - default
-      - onyx_craft_sandbox
+      - orbyte_craft_sandbox
     # See api_server above for the service_healthy rationale.
     depends_on:
       sandbox-proxy:
@@ -67,8 +67,8 @@ services:
 
   # Egress proxy: MITMs sandbox HTTPS traffic and gates action approvals.
   sandbox-proxy:
-    image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
-    command: ["python", "-m", "onyx.sandbox_proxy.server"]
+    image: ${ORBYTE_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
+    command: ["python", "-m", "orbyte.sandbox_proxy.server"]
     env_file:
       - path: .env
         required: false
@@ -78,11 +78,11 @@ services:
       - REDIS_HOST=${REDIS_HOST:-cache}
       # Pinned to defeat env_file leaks. See api_server above.
       - SANDBOX_DOCKER_SOCKET=/var/run/docker.sock
-      - SANDBOX_DOCKER_NETWORK=onyx_craft_sandbox
+      - SANDBOX_DOCKER_NETWORK=orbyte_craft_sandbox
       - SANDBOX_PROXY_LISTEN_PORT=${SANDBOX_PROXY_PORT:-8080}
       # Matches the healthcheck URL below.
       - SANDBOX_PROXY_HEALTHZ_PORT=8081
-      # OnyxPatResolver reads this at boot to know which host to claim for PAT
+      # OrbytePatResolver reads this at boot to know which host to claim for PAT
       # injection. Without it, /me requests pass through bare with the
       # placeholder bearer and api_server 403s.
       - SANDBOX_API_SERVER_URL=${SANDBOX_API_SERVER_URL:-}
@@ -100,7 +100,7 @@ services:
       # bridge join makes the service resolvable as `sandbox-proxy` from inside
       # each sandbox container.
       - default
-      - onyx_craft_sandbox
+      - orbyte_craft_sandbox
     restart: unless-stopped
     # >= _DRAIN_TIMEOUT_S (10s in server.py) plus margin so the SIGTERM drain
     # can terminalize parked approvals (claim EXPIRED + wake BLPOP listeners,
@@ -130,8 +130,8 @@ services:
 
 networks:
   # Pre-created by install.sh --include-craft.
-  onyx_craft_sandbox:
-    name: onyx_craft_sandbox
+  orbyte_craft_sandbox:
+    name: orbyte_craft_sandbox
     external: true
 
 volumes:

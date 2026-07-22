@@ -479,7 +479,7 @@ jobs:
       - name: Start Docker containers (onyx-lite)
         run: |
           cd deployment/docker_compose
-          docker compose -f docker-compose.yml -f docker-compose.onyx-lite.yml -f docker-compose.dev.yml up -d \
+          docker compose -f docker-compose.yml -f docker-compose.orbyte-lite.yml -f docker-compose.dev.yml up -d \
             --wait --wait-timeout 300 \
             relational_db
         id: start_docker_onyx_lite
@@ -524,7 +524,7 @@ jobs:
         if: always()
         run: |
           cd deployment/docker_compose
-          docker compose -f docker-compose.yml -f docker-compose.onyx-lite.yml -f docker-compose.dev.yml \
+          docker compose -f docker-compose.yml -f docker-compose.orbyte-lite.yml -f docker-compose.dev.yml \
             logs --no-color > $GITHUB_WORKSPACE/docker-compose-onyx-lite.log || true
 
       - name: Upload logs (onyx-lite)
@@ -538,7 +538,7 @@ jobs:
         if: always()
         run: |
           cd deployment/docker_compose
-          docker compose -f docker-compose.yml -f docker-compose.onyx-lite.yml -f docker-compose.dev.yml down -v
+          docker compose -f docker-compose.yml -f docker-compose.orbyte-lite.yml -f docker-compose.dev.yml down -v
 
   multitenant-tests:
     needs: [build-model-server-image, build-devcontainer-image]

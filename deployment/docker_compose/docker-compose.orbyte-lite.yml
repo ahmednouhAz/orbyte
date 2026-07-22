@@ -1,17 +1,17 @@
 # =============================================================================
-# ONYX LITE — MINIMAL DEPLOYMENT OVERLAY
+# ORBYTE LITE — MINIMAL DEPLOYMENT OVERLAY
 # =============================================================================
-# Overlay to run Onyx in a minimal configuration: no vector database, no Redis,
+# Overlay to run Orbyte in a minimal configuration: no vector database, no Redis,
 # no model servers, and no background workers. Only PostgreSQL is required. In
 # this mode, connectors and RAG search are disabled, but the core chat
 # experience (LLM conversations, tools, user file uploads, Projects, Agent
 # knowledge, code interpreter) still works.
 #
 # Usage:
-#   docker compose -f docker-compose.yml -f docker-compose.onyx-lite.yml up -d
+#   docker compose -f docker-compose.yml -f docker-compose.orbyte-lite.yml up -d
 #
 # With dev ports:
-#   docker compose -f docker-compose.yml -f docker-compose.onyx-lite.yml \
+#   docker compose -f docker-compose.yml -f docker-compose.orbyte-lite.yml \
 #                  -f docker-compose.dev.yml up -d --wait
 #
 # This overlay:
@@ -31,7 +31,7 @@
 #   --profile s3-filestore      MinIO (S3-compatible file store)
 # =============================================================================
 
-name: onyx
+name: orbyte
 
 services:
   api_server:

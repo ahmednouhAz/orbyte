@@ -1,12 +1,12 @@
 # =============================================================================
-# ONYX DOCKER COMPOSE
+# ORBYTE DOCKER COMPOSE
 # =============================================================================
-# This is the default configuration for Onyx. This file is fairly configurable,
+# This is the default configuration for Orbyte. This file is fairly configurable,
 # also see env.template for possible settings.
 #
 # PRODUCTION DEPLOYMENT CHECKLIST:
 # To convert this setup to a production deployment following best practices,
-# follow the checklist below. Note that there are other ways to secure the Onyx
+# follow the checklist below. Note that there are other ways to secure the Orbyte
 # deployment so these are not strictly necessary for all teams.
 #
 # 1. SECURITY HARDENING:
@@ -35,7 +35,7 @@
 # For a complete production setup, refer to docker-compose.prod.yml
 # =============================================================================
 
-name: onyx
+name: orbyte
 
 services:
   api_server:
@@ -44,8 +44,8 @@ services:
       dockerfile: Dockerfile
     command: >
       /bin/sh -c "alembic upgrade head &&
-      echo \"Starting Onyx Api Server\" &&
-      uvicorn onyx.main:app --host 0.0.0.0 --port 8080"
+      echo \"Starting Orbyte Api Server\" &&
+      uvicorn orbyte.main:app --host 0.0.0.0 --port 8080"
     # Check env.template and copy to .env for env vars
     env_file:
       - path: .env
@@ -81,7 +81,7 @@ services:
       - S3_ENDPOINT_URL=${S3_ENDPOINT_URL:-http://minio:9000}
       - S3_AWS_ACCESS_KEY_ID=${S3_AWS_ACCESS_KEY_ID:-minioadmin}
       - S3_AWS_SECRET_ACCESS_KEY=${S3_AWS_SECRET_ACCESS_KEY:-minioadmin}
-      # Onyx Craft configuration (disabled by default, set ENABLE_CRAFT=true in .env to enable)
+      # Orbyte Craft configuration (disabled by default, set ENABLE_CRAFT=true in .env to enable)
       # Use --include-craft with install script, or manually set in .env file
       - ENABLE_CRAFT=${ENABLE_CRAFT:-false}
     # PRODUCTION: Uncomment the line below to use if IAM_AUTH is true and you are using iam auth for postgres
@@ -112,7 +112,7 @@ services:
       start_period: 600s
     # Optional, only for debugging purposes
     volumes:
-      - api_server_logs:/var/log/onyx
+      - api_server_logs:/var/log/orbyte
       # Shared volume for persistent document storage (Craft file-system mode)
       - file-system:/app/file-system
 
@@ -157,7 +157,7 @@ services:
       # API Server connection for Discord bot message processing
       - API_SERVER_PROTOCOL=${API_SERVER_PROTOCOL:-http}
       - API_SERVER_HOST=${API_SERVER_HOST:-api_server}
-      # Onyx Craft configuration (set up automatically on container startup)
+      # Orbyte Craft configuration (set up automatically on container startup)
       - ENABLE_CRAFT=${ENABLE_CRAFT:-false}
     # PRODUCTION: Uncomment the line below to use if IAM_AUTH is true and you are using iam auth for postgres
     # volumes:
@@ -166,7 +166,7 @@ services:
       - "host.docker.internal:host-gateway"
     # Optional, only for debugging purposes
     volumes:
-      - background_logs:/var/log/onyx
+      - background_logs:/var/log/orbyte
       # Shared volume for persistent document storage (Craft file-system mode)
       - file-system:/app/file-system
     logging:
@@ -209,11 +209,11 @@ services:
       retries: 5
       start_period: 30s
 
-  # NOTE: the standalone MCP server (onyx.mcp_server_main) has been removed
+  # NOTE: the standalone MCP server (orbyte.mcp_server_main) has been removed
   # from this deployment along with MCP tool support — no service to enable here.
 
   inference_model_server:
-    image: ${ONYX_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
+    image: ${ORBYTE_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
     # This service ships unmodified upstream ML/embedding code (no Orbyte-specific
     # changes), so it's pulled pre-built rather than compiled from source on every
     # clone -- building it locally means installing ~3GB of torch/CUDA wheels and
@@ -238,7 +238,7 @@ services:
       # Not necessary, this is just to reduce download time during startup
       - model_cache_huggingface:/app/.cache/huggingface/
       # Optional, only for debugging purposes
-      - inference_model_server_logs:/var/log/onyx
+      - inference_model_server_logs:/var/log/orbyte
     logging:
       driver: json-file
       options:
@@ -260,7 +260,7 @@ services:
       start_period: 600s
 
   indexing_model_server:
-    image: ${ONYX_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
+    image: ${ORBYTE_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
     # See note on inference_model_server above -- unmodified upstream ML code,
     # pulled pre-built rather than compiled from source.
     # build:
@@ -285,7 +285,7 @@ services:
       # Not necessary, this is just to reduce download time during startup
       - indexing_huggingface_model_cache:/app/.cache/huggingface/
       # Optional, only for debugging purposes
-      - indexing_model_server_logs:/var/log/onyx
+      - indexing_model_server_logs:/var/log/orbyte
     logging:
       driver: json-file
       options:
@@ -483,7 +483,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
       # Note: we've seen the default bucket creation logic not work in some cases
-      MINIO_DEFAULT_BUCKETS: ${S3_FILE_STORE_BUCKET_NAME:-onyx-file-store-bucket}
+      MINIO_DEFAULT_BUCKETS: ${S3_FILE_STORE_BUCKET_NAME:-orbyte-file-store-bucket}
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"

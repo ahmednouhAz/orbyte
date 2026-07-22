@@ -1,16 +1,16 @@
-name: onyx
+name: orbyte
 
 services:
   api_server:
-    image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
+    image: ${ORBYTE_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
     build:
       context: ../../backend
       dockerfile: Dockerfile
     command: >
       /bin/sh -c "
       alembic -n schema_private upgrade head &&
-      echo \"Starting Onyx Api Server\" &&
-      uvicorn onyx.main:app --host 0.0.0.0 --port 8080"
+      echo \"Starting Orbyte Api Server\" &&
+      uvicorn orbyte.main:app --host 0.0.0.0 --port 8080"
     depends_on:
       - relational_db
       - opensearch
@@ -80,7 +80,7 @@ services:
       - MODEL_SERVER_HOST=${MODEL_SERVER_HOST:-inference_model_server}
       - MODEL_SERVER_PORT=${MODEL_SERVER_PORT:-}
       - CODE_INTERPRETER_BASE_URL=${CODE_INTERPRETER_BASE_URL:-http://code-interpreter:8000}
-      - LOG_ONYX_MODEL_INTERACTIONS=${LOG_ONYX_MODEL_INTERACTIONS:-}
+      - LOG_ORBYTE_MODEL_INTERACTIONS=${LOG_ORBYTE_MODEL_INTERACTIONS:-}
       - LOG_VESPA_TIMING_INFORMATION=${LOG_VESPA_TIMING_INFORMATION:-}
       - LOG_ENDPOINT_LATENCY=${LOG_ENDPOINT_LATENCY:-}
       - LOG_POSTGRES_LATENCY=${LOG_POSTGRES_LATENCY:-}
@@ -136,7 +136,7 @@ services:
       start_period: 600s
 
   background:
-    image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
+    image: ${ORBYTE_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
     build:
       context: ../../backend
       dockerfile: Dockerfile
@@ -163,7 +163,7 @@ services:
       - IMAGE_TAG=test
       - ENCRYPTION_KEY_SECRET=${ENCRYPTION_KEY_SECRET:-}
       - JWT_PUBLIC_KEY_URL=${JWT_PUBLIC_KEY_URL:-}
-      # Gen AI Settings (Needed by OnyxBot)
+      # Gen AI Settings (Needed by OrbyteBot)
       - GEN_AI_MAX_TOKENS=${GEN_AI_MAX_TOKENS:-}
       - LLM_SOCKET_READ_TIMEOUT=${LLM_SOCKET_READ_TIMEOUT:-}
       - MAX_CHUNKS_FED_TO_CHAT=${MAX_CHUNKS_FED_TO_CHAT:-}
@@ -228,13 +228,13 @@ services:
       - CELERY_WORKER_LIGHT_CONCURRENCY=${CELERY_WORKER_LIGHT_CONCURRENCY:-}
       - CELERY_WORKER_LIGHT_PREFETCH_MULTIPLIER=${CELERY_WORKER_LIGHT_PREFETCH_MULTIPLIER:-}
 
-      # Onyx SlackBot Configs
-      - ONYX_BOT_DISABLE_DOCS_ONLY_ANSWER=${ONYX_BOT_DISABLE_DOCS_ONLY_ANSWER:-}
-      - ONYX_BOT_FEEDBACK_VISIBILITY=${ONYX_BOT_FEEDBACK_VISIBILITY:-}
-      - ONYX_BOT_DISPLAY_ERROR_MSGS=${ONYX_BOT_DISPLAY_ERROR_MSGS:-}
+      # Orbyte SlackBot Configs
+      - ORBYTE_BOT_DISABLE_DOCS_ONLY_ANSWER=${ORBYTE_BOT_DISABLE_DOCS_ONLY_ANSWER:-}
+      - ORBYTE_BOT_FEEDBACK_VISIBILITY=${ORBYTE_BOT_FEEDBACK_VISIBILITY:-}
+      - ORBYTE_BOT_DISPLAY_ERROR_MSGS=${ORBYTE_BOT_DISPLAY_ERROR_MSGS:-}
       - NOTIFY_SLACKBOT_NO_ANSWER=${NOTIFY_SLACKBOT_NO_ANSWER:-}
-      - ONYX_BOT_MAX_QPM=${ONYX_BOT_MAX_QPM:-}
-      - ONYX_BOT_MAX_WAIT_TIME=${ONYX_BOT_MAX_WAIT_TIME:-}
+      - ORBYTE_BOT_MAX_QPM=${ORBYTE_BOT_MAX_QPM:-}
+      - ORBYTE_BOT_MAX_WAIT_TIME=${ORBYTE_BOT_MAX_WAIT_TIME:-}
       # Discord Bot Configuration (runs via supervisord, requires DISCORD_BOT_TOKEN to be set)
       # IMPORTANT: Only one Discord bot instance can run per token - do not scale background workers
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:-}
@@ -246,8 +246,8 @@ services:
       # Leave this on pretty please? Nothing sensitive is collected!
       - DISABLE_TELEMETRY=${DISABLE_TELEMETRY:-}
       - LOG_LEVEL=${LOG_LEVEL:-info} # Set to debug to get more fine-grained logs
-      # Log all of Onyx prompts and interactions with the LLM
-      - LOG_ONYX_MODEL_INTERACTIONS=${LOG_ONYX_MODEL_INTERACTIONS:-}
+      # Log all of Orbyte prompts and interactions with the LLM
+      - LOG_ORBYTE_MODEL_INTERACTIONS=${LOG_ORBYTE_MODEL_INTERACTIONS:-}
       - LOG_VESPA_TIMING_INFORMATION=${LOG_VESPA_TIMING_INFORMATION:-}
 
       # Analytics Configs
@@ -282,7 +282,7 @@ services:
     #   - ${CA_CERT_PATH:-./custom-ca.crt}:/etc/ssl/certs/custom-ca.crt:ro
 
   web_server:
-    image: ${ONYX_WEB_SERVER_IMAGE:-onyxdotapp/onyx-web-server:${IMAGE_TAG:-latest}}
+    image: ${ORBYTE_WEB_SERVER_IMAGE:-onyxdotapp/onyx-web-server:${IMAGE_TAG:-latest}}
     build:
       context: ../../web
       dockerfile: Dockerfile
@@ -291,7 +291,7 @@ services:
         - NEXT_PUBLIC_FORGOT_PASSWORD_ENABLED=${NEXT_PUBLIC_FORGOT_PASSWORD_ENABLED:-}
         # Enterprise Edition only
         - NEXT_PUBLIC_THEME=${NEXT_PUBLIC_THEME:-}
-        # DO NOT TURN ON unless you have EXPLICIT PERMISSION from Onyx.
+        # DO NOT TURN ON unless you have EXPLICIT PERMISSION from Orbyte.
         - NEXT_PUBLIC_DO_NOT_USE_TOGGLE_OFF_DANSWER_POWERED=${NEXT_PUBLIC_DO_NOT_USE_TOGGLE_OFF_DANSWER_POWERED:-false}
     depends_on:
       - api_server
@@ -304,9 +304,9 @@ services:
       - ENABLE_PAID_ENTERPRISE_EDITION_FEATURES=${ENABLE_PAID_ENTERPRISE_EDITION_FEATURES:-false}
       - NEXT_PUBLIC_CUSTOM_REFRESH_URL=${NEXT_PUBLIC_CUSTOM_REFRESH_URL:-}
 
-  # Uncomment the block below to enable the MCP server for Onyx.
+  # Uncomment the block below to enable the MCP server for Orbyte.
   # mcp_server:
-  #   image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
+  #   image: ${ORBYTE_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
   #   build:
   #     context: ../../backend
   #     dockerfile: Dockerfile
@@ -315,7 +315,7 @@ services:
   #       echo 'MCP server is disabled (MCP_SERVER_ENABLED=false), skipping...';
   #       exit 0;
   #     else
-  #       exec python -m onyx.mcp_server_main;
+  #       exec python -m orbyte.mcp_server_main;
   #     fi"
   #   ports:
   #     - "8090:8090"
@@ -343,10 +343,10 @@ services:
   #       max-size: "50m"
   #       max-file: "6"
   #   volumes:
-  #     - mcp_server_logs:/var/log/onyx
+  #     - mcp_server_logs:/var/log/orbyte
 
   inference_model_server:
-    image: ${ONYX_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
+    image: ${ORBYTE_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
     build:
       context: ../../backend
       dockerfile: Dockerfile.model_server
@@ -368,7 +368,7 @@ services:
         max-file: "6"
 
   indexing_model_server:
-    image: ${ONYX_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
+    image: ${ORBYTE_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
     build:
       context: ../../backend
       dockerfile: Dockerfile.model_server
@@ -482,7 +482,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
-      MINIO_DEFAULT_BUCKETS: ${S3_FILE_STORE_BUCKET_NAME:-onyx-file-store-bucket}
+      MINIO_DEFAULT_BUCKETS: ${S3_FILE_STORE_BUCKET_NAME:-orbyte-file-store-bucket}
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"

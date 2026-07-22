@@ -62,16 +62,16 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --help|-h)
-            echo "Onyx Installation Script"
+            echo "Orbyte Installation Script"
             echo ""
             echo "Usage: $0 [OPTIONS]"
             echo ""
             echo "Options:"
-            echo "  --include-craft  Enable Onyx Craft (AI-powered web app building)"
-            echo "  --lite           Deploy Onyx Lite (no Vespa, Redis, or model servers)"
+            echo "  --include-craft  Enable Orbyte Craft (AI-powered web app building)"
+            echo "  --lite           Deploy Orbyte Lite (no Vespa, Redis, or model servers)"
             echo "  --local          Use existing config files instead of downloading from GitHub"
-            echo "  --shutdown       Stop (pause) Onyx containers"
-            echo "  --delete-data    Remove all Onyx data (containers, volumes, and files)"
+            echo "  --shutdown       Stop (pause) Orbyte containers"
+            echo "  --delete-data    Remove all Orbyte data (containers, volumes, and files)"
             echo "  --no-prompt      Run non-interactively with defaults (for CI/automation)"
             echo "  --dry-run        Show what would be done without making changes"
             echo "  --verbose        Show detailed output for debugging"
@@ -80,11 +80,11 @@ while [[ $# -gt 0 ]]; do
             echo "  --help, -h       Show this help message"
             echo ""
             echo "Examples:"
-            echo "  $0                    # Install Onyx"
-            echo "  $0 --lite             # Install Onyx Lite (minimal deployment)"
-            echo "  $0 --include-craft    # Install Onyx with Craft enabled"
-            echo "  $0 --shutdown         # Pause Onyx services"
-            echo "  $0 --delete-data      # Completely remove Onyx and all data"
+            echo "  $0                    # Install Orbyte"
+            echo "  $0 --lite             # Install Orbyte Lite (minimal deployment)"
+            echo "  $0 --include-craft    # Install Orbyte with Craft enabled"
+            echo "  $0 --shutdown         # Pause Orbyte services"
+            echo "  $0 --delete-data      # Completely remove Orbyte and all data"
             echo "  $0 --local            # Re-run using existing config files on disk"
             echo "  $0 --no-prompt        # Non-interactive install with defaults"
             exit 0
@@ -116,9 +116,9 @@ if [[ "$LITE_MODE" = true ]]; then
     EXPECTED_DISK_GB=16
 fi
 
-INSTALL_ROOT="${INSTALL_PREFIX:-onyx_data}"
+INSTALL_ROOT="${INSTALL_PREFIX:-orbyte_data}"
 
-LITE_COMPOSE_FILE="docker-compose.onyx-lite.yml"
+LITE_COMPOSE_FILE="docker-compose.orbyte-lite.yml"
 CRAFT_COMPOSE_FILE="docker-compose.craft.yml"
 
 # Populate COMPOSE_FILE_ARGS with the -f flags for docker compose.
@@ -166,7 +166,7 @@ download_file() {
     fi
 }
 
-# Fetches the most recent published release tag from the Onyx GitHub repo.
+# Fetches the most recent published release tag from the Orbyte GitHub repo.
 # Used to default the installer to a pinned, tested release (instead of the
 # rolling "edge" tag) and to pull compose/nginx files that match it.
 LATEST_RELEASE_TAG=""
@@ -393,11 +393,11 @@ print_warning() {
 # Handle shutdown mode
 if [ "$SHUTDOWN_MODE" = true ]; then
     echo ""
-    echo -e "${BLUE}${BOLD}=== Shutting down Onyx ===${NC}"
+    echo -e "${BLUE}${BOLD}=== Shutting down Orbyte ===${NC}"
     echo ""
 
     if [ -d "${INSTALL_ROOT}/deployment" ]; then
-        print_info "Stopping Onyx containers..."
+        print_info "Stopping Orbyte containers..."
 
         # Check if docker-compose.yml exists
         if [ -f "${INSTALL_ROOT}/deployment/docker-compose.yml" ]; then
@@ -410,7 +410,7 @@ if [ "$SHUTDOWN_MODE" = true ]; then
             build_compose_file_args true
             # shellcheck disable=SC2086 # COMPOSE_CMD is "docker compose" and needs word-splitting
             if (cd "${INSTALL_ROOT}/deployment" && ${DOCKER_SUDO[@]+"${DOCKER_SUDO[@]}"} HOST_PORT="${HOST_PORT:-3000}" IMAGE_TAG="${IMAGE_TAG:-edge}" $COMPOSE_CMD "${COMPOSE_FILE_ARGS[@]}" stop); then
-                print_success "Onyx containers stopped (paused)"
+                print_success "Orbyte containers stopped (paused)"
             else
                 print_error "Failed to stop containers"
                 exit 1
@@ -419,21 +419,21 @@ if [ "$SHUTDOWN_MODE" = true ]; then
             print_warning "docker-compose.yml not found in ${INSTALL_ROOT}/deployment"
         fi
     else
-        print_warning "Onyx data directory not found. Nothing to shutdown."
+        print_warning "Orbyte data directory not found. Nothing to shutdown."
     fi
 
     echo ""
-    print_success "Onyx shutdown complete!"
+    print_success "Orbyte shutdown complete!"
     exit 0
 fi
 
 # Handle delete data mode
 if [ "$DELETE_DATA_MODE" = true ]; then
     echo ""
-    echo -e "${RED}${BOLD}=== WARNING: This will permanently delete all Onyx data ===${NC}"
+    echo -e "${RED}${BOLD}=== WARNING: This will permanently delete all Orbyte data ===${NC}"
     echo ""
     print_warning "This action will remove:"
-    echo "  • All Onyx containers and volumes"
+    echo "  • All Orbyte containers and volumes"
     echo "  • All downloaded files and configurations"
     echo "  • All user data and documents"
     echo ""
@@ -450,7 +450,7 @@ if [ "$DELETE_DATA_MODE" = true ]; then
         exit 1
     fi
 
-    print_info "Removing Onyx containers and volumes..."
+    print_info "Removing Orbyte containers and volumes..."
 
     if [ -d "${INSTALL_ROOT}/deployment" ]; then
         # Check if docker-compose.yml exists
@@ -464,7 +464,7 @@ if [ "$DELETE_DATA_MODE" = true ]; then
             build_compose_file_args true
             # shellcheck disable=SC2086 # COMPOSE_CMD is "docker compose" and needs word-splitting
             if (cd "${INSTALL_ROOT}/deployment" && ${DOCKER_SUDO[@]+"${DOCKER_SUDO[@]}"} HOST_PORT="${HOST_PORT:-3000}" IMAGE_TAG="${IMAGE_TAG:-edge}" $COMPOSE_CMD "${COMPOSE_FILE_ARGS[@]}" down -v); then
-                print_success "Onyx containers and volumes removed"
+                print_success "Orbyte containers and volumes removed"
             else
                 print_error "Failed to remove containers and volumes"
             fi
@@ -480,7 +480,7 @@ if [ "$DELETE_DATA_MODE" = true ]; then
     fi
 
     echo ""
-    print_success "All Onyx data has been permanently deleted!"
+    print_success "All Orbyte data has been permanently deleted!"
     exit 0
 fi
 
@@ -554,7 +554,7 @@ if ! command -v docker &> /dev/null; then
     if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ -n "${WSL_DISTRO_NAME:-}" ]]; then
         print_info "Docker is required but not installed."
         if ! confirm_action "Docker Engine"; then
-            print_error "Docker is required to run Onyx."
+            print_error "Docker is required to run Orbyte."
             exit 1
         fi
         install_docker_linux
@@ -576,7 +576,7 @@ if command -v docker &> /dev/null \
 
     print_info "Docker Compose is required but not installed."
     if ! confirm_action "Docker Compose plugin"; then
-        print_error "Docker Compose is required to run Onyx."
+        print_error "Docker Compose is required to run Orbyte."
         exit 1
     fi
     COMPOSE_ARCH="$(uname -m)"
@@ -632,17 +632,17 @@ echo " \____/|_| |_|\__, /_/\_\ "
 echo "               __/ |      "
 echo "              |___/       "
 echo -e "${NC}"
-echo "Welcome to Onyx Installation Script"
+echo "Welcome to Orbyte Installation Script"
 echo "===================================="
 echo ""
 
 if [[ "$RELEASE_LOOKUP_FAILED" = true ]]; then
-    print_warning "Could not determine latest Onyx release — falling back to main / edge"
+    print_warning "Could not determine latest Orbyte release — falling back to main / edge"
 fi
 
 # User acknowledgment section
 echo -e "${YELLOW}${BOLD}This script will:${NC}"
-echo "1. Download deployment files for Onyx into a new '${INSTALL_ROOT}' directory"
+echo "1. Download deployment files for Orbyte into a new '${INSTALL_ROOT}' directory"
 echo "2. Check your system resources (Docker, memory, disk space)"
 echo "3. Guide you through deployment options (version, authentication)"
 echo ""
@@ -825,7 +825,7 @@ fi
 
 if [ "$RESOURCE_WARNING" = true ]; then
     echo ""
-    print_warning "Onyx recommends at least ${EXPECTED_DOCKER_RAM_GB}GB RAM and ${EXPECTED_DISK_GB}GB disk space for optimal performance in standard mode."
+    print_warning "Orbyte recommends at least ${EXPECTED_DOCKER_RAM_GB}GB RAM and ${EXPECTED_DISK_GB}GB disk space for optimal performance in standard mode."
     print_warning "Lite mode requires less resources (1-4GB RAM, 8-16GB disk depending on usage), but does not include a vector database."
     echo ""
     prompt_yn_or_default "Do you want to continue anyway? (Y/n): " "y"
@@ -852,7 +852,7 @@ NGINX_BASE_URL="https://raw.githubusercontent.com/onyx-dot-app/onyx/${RELEASE_RE
 if [[ "$USE_LOCAL_FILES" = true ]]; then
     print_step "Verifying existing configuration files"
 else
-    print_step "Downloading Onyx configuration files"
+    print_step "Downloading Orbyte configuration files"
     print_info "This step downloads all necessary configuration files from GitHub..."
 fi
 
@@ -970,11 +970,11 @@ if [ -d "${INSTALL_ROOT}/deployment" ] && [ -f "${INSTALL_ROOT}/deployment/docke
     # shellcheck disable=SC2086 # COMPOSE_CMD is "docker compose" and needs word-splitting
     RUNNING_CONTAINERS=$(cd "${INSTALL_ROOT}/deployment" && ${DOCKER_SUDO[@]+"${DOCKER_SUDO[@]}"} $COMPOSE_CMD "${COMPOSE_FILE_ARGS[@]}" ps -q 2>/dev/null | wc -l)
     if [ "$RUNNING_CONTAINERS" -gt 0 ]; then
-        print_error "Onyx services are currently running!"
+        print_error "Orbyte services are currently running!"
         echo ""
         print_info "To make configuration changes, you must first shut down the services."
         echo ""
-        print_info "Please run the following command to shut down Onyx:"
+        print_info "Please run the following command to shut down Orbyte:"
         echo -e "   ${BOLD}./install.sh --shutdown${NC}"
         echo ""
         print_info "Then run this script again to make your changes."
@@ -1036,7 +1036,7 @@ if [ -f "$ENV_FILE" ]; then
         fi
         EFFECTIVE_TAG="${VERSION:-$(grep -E '^IMAGE_TAG=' "$ENV_FILE" | head -1 | cut -d= -f2-)}"
         set_sandbox_backend_for_tag "$EFFECTIVE_TAG"
-        print_success "Onyx Craft enabled (ENABLE_CRAFT=true, SANDBOX_BACKEND=$SANDBOX_BACKEND_VALUE, image tag: ${EFFECTIVE_TAG})"
+        print_success "Orbyte Craft enabled (ENABLE_CRAFT=true, SANDBOX_BACKEND=$SANDBOX_BACKEND_VALUE, image tag: ${EFFECTIVE_TAG})"
     fi
 
     # Ensure COMPOSE_PROFILES is cleared when running in lite mode on an
@@ -1106,7 +1106,7 @@ else
     print_success "IMAGE_TAG set to $VERSION"
 
     # In lite mode, MinIO never starts (COMPOSE_PROFILES cleared) and the
-    # onyx-lite overlay forces FILE_STORE_BACKEND=postgres at runtime; set it in
+    # orbyte-lite overlay forces FILE_STORE_BACKEND=postgres at runtime; set it in
     # .env too so the file isn't misleadingly left on s3 (the MinIO/S3 creds
     # generated below are then unused, but stay ready if s3-filestore is enabled).
     if [[ "$LITE_MODE" = true ]]; then
@@ -1145,7 +1145,7 @@ else
         sed -i.bak 's/^#* *ENABLE_CRAFT=.*/ENABLE_CRAFT=true/' "$ENV_FILE" 2>/dev/null || true
         # docker backend exists only in v4.0.6+; older tags get kubernetes.
         set_sandbox_backend_for_tag "$VERSION"
-        print_success "Onyx Craft enabled (ENABLE_CRAFT=true, SANDBOX_BACKEND=$SANDBOX_BACKEND_VALUE)"
+        print_success "Orbyte Craft enabled (ENABLE_CRAFT=true, SANDBOX_BACKEND=$SANDBOX_BACKEND_VALUE)"
 
         if [ "$SANDBOX_BACKEND_VALUE" = "docker" ]; then
             echo ""
@@ -1160,7 +1160,7 @@ else
             print_info "Image tag ${VERSION} predates the docker sandbox backend (v4.0.6+); using SANDBOX_BACKEND=${SANDBOX_BACKEND_VALUE}."
         fi
     else
-        print_info "Onyx Craft disabled (use --include-craft to enable)"
+        print_info "Orbyte Craft disabled (use --include-craft to enable)"
     fi
 
     print_success ".env file created with your preferences"
@@ -1170,13 +1170,13 @@ else
     echo "  • Advanced authentication (OAuth, SAML, etc.)"
     echo "  • AI model configuration"
     echo "  • Domain settings (for production)"
-    echo "  • Onyx Craft (set ENABLE_CRAFT=true)"
+    echo "  • Orbyte Craft (set ENABLE_CRAFT=true)"
     echo ""
 fi
 
 # Pre-create the sandbox bridge — compose overlay references it as external.
 if [ "$INCLUDE_CRAFT" = true ]; then
-    SANDBOX_NET="${SANDBOX_DOCKER_NETWORK:-onyx_craft_sandbox}"
+    SANDBOX_NET="${SANDBOX_DOCKER_NETWORK:-orbyte_craft_sandbox}"
     if ! ${DOCKER_SUDO[@]+"${DOCKER_SUDO[@]}"} docker network inspect "$SANDBOX_NET" >/dev/null 2>&1; then
         if ${DOCKER_SUDO[@]+"${DOCKER_SUDO[@]}"} docker network create "$SANDBOX_NET" >/dev/null 2>&1; then
             print_success "Created sandbox bridge network: $SANDBOX_NET"
@@ -1340,7 +1340,7 @@ if [[ "$NO_WAIT" = false ]]; then
 fi
 
 # Start services
-print_step "Starting Onyx services"
+print_step "Starting Orbyte services"
 print_info "Launching containers..."
 if [[ "$NO_WAIT" = false ]]; then
     print_info "Waiting up to ${WAIT_TIMEOUT_SECONDS}s for all services to become healthy..."
@@ -1356,7 +1356,7 @@ else
     (cd "${INSTALL_ROOT}/deployment" && ${DOCKER_SUDO[@]+"${DOCKER_SUDO[@]}"} HOST_PORT="$HOST_PORT" IMAGE_TAG="$CURRENT_IMAGE_TAG" $COMPOSE_CMD "${COMPOSE_FILE_ARGS[@]}" up -d "${UP_WAIT_ARGS[@]}") || UP_EXIT=$?
 fi
 if [ $UP_EXIT -ne 0 ]; then
-    print_error "Failed to start Onyx services"
+    print_error "Failed to start Orbyte services"
     echo ""
     print_info "Current container status:"
     # shellcheck disable=SC2086 # COMPOSE_CMD is "docker compose" and needs word-splitting
@@ -1374,17 +1374,17 @@ print_step "Installation Complete!"
 echo ""
 if [[ "$NO_WAIT" = false ]]; then
     echo -e "${GREEN}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${GREEN}${BOLD}   🎉 Onyx service is ready! 🎉${NC}"
+    echo -e "${GREEN}${BOLD}   🎉 Orbyte service is ready! 🎉${NC}"
     echo -e "${GREEN}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 else
     echo -e "${YELLOW}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${YELLOW}${BOLD}   ⚠️  Onyx containers started  ⚠️${NC}"
+    echo -e "${YELLOW}${BOLD}   ⚠️  Orbyte containers started  ⚠️${NC}"
     echo -e "${YELLOW}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     print_info "Services may still be initializing. Check status with:"
     echo "  (cd \"${INSTALL_ROOT}/deployment\" && $(is_using_sudo && echo "sudo ")$COMPOSE_CMD ${COMPOSE_FILE_ARGS[*]} ps)"
 fi
 echo ""
-print_info "Access Onyx at:"
+print_info "Access Orbyte at:"
 echo -e "   ${BOLD}http://localhost:${HOST_PORT}${NC}"
 echo ""
 print_info "If authentication is enabled, you can create your admin account here:"
@@ -1412,7 +1412,7 @@ echo ""
 # Only prompt in interactive mode and only if gh CLI is available.
 # Uses the GitHub API directly (PUT /user/starred) like oh-my-codex.
 if is_interactive && command -v gh &>/dev/null; then
-    prompt_yn_or_default "Enjoying Onyx? Star the repo on GitHub? [Y/n] " "Y"
+    prompt_yn_or_default "Enjoying Orbyte? Star the repo on GitHub? [Y/n] " "Y"
     if [[ ! "$REPLY" =~ ^[Nn] ]]; then
         if GH_PAGER='' gh api -X PUT /user/starred/onyx-dot-app/onyx < /dev/null >/dev/null 2>&1; then
             print_success "Thanks for the star!"
