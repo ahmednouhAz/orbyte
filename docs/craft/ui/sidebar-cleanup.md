@@ -1,4 +1,4 @@
-# Onyx Craft Sidebar Cleanup
+# Orbyte Craft Sidebar Cleanup
 
 > **Stacked on `craft-input-bar` (#11634).** This branch builds on the composer
 > redesign in that PR — `BaseInputBar`, `CraftInputBar`, `PlusMenuButton`,
@@ -210,7 +210,7 @@ deliberately does **not** resolve that — it stays focused on the sidebar clean
 Noted for a future pass. Two possible directions if/when we unify: bring skill
 management into the Craft sidebar with the same Personal/Workspace toggle (treating
 skills + apps as one "Craft capabilities" set), or move app management out to the
-admin panel (matching Onyx-wide governance convention). Direction intentionally
+admin panel (matching Orbyte-wide governance convention). Direction intentionally
 left open.
 
 ## Tests

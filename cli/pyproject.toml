@@ -3,13 +3,13 @@ requires = ["hatchling==1.29.0", "go-bin~=1.26.4", "manygo==0.2.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "onyx-cli"
+name = "orbyte-cli"
 readme = "README.md"
-description = "Terminal interface for chatting with your Onyx agent"
-authors = [{ name = "Onyx AI", email = "founders@onyx.app" }]
+description = "Terminal interface for chatting with your Orbyte agent"
+authors = [{ name = "Orbyte AI", email = "founders@onyx.app" }]
 requires-python = ">=3.9"
 keywords = [
-  "onyx", "cli", "chat", "ai", "enterprise-search",
+  "orbyte", "cli", "chat", "ai", "enterprise-search",
 ]
 classifiers = [
     "Programming Language :: Go",
@@ -32,7 +32,7 @@ path = "internal/_version.py"
 
 [tool.hatch.build.targets.wheel.hooks.custom]
 path = "hatch_build.py"
-binary_name = "onyx-cli"
+binary_name = "orbyte-cli"
 tag_prefix = "cli"
 
 [tool.uv]

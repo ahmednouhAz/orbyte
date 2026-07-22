@@ -1,30 +1,30 @@
-# Mock LLM server for load testing — deploy alongside an Onyx installation
+# Mock LLM server for load testing — deploy alongside an Orbyte installation
 # and register as an `openai_compatible` LLM provider with
-# api_base=http://onyx-mock-llm:8000 (see ../README.md for provider setup,
+# api_base=http://orbyte-mock-llm:8000 (see ../README.md for provider setup,
 # including the max-input-tokens >= 50k requirement).
 #
-# Apply into the Onyx namespace:  kubectl apply -n <onyx-namespace> -f mock-llm.yaml
+# Apply into the Orbyte namespace:  kubectl apply -n <orbyte-namespace> -f mock-llm.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: onyx-mock-llm
+  name: orbyte-mock-llm
   labels:
-    app: onyx-mock-llm
+    app: orbyte-mock-llm
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: onyx-mock-llm
+      app: orbyte-mock-llm
   template:
     metadata:
       labels:
-        app: onyx-mock-llm
+        app: orbyte-mock-llm
     spec:
       containers:
         - name: mock-llm
           # Pin the tag: master/workers and mid-run restarts must never pick
           # up a different build (bump deliberately when publishing).
-          image: <your-registry>/onyx-mock-llm:v0.1.0
+          image: <your-registry>/orbyte-mock-llm:v0.1.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -53,13 +53,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: onyx-mock-llm
+  name: orbyte-mock-llm
   labels:
-    app: onyx-mock-llm
+    app: orbyte-mock-llm
 spec:
   type: ClusterIP
   selector:
-    app: onyx-mock-llm
+    app: orbyte-mock-llm
   ports:
     - port: 8000
       targetPort: 8000

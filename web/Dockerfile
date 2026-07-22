@@ -184,9 +184,9 @@ ENV NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
 ARG SENTRY_RELEASE
 ENV SENTRY_RELEASE=${SENTRY_RELEASE}
 
-# Default ONYX_VERSION, typically overridden during builds by GitHub Actions.
-ARG ONYX_VERSION=0.0.0-dev
-ENV ONYX_VERSION=${ONYX_VERSION}
+# Default ORBYTE_VERSION, typically overridden during builds by GitHub Actions.
+ARG ORBYTE_VERSION=0.0.0-dev
+ENV ORBYTE_VERSION=${ORBYTE_VERSION}
 
 # Note: Don't expose ports here, Compose will handle that for us if necessary.
 # If you want to run this without compose, specify the ports to

@@ -6,11 +6,11 @@ Follow-up to [`opencode-serve-migration.md`](./opencode-serve-migration.md). Two
 
 **The `opencode acp` transport is gone.** `OpencodeServeClient` is the only path behind `KubernetesSandboxManager.send_message` and `DockerSandboxManager.send_message`. `AGENT_TRANSPORT` env var, the `AgentTransport` enum, the per-message ACP exec clients (`ACPExecClient`, `DockerACPExecClient`), `ACPExecClientBase`, and the entrypoint idle branch are deleted. Per-session `opencode.json` writes are gone — provider config lives at pod/container scope via `OPENCODE_CONFIG_CONTENT`. Port 8081 (`AGENT_PORT`) cleared from the pod/service/Dockerfile.
 
-**The "ACP" vocabulary is gone from production code, tests, deployment, and non-historical docs.** Internal symbols renamed: `ACPEvent → SandboxEvent`, `_yield_acp_events → _yield_sandbox_events`, `_persist_acp_event → _persist_sandbox_event`, `[ACP-EVENT] → [SANDBOX-EVENT]`, `ACPError → SandboxError`, `_merge_acp_with_announces → _merge_events_with_announces`. Config: `ACP_MESSAGE_TIMEOUT → SANDBOX_TURN_TIMEOUT_SECONDS`. Frontend: `ACPEvent → SandboxEvent`, `ACPErrorEvent → SandboxErrorEvent`, `ACPBaseEvent → SandboxEventBase`, `ACPErrorPacket → SandboxErrorPacket`. Every `from acp.schema import …` now routes through `backend/onyx/server/features/build/sandbox/event_schema.py` — a thin re-export wrapper, the only place `acp.schema` is mentioned in the tree.
+**The "ACP" vocabulary is gone from production code, tests, deployment, and non-historical docs.** Internal symbols renamed: `ACPEvent → SandboxEvent`, `_yield_acp_events → _yield_sandbox_events`, `_persist_acp_event → _persist_sandbox_event`, `[ACP-EVENT] → [SANDBOX-EVENT]`, `ACPError → SandboxError`, `_merge_acp_with_announces → _merge_events_with_announces`. Config: `ACP_MESSAGE_TIMEOUT → SANDBOX_TURN_TIMEOUT_SECONDS`. Frontend: `ACPEvent → SandboxEvent`, `ACPErrorEvent → SandboxErrorEvent`, `ACPBaseEvent → SandboxEventBase`, `ACPErrorPacket → SandboxErrorPacket`. Every `from acp.schema import …` now routes through `backend/orbyte/server/features/build/sandbox/event_schema.py` — a thin re-export wrapper, the only place `acp.schema` is mentioned in the tree.
 
 ## What's deferred
 
-Inlining the schema types into Onyx-owned Pydantic models and dropping the `agent-client-protocol>=0.7.1` PyPI dep. The wrapper makes this a single-file change — replace the re-exports in `event_schema.py` with local Pydantic definitions, drop the dep, done.
+Inlining the schema types into Orbyte-owned Pydantic models and dropping the `agent-client-protocol>=0.7.1` PyPI dep. The wrapper makes this a single-file change — replace the re-exports in `event_schema.py` with local Pydantic definitions, drop the dep, done.
 
 Why deferred:
 

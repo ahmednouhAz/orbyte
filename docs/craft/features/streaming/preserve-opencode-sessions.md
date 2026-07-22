@@ -3,7 +3,7 @@
 ## Context
 
 Craft sessions use `opencode serve` as the long-lived agent runtime inside a
-sandbox. Onyx persists the `BuildSession.opencode_session_id` in Postgres so a
+sandbox. Orbyte persists the `BuildSession.opencode_session_id` in Postgres so a
 later turn can reconnect to the same opencode session instead of creating a
 fresh one every message.
 
@@ -27,10 +27,10 @@ separate from normal per-session workspace snapshots.
 5. Be optimistic when a saved opencode ID is missing from a restored DB: mint a
    replacement ID and persist it. A later follow-up can replay saved chat history
    into that replacement session.
-6. Treat opencode's session store as implementation data. Deleting an Onyx
+6. Treat opencode's session store as implementation data. Deleting an Orbyte
    BuildSession removes the product-visible record and best-effort deletes the
    live opencode session when the sandbox is running; failure does not block
-   Onyx deletion and does not prune durable history archives.
+   Orbyte deletion and does not prune durable history archives.
 
 ## Storage Model
 
@@ -85,7 +85,7 @@ sandbox-level data model.
 
 ### `SnapshotManager`
 
-`backend/onyx/server/features/build/sandbox/snapshot_manager.py`
+`backend/orbyte/server/features/build/sandbox/snapshot_manager.py`
 
 Owns FileStore persistence for both normal session snapshots and sandbox-global
 opencode history snapshots. Normal sidecar-created workspace snapshots keep the
@@ -96,7 +96,7 @@ limits. Kubernetes still bounds the pod-local opencode data volume with an
 
 ### Sandbox sidecar snapshot endpoints
 
-`backend/onyx/server/features/build/sandbox/image/sandbox_daemon/server.py`
+`backend/orbyte/server/features/build/sandbox/image/sandbox_daemon/server.py`
 
 The sidecar exposes local filesystem operations as signed HTTP endpoints. It
 does not upload to S3 and does not know tenant storage credentials.
@@ -116,7 +116,7 @@ For opencode history:
 
 ### Opencode history archive helpers
 
-`backend/onyx/server/features/build/sandbox/image/sandbox_daemon/opencode_history.py`
+`backend/orbyte/server/features/build/sandbox/image/sandbox_daemon/opencode_history.py`
 
 This module owns the opencode data archive logic:
 
@@ -134,14 +134,14 @@ This module owns the opencode data archive logic:
 - rely on signed sidecar endpoints and SHA-256 request verification for transport
   integrity
 - write the startup restore marker under sidecar-owned managed state at
-  `/workspace/managed/.onyx/opencode-history-restored`
+  `/workspace/managed/.orbyte/opencode-history-restored`
 
 This is separate from `snapshot.py`, which now remains focused on normal
 session workspace snapshotting.
 
 ### Kubernetes sandbox manager
 
-`backend/onyx/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
+`backend/orbyte/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
 
 The K8s manager coordinates pod lifecycle, sidecar calls, FileStore streaming,
 and startup restore gating.
@@ -217,7 +217,7 @@ The prompt path is intentionally optimistic.
    ID and an `on_opencode_session_resolved` callback.
 4. `_send_message_via_serve` calls `OpencodeServeClient.ensure_session`.
 5. If the saved ID exists, opencode returns `200` and the same ID is reused.
-6. If opencode returns `404`, Onyx creates a fresh opencode session and invokes
+6. If opencode returns `404`, Orbyte creates a fresh opencode session and invokes
    the callback so the BuildSession row is updated.
 7. Non-404 lookup errors still raise. A runtime outage should not silently mint
    a replacement session.
@@ -232,15 +232,15 @@ change.
 
 ## Delete Session Flow
 
-Deleting a BuildSession deletes Onyx's durable session record. When the sandbox
-is running and the row has an `opencode_session_id`, Onyx also makes a
+Deleting a BuildSession deletes Orbyte's durable session record. When the sandbox
+is running and the row has an `opencode_session_id`, Orbyte also makes a
 best-effort request to delete that live opencode session. That cleanup is an
-optimization only: failures are logged and do not block deleting the Onyx row.
+optimization only: failures are logged and do not block deleting the Orbyte row.
 
 Opencode history remains sandbox-global implementation data, so session delete
 does not prune durable opencode history archives. If opencode still has a row
 for the deleted BuildSession, that row is orphaned and no longer reachable
-through Onyx.
+through Orbyte.
 
 1. `SessionManager.delete_session` acquires the session prompt slot.
 2. If the sandbox is running and the BuildSession has an opencode session ID,
@@ -249,7 +249,7 @@ through Onyx.
 4. The BuildSession DB row is deleted.
 
 For a sleeping or otherwise not-running sandbox, deletion does not try to edit
-or validate opencode history. The Onyx row is removed, so any stale opencode
+or validate opencode history. The Orbyte row is removed, so any stale opencode
 record left in a durable history archive is orphaned implementation data.
 
 ## Idle Sleep Flow
@@ -269,7 +269,7 @@ The sandbox cleanup task handles idle running sandboxes.
 
 ## Recovery Flow
 
-When Onyx detects an unhealthy running sandbox and needs to terminate/recover it,
+When Orbyte detects an unhealthy running sandbox and needs to terminate/recover it,
 the lifecycle code attempts a best-effort opencode history snapshot before
 termination.
 
@@ -311,7 +311,7 @@ Opencode history is different:
 - opencode stores all sessions in one sandbox-level data store
 - a per-session archive cannot safely represent the shared data store
 - multiple BuildSessions can share the same opencode history store
-- deleting one session can leave orphaned opencode rows because Onyx does not
+- deleting one session can leave orphaned opencode rows because Orbyte does not
   edit opencode's internal store on BuildSession deletion
 - reset must delete the shared archive, not merge or preserve per-session stores
 
@@ -347,7 +347,7 @@ policy.
 
 ## Known Follow-Up
 
-If a restored sandbox does not contain the saved opencode ID, Onyx now mints a
+If a restored sandbox does not contain the saved opencode ID, Orbyte now mints a
 new opencode session and persists it. That avoids blocking the user, but the
 new opencode session does not yet contain prior chat history.
 
@@ -358,11 +358,11 @@ should continue to restore the DB when possible and stay storage-focused.
 
 ## Files Worth Reading
 
-- `backend/onyx/server/features/build/sandbox/image/sandbox_daemon/opencode_history.py`
-- `backend/onyx/server/features/build/sandbox/image/sandbox_daemon/server.py`
-- `backend/onyx/server/features/build/sandbox/snapshot_manager.py`
-- `backend/onyx/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
-- `backend/onyx/server/features/build/sandbox/opencode/serve_client.py`
-- `backend/onyx/server/features/build/sandbox/serve_transport.py`
-- `backend/onyx/server/features/build/session/streaming.py`
-- `backend/onyx/server/features/build/session/manager.py`
+- `backend/orbyte/server/features/build/sandbox/image/sandbox_daemon/opencode_history.py`
+- `backend/orbyte/server/features/build/sandbox/image/sandbox_daemon/server.py`
+- `backend/orbyte/server/features/build/sandbox/snapshot_manager.py`
+- `backend/orbyte/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
+- `backend/orbyte/server/features/build/sandbox/opencode/serve_client.py`
+- `backend/orbyte/server/features/build/sandbox/serve_transport.py`
+- `backend/orbyte/server/features/build/session/streaming.py`
+- `backend/orbyte/server/features/build/session/manager.py`

@@ -1,13 +1,13 @@
 {
   "__inputs": [],
-  "title": "Onyx Chat Load Test — Correlation",
-  "uid": "onyx-chat-loadtest-correlation",
+  "title": "Orbyte Chat Load Test — Correlation",
+  "uid": "orbyte-chat-loadtest-correlation",
   "annotations": { "list": [] },
-  "description": "Overlays Locust chat-path milestone latency / failure rate (from the loadtest Prometheus exporter) with server-side resource usage, so load and saturation can be read on one timeline. Templated: pick a Prometheus datasource and set $namespace / $workload to the Onyx deployment under test.",
+  "description": "Overlays Locust chat-path milestone latency / failure rate (from the loadtest Prometheus exporter) with server-side resource usage, so load and saturation can be read on one timeline. Templated: pick a Prometheus datasource and set $namespace / $workload to the Orbyte deployment under test.",
   "editable": true,
   "graphTooltip": 1,
   "schemaVersion": 39,
-  "tags": ["onyx", "loadtest", "locust"],
+  "tags": ["orbyte", "loadtest", "locust"],
   "templating": {
     "list": [
       {
@@ -22,16 +22,16 @@
         "name": "namespace",
         "label": "Namespace",
         "type": "textbox",
-        "query": "onyx",
-        "current": { "text": "onyx", "value": "onyx" },
+        "query": "orbyte",
+        "current": { "text": "orbyte", "value": "orbyte" },
         "hide": 0
       },
       {
         "name": "workload",
         "label": "Server workload (pod prefix)",
         "type": "textbox",
-        "query": "onyx-api-server",
-        "current": { "text": "onyx-api-server", "value": "onyx-api-server" },
+        "query": "orbyte-api-server",
+        "current": { "text": "orbyte-api-server", "value": "orbyte-api-server" },
         "hide": 0
       },
       {

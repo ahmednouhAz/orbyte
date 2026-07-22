@@ -9,9 +9,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/docker"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/postgres"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/docker"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/paths"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/postgres"
 )
 
 // DBDumpOptions holds options for the db dump command.
@@ -31,10 +31,10 @@ func NewDBDumpCommand() *cobra.Command {
 		Long: `Create a database snapshot using pg_dump.
 
 The snapshot is saved to the specified output file, or to the default
-snapshots directory (~/.local/share/onyx-dev/snapshots/) if no file is specified.
+snapshots directory (~/.local/share/orbyte-dev/snapshots/) if no file is specified.
 
 Examples:
-  ods db dump                           # Creates onyx_<timestamp>.dump in snapshots dir
+  ods db dump                           # Creates orbyte_<timestamp>.dump in snapshots dir
   ods db dump mybackup.dump             # Creates mybackup.dump in snapshots dir
   ods db dump /path/to/backup.sql       # Creates backup.sql at specified path
   ods db dump --format sql              # Creates SQL format instead of custom format`,
@@ -81,7 +81,7 @@ func runDBDump(opts *DBDumpOptions) {
 	}
 
 	// Create a temporary file in the container.
-	containerTmpFile := "/tmp/onyx_dump_tmp"
+	containerTmpFile := "/tmp/orbyte_dump_tmp"
 	args = append(args, "-f", containerTmpFile)
 
 	// Run pg_dump in container.
@@ -117,7 +117,7 @@ func determineOutputPath(output string, format string) string {
 	if output == "" {
 		// Generate default filename with timestamp.
 		timestamp := time.Now().Format("20060102_150405")
-		filename := fmt.Sprintf("onyx_%s%s", timestamp, ext)
+		filename := fmt.Sprintf("orbyte_%s%s", timestamp, ext)
 		return filepath.Join(paths.SnapshotsDir(), filename)
 	}
 

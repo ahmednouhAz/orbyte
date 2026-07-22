@@ -104,7 +104,7 @@ or resolved.
 
 ### Recognition pipeline (request → action_id)
 
-Shared, provider-agnostic infrastructure (lives under `backend/onyx/external_apps/`;
+Shared, provider-agnostic infrastructure (lives under `backend/orbyte/external_apps/`;
 a prototype informing these shapes was built in scratch as `request_action_parser.py`):
 
 1. **Normalize** the request to secret-scrubbed facts:
@@ -140,7 +140,7 @@ a prototype informing these shapes was built in scratch as `request_action_parse
 
 ### Where it plugs in (code that exists today)
 
-The [providers refactor](../../../../backend/onyx/external_apps/providers/base.py)
+The [providers refactor](../../../../backend/orbyte/external_apps/providers/base.py)
 already established the contract: every provider declares a `spec: ProviderSpec`
 (`ExternalAppProvider`), and the OAuth subset adds the flow
 (`OAuthExternalAppProvider` / `OAuthProviderSpec`). The catalog + matcher attach
@@ -161,7 +161,7 @@ per-provider FE work.
 | `id` | surrogate PK |
 | `external_app_id` | FK → `external_app(id)` ON DELETE CASCADE |
 | `action_id` | `text` — hierarchical `service.resource.verb` (built-in: a catalog id; reserved for custom per-endpoint ids later) |
-| `policy` | `text NOT NULL CHECK (policy IN ('ALWAYS','ASK','DENY'))` — Onyx convention: string + CHECK, not a PG enum |
+| `policy` | `text NOT NULL CHECK (policy IN ('ALWAYS','ASK','DENY'))` — Orbyte convention: string + CHECK, not a PG enum |
 | `name` | `text NULL` — NULL for built-in (display comes from the code catalog at read time); set for custom |
 | `description` | `text NULL` — same |
 | `match` | `jsonb NULL` — reserved: NULL in v0 (built-in matchers live in code; custom is blanket-only). Populated when per-endpoint custom rules land. |
@@ -266,7 +266,7 @@ matchers alone is insufficient.
    `extract_actions(normalized_request) -> list[Action]` on `ExternalAppProvider`
    (base default returns the generic fallback).
 2. **Shared recognition infra (code).** Normalizer + GraphQL parser + generic
-   fallback/risk helpers under `backend/onyx/external_apps/` (port the prototype;
+   fallback/risk helpers under `backend/orbyte/external_apps/` (port the prototype;
    prefer `graphql-core`'s parser over the brace-walker for production).
 3. **Per-provider catalogs + matchers.** ~6–12 `EndpointSpec`s each in the three
    provider files, with `MatchRule`s and recommended `default_state`s.

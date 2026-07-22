@@ -10,7 +10,7 @@ func NewDeployCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "deploy",
 		Short: "Trigger ad-hoc deployments",
-		Long:  "Trigger ad-hoc deployments to Onyx-managed environments.",
+		Long:  "Trigger ad-hoc deployments to Orbyte-managed environments.",
 	}
 
 	cmd.AddCommand(NewDeployEdgeCommand())

@@ -11,7 +11,7 @@
       }
     },
     {
-      "name": "Run All Onyx Services",
+      "name": "Run All Orbyte Services",
       "configurations": [
         "Web Server",
         "Model Server",
@@ -43,7 +43,7 @@
       }
     },
     {
-      "name": "Run All Onyx Services (k8s)",
+      "name": "Run All Orbyte Services (k8s)",
       "configurations": [
         "Web Server",
         "API Server (k8s)",
@@ -167,7 +167,7 @@
         "model_server.main:app",
         "--reload",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/skills/builtin",
+        "${workspaceFolder}/backend/orbyte/skills/builtin",
         "--port",
         "9000"
       ],
@@ -190,12 +190,12 @@
         "PYTHONUNBUFFERED": "1"
       },
       "args": [
-        "onyx.main:app",
+        "orbyte.main:app",
         "--reload",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/skills/builtin",
+        "${workspaceFolder}/backend/orbyte/skills/builtin",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/server/features/build/sandbox/image",
+        "${workspaceFolder}/backend/orbyte/server/features/build/sandbox/image",
         "--port",
         "8080"
       ],
@@ -220,12 +220,12 @@
         "SANDBOX_BACKEND": "kubernetes"
       },
       "args": [
-        "onyx.main:app",
+        "orbyte.main:app",
         "--reload",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/skills/builtin",
+        "${workspaceFolder}/backend/orbyte/skills/builtin",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/server/features/build/sandbox/image",
+        "${workspaceFolder}/backend/orbyte/server/features/build/sandbox/image",
         "--port",
         "8080"
       ],
@@ -240,7 +240,7 @@
       "consoleName": "Slack Bot",
       "type": "debugpy",
       "request": "launch",
-      "program": "onyx/onyxbot/slack/listener.py",
+      "program": "orbyte/orbytebot/slack/listener.py",
       "cwd": "${workspaceFolder}/backend",
       "envFile": "${workspaceFolder}/.vscode/.env",
       "env": {
@@ -258,7 +258,7 @@
       "consoleName": "Discord Bot",
       "type": "debugpy",
       "request": "launch",
-      "program": "onyx/onyxbot/discord/client.py",
+      "program": "orbyte/orbytebot/discord/client.py",
       "cwd": "${workspaceFolder}/backend",
       "envFile": "${workspaceFolder}/.vscode/.env",
       "env": {
@@ -287,10 +287,10 @@
         "PYTHONUNBUFFERED": "1"
       },
       "args": [
-        "onyx.mcp_server.api:mcp_app",
+        "orbyte.mcp_server.api:mcp_app",
         "--reload",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/skills/builtin",
+        "${workspaceFolder}/backend/orbyte/skills/builtin",
         "--port",
         "8090",
         "--timeout-graceful-shutdown",
@@ -317,7 +317,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.primary",
+        "orbyte.background.celery.versioned_apps.primary",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -349,7 +349,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.light",
+        "orbyte.background.celery.versioned_apps.light",
         "worker",
         "--pool=threads",
         "--concurrency=64",
@@ -381,7 +381,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.heavy",
+        "orbyte.background.celery.versioned_apps.heavy",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -414,7 +414,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.monitoring",
+        "orbyte.background.celery.versioned_apps.monitoring",
         "worker",
         "--pool=threads",
         "--concurrency=1",
@@ -446,7 +446,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.user_file_processing",
+        "orbyte.background.celery.versioned_apps.user_file_processing",
         "worker",
         "--pool=threads",
         "--concurrency=2",
@@ -479,7 +479,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.scheduled_tasks",
+        "orbyte.background.celery.versioned_apps.scheduled_tasks",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -512,7 +512,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.docfetching",
+        "orbyte.background.celery.versioned_apps.docfetching",
         "worker",
         "--pool=threads",
         "--prefetch-multiplier=1",
@@ -545,7 +545,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.docprocessing",
+        "orbyte.background.celery.versioned_apps.docprocessing",
         "worker",
         "--pool=threads",
         "--prefetch-multiplier=1",
@@ -577,7 +577,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.beat",
+        "orbyte.background.celery.versioned_apps.beat",
         "beat",
         "--loglevel=INFO"
       ],
@@ -604,7 +604,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.primary",
+        "orbyte.background.celery.versioned_apps.primary",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -637,7 +637,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.light",
+        "orbyte.background.celery.versioned_apps.light",
         "worker",
         "--pool=threads",
         "--concurrency=64",
@@ -670,7 +670,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.heavy",
+        "orbyte.background.celery.versioned_apps.heavy",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -704,7 +704,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.monitoring",
+        "orbyte.background.celery.versioned_apps.monitoring",
         "worker",
         "--pool=threads",
         "--concurrency=1",
@@ -737,7 +737,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.user_file_processing",
+        "orbyte.background.celery.versioned_apps.user_file_processing",
         "worker",
         "--pool=threads",
         "--concurrency=2",
@@ -771,7 +771,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.scheduled_tasks",
+        "orbyte.background.celery.versioned_apps.scheduled_tasks",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -805,7 +805,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.docfetching",
+        "orbyte.background.celery.versioned_apps.docfetching",
         "worker",
         "--pool=threads",
         "--prefetch-multiplier=1",
@@ -839,7 +839,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.docprocessing",
+        "orbyte.background.celery.versioned_apps.docprocessing",
         "worker",
         "--pool=threads",
         "--prefetch-multiplier=1",
@@ -872,7 +872,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.beat",
+        "orbyte.background.celery.versioned_apps.beat",
         "beat",
         "--loglevel=INFO"
       ],
@@ -945,7 +945,7 @@
       "name": "Eval CLI",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/backend/onyx/evals/eval_cli.py",
+      "program": "${workspaceFolder}/backend/orbyte/evals/eval_cli.py",
       "cwd": "${workspaceFolder}/backend",
       "console": "integratedTerminal",
       "justMyCode": false,
@@ -996,7 +996,7 @@
       "name": "Build Sandbox Templates",
       "type": "debugpy",
       "request": "launch",
-      "module": "onyx.server.features.build.sandbox.build_templates",
+      "module": "orbyte.server.features.build.sandbox.build_templates",
       "cwd": "${workspaceFolder}/backend",
       "envFile": "${workspaceFolder}/.vscode/.env",
       "env": {
@@ -1123,10 +1123,10 @@
       }
     },
     {
-      "name": "Onyx OpenAPI Schema Generator",
+      "name": "Orbyte OpenAPI Schema Generator",
       "type": "debugpy",
       "request": "launch",
-      "program": "backend/scripts/onyx_openapi_schema.py",
+      "program": "backend/scripts/orbyte_openapi_schema.py",
       "cwd": "${workspaceFolder}",
       "envFile": "${workspaceFolder}/.env",
       "env": {
@@ -1140,10 +1140,10 @@
       ]
     },
     {
-      "name": "Onyx DB Manager (Top Chunks)",
+      "name": "Orbyte DB Manager (Top Chunks)",
       "type": "debugpy",
       "request": "launch",
-      "program": "scripts/debugging/onyx_db.py",
+      "program": "scripts/debugging/orbyte_db.py",
       "cwd": "${workspaceFolder}/backend",
       "envFile": "${workspaceFolder}/.env",
       "env": {

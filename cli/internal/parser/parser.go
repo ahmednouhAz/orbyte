@@ -1,4 +1,4 @@
-// Package parser handles NDJSON stream parsing for Onyx chat responses.
+// Package parser handles NDJSON stream parsing for Orbyte chat responses.
 package parser
 
 import (
@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/models"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )

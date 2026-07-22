@@ -18,7 +18,7 @@ func TestNormalizeProjectName(t *testing.T) {
 		input string
 		want  string
 	}{
-		{"onyx", "onyx"},
+		{"orbyte", "orbyte"},
 		{"feature-x", "feature-x"},
 		{"My.Feature", "myfeature"},
 		{"UPPER_CASE", "upper_case"},

@@ -71,7 +71,7 @@ func TestEnsureDirForCopy(t *testing.T) {
 
 	t.Run("removes regular file", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		filePath := filepath.Join(tmpDir, "onyx-cli")
+		filePath := filepath.Join(tmpDir, "orbyte-cli")
 		if err := os.WriteFile(filePath, []byte("x"), 0o644); err != nil {
 			t.Fatalf("write file failed: %v", err)
 		}
@@ -87,7 +87,7 @@ func TestEnsureDirForCopy(t *testing.T) {
 
 	t.Run("keeps existing directory", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		dirPath := filepath.Join(tmpDir, "onyx-cli")
+		dirPath := filepath.Join(tmpDir, "orbyte-cli")
 		if err := os.MkdirAll(dirPath, 0o755); err != nil {
 			t.Fatalf("mkdir failed: %v", err)
 		}

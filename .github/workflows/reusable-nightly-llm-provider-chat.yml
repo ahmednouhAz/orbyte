@@ -233,7 +233,7 @@ jobs:
             AZURE_API_KEY, test/azure-api-key
             OLLAMA_API_KEY, test/ollama-api-key
             OPENROUTER_API_KEY, test/openrouter-api-key
-            ONYX_DEV_LICENSE, test/onyx-dev-license
+            ORBYTE_DEV_LICENSE, test/orbyte-dev-license
 
       - name: Run nightly provider chat test
         uses: ./.github/actions/run-nightly-provider-chat-test
@@ -294,7 +294,7 @@ jobs:
           {
             echo "### 🔁 Reproduce \`${PROVIDER}\` failure locally"
             echo ""
-            echo "From the Onyx dev container (all services running), supply your own credentials and run:"
+            echo "From the Orbyte dev container (all services running), supply your own credentials and run:"
             echo ""
             echo '```bash'
             echo "${CMD}"

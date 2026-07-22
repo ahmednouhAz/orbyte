@@ -1,4 +1,4 @@
-# Onyx Developer Script
+# Orbyte Developer Script
 
 [![Deploy Status](https://github.com/onyx-dot-app/onyx/actions/workflows/release-devtools.yml/badge.svg)](https://github.com/onyx-dot-app/onyx/actions/workflows/release-devtools.yml)
 [![PyPI](https://img.shields.io/pypi/v/onyx-devtools.svg)](https://pypi.org/project/onyx-devtools/)
@@ -12,7 +12,7 @@ A stable version of `ods` is provided in the default [python venv](https://githu
 which is synced automatically if you have [pre-commit](https://github.com/onyx-dot-app/onyx/blob/main/CONTRIBUTING.md#formatting-and-linting)
 hooks installed.
 
-While inside the Onyx repository, activate the root project's venv,
+While inside the Orbyte repository, activate the root project's venv,
 
 ```shell
 source .venv/bin/activate
@@ -68,7 +68,7 @@ _Note: bash completion requires the [bash-completion](https://github.com/scop/ba
 
 ### `compose` - Launch Docker Containers
 
-Launch Onyx docker containers using docker compose.
+Launch Orbyte docker containers using docker compose.
 
 ```shell
 ods compose [profile]
@@ -116,7 +116,7 @@ ods compose --tag edge
 
 ### `logs` - View Docker Container Logs
 
-View logs from running Onyx docker containers. Service names are available as
+View logs from running Orbyte docker containers. Service names are available as
 arguments to filter output, with tab-completion support.
 
 ```shell
@@ -151,7 +151,7 @@ ods logs --follow=false
 
 ### `pull` - Pull Docker Images
 
-Pull the latest images for Onyx docker containers.
+Pull the latest images for Orbyte docker containers.
 
 ```shell
 ods pull
@@ -188,7 +188,7 @@ ods backend <subcommand>
 
 **Subcommands:**
 
-- `api` - Start the FastAPI backend server (`uvicorn onyx.main:app --reload`)
+- `api` - Start the FastAPI backend server (`uvicorn orbyte.main:app --reload`)
 - `model_server` - Start the model server (`uvicorn model_server.main:app --reload`)
 
 **Flags:**
@@ -246,7 +246,7 @@ ods web test --watch
 
 ### `dev` - Devcontainer Management
 
-Manage the Onyx devcontainer. Also available as `ods dc`.
+Manage the Orbyte devcontainer. Also available as `ods dc`.
 
 Requires the [devcontainer CLI](https://github.com/devcontainers/cli) (`bun install -g @devcontainers/cli`).
 
@@ -333,7 +333,7 @@ external binary required) and open GitHub Dependabot security alerts for known
 vulnerabilities. With no selector flags, all sources are audited.
 
 Accepted advisories are suppressed via an allowlist fetched from S3 at runtime
-(`s3://onyx-internal-tools/audit/ignores.json` by default), so a release can be
+(`s3://orbyte-internal-tools/audit/ignores.json` by default), so a release can be
 unblocked without a code change. The command exits non-zero when an unignored
 finding at or above `--fail-on` (default `critical`) remains, which is how it
 gates deploys.
@@ -472,12 +472,12 @@ When set, the following defaults are applied:
 
 | Flag | Default |
 |------|---------|
-| `--baseline` | `s3://onyx-playwright-artifacts/baselines/<project>/<rev>/` |
+| `--baseline` | `s3://orbyte-playwright-artifacts/baselines/<project>/<rev>/` |
 | `--current` | `web/output/screenshots/` |
 | `--output` | `web/output/screenshot-diff/<project>/index.html` |
 | `--rev` | `main` |
 
-The S3 bucket defaults to `onyx-playwright-artifacts` and can be overridden with the
+The S3 bucket defaults to `orbyte-playwright-artifacts` and can be overridden with the
 `PLAYWRIGHT_S3_BUCKET` environment variable.
 
 **`compare` Flags:**
@@ -626,7 +626,7 @@ while `go install .` will output to your [GOPATH](https://go.dev/wiki/SettingGOP
 ```
 
 _Typically, `GOPATH` is added to your shell's `PATH`, but this may be confused easily during development
-with the pip version of `ods` installed in the Onyx venv._
+with the pip version of `ods` installed in the Orbyte venv._
 
 To build the wheel,
 

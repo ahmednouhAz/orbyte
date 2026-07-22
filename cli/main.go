@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/onyx-dot-app/onyx/cli/cmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
+	"github.com/orbyte-dot-app/orbyte/cli/cmd"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/exitcodes"
 )
 
 var (

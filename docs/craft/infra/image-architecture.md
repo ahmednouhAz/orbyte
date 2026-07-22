@@ -1,7 +1,7 @@
 # Craft image & deployment architecture
 
-**Craft uses the standard Onyx application images.** There are no `craft-*`
-app/backend images or tags. The regular Onyx images run Craft; you turn it on
+**Craft uses the standard Orbyte application images.** There are no `craft-*`
+app/backend images or tags. The regular Orbyte images run Craft; you turn it on
 with `ENABLE_CRAFT=true`. The sandbox is a separate runtime image and uses the
 same tag as the application release by default.
 
@@ -13,7 +13,7 @@ The api_server is just an HTTP client to `opencode-serve` (it never executes
 `docker` and `kubernetes`, both of which run the agent in the sandbox.
 
 So the backend needs nothing craft-specific baked in. `ENABLE_CRAFT` is read
-at runtime (`onyx/server/features/build/configs.py`) to toggle the feature.
+at runtime (`orbyte/server/features/build/configs.py`) to toggle the feature.
 
 ## The images
 
@@ -31,7 +31,7 @@ tag as the application image. For an application tag `X`,
 `onyxdotapp/sandbox:X` must exist before Craft deploys that app tag.
 
 The sandbox jobs in `.github/workflows/deployment.yml` key image content by the
-build context at `backend/onyx/server/features/build/sandbox/image/` and
+build context at `backend/orbyte/server/features/build/sandbox/image/` and
 publish a content tag (`ctx-<hash>`). If a later application release does not
 change the sandbox context, CI only adds new aliases to the existing manifest
 instead of rebuilding it.

@@ -4,7 +4,7 @@
 
 When a Craft sandbox goes idle, the cleanup task snapshots each session's
 workspace (`outputs/`, `attachments/`, `.opencode-data/`) into a `tar.gz` and
-persists it through the Onyx FileStore, then terminates the pod. On wake, the
+persists it through the Orbyte FileStore, then terminates the pod. On wake, the
 latest snapshot is restored. Snapshots are internal sleep/wake plumbing — they
 are not a user-facing version history.
 

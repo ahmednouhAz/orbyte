@@ -7,13 +7,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
-	"github.com/onyx-dot-app/onyx/cli/internal/testutil"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/models"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/testutil"
 )
 
 // TestListAgents_Timeout verifies that the wrapTimeoutError helper correctly
-// wraps network timeouts as OnyxAPIError{408}. Integration tests cover the
+// wraps network timeouts as OrbyteAPIError{408}. Integration tests cover the
 // happy path and HTTP error cases against a real server.
 func TestListAgents_Timeout(t *testing.T) {
 	url := testutil.DeadServerURL()
@@ -61,9 +61,9 @@ func TestSearch_401(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for 401")
 	}
-	var apiErr *api.OnyxAPIError
+	var apiErr *api.OrbyteAPIError
 	if !errors.As(err, &apiErr) {
-		t.Fatalf("want *OnyxAPIError, got %T: %v", err, err)
+		t.Fatalf("want *OrbyteAPIError, got %T: %v", err, err)
 	}
 	if apiErr.StatusCode != 401 {
 		t.Errorf("status = %d, want 401", apiErr.StatusCode)

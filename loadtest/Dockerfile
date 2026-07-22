@@ -1,5 +1,5 @@
 # Locust harness image for running the chat load tests in-cluster.
-# Build from the loadtest/ directory:  docker build -t onyx-loadtest .
+# Build from the loadtest/ directory:  docker build -t orbyte-loadtest .
 # Master/worker mode and run flags are supplied by the deployment (see k8s/).
 ARG BASE_IMAGE_REGISTRY=docker.io
 # Keep the tag in sync with the locust pin in uv.lock.
@@ -14,7 +14,7 @@ COPY locustfile.py /loadtest/locustfile.py
 COPY shapes.py /loadtest/shapes.py
 COPY prometheus_exporter.py /loadtest/prometheus_exporter.py
 COPY prometheus_collector.py /loadtest/prometheus_collector.py
-COPY onyx_client /loadtest/onyx_client
+COPY orbyte_client /loadtest/orbyte_client
 COPY scenarios /loadtest/scenarios
 
 # 8089 web UI, 5557 worker comms, 9646 Prometheus /metrics (master only).

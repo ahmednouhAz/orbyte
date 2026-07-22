@@ -146,13 +146,13 @@ func runbook(res *Result) string {
 	if f.Ecosystem != "" {
 		add += fmt.Sprintf(" --ecosystem %q", f.Ecosystem)
 	}
-	add += ` --reason "<why this is not exploitable in Onyx>"`
+	add += ` --reason "<why this is not exploitable in Orbyte>"`
 
 	var b strings.Builder
 	fmt.Fprintf(&b, "\nAction required: %d finding(s) at or above the fail-on threshold are blocking this audit.\n", len(res.Blocking))
 	b.WriteString("  - Resolve (preferred): upgrade or remove the affected package. Look up each\n")
 	b.WriteString("    advisory by its ID at https://osv.dev to find the fixed version.\n")
-	b.WriteString("  - Accept: if you've reviewed an advisory and it isn't exploitable in Onyx,\n")
+	b.WriteString("  - Accept: if you've reviewed an advisory and it isn't exploitable in Orbyte,\n")
 	b.WriteString("    suppress it in the shared allowlist (a --reason is required; add\n")
 	b.WriteString("    --expires YYYY-MM-DD to time-box it), then re-run the audit:\n\n")
 	fmt.Fprintf(&b, "      %s\n\n", add)

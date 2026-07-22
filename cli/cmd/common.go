@@ -3,21 +3,21 @@ package cmd
 import (
 	"errors"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/config"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/exitcodes"
 )
 
-func requireConfig() (config.OnyxCliConfig, error) {
+func requireConfig() (config.OrbyteCliConfig, error) {
 	cfg := config.Load()
 	if !cfg.IsConfigured() {
 		return cfg, exitcodes.New(exitcodes.NotConfigured,
-			"onyx CLI is not configured\n  Set ONYX_PAT (and optionally ONYX_SERVER_URL), or run: onyx-cli chat to complete first-time setup")
+			"orbyte CLI is not configured\n  Set ORBYTE_PAT (and optionally ORBYTE_SERVER_URL), or run: orbyte-cli chat to complete first-time setup")
 	}
 	return cfg, nil
 }
 
-func requireClient() (config.OnyxCliConfig, *api.Client, error) {
+func requireClient() (config.OrbyteCliConfig, *api.Client, error) {
 	cfg, err := requireConfig()
 	if err != nil {
 		return cfg, nil, err
@@ -30,7 +30,7 @@ func apiErrorToExit(err error, action string) error {
 	if errors.As(err, &authErr) {
 		return exitcodes.Newf(exitcodes.AuthFailure, "%s: %v", action, err)
 	}
-	var apiErr *api.OnyxAPIError
+	var apiErr *api.OrbyteAPIError
 	if errors.As(err, &apiErr) {
 		return exitcodes.Newf(exitcodes.ForHTTPStatus(apiErr.StatusCode), "%s: %s", action, apiErr.Error())
 	}

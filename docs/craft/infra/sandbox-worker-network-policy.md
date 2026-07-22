@@ -10,7 +10,7 @@ opencode-history and per-session workspace snapshots are created by the
 (port 8731)** to produce the archive. That task runs on whichever worker consumes
 the **`sandbox` Celery queue** — currently `celery-worker-heavy`.
 
-Sandbox pods are guarded by the `onyx-sandbox-push` NetworkPolicy
+Sandbox pods are guarded by the `orbyte-sandbox-push` NetworkPolicy
 (`templates/network-policy-sandbox-push.yaml`), which allow-lists who may reach the
 sidecar (`:8731`), opencode serve (`:4096`), and the per-session Next.js dev
 servers. A NetworkPolicy only takes effect on clusters whose CNI enforces
@@ -42,7 +42,7 @@ ingress:
 
 Network access alone isn't enough: snapshot POSTs are **signed**
 (`SidecarClient._signed_headers` → `get_push_key_pair`), so the worker also needs
-`ONYX_SANDBOX_PUSH_PRIVATE_KEY`. With the default `sandboxPushSecret.allPods=false`
+`ORBYTE_SANDBOX_PUSH_PRIVATE_KEY`. With the default `sandboxPushSecret.allPods=false`
 that key is emitted only through the purpose-specific auth helper, so
 `celery-worker-heavy` must opt into `auth.sandboxPushSecret` explicitly (as
 `api-server` and `celery-worker-scheduled-tasks` do). Otherwise
@@ -64,19 +64,19 @@ connector load. A cleaner setup is a dedicated worker (e.g. `celery-worker-sandb
 that:
 
 - consumes only the `sandbox` queue (isolated from connector/indexing load),
-- is the one granted in `onyx-sandbox-push` (replacing `celery-worker-heavy`),
+- is the one granted in `orbyte-sandbox-push` (replacing `celery-worker-heavy`),
 - carries the sandbox RBAC, and
 - is sized / HPA'd for bursty snapshot I/O (tar+gzip of webapp source + attachments;
   `node_modules`/`.next` are excluded, so it's MB-scale, not GB).
 
 That keeps `celery-worker-scheduled-tasks` lean for timely cron dispatch and keeps
 Craft snapshotting off the contended connector worker. When it lands, point the
-`onyx-sandbox-push` allow-list at the new worker instead of heavy.
+`orbyte-sandbox-push` allow-list at the new worker instead of heavy.
 
 ## NetworkPolicy enforcement is a cluster/CNI concern
 
 Whether NetworkPolicies are enforced at all is a property of the cluster's CNI,
-configured at the infrastructure layer — not something the Onyx app chart can
+configured at the infrastructure layer — not something the Orbyte app chart can
 toggle. The chart's job is to keep the allow-list correct so the policy behaves the
 same whether or not enforcement is on. Enforcement should be consistent across
 environments so connectivity gaps surface everywhere, not only on enforcing
@@ -94,5 +94,5 @@ clusters.
    session's `opencode_session_id` absent from its sandbox snapshot.
 2. **Contention** — heavy also runs the connector queues above; a large connector
    job can saturate it and starve/slow the `sandbox` sweep. Watch
-   `onyx_celery_task_duration_seconds` / queue wait for the `sandbox` queue and the
+   `orbyte_celery_task_duration_seconds` / queue wait for the `sandbox` queue and the
    heavy worker's active-task mix.

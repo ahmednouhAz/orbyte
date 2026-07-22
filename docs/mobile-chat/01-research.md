@@ -4,7 +4,7 @@
 
 ## Requirement
 
-Port the Onyx **web chat experience** to the Onyx **mobile app** (React Native 0.85 + Expo SDK 56 + NativeWind). Scope: core chat (send → stream → markdown → sessions/history), **agent selection** (select-an-agent-to-chat-with only, no creation/editing), **projects** (select + chat-within + project file management; no project CRUD), and **input-bar file attachment** (documents + photo library; no camera). Pure-TS logic is shared via `@onyx-ai/shared`. Delivered as **independently-mergeable phases**, merged one-by-one. Product is **not in production** — no backwards-compat concerns.
+Port the Orbyte **web chat experience** to the Orbyte **mobile app** (React Native 0.85 + Expo SDK 56 + NativeWind). Scope: core chat (send → stream → markdown → sessions/history), **agent selection** (select-an-agent-to-chat-with only, no creation/editing), **projects** (select + chat-within + project file management; no project CRUD), and **input-bar file attachment** (documents + photo library; no camera). Pure-TS logic is shared via `@orbyte-ai/shared`. Delivered as **independently-mergeable phases**, merged one-by-one. Product is **not in production** — no backwards-compat concerns.
 
 ## Clarifications (locked at GATE 1 intake)
 
@@ -14,7 +14,7 @@ Port the Onyx **web chat experience** to the Onyx **mobile app** (React Native 0
 | 2 | Projects scope | **Select + chat-within + project file management** (add/remove files). Project create/rename/delete **deferred**. |
 | 3 | Attachment sources | **Documents** (expo-document-picker) **+ photo library** (expo-image-picker). Camera **deferred**. |
 | — | Agents | Select-to-chat only. No creation/editing. |
-| — | Shared-extraction policy (standing) | `@onyx-ai/shared` grows **incrementally, extract-on-proven-reuse** — not a big upfront task. Cross-platform contracts go in neutral paths (`/contracts`, `/types`); `/native` is RN-only. |
+| — | Shared-extraction policy (standing) | `@orbyte-ai/shared` grows **incrementally, extract-on-proven-reuse** — not a big upfront task. Cross-platform contracts go in neutral paths (`/contracts`, `/types`); `/native` is RN-only. |
 
 ## Current status & reuse (codebase scan — exact paths)
 
@@ -29,14 +29,14 @@ Port the Onyx **web chat experience** to the Onyx **mobile app** (React Native 0
 - **Agents**: `GET /api/persona` → `MinimalAgent[]` (`id,name,description,tools[],starter_messages,icon_name,uploaded_image_id,builtin_persona,is_public,is_featured,display_priority`). Selection is **implicit** — session carries `persona_id`; `sendMessage` has **no** agent param. Types `web/src/lib/agents/types.ts`. Default persona id=0.
 - **Projects**: `GET /api/user/projects` → `Project[] {id,name,instructions,chat_sessions[]}`; `ChatSession.project_id`. Files many-to-many. Upload `POST /api/user/projects/file/upload` (multipart, field `files`, `project_id?`, `temp_id_map?`) → `{user_files: ProjectFile[], rejected_files[]}`. `ProjectFile {id,file_id,name,status,chat_file_type,token_count,…}`; `UserFileStatus` enum. Link/unlink `POST`/`DELETE /api/user/projects/{pid}/files/{fid}`. Service `web/src/app/app/projects/projectsService.ts`; state `web/src/providers/ProjectsContext.tsx` (optimistic temp_id, **3s status polling**).
 - **Attachments**: `FileDescriptor {id, type:ChatFileType, name?, user_file_id?}`; `ChatFileType` enum (`image/document/plain_text/tabular/user_knowledge`). Pure helper `projectFilesToFileDescriptors()` `web/src/app/app/services/fileUtils.ts`. Sent message carries `file_descriptors[]`. **Send is gated** until uploaded files are indexed (`token_count != null`). Image preview via `GET /api/chat/file/{file_id}`.
-- Backend: `backend/onyx/server/query_and_chat/chat_backend.py` (+ `models.py`, `streaming_models.py`), `…/features/projects/api.py`, `…/features/persona/api.py`.
+- Backend: `backend/orbyte/server/query_and_chat/chat_backend.py` (+ `models.py`, `streaming_models.py`), `…/features/projects/api.py`, `…/features/persona/api.py`.
 
 **Mobile foundation already in place (reuse these):**
 - Navigation: `mobile/src/app/_layout.tsx` (`PersistQueryClientProvider` + `SidebarProvider` + `AuthGate` + expo-router `Stack`). Route group `(auth)` at `mobile/src/app/(auth)`. A new authed chat route group slots alongside.
 - HTTP: `mobile/src/api/client.ts` `apiFetch<T>` — injects Bearer token, normalizes errors to `ApiError`, base URL lazy from `session.serverUrl` (`mobile/src/api/config.ts`). Query keys `mobile/src/api/query-keys.ts` (keyed by `serverUrl`).
 - Server state: TanStack Query persisted to MMKV, PII excluded via `dehydrateOptions` (`mobile/src/query/client.ts`). Auth/session: `mobile/src/api/auth/sessionManager.ts`, `mobile/src/api/auth/tokenStore.ts` (bearer store — `getToken`/`setToken`, secure-store backed), `mobile/src/hooks/useCurrentUser.ts`, `mobile/src/state/session.ts` (zustand).
 - UI primitives: `mobile/src/components/ui` (`text/button/text-input/icon/separator`). Sidebar `mobile/src/components/sidebar`. Icons `mobile/src/icons`. `zustand`, `@shopify/flash-list@2.0.2`, `react-native-reanimated@4`, `react-native-worklets`, `expo-dev-client` all present.
-- Shared pkg `@onyx-ai/shared` at `web/lib/shared/src` — currently thin (`types/dto.ts`, `types/enums.ts`, `contracts/`, `utils/`). Subpath exports `./types ./contracts ./utils`. Consumed by mobile via `file:` dep; **dist must be rebuilt** when shared changes.
+- Shared pkg `@orbyte-ai/shared` at `web/lib/shared/src` — currently thin (`types/dto.ts`, `types/enums.ts`, `contracts/`, `utils/`). Subpath exports `./types ./contracts ./utils`. Consumed by mobile via `file:` dep; **dist must be rebuilt** when shared changes.
 
 ## Industry best practices (web research, 2025–2026)
 
@@ -48,7 +48,7 @@ Port the Onyx **web chat experience** to the Onyx **mobile app** (React Native 0
 
 ## Approaches
 
-> All three share the **same vertical-slice phase roadmap** (foundation → shared parser/contracts → core chat → sessions/history → agents → projects → project files → input attachments → deferred rich-chat). They diverge **only on the shared-extraction boundary** — how much of the web chat's pure-TS heart moves into `@onyx-ai/shared` vs is reimplemented/copied on mobile, and whether web is refactored to consume it.
+> All three share the **same vertical-slice phase roadmap** (foundation → shared parser/contracts → core chat → sessions/history → agents → projects → project files → input attachments → deferred rich-chat). They diverge **only on the shared-extraction boundary** — how much of the web chat's pure-TS heart moves into `@orbyte-ai/shared` vs is reimplemented/copied on mobile, and whether web is refactored to consume it.
 
 ### Approach A — Simplicity-First: "Thin-Contracts, Fat-Mobile"
 Share **only** what is provably identical *today*: the packet **type contracts** (trimmed `streamingModels.ts`) and the pure **NDJSON line parser** (the buffer/split core of `handleSSEStream`, minus the reader). DTO types (FileDescriptor/enums, MinimalAgent, Project/ProjectFile) move to shared incrementally as each phase needs them. Mobile **copies** the ~4 message-tree functions it actually uses (web's `messageTree.ts` carries multi-model/agentic cruft) and **reimplements** the packet→display reducer, handling only `MESSAGE_*`/`STOP`/`ERROR` in core. Web is touched only to import the shared packet types + parser (low-risk, covered by web tests).
@@ -56,7 +56,7 @@ Share **only** what is provably identical *today*: the packet **type contracts**
 - **Sacrifices**: two parsers + two reducers + two tree copies → silent drift risk if the backend protocol changes; mobile may re-debug bugs web already fixed.
 
 ### Approach B — Robustness/Reuse-First: "Fat Shared Chat Engine"
-Extract the web's entire pure-TS heart into a new `@onyx-ai/shared/chat` subpath: all packet types, the NDJSON parser **behind a `ChatTransport` interface**, `messageTree.ts`, the `packetProcessor.ts` reducer, `buildSendMessageBody`, and `processRawChatHistory`. **Refactor web** to consume it (thin re-export shims keep web import paths working). Mobile implements exactly one new platform primitive — an expo/fetch `ChatTransport` — plus the RN render layer + thin store/query glue.
+Extract the web's entire pure-TS heart into a new `@orbyte-ai/shared/chat` subpath: all packet types, the NDJSON parser **behind a `ChatTransport` interface**, `messageTree.ts`, the `packetProcessor.ts` reducer, `buildSendMessageBody`, and `processRawChatHistory`. **Refactor web** to consume it (thin re-export shims keep web import paths working). Mobile implements exactly one new platform primitive — an expo/fetch `ChatTransport` — plus the RN render layer + thin store/query glue.
 - **Gains**: true single-source-of-truth — a backend packet change updates one file and both apps follow; mobile phases become nearly pure render work; engine is trivially unit-testable with a fake transport.
 - **Sacrifices**: **violates the standing extract-on-proven-reuse policy** (extracts before reuse is proven); **edits working web streaming code inside the porting PRs** (regression surface on live web); couples web + mobile to the shared dist rebuild; front-loads abstraction for deferred features.
 
@@ -80,7 +80,7 @@ Share the cross-platform **contracts** (chat/streaming/files/agents/projects typ
 
 > **Refinement (2026-06-26, PR 2 — revised to no shared chat code).** The shared boundary below is dropped **entirely** for chat: the NDJSON parser, contracts/types, `messageTree`, `processRawChatHistory`, and `projectFilesToFileDescriptors` are **all written natively in mobile**, with web keeping its own copies. We considered sharing the pure layer (and briefly just the parser), but the shared-package machinery (util + web re-point + jest mapper + dist coupling) is more moving parts than the ~200 lines of duplication it removes; pre-production the protocol is stable so drift is cheap to fix later. **Web is untouched.** See the **PR 2 Decision** in `05-pr-roadmap.md`. The bullets below record the original (wider) Approach-C intent.
 
-- **Into `@onyx-ai/shared`** — **nothing chat-related** (revised). *(Originally: NDJSON parser + contracts + `messageTree` + `processRawChatHistory` + `projectFilesToFileDescriptors`, added incrementally — all now mobile-native; web untouched.)*
+- **Into `@orbyte-ai/shared`** — **nothing chat-related** (revised). *(Originally: NDJSON parser + contracts + `messageTree` + `processRawChatHistory` + `projectFilesToFileDescriptors`, added incrementally — all now mobile-native; web untouched.)*
 - **Stays mobile-only**: expo/fetch transport, the zustand chat-session store, mobile orchestration hooks (`useChatController`/`useChatSessionController`), **the chat/streaming/file contracts + `messageTree` + `processRawChatHistory` + `fileDescriptors` (now mobile-native, `mobile/src/chat/`)**, a thin packet→display mapping (core = concatenate `MESSAGE_*`), all RN UI, expo pickers + `expo-file-system` upload.
 - **Stays web-only**: `usePacketProcessor` + transformers, `MinimalMarkdown`, the full tool/citation packet zoo, the SWR hooks. Web keeps its current copies; imports are re-pointed to shared **opportunistically per phase**, only where the file is already pure — **no big-bang web refactor**.
 - The deferred rich-chat features (citations, agentic timeline, regenerate/edit/feedback, follow-ups, image-gen) each land as their **own later phase**, adding the relevant packet types to shared + a mobile mapping extension + RN UI.

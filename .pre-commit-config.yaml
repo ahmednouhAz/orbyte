@@ -77,7 +77,7 @@ repos:
         # ty runs against. All are excluded from the full ty run via
         # [tool.ty.src] in pyproject; repeat here because pre-commit passes
         # explicit filenames, which bypass that discovery-time exclude.
-        exclude: ^(backend/onyx/(server/features/build/sandbox/image/sandbox_daemon/|skills/builtin/)|loadtest/)
+        exclude: ^(backend/orbyte/(server/features/build/sandbox/image/sandbox_daemon/|skills/builtin/)|loadtest/)
       - id: uv-run
         alias: ruff
         name: ruff
@@ -121,12 +121,8 @@ repos:
         name: Check YAML
         # --unsafe relaxes check-yaml to syntax-only, so it accepts the
         # non-standard YAML this repo uses on purpose: custom tags
-        # (CloudFormation `!Ref`, docker-compose `!reset`) and multi-document
-        # files (e.g. vendored CRDs). Helm chart templates are excluded instead —
-        # their Go templating (`{{ ... }}`) isn't parseable as YAML at all.
+        # (docker-compose `!reset`) and multi-document files.
         args: ["--unsafe"]
-        exclude: >-
-          (?x)^deployment/helm/charts/onyx/(templates|templates_disabled)/
 
   - repo: https://github.com/rhysd/actionlint
     rev: a443f344ff32813837fa49f7aa6cbc478d770e62 # frozen: v1.7.9
@@ -158,12 +154,6 @@ repos:
           - --additional-pattern
           - ^sk-[A-Za-z0-9_\-]{20,}$
 
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: d0e12caebb2ab0ee8bf98181c8bfe9702bca103d
-    hooks:
-      - id: terraform_fmt
-        files: \.tf$
-
   - repo: local
     hooks:
       # Regenerate the baseline with `env_inventory.py --write-baseline`.
@@ -176,10 +166,9 @@ repos:
         stages: [pre-commit]
         files: >-
           (?x)^(
-            backend/(onyx|ee|shared_configs|model_server)/.*\.py
+            backend/(orbyte|ee|shared_configs|model_server)/.*\.py
             |backend/scripts/env_inventory(\.py|_baseline\.txt)
             |deployment/docker_compose/env\.(template|prod\.template)
-            |deployment/helm/charts/onyx/(values\.yaml|templates/configmap\.yaml)
           )$
       - id: bun-install
         name: bun install

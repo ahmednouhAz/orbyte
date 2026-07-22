@@ -4,7 +4,7 @@
 
 import { ChatMessage } from "@/types/widget-types";
 
-const SESSION_KEY = "onyx-widget-session";
+const SESSION_KEY = "orbyte-widget-session";
 const SESSION_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 export interface StoredSession {

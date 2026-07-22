@@ -7,12 +7,12 @@ from __future__ import annotations
 
 import os
 
-from onyx_client.chat_user import OnyxChatUser
+from orbyte_client.chat_user import OrbyteChatUser
 
 
-class MultiToolUser(OnyxChatUser):
+class MultiToolUser(OrbyteChatUser):
     abstract = False
     weight = 8
 
     scenario_prefix: str = "multitool"
-    mock_model: str | None = os.environ.get("ONYX_MULTITOOL_MODEL", "mock-tools3")
+    mock_model: str | None = os.environ.get("ORBYTE_MULTITOOL_MODEL", "mock-tools3")

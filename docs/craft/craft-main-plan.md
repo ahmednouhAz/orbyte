@@ -2,19 +2,19 @@
 
 ## Objective
 
-Craft is Onyx's "AI coworker" surface: an agent that knows company context and finishes work end-to-end inside an isolated sandbox. The pieces already exist — a separate `/craft/v1` UI, `/api/build` routes, OpenCode-based sandbox execution, artifact persistence, file uploads, built-in sandbox skills, and Kubernetes sandbox isolation. V1's job is to integrate those pieces into a coherent, enterprise-approvable product without rebuilding the runtime.
+Craft is Orbyte's "AI coworker" surface: an agent that knows company context and finishes work end-to-end inside an isolated sandbox. The pieces already exist — a separate `/craft/v1` UI, `/api/build` routes, OpenCode-based sandbox execution, artifact persistence, file uploads, built-in sandbox skills, and Kubernetes sandbox isolation. V1's job is to integrate those pieces into a coherent, enterprise-approvable product without rebuilding the runtime.
 
-The bar for V1: a user (or scheduled trigger) can give Craft a prompt, the agent uses Onyx-grade permissioned retrieval to read company knowledge, can call external systems through an Onyx-controlled boundary that injects secrets and gates writes behind approvals, and produces durable artifacts with a clear audit trail.
+The bar for V1: a user (or scheduled trigger) can give Craft a prompt, the agent uses Orbyte-grade permissioned retrieval to read company knowledge, can call external systems through an Orbyte-controlled boundary that injects secrets and gates writes behind approvals, and produces durable artifacts with a clear audit trail.
 
 ## Enhancements
 
 V1 covers nine product-level enhancements:
 
-1. **Onyx hybrid search inside the sandbox** — replaces the old `files/` corpus sync with a first-party search tool that mirrors the regular Onyx search experience, scoped to the running user's permissions.
+1. **Orbyte hybrid search inside the sandbox** — replaces the old `files/` corpus sync with a first-party search tool that mirrors the regular Orbyte search experience, scoped to the running user's permissions.
 2. **Real sandbox isolation** — adds a docker-compose backend for self-hosted, alongside the existing Kubernetes path for cloud. The current `local` filesystem mode stays as a dev backend only.
 3. **First-class skills** — DB-backed, versioned, shareable skill bundles (built-in + custom) that admins can manage and users can pin to sessions or triggers.
-4. **Egress interception layer for secrets and external access** — sandbox HTTP/S egress is forced through an Onyx-managed proxy that injects credentials server-side for allowlisted upstream services. Sandbox never sees raw tokens.
-5. **OAuth for external apps** — admins define "Apps" the agent can ask the user to authenticate with; per-user access tokens are stored in the proxy layer and injected on the user's behalf when the agent calls those APIs. Mirrors the existing Onyx OAuth-for-actions (custom tools) flow.
+4. **Egress interception layer for secrets and external access** — sandbox HTTP/S egress is forced through an Orbyte-managed proxy that injects credentials server-side for allowlisted upstream services. Sandbox never sees raw tokens.
+5. **OAuth for external apps** — admins define "Apps" the agent can ask the user to authenticate with; per-user access tokens are stored in the proxy layer and injected on the user's behalf when the agent calls those APIs. Mirrors the existing Orbyte OAuth-for-actions (custom tools) flow.
 6. **Approvals** — first-class workflow for gating risky agent actions (external writes, deliveries, destructive ops). Enforcement lives in backend/proxy paths; review and notifications live in the Craft app.
 7. **Scheduled triggers** — saved prompts that run on a schedule with durable run records, artifact delivery, timeouts, and approval-aware pause/resume.
 8. **Shared admin UI** — admin UI for Craft enablement, skills, intercepted services/secrets, OAuth apps, approval policies, and trigger oversight.
@@ -24,7 +24,7 @@ V1 covers nine product-level enhancements:
 
 Intentionally deferred for V1 and why:
 
-- **Connector file sync into the sandbox** — Onyx search gives us permissioned retrieval without shipping the corpus into the sandbox.
+- **Connector file sync into the sandbox** — Orbyte search gives us permissioned retrieval without shipping the corpus into the sandbox.
 - **One-click integration installers in Craft UI** — admins should configure intercepted services explicitly; magic installers add risk without product validation.
 - **Dedicated Craft config for LLMs/connectors/data sources** — the main admin panel stays the source of truth. Craft only surfaces availability/status.
 - **Demo dataset / demo-data mode** — V1 starts from real user/org context.
@@ -40,9 +40,9 @@ Intentionally deferred for V1 and why:
 
 Nine projects, scoped to be worked on largely independently. Some entanglement (OAuth and approvals both touch interception; triggers depend on approvals) is expected but called out below.
 
-### 1. Onyx Search Tool for Craft
+### 1. Orbyte Search Tool for Craft
 
-Expose Onyx hybrid search to OpenCode as a first-party HTTP tool that exactly mirrors the regular Onyx app search tool. Sandbox calls `onyx_search` with a session-scoped token; backend resolves token → user/tenant/session, runs the existing Onyx hybrid search path as that user, returns compact results with citation metadata. Update `AGENTS.template.md` so the agent uses Onyx search for company knowledge and uploaded files only as explicit session input. Remove all references to the legacy `files/` company-knowledge directory.
+Expose Orbyte hybrid search to OpenCode as a first-party HTTP tool that exactly mirrors the regular Orbyte app search tool. Sandbox calls `orbyte_search` with a session-scoped token; backend resolves token → user/tenant/session, runs the existing Orbyte hybrid search path as that user, returns compact results with citation metadata. Update `AGENTS.template.md` so the agent uses Orbyte search for company knowledge and uploaded files only as explicit session input. Remove all references to the legacy `files/` company-knowledge directory.
 
 **Key decisions:** purpose-built HTTP tool (not MCP), exact behavioral parity with the regular search tool, search runs as the session/trigger owner.
 
@@ -58,7 +58,7 @@ Detail doc: [`docker/docker-compose-overview.md`](docker/docker-compose-overview
 
 ### 3. Skills System
 
-DB-backed skills with versioned bundles stored in the existing file store and materialized into `.opencode/skills` at sandbox setup. Admins can enable/disable built-ins, upload custom bundles, and grant org-wide or per-group. Users pin skills to sessions or triggers. Built-ins for V1: presentation/deck, document/report, dashboard/web app, image generation (if provider configured), Onyx search/research skill. Skill shape stays compatible with Codex/OpenCode skills so the future "skills library" is mostly distribution + trust metadata, not a new runtime.
+DB-backed skills with versioned bundles stored in the existing file store and materialized into `.opencode/skills` at sandbox setup. Admins can enable/disable built-ins, upload custom bundles, and grant org-wide or per-group. Users pin skills to sessions or triggers. Built-ins for V1: presentation/deck, document/report, dashboard/web app, image generation (if provider configured), Orbyte search/research skill. Skill shape stays compatible with Codex/OpenCode skills so the future "skills library" is mostly distribution + trust metadata, not a new runtime.
 
 **Key decisions:** built-ins are seeded into the DB so built-in and custom skills share one admin/selection path; no in-browser skill editing in V1; no second plugin ecosystem.
 
@@ -66,7 +66,7 @@ Detail doc: [`features/skills/README.md`](features/skills/README.md).
 
 ### 4. Egress Interception & Secrets
 
-The interception proxy is the only component that can read decrypted secrets and the first enforcement point for outbound writes. Sandbox egress is routed via `HTTP_PROXY`/`HTTPS_PROXY` to the Onyx proxy; the Onyx CA cert is trusted in the sandbox image; direct external egress is blocked. Skills call normal upstream URLs (e.g. `https://api.linear.app/graphql`); proxy resolves session → grants → policy, classifies the request (read/write/delivery/destructive/unknown), injects credentials server-side for allowlisted requests, and forwards. Non-secret internet access defaults to pass-through.
+The interception proxy is the only component that can read decrypted secrets and the first enforcement point for outbound writes. Sandbox egress is routed via `HTTP_PROXY`/`HTTPS_PROXY` to the Orbyte proxy; the Orbyte CA cert is trusted in the sandbox image; direct external egress is blocked. Skills call normal upstream URLs (e.g. `https://api.linear.app/graphql`); proxy resolves session → grants → policy, classifies the request (read/write/delivery/destructive/unknown), injects credentials server-side for allowlisted requests, and forwards. Non-secret internet access defaults to pass-through.
 
 Models: `CraftSecret`, `CraftInterceptedService`, `CraftInterceptedServiceGrant`, `CraftEgressPolicy`.
 
@@ -76,11 +76,11 @@ Detail doc: [`features/egress-proxy-and-approvals/README.md`](features/egress-pr
 
 ### 5. OAuth for External Apps
 
-Admins can register "Apps" (e.g. Linear, HubSpot, Google Calendar, custom OAuth-capable APIs) that the Craft agent can prompt the user to authenticate with. The OAuth flow runs in the Craft UI — never inside the sandbox. The retrieved access/refresh tokens are stored encrypted in the proxy/credential layer, scoped per-user and per-app. When the agent calls a registered App's API, the egress proxy resolves session → user → App grant and injects the user's access token server-side, refreshing it as needed. Should mirror the existing Onyx OAuth-for-actions (custom tools) flow for admin configuration shape (client id/secret, auth/token URLs, scopes, redirect URI) and for the user-consent UX.
+Admins can register "Apps" (e.g. Linear, HubSpot, Google Calendar, custom OAuth-capable APIs) that the Craft agent can prompt the user to authenticate with. The OAuth flow runs in the Craft UI — never inside the sandbox. The retrieved access/refresh tokens are stored encrypted in the proxy/credential layer, scoped per-user and per-app. When the agent calls a registered App's API, the egress proxy resolves session → user → App grant and injects the user's access token server-side, refreshing it as needed. Should mirror the existing Orbyte OAuth-for-actions (custom tools) flow for admin configuration shape (client id/secret, auth/token URLs, scopes, redirect URI) and for the user-consent UX.
 
 Per-app definition includes upstream base URL(s), allowed methods/path prefixes, scopes, and approval policy — same shape as a `CraftInterceptedService`, but with per-user OAuth credentials instead of an org-wide secret. Admin can grant Apps org-wide or per-group; the user must still complete the OAuth handshake before the agent can act on their behalf. If a user-bound token is missing or expired and unrefreshable, the agent's call returns a structured "needs auth" response that the Craft UI surfaces as a connect-app prompt.
 
-**Key decisions:** OAuth handshake happens in the main Craft UI, not the sandbox; tokens are stored in the proxy/credential layer and never reach the sandbox; per-user scoping (vs. the org-wide secrets in project 4); reuse the existing Onyx custom-tool OAuth implementation patterns wherever possible rather than building a parallel system; refresh handled by the proxy on demand.
+**Key decisions:** OAuth handshake happens in the main Craft UI, not the sandbox; tokens are stored in the proxy/credential layer and never reach the sandbox; per-user scoping (vs. the org-wide secrets in project 4); reuse the existing Orbyte custom-tool OAuth implementation patterns wherever possible rather than building a parallel system; refresh handled by the proxy on demand.
 
 Detail doc: `oauth-apps.md` (to be written). Builds directly on **Egress Interception** (uses the same proxy + grant + classification path) and inherits **Approvals** for any write requests through OAuth-backed Apps.
 
@@ -115,7 +115,7 @@ Detail doc: `admin-ui.md` (to be written).
 
 ### 9. Run Audit & Observability
 
-Compact run/audit layer on top of existing session/message/artifact records (which already give us the interactive replay). For each run, persist summary metadata (user/tenant, session id, trigger id, model, selected skills/services, approval counts, sandbox id/backend/lease, run source, start/end/duration, artifact ids, summary) plus indexed event records for: Onyx search calls, intercepted upstream calls, approval requests, skill usage, admission/limit decisions, notification attempts. Optimized for admin/debug queries ("which runs used HubSpot last week?", "why did this trigger skip?", "which writes were approved?"), not conversation rendering.
+Compact run/audit layer on top of existing session/message/artifact records (which already give us the interactive replay). For each run, persist summary metadata (user/tenant, session id, trigger id, model, selected skills/services, approval counts, sandbox id/backend/lease, run source, start/end/duration, artifact ids, summary) plus indexed event records for: Orbyte search calls, intercepted upstream calls, approval requests, skill usage, admission/limit decisions, notification attempts. Optimized for admin/debug queries ("which runs used HubSpot last week?", "why did this trigger skip?", "which writes were approved?"), not conversation rendering.
 
 **Key decisions:** do not duplicate the full conversation transcript; never store raw secrets; redact prompts/tool args using existing privacy patterns; full request snapshots for approval replay are encrypted and short-lived.
 
@@ -129,23 +129,23 @@ Detail doc: `audit.md` (to be written).
 
 ## Other Important Notes
 
-- **Treat existing Craft/Build code as the foundation.** `backend/onyx/server/features/build/` already owns sessions, messages, artifacts, sandbox setup, uploads, and OpenCode streaming. `web/src/app/craft/v1/` already provides the separate UI. Don't rewrite — integrate.
-- **No backwards compatibility requirement.** Craft was alpha, so losing existing sessions, artifacts, sandboxes, or other Craft state is acceptable if it simplifies the V1 implementation. Preserve them when it's cheap to do so, but do not bend the design or add migration shims to keep old data alive. This applies to data only — don't break unrelated Onyx surfaces.
+- **Treat existing Craft/Build code as the foundation.** `backend/orbyte/server/features/build/` already owns sessions, messages, artifacts, sandbox setup, uploads, and OpenCode streaming. `web/src/app/craft/v1/` already provides the separate UI. Don't rewrite — integrate.
+- **No backwards compatibility requirement.** Craft was alpha, so losing existing sessions, artifacts, sandboxes, or other Craft state is acceptable if it simplifies the V1 implementation. Preserve them when it's cheap to do so, but do not bend the design or add migration shims to keep old data alive. This applies to data only — don't break unrelated Orbyte surfaces.
 - **Keep the product name "Craft" but do not rename backend `build/` modules** in V1. The existing names are implementation details; a broad rename adds migration risk without product value.
-- **The sandbox should never receive:** the full Onyx document corpus, raw admin secrets, long-lived user auth tokens, or approval-bypass tokens. It receives only a session-scoped Craft token, session uploads/library files, materialized skill bundles, OpenCode config, and proxy/trust configuration.
-- **Approval enforcement must live in Onyx-controlled paths** (proxy + backend orchestration). Agent prompts and OpenCode tool permissions are guidance, not the approval boundary.
+- **The sandbox should never receive:** the full Orbyte document corpus, raw admin secrets, long-lived user auth tokens, or approval-bypass tokens. It receives only a session-scoped Craft token, session uploads/library files, materialized skill bundles, OpenCode config, and proxy/trust configuration.
+- **Approval enforcement must live in Orbyte-controlled paths** (proxy + backend orchestration). Agent prompts and OpenCode tool permissions are guidance, not the approval boundary.
 - **Repo conventions to follow throughout:**
-  - Raise `OnyxError` (not `HTTPException`); typed FastAPI returns (no `response_model=`).
-  - All DB ops under `backend/onyx/db` or `backend/ee/onyx/db`.
+  - Raise `OrbyteError` (not `HTTPException`); typed FastAPI returns (no `response_model=`).
+  - All DB ops under `backend/orbyte/db` or `backend/ee/orbyte/db`.
   - All Celery tasks use `@shared_task` and every enqueue includes `expires=`. Existing direct sandbox file-sync enqueues should be removed or given expirations as part of search/sandbox work.
   - Implement timeout logic in task bodies — Celery's time limits don't work with thread pools.
   - Restart Celery workers after task changes (no auto-reload).
 - **Remove the legacy `files/` corpus directory and demo-data path** as part of search/control-plane work. Any sandbox instructions or code paths still referencing them are stale.
 - **Settled cross-project decisions:**
   1. Docker sandbox backend uses direct Docker control, not a separate runner service.
-  2. Onyx search is exposed to OpenCode as a purpose-built HTTP tool that mirrors the regular Onyx search tool exactly.
+  2. Orbyte search is exposed to OpenCode as a purpose-built HTTP tool that mirrors the regular Orbyte search tool exactly.
   3. Every scheduled run creates a brand-new Craft session.
   4. Slack DM delivery is available only through a skill, not a custom Craft integration.
   5. Built-in skills are seeded into the DB so built-in and custom share one admin/selection path.
   6. Non-secret internet access defaults to pass-through.
-  7. Approval enforcement lives in Onyx-controlled backend/proxy paths; review/notifications live in the Craft app.
+  7. Approval enforcement lives in Orbyte-controlled backend/proxy paths; review/notifications live in the Craft app.

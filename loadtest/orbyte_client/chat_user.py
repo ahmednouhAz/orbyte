@@ -1,4 +1,4 @@
-"""Locust user that drives the Onyx chat streaming endpoint.
+"""Locust user that drives the Orbyte chat streaming endpoint.
 
 Each turn POSTs /api/chat/send-chat-message with stream=True and consumes the
 NDJSON response line by line, firing a named pseudo-request the moment each
@@ -27,9 +27,9 @@ from locust import constant
 from locust import HttpUser
 from locust import task
 
-from onyx_client.env import env_float
-from onyx_client.env import env_int
-from onyx_client.stream_parser import ChatStreamAnalyzer
+from orbyte_client.env import env_float
+from orbyte_client.env import env_int
+from orbyte_client.stream_parser import ChatStreamAnalyzer
 
 DEFAULT_MESSAGES = [
     "What are the key features of the product?",
@@ -52,21 +52,21 @@ def _sized_message(question: str, target_chars: int) -> str:
     return (question + " " + filler)[:target_chars]
 
 
-class OnyxChatUser(HttpUser):
+class OrbyteChatUser(HttpUser):
     abstract = True
 
     scenario_prefix: str = "chat"
     # Model name sent as llm_override (mock knobs ride in the name). None =
-    # persona default. Requires ONYX_LLM_PROVIDER when the target provider
+    # persona default. Requires ORBYTE_LLM_PROVIDER when the target provider
     # is not the deployment default.
     mock_model: str | None = None
     deep_research: bool = False
 
     # >1 keeps one session alive for N turns, chaining parent_message_id so
     # history grows; 1 (default) = a fresh session per turn.
-    max_session_turns: int = env_int("ONYX_SESSION_TURNS", 1)
+    max_session_turns: int = env_int("ORBYTE_SESSION_TURNS", 1)
 
-    # Per-message size in chars (ONYX_MSG_CHARS overrides). 0 = the short
+    # Per-message size in chars (ORBYTE_MSG_CHARS overrides). 0 = the short
     # default questions. Scenarios that need history to grow fast (compression)
     # raise this default; larger messages cross the summarization threshold in
     # fewer turns.
@@ -76,33 +76,33 @@ class OnyxChatUser(HttpUser):
     # (client disconnect). Recorded as <prefix>:disconnected, not a failure.
     disconnect_after_milestone: str | None = None
 
-    wait_time = constant(env_float("ONYX_WAIT_SECONDS", 15.0))
+    wait_time = constant(env_float("ORBYTE_WAIT_SECONDS", 15.0))
     # Read timeout is between chunks, not total; chat_heartbeat keepalives in
     # the stream mean a healthy turn never goes silent this long.
-    stream_read_timeout: float = env_float("ONYX_STREAM_READ_TIMEOUT", 180.0)
+    stream_read_timeout: float = env_float("ORBYTE_STREAM_READ_TIMEOUT", 180.0)
 
     def on_start(self) -> None:
-        api_key = os.environ.get("ONYX_API_KEY")
+        api_key = os.environ.get("ORBYTE_API_KEY")
         if not api_key:
-            raise RuntimeError("ONYX_API_KEY env var is required")
+            raise RuntimeError("ORBYTE_API_KEY env var is required")
         self.client.headers["Authorization"] = f"Bearer {api_key}"
 
         # When LOCUST_HOST points at an internal Service (to bypass an external
-        # ALB/WAF rate limit for high-rps runs), set ONYX_HOST_HEADER to the
+        # ALB/WAF rate limit for high-rps runs), set ORBYTE_HOST_HEADER to the
         # real domain so the in-cluster nginx routes by Host as usual.
-        host_header = os.environ.get("ONYX_HOST_HEADER")
+        host_header = os.environ.get("ORBYTE_HOST_HEADER")
         if host_header:
             self.client.headers["Host"] = host_header
 
-        provider = os.environ.get("ONYX_LLM_PROVIDER")
-        model = self.mock_model or os.environ.get("ONYX_LLM_MODEL")
+        provider = os.environ.get("ORBYTE_LLM_PROVIDER")
+        model = self.mock_model or os.environ.get("ORBYTE_LLM_MODEL")
         self.llm_override: dict[str, Any] | None = None
         if model:
             self.llm_override = {"model_version": model}
             if provider:
                 self.llm_override["model_provider"] = provider
 
-        msg_chars = env_int("ONYX_MSG_CHARS", self.default_msg_chars)
+        msg_chars = env_int("ORBYTE_MSG_CHARS", self.default_msg_chars)
         self.messages: list[str] = (
             [_sized_message(q, msg_chars) for q in DEFAULT_MESSAGES]
             if msg_chars > 0
@@ -271,7 +271,7 @@ class OnyxChatUser(HttpUser):
             )
 
 
-class BasicChatUser(OnyxChatUser):
+class BasicChatUser(OrbyteChatUser):
     """Single-turn basic chat, new session each turn.
 
     The bulk of the default weighted mix (see README "Scenario mix").

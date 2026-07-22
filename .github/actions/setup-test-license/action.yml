@@ -1,5 +1,5 @@
 name: "Setup Test License"
-description: "Pulls the dev license from AWS Secrets Manager and exposes it as the ONYX_DEV_LICENSE env var for subsequent steps."
+description: "Pulls the dev license from AWS Secrets Manager and exposes it as the ORBYTE_DEV_LICENSE env var for subsequent steps."
 inputs:
   aws-oidc-role-arn:
     description: "AWS OIDC role ARN used to authenticate to AWS Secrets Manager"
@@ -18,4 +18,4 @@ runs:
       with:
         parse-json-secrets: false
         secret-ids: |
-          ONYX_DEV_LICENSE, test/onyx-dev-license
+          ORBYTE_DEV_LICENSE, test/orbyte-dev-license

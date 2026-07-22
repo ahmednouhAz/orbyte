@@ -4,15 +4,15 @@ Port `DockerSandboxManager` from the per-message `opencode acp` exec to the long
 
 ## Issues to Address
 
-`DockerSandboxManager.send_message` (`backend/onyx/server/features/build/sandbox/docker/docker_sandbox_manager.py:1039-1103`) spawns a `DockerACPExecClient` per user message — same per-process startup cost, same session-lifetime-tied-to-one-turn, same opencode-1.15.7-drops-the-terminator bug enumerated in [`opencode-serve-migration.md`](./opencode-serve-migration.md) §Issues. The Kubernetes backend already migrated; self-hosted docker-compose deployments are stuck on the buggy path.
+`DockerSandboxManager.send_message` (`backend/orbyte/server/features/build/sandbox/docker/docker_sandbox_manager.py:1039-1103`) spawns a `DockerACPExecClient` per user message — same per-process startup cost, same session-lifetime-tied-to-one-turn, same opencode-1.15.7-drops-the-terminator bug enumerated in [`opencode-serve-migration.md`](./opencode-serve-migration.md) §Issues. The Kubernetes backend already migrated; self-hosted docker-compose deployments are stuck on the buggy path.
 
 The blockers, all docker-specific:
 
 1. **No serve client wiring on the Docker manager.** `send_message` takes `opencode_session_id` / `agent_provider` / `agent_model` kwargs but marks them `noqa: ARG002 — serve-only` and ignores them. There is no `_send_message_via_serve`, no `ensure_opencode_session` override, no `prompt_slot` impl, no event bus.
-2. **No password provisioning.** The K8s manager creates a per-pod `V1Secret` holding `OPENCODE_SERVER_PASSWORD` + `OPENCODE_CONFIG_CONTENT` (`kubernetes_sandbox_manager.py:372-429`). Docker has no equivalent — `build_container_create_kwargs` (`docker_sandbox_manager.py:347-350`) is an env allowlist of `{ONYX_PAT, ONYX_SERVER_URL}` enforced by `test_docker_manager_config.py`.
+2. **No password provisioning.** The K8s manager creates a per-pod `V1Secret` holding `OPENCODE_SERVER_PASSWORD` + `OPENCODE_CONFIG_CONTENT` (`kubernetes_sandbox_manager.py:372-429`). Docker has no equivalent — `build_container_create_kwargs` (`docker_sandbox_manager.py:347-350`) is an env allowlist of `{ORBYTE_PAT, ORBYTE_SERVER_URL}` enforced by `test_docker_manager_config.py`.
 3. **No `OPENCODE_CONFIG_CONTENT` at provision time.** The K8s path uses pod-wide `build_multi_provider_opencode_config` so per-prompt model overrides can switch providers without restarting opencode (`opencode_config.py:1-7` — opencode-serve does not hot-reload config). The Docker path writes per-session `opencode.json` files via `build_opencode_config` in `setup_session_workspace` (`docker_sandbox_manager.py:668`) and `_regenerate_session_config` (`:1005-1033`, write at `:1018-1028`), which serve cannot pick up since it loaded its provider list at startup.
-4. **The image's entrypoint already runs `opencode serve`**, but only when `AGENT_TRANSPORT=serve` (`backend/onyx/server/features/build/sandbox/image/entrypoint.sh:36` sets `TRANSPORT="${AGENT_TRANSPORT:-acp}"`, gate at `:46` (`[ "$TRANSPORT" != "serve" ]` → idle), serve branch at `:56-80`). The Docker manager today never sets `AGENT_TRANSPORT`, so the entrypoint falls through to the `tail -f /dev/null` idle branch and `opencode acp` is exec'd per message.
-5. **Network reachability.** K8s reaches opencode-serve via the per-pod `ClusterIP` Service at `service_name.namespace.svc.cluster.local:4096` (`kubernetes_sandbox_manager.py:2183-2194`). Docker would need to reach the sandbox container over the `onyx_craft_sandbox` bridge, by container name on port 4096. No host port mapping (would break isolation); api_server must be on the same bridge or have a route into it.
+4. **The image's entrypoint already runs `opencode serve`**, but only when `AGENT_TRANSPORT=serve` (`backend/orbyte/server/features/build/sandbox/image/entrypoint.sh:36` sets `TRANSPORT="${AGENT_TRANSPORT:-acp}"`, gate at `:46` (`[ "$TRANSPORT" != "serve" ]` → idle), serve branch at `:56-80`). The Docker manager today never sets `AGENT_TRANSPORT`, so the entrypoint falls through to the `tail -f /dev/null` idle branch and `opencode acp` is exec'd per message.
+5. **Network reachability.** K8s reaches opencode-serve via the per-pod `ClusterIP` Service at `service_name.namespace.svc.cluster.local:4096` (`kubernetes_sandbox_manager.py:2183-2194`). Docker would need to reach the sandbox container over the `orbyte_craft_sandbox` bridge, by container name on port 4096. No host port mapping (would break isolation); api_server must be on the same bridge or have a route into it.
 
 ## Important Notes
 
@@ -81,13 +81,13 @@ from a coherent SQLite backup rather than a raw mid-write file copy.
 
 ### Networking from api_server to sandbox container
 
-The api_server container needs to be on the `onyx_craft_sandbox` bridge network to resolve `sandbox-{id}` by name on port 4096. This is already true for the push-daemon path (`PUSH_DAEMON_PORT=8731` on the same bridge); no compose change. Verify by reading the compose file and the existing push-daemon code path before claiming "no change" in the PR description.
+The api_server container needs to be on the `orbyte_craft_sandbox` bridge network to resolve `sandbox-{id}` by name on port 4096. This is already true for the push-daemon path (`PUSH_DAEMON_PORT=8731` on the same bridge); no compose change. Verify by reading the compose file and the existing push-daemon code path before claiming "no change" in the PR description.
 
 ## Implementation Strategy
 
 ### Factor shared serve plumbing to `base.py`
 
-Today `SandboxManager` (`backend/onyx/server/features/build/sandbox/base.py`) already defines `prompt_slot`, `ensure_opencode_session`, `list_subagents`, and `subscribe_to_opencode_session` as abstract / no-op defaults. K8s overrides all four with the serve-only real implementations, each gated on `AGENT_TRANSPORT == AgentTransport.SERVE`. The other serve helpers (`_wait_for_opencode_serve_ready`, `_get_or_create_event_bus`, `_build_serve_client`, `_send_message_via_serve`, `_event_buses`/`_event_buses_lock`/`_terminated_sandboxes` state) live only on the K8s subclass.
+Today `SandboxManager` (`backend/orbyte/server/features/build/sandbox/base.py`) already defines `prompt_slot`, `ensure_opencode_session`, `list_subagents`, and `subscribe_to_opencode_session` as abstract / no-op defaults. K8s overrides all four with the serve-only real implementations, each gated on `AGENT_TRANSPORT == AgentTransport.SERVE`. The other serve helpers (`_wait_for_opencode_serve_ready`, `_get_or_create_event_bus`, `_build_serve_client`, `_send_message_via_serve`, `_event_buses`/`_event_buses_lock`/`_terminated_sandboxes` state) live only on the K8s subclass.
 
 Move these to base:
 
@@ -131,7 +131,7 @@ The `AGENT_TRANSPORT=serve` env var is transitional. It goes away in [`drop-acp-
 
 ### Documentation
 
-Update `docs/craft/opencode-serve-migration.md` §"Migration phases" to note Docker is now serve-by-default. Add a one-paragraph entry to `docs/craft/issues/opencode-serve-deploy-gotchas.md` for the docker-compose specifics: api_server needs to be on `onyx_craft_sandbox` bridge, the password lives in container env, snapshot/restore needs the abort-before-tar guard.
+Update `docs/craft/opencode-serve-migration.md` §"Migration phases" to note Docker is now serve-by-default. Add a one-paragraph entry to `docs/craft/issues/opencode-serve-deploy-gotchas.md` for the docker-compose specifics: api_server needs to be on `orbyte_craft_sandbox` bridge, the password lives in container env, snapshot/restore needs the abort-before-tar guard.
 
 ## Tests
 
@@ -139,7 +139,7 @@ Update `docs/craft/opencode-serve-migration.md` §"Migration phases" to note Doc
 - `test_docker_sandbox_serve_streaming.py` keeps the direct transport/event matrix against a Docker-provisioned sandbox container. The Craft k8s lane now covers deployed API/Celery turn handoff through `backend/tests/integration/tests/craft/k8s/test_messages_api_k8s.py` instead of directly calling `KubernetesSandboxManager.send_message`.
 - Update `backend/tests/integration/tests/craft/k8s/test_kubernetes_sandbox_file_ops.py` if any imports churn from the base.py refactor.
 
-**Unit** (`backend/tests/unit/onyx/server/features/build/sandbox/`):
+**Unit** (`backend/tests/unit/orbyte/server/features/build/sandbox/`):
 - `test_docker_manager_config.py` — extend the env-allowlist assertion to include the four new serve env vars. Assert the OLD allowlist no longer matches (catches regressions in either direction).
 - New `test_docker_provision_opencode_secret.py` — assert password generation is per-provision and that `OPENCODE_CONFIG_CONTENT` is a valid `build_opencode_config` JSON.
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"text/tabwriter"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/iostreams"
 	"github.com/spf13/cobra"
 )
 
@@ -15,13 +15,13 @@ func newAgentsCmd(ios *iostreams.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "agents",
 		Short: "List available agents (ID, name, description)",
-		Long: `List all visible agents configured on the Onyx server.
+		Long: `List all visible agents configured on the Orbyte server.
 
 By default, output is a human-readable table with ID, name, and description.
 Use --json for machine-readable output.`,
-		Example: `  onyx-cli agents
-  onyx-cli agents --json
-  onyx-cli agents --json | jq '.[].name'`,
+		Example: `  orbyte-cli agents
+  orbyte-cli agents --json
+  orbyte-cli agents --json | jq '.[].name'`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			_, client, err := requireClient()
 			if err != nil {

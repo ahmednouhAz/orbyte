@@ -1,7 +1,7 @@
 package tui
 
 import (
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/models"
 )
 
 // InitDoneMsg signals that async initialization is complete.

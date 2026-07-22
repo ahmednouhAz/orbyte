@@ -62,7 +62,7 @@ jobs:
           shopt -s nullglob
           files=(reproduce-commands/*.txt)
           if [ ${#files[@]} -gt 0 ]; then
-            DETAILS="${DETAILS}"$'\n'"Supply your own credentials, then run from the Onyx dev container:"
+            DETAILS="${DETAILS}"$'\n'"Supply your own credentials, then run from the Orbyte dev container:"
             for f in "${files[@]}"; do
               DETAILS="${DETAILS}"$'\n\n'"$(cat "$f")"
             done

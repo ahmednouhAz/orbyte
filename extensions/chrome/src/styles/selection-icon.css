@@ -1,4 +1,4 @@
-#onyx-selection-icon {
+#orbyte-selection-icon {
   position: fixed;
   z-index: 2147483647;
   width: 32px;
@@ -20,22 +20,22 @@
   pointer-events: none;
 }
 
-#onyx-selection-icon.visible {
+#orbyte-selection-icon.visible {
   opacity: 1;
   transform: scale(1);
   pointer-events: auto;
 }
 
-#onyx-selection-icon:hover {
+#orbyte-selection-icon:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transform: scale(1.1);
 }
 
-#onyx-selection-icon:active {
+#orbyte-selection-icon:active {
   transform: scale(0.95);
 }
 
-#onyx-selection-icon img {
+#orbyte-selection-icon img {
   width: 20px;
   height: 20px;
   pointer-events: none;

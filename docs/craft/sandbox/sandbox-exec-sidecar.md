@@ -60,14 +60,14 @@ retained only for in-sandbox-container process control.
 - **Honest tradeoffs of the complementary split** (chosen over sidecar-only):
   because exec remains for the dev server, two benefits are NOT realized —
   `pods/exec` stays in the sandbox-manager RBAC Role
-  (`deployment/helm/charts/onyx/templates/sandbox-rbac.yaml`; K8s can't scope
+  (`deployment/helm/charts/orbyte/templates/sandbox-rbac.yaml`; K8s can't scope
   exec by command), and the dual-`ApiClient` workaround stays (it's required as
   long as any `k8s_stream` exists). Both shrink to serving only 3 call sites. A
   later sandbox-container control endpoint could remove them entirely if desired.
 - **Wire-schema location:** request/response models go in
   `sandbox_daemon/contract.py` (the daemon imports `sandbox_daemon.contract`; the
   api-server imports the full
-  `onyx.server.features.build.sandbox.image.sandbox_daemon.contract` path). This is
+  `orbyte.server.features.build.sandbox.image.sandbox_daemon.contract` path). This is
   the existing shared-contract pattern — both ends stay in sync.
 - **Reuse the existing client plumbing** on the api-server side:
   `_signed_sidecar_headers` + `_sandbox_pod_hosts` (Service FQDN, then pod-IP

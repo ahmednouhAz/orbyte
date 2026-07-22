@@ -15,7 +15,7 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "backend/onyx/llm/well_known_providers/recommended-models.json"
+      - "backend/orbyte/llm/well_known_providers/recommended-models.json"
       - ".github/workflows/pr-recommended-models-chat-test.yml"
       - ".github/workflows/reusable-nightly-llm-provider-chat.yml"
       - ".github/actions/run-nightly-provider-chat-test/**"
@@ -46,7 +46,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          RECOMMENDED_MODELS_FILE="backend/onyx/llm/well_known_providers/recommended-models.json"
+          RECOMMENDED_MODELS_FILE="backend/orbyte/llm/well_known_providers/recommended-models.json"
 
           # default_model + additional_visible_models names, deduped, comma-joined.
           # A missing provider key yields "" → clean pytest.skip under strict=false.

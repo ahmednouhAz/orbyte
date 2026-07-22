@@ -2,13 +2,13 @@ package api
 
 import "fmt"
 
-// OnyxAPIError is returned when an Onyx API call fails.
-type OnyxAPIError struct {
+// OrbyteAPIError is returned when an Orbyte API call fails.
+type OrbyteAPIError struct {
 	StatusCode int
 	Detail     string
 }
 
-func (e *OnyxAPIError) Error() string {
+func (e *OrbyteAPIError) Error() string {
 	return fmt.Sprintf("HTTP %d: %s", e.StatusCode, e.Detail)
 }
 

@@ -2,10 +2,10 @@ package cmd
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/starprompt"
-	"github.com/onyx-dot-app/onyx/cli/internal/tui"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/config"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/starprompt"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/tui"
 	"github.com/spf13/cobra"
 )
 
@@ -15,9 +15,9 @@ func newChatCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "chat",
 		Short: "Launch the interactive chat TUI (requires terminal)",
-		Long: `Launch the interactive terminal UI for chatting with your Onyx agent.
+		Long: `Launch the interactive terminal UI for chatting with your Orbyte agent.
 On first run, an interactive setup wizard will guide you through configuration.`,
-		Example: `  onyx-cli chat`,
+		Example: `  orbyte-cli chat`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg := config.Load()
 

@@ -1,4 +1,4 @@
-module github.com/onyx-dot-app/onyx/tools/ods
+module github.com/orbyte-dot-app/orbyte/tools/ods
 
 go 1.26.4
 

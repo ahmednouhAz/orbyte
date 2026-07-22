@@ -17,8 +17,8 @@ func NewLogsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "logs [service...]",
-		Short: "View logs from Onyx docker containers",
-		Long: `View logs from running Onyx docker containers.
+		Short: "View logs from Orbyte docker containers",
+		Long: `View logs from running Orbyte docker containers.
 
 All arguments are treated as service names to filter logs.
 If no services are specified, logs from all services are shown.

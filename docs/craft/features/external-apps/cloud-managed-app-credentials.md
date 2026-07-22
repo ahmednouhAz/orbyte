@@ -1,10 +1,10 @@
 # Cloud-Managed External-App Credentials
 
-On Onyx Cloud, Onyx owns the OAuth client credentials for built-in external apps
+On Orbyte Cloud, Orbyte owns the OAuth client credentials for built-in external apps
 (Gmail, Google Calendar, Slack, Linear). Each tenant is seeded with these apps
 already configured, so a tenant admin never registers their own OAuth
 application. An admin only **enables/disables** an app and sets its **action
-policies**; users then run the normal per-user OAuth flow against Onyx's app.
+policies**; users then run the normal per-user OAuth flow against Orbyte's app.
 
 Self-hosted is unchanged: admins create built-ins and supply their own
 credentials, as before.
@@ -14,19 +14,19 @@ credentials, as before.
 - **One built-in per type per tenant.** A tenant has at most one built-in app of
   each `app_type`, enforced by the built-in skill's unique slug. (`CUSTOM` apps
   may repeat.)
-- **Seeded, disabled, on Cloud.** When a tenant is created, every Onyx-managed
-  built-in is provisioned disabled with Onyx's credentials populated.
+- **Seeded, disabled, on Cloud.** When a tenant is created, every Orbyte-managed
+  built-in is provisioned disabled with Orbyte's credentials populated.
 - **Admins toggle + set policies only.** On Cloud a tenant admin cannot create,
   edit credentials/config for, or delete a built-in app. Credentials and gateway
   config (`auth_template`, `upstream_url_patterns`) are never sent to the client.
 - **Users authenticate normally.** Once an app is enabled, each user runs the
-  existing OAuth flow and gets their own per-user token against Onyx's app.
+  existing OAuth flow and gets their own per-user token against Orbyte's app.
 
-## Onyx-managed providers
+## Orbyte-managed providers
 
-A built-in provider whose credentials Onyx owns subclasses `OnyxManagedExtApp`
-(`onyx/external_apps/providers/base.py`). This interface is the single source of
-truth for "is this app Onyx-managed":
+A built-in provider whose credentials Orbyte owns subclasses `OrbyteManagedExtApp`
+(`orbyte/external_apps/providers/base.py`). This interface is the single source of
+truth for "is this app Orbyte-managed":
 
 - It declares `managed_org_credentials`, mapping each credential field to its
   value. Keys must match the provider's `required_org_credential_fields`
@@ -34,17 +34,17 @@ truth for "is this app Onyx-managed":
 - `configured_managed_credentials()` returns those values when all are set, or
   `None` when none/only some are set (a partial set is logged and skipped).
 - A built-in that admins configure themselves simply doesn't inherit
-  `OnyxManagedExtApp`; it carries no Onyx-owned credentials and stays editable
+  `OrbyteManagedExtApp`; it carries no Orbyte-owned credentials and stays editable
   even on Cloud.
 
-`get_onyx_managed_provider(app_type)` (`registry.py`) returns the provider if it
-inherits `OnyxManagedExtApp`, else `None`; the API treats `… is not None`,
+`get_orbyte_managed_provider(app_type)` (`registry.py`) returns the provider if it
+inherits `OrbyteManagedExtApp`, else `None`; the API treats `… is not None`,
 combined with `MULTI_TENANT`, as the Cloud-only lockdown check.
 
 ## Credential configuration
 
 Operators supply credentials through per-field environment variables, defined as
-constants in `onyx/configs/app_configs.py`:
+constants in `orbyte/configs/app_configs.py`:
 
 ```
 EXT_APP_<APP_TYPE>_<FIELD>     e.g. EXT_APP_GMAIL_CLIENT_ID, EXT_APP_SLACK_CLIENT_SECRET
@@ -62,7 +62,7 @@ until then).
 ## Provisioning
 
 `provision_built_in_external_apps(db_session)`
-(`ee/onyx/server/tenants/provisioning.py`) runs from `setup_tenant`, alongside
+(`ee/orbyte/server/tenants/provisioning.py`) runs from `setup_tenant`, alongside
 `configure_default_api_keys`, when a tenant is created. It is gated by
 `AUTO_PROVISION_DEFAULT_EXTERNAL_APPS` (default `false`; set `true` on cloud).
 For each managed built-in it:
@@ -87,20 +87,20 @@ Per-app failures are rolled back and logged so one bad app can't block the rest.
 - `POST /admin/apps/custom` — `CUSTOM` apps, unaffected by the Cloud rules.
 
 `_to_admin_response` blanks `organization_credentials`, `auth_template`, and
-`upstream_url_patterns` for a managed app (and sets `is_onyx_managed=True`),
+`upstream_url_patterns` for a managed app (and sets `is_orbyte_managed=True`),
 exposing only identity, enabled state, and policies. Self-hosted built-ins still
 return masked (not blanked) credentials. After a mutation the helper flushes and
 the endpoint commits once the sandbox push succeeds, so a push failure doesn't
 leave the database ahead of the runtime.
 
-The frontend (`web/src/app/craft/v1/apps/`) reads `is_onyx_managed` to hide the
+The frontend (`web/src/app/craft/v1/apps/`) reads `is_orbyte_managed` to hide the
 credential form, the "add built-in" affordance, and the delete control for
 managed apps, leaving only the enable toggle and policy editor.
 
 ## OAuth
 
 User-facing endpoints (`GET /apps`, `POST /apps/{id}/credentials`) and the OAuth
-start/callback are unchanged. Cloud uses a single Onyx-owned OAuth client with
+start/callback are unchanged. Cloud uses a single Orbyte-owned OAuth client with
 one fixed callback (`{WEB_DOMAIN}/craft/v1/apps/oauth/callback`) shared across all
 tenants; credential injection and token refresh read the seeded
 `organization_credentials` with no change.

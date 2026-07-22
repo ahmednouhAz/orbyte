@@ -1,4 +1,4 @@
-// Package embedded holds files that are compiled into the onyx-cli binary.
+// Package embedded holds files that are compiled into the orbyte-cli binary.
 package embedded
 
 import _ "embed"

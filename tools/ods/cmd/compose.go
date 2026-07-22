@@ -10,8 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/docker"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/docker"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/paths"
 )
 
 var validProfiles = []string{"dev", "multitenant"}
@@ -32,8 +32,8 @@ func NewComposeCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "compose [profile]",
-		Short: "Launch Onyx docker containers",
-		Long: `Launch Onyx docker containers using docker compose.
+		Short: "Launch Orbyte docker containers",
+		Long: `Launch Orbyte docker containers using docker compose.
 
 By default, this runs docker compose up -d with the standard docker-compose.yml.
 Enterprise Edition features are enabled by default for development.
@@ -163,7 +163,7 @@ func execDockerCompose(args []string, extraEnv []string) {
 }
 
 // runningServiceNames returns the names of currently running services in the
-// compose project by running "docker compose -p onyx ps --services".
+// compose project by running "docker compose -p orbyte ps --services".
 // On any error it returns nil (completions will just be empty).
 func runningServiceNames() []string {
 	gitRoot, err := paths.GitRoot()

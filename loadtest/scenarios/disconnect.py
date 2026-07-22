@@ -8,13 +8,13 @@ from __future__ import annotations
 
 import os
 
-from onyx_client.chat_user import OnyxChatUser
+from orbyte_client.chat_user import OrbyteChatUser
 
 
-class DisconnectUser(OnyxChatUser):
+class DisconnectUser(OrbyteChatUser):
     abstract = False
 
     scenario_prefix: str = "disconnect"
     disconnect_after_milestone: str | None = os.environ.get(
-        "ONYX_DISCONNECT_AFTER", "first_answer_token"
+        "ORBYTE_DISCONNECT_AFTER", "first_answer_token"
     )

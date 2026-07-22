@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/browser"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/browser"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/config"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/models"
 )
 
 // handleSlashCommand dispatches slash commands and returns updated model + cmd.

@@ -6,13 +6,13 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/config"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/config"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/git"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/prompt"
 )
 
 const (
-	onyxRepo               = "onyx-dot-app/onyx"
+	orbyteRepo               = "onyx-dot-app/onyx"
 	deploymentWorkflowFile = "deployment.yml"
 	edgeTagName            = "edge"
 
@@ -49,7 +49,7 @@ All GitHub operations run through the gh CLI, so authorization is enforced
 by your gh credentials and GitHub's repo/workflow permissions.
 
 On first run, you'll be prompted for the deploy target repo and workflow
-filename, saved to the ods config file (~/.config/onyx-dev/config.json on
+filename, saved to the ods config file (~/.config/orbyte-dev/config.json on
 Linux/macOS) and reused on subsequent runs. The target repo is shared across
 all deploy subcommands; the workflow filename is per-subcommand. Pass
 --target-repo or --target-workflow to override the saved values.
@@ -95,7 +95,7 @@ func deployEdge(opts *DeployEdgeOptions) {
 
 	// Capture the most recent existing edge build run id BEFORE pushing, so we
 	// can reliably identify the new run we trigger and not pick up a stale one.
-	priorBuildRunID, err := latestWorkflowRunID(onyxRepo, deploymentWorkflowFile, "push", edgeTagName)
+	priorBuildRunID, err := latestWorkflowRunID(orbyteRepo, deploymentWorkflowFile, "push", edgeTagName)
 	if err != nil {
 		log.Fatalf("Failed to query existing deployment runs: %v", err)
 	}
@@ -125,13 +125,13 @@ func deployEdge(opts *DeployEdgeOptions) {
 
 	// Find the new build run, then poll it to completion.
 	log.Info("Waiting for build workflow to start...")
-	buildRun, err := waitForNewRun(onyxRepo, deploymentWorkflowFile, "push", edgeTagName, priorBuildRunID)
+	buildRun, err := waitForNewRun(orbyteRepo, deploymentWorkflowFile, "push", edgeTagName, priorBuildRunID)
 	if err != nil {
 		log.Fatalf("Failed to find triggered build run: %v", err)
 	}
 	log.Infof("Build run started: %s", buildRun.URL)
 
-	if err := waitForRunCompletion(onyxRepo, buildRun.DatabaseID, buildPollTimeout, "build"); err != nil {
+	if err := waitForRunCompletion(orbyteRepo, buildRun.DatabaseID, buildPollTimeout, "build"); err != nil {
 		log.Fatalf("Build did not complete successfully: %v", err)
 	}
 	log.Info("Build completed successfully.")

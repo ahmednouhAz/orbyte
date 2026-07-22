@@ -1,6 +1,6 @@
 package tui
 
-const helpText = `Onyx CLI Commands
+const helpText = `Orbyte CLI Commands
 
   /help              Show this help message
   /clear             Clear chat and start a new session
@@ -9,9 +9,9 @@ const helpText = `Onyx CLI Commands
   /sessions          Browse and resume previous sessions
   /configure         Re-run connection setup
   /connectors        Open connectors page in browser
-  /settings          Open Onyx settings in browser
+  /settings          Open Orbyte settings in browser
   /experiments       List experimental features and their status
-  /quit              Exit Onyx CLI
+  /quit              Exit Orbyte CLI
 
 Keyboard Shortcuts
 

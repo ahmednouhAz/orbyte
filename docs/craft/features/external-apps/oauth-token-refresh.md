@@ -30,11 +30,11 @@ expiry.
 ## Problem
 
 - `extract_credentials` persists `refresh_token` + `expires_in` at connect time
-  (`backend/onyx/external_apps/providers/{google_calendar,slack,linear}.py`), but
+  (`backend/orbyte/external_apps/providers/{google_calendar,slack,linear}.py`), but
   nothing ever calls the token endpoint again and no absolute expiry is stored.
 - The sole injection seam, `GateAddon._inject_credentials`
-  (`backend/onyx/sandbox_proxy/addons/gate.py`) → `resolve_injection_headers`
-  (`backend/onyx/external_apps/credentials.py`), renders whatever is stored —
+  (`backend/orbyte/sandbox_proxy/addons/gate.py`) → `resolve_injection_headers`
+  (`backend/orbyte/external_apps/credentials.py`), renders whatever is stored —
   including an expired token. It already opens a synchronous DB session here, so
   the refresh is a natural in-line addition at this one seam.
 
@@ -73,14 +73,14 @@ loop), the Redis lock is the real in-process single-flight, not redundant.
 ## Changes (file-by-file — the PR review map)
 
 ### 1. Stamp absolute `expires_at` at write time
-- **`backend/onyx/server/features/build/external_apps/oauth.py`** — after
+- **`backend/orbyte/server/features/build/external_apps/oauth.py`** — after
   `provider.extract_credentials(...)` in the callback, compute `expires_at` (UTC,
   from the response's `expires_in`) and merge it into the stored dict before
   `upsert_external_app_user_credential`. `extract_credentials` stays a pure
   response→dict mapper (no clock).
 
 ### 2. Provider refresh capability (template method)
-- **`backend/onyx/external_apps/providers/base.py`** — `OAuthExternalAppProvider`
+- **`backend/orbyte/external_apps/providers/base.py`** — `OAuthExternalAppProvider`
   owns refresh as a **template method**, so the format knowledge lives on the
   provider class (not in free functions) and a divergent provider overrides only
   the piece that differs — it never re-implements the POST + error boilerplate:
@@ -101,7 +101,7 @@ loop), the Redis lock is the real in-process single-flight, not redundant.
     refreshed regardless.
 
 ### 3. Refresh-and-persist helper (new)
-- **`backend/onyx/external_apps/token_refresh.py`** (new) — the one call the gate
+- **`backend/orbyte/external_apps/token_refresh.py`** (new) — the one call the gate
   makes; everything about keeping the token fresh lives behind it:
   ```
   ensure_fresh_credentials(db_session_factory, tenant_id, external_app_id, user_id) -> None
@@ -129,7 +129,7 @@ loop), the Redis lock is the real in-process single-flight, not redundant.
     in (not a live session); **persistence stays in `db/external_app.py`**.
 
 ### 4. Wire into the egress seam
-- **`backend/onyx/sandbox_proxy/addons/gate.py`** — `_inject_credentials` (now
+- **`backend/orbyte/sandbox_proxy/addons/gate.py`** — `_inject_credentials` (now
   `async`) refreshes off the event loop, then renders:
   ```python
   await asyncio.to_thread(

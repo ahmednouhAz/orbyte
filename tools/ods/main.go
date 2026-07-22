@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/cmd"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/cmd"
 )
 
 var (

@@ -80,9 +80,9 @@ jobs:
           filters: |
             craft_compose:
               - 'backend/Dockerfile'
-              - 'backend/onyx/sandbox_proxy/**'
-              - 'backend/onyx/server/features/build/**'
-              - 'backend/onyx/skills/**'
+              - 'backend/orbyte/sandbox_proxy/**'
+              - 'backend/orbyte/server/features/build/**'
+              - 'backend/orbyte/skills/**'
               - 'deployment/docker_compose/docker-compose.yml'
               - 'deployment/docker_compose/docker-compose.dev.yml'
               - 'deployment/docker_compose/docker-compose.craft.yml'
@@ -145,8 +145,8 @@ jobs:
       matrix:
         include:
           - image: sandbox
-            context: ./backend/onyx/server/features/build/sandbox/image
-            file: ./backend/onyx/server/features/build/sandbox/image/Dockerfile
+            context: ./backend/orbyte/server/features/build/sandbox/image
+            file: ./backend/orbyte/server/features/build/sandbox/image/Dockerfile
             # CI tests don't exercise skill runtime deps (soffice/pdftoppm/pptxgenjs),
             # so skip LibreOffice et al. to keep the CI image lean. Browser stays
             # on (ENABLE_BROWSER defaults true) — chromium is lighter than the
@@ -260,7 +260,7 @@ jobs:
         # docker-compose.craft.yml declares both as external. In prod install.sh
         # --include-craft creates them, but CI doesn't run install.sh.
         run: |
-          docker network create onyx_craft_sandbox
+          docker network create orbyte_craft_sandbox
           docker volume create sandbox_proxy_ca
 
       # CI skips install.sh, so these have to be added explicitly.
@@ -313,7 +313,7 @@ jobs:
           S3_ENDPOINT_URL: "http://127.0.0.1:9004"
           S3_AWS_ACCESS_KEY_ID: "minioadmin"
           S3_AWS_SECRET_ACCESS_KEY: "minioadmin"
-          # onyx.* reads these at import; DockerSandboxManager needs the
+          # orbyte.* reads these at import; DockerSandboxManager needs the
           # proxy/docker env. USER_AUTH_SECRET must match the stack's .env.
           ENABLE_CRAFT: "true"
           ENABLE_PAID_ENTERPRISE_EDITION_FEATURES: "true"
@@ -321,7 +321,7 @@ jobs:
           SANDBOX_BACKEND: "docker"
           SANDBOX_PROXY_HOST: "sandbox-proxy"
           SANDBOX_PROXY_PORT: "8080"
-          SANDBOX_DOCKER_NETWORK: "onyx_craft_sandbox"
+          SANDBOX_DOCKER_NETWORK: "orbyte_craft_sandbox"
           SANDBOX_DOCKER_SOCKET: "/var/run/docker.sock"
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
@@ -339,9 +339,9 @@ jobs:
         if: ${{ !success() }}
         run: |
           echo "=== docker ps -a ==="; docker ps -a || true
-          echo "=== api_server tail ==="; docker logs --tail 200 onyx-api_server-1 || true
-          echo "=== sandbox-proxy tail ==="; docker logs --tail 200 onyx-sandbox-proxy-1 || true
-          echo "=== background tail ==="; docker logs --tail 100 onyx-background-1 || true
+          echo "=== api_server tail ==="; docker logs --tail 200 orbyte-api_server-1 || true
+          echo "=== sandbox-proxy tail ==="; docker logs --tail 200 orbyte-sandbox-proxy-1 || true
+          echo "=== background tail ==="; docker logs --tail 100 orbyte-background-1 || true
           echo "=== sandbox-* tails ==="; \
             for c in $(docker ps -aq --filter "name=sandbox-" | grep -v sandbox-proxy || true); do \
               echo "--- $c ---"; docker logs --tail 200 "$c" || true; \
@@ -380,7 +380,7 @@ jobs:
           retention-days: 7
 
       # -v drops the project's named volumes; the external sandbox_proxy_ca /
-      # onyx_craft_sandbox are removed explicitly below.
+      # orbyte_craft_sandbox are removed explicitly below.
       - name: Teardown
         if: always()
         working-directory: deployment/docker_compose
@@ -391,7 +391,7 @@ jobs:
             -f docker-compose.craft.yml \
             down -v || true
           docker volume rm sandbox_proxy_ca || true
-          docker network rm onyx_craft_sandbox || true
+          docker network rm orbyte_craft_sandbox || true
 
   craft-compose-integration-required:
     # Single required status check for the craft-compose integration suite.

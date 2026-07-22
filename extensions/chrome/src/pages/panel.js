@@ -7,7 +7,7 @@ import {
   SIDE_PANEL_PATH,
 } from "../utils/constants.js";
 (function () {
-  const iframe = document.getElementById("onyx-panel-iframe");
+  const iframe = document.getElementById("orbyte-panel-iframe");
   const loadingScreen = document.getElementById("loading-screen");
 
   let currentUrl = "";
@@ -15,7 +15,7 @@ import {
   let iframeLoadTimeout;
   let authRequired = false;
 
-  // Returns the origin of the Onyx app loaded in the iframe.
+  // Returns the origin of the Orbyte app loaded in the iframe.
   // We derive the origin from iframe.src so postMessage payloads
   // (including tab URLs) are only delivered to the expected page.
   // Throws if iframe.src is not a valid URL — this is intentional:
@@ -37,7 +37,7 @@ import {
         await chrome.storage.session.remove("pendingInput");
       }
     } catch (error) {
-      console.error("[Onyx Panel] Error checking pending input:", error);
+      console.error("[Orbyte Panel] Error checking pending input:", error);
     }
     return false;
   }
@@ -50,7 +50,7 @@ import {
     // Check for pending input first (from selection icon click)
     const hasPendingInput = await checkPendingInput();
     if (!hasPendingInput) {
-      loadOnyxDomain();
+      loadOrbyteDomain();
     }
   }
 
@@ -85,7 +85,7 @@ import {
   }
 
   function handleMessage(event) {
-    // Only trust messages from the Onyx app iframe.
+    // Only trust messages from the Orbyte app iframe.
     // Check both source identity and origin so that a cross-origin page
     // navigated to inside the iframe cannot send privileged extension
     // messages (e.g. TAB_READING_ENABLED) after iframe.src changes.
@@ -97,7 +97,7 @@ import {
     } catch {
       return;
     }
-    if (event.data.type === CHROME_MESSAGE.ONYX_APP_LOADED) {
+    if (event.data.type === CHROME_MESSAGE.ORBYTE_APP_LOADED) {
       clearTimeout(iframeLoadTimeout);
       iframeLoaded = true;
       showIframe();
@@ -124,24 +124,24 @@ import {
     }, 500);
   }
 
-  async function loadOnyxDomain() {
+  async function loadOrbyteDomain() {
     const response = await chrome.runtime.sendMessage({
-      action: ACTIONS.GET_CURRENT_ONYX_DOMAIN,
+      action: ACTIONS.GET_CURRENT_ORBYTE_DOMAIN,
     });
-    if (response && response[CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN]) {
+    if (response && response[CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN]) {
       setIframeSrc(
-        response[CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN] + SIDE_PANEL_PATH,
+        response[CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN] + SIDE_PANEL_PATH,
         ""
       );
     } else {
-      console.warn("Onyx domain not found, using default");
-      const domain = await getOnyxDomain();
+      console.warn("Orbyte domain not found, using default");
+      const domain = await getOrbyteDomain();
       setIframeSrc(domain + SIDE_PANEL_PATH, "");
     }
   }
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === ACTIONS.OPEN_ONYX_WITH_INPUT) {
+    if (request.action === ACTIONS.OPEN_ORBYTE_WITH_INPUT) {
       setIframeSrc(request.url, request.pageUrl);
     } else if (request.action === ACTIONS.UPDATE_PAGE_URL) {
       sendWebsiteToIframe(request.pageUrl);

@@ -5,7 +5,7 @@ lxml
 matplotlib
 matplotlib-inline
 numpy
-onyx-cli
+orbyte-cli
 openpyxl
 pandas
 pdfplumber

@@ -2,20 +2,20 @@ package tui
 
 import "charm.land/lipgloss/v2"
 
-const onyxLogo = `   ██████╗ ███╗   ██╗██╗   ██╗██╗  ██╗
+const orbyteLogo = `   ██████╗ ███╗   ██╗██╗   ██╗██╗  ██╗
   ██╔═══██╗████╗  ██║╚██╗ ██╔╝╚██╗██╔╝
   ██║   ██║██╔██╗ ██║ ╚████╔╝  ╚███╔╝
   ██║   ██║██║╚██╗██║  ╚██╔╝   ██╔██╗
   ╚██████╔╝██║ ╚████║   ██║   ██╔╝ ██╗
    ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝`
 
-const tagline = "Your terminal interface for Onyx"
+const tagline = "Your terminal interface for Orbyte"
 const splashHint = "Type a message to begin  ·  /help for commands"
 
 // renderSplash renders the splash screen centered for the given dimensions.
 func renderSplash(width, height int) string {
 	// Render the logo as a single block (don't center individual lines)
-	logo := splashStyle.Render(onyxLogo)
+	logo := splashStyle.Render(orbyteLogo)
 
 	// Center tagline and hint relative to the logo block width
 	logoWidth := lipgloss.Width(logo)

@@ -44,7 +44,7 @@ next-env.d.ts
 /test-results
 /output/
 
-# generated clients ... in particular, the API to the Onyx backend itself!
+# generated clients ... in particular, the API to the Orbyte backend itself!
 /src/lib/generated
 .jest-cache
 

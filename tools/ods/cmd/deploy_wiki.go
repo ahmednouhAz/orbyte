@@ -6,9 +6,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/config"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/config"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/git"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/prompt"
 )
 
 const (
@@ -50,7 +50,7 @@ by your gh credentials and GitHub's repo/workflow permissions. A kickoff
 Slack message will appear in #monitor-deployments.
 
 On first run, you'll be prompted for the deploy target repo and workflow
-filename, saved to the ods config file (~/.config/onyx-dev/config.json on
+filename, saved to the ods config file (~/.config/orbyte-dev/config.json on
 Linux/macOS) and reused on subsequent runs. The target repo is shared across
 all deploy subcommands; the workflow filename is per-subcommand. Pass
 --target-repo or --target-workflow to override the saved values.

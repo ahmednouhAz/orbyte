@@ -1,10 +1,10 @@
 # Audit Logging
 
-Onyx emits a normalized, structured **audit-event stream** for security-relevant
+Orbyte emits a normalized, structured **audit-event stream** for security-relevant
 actions (authentication, admin-config changes, access-control changes,
 credential access). The stream is designed to be exported to any SIEM
 (Splunk, Microsoft Sentinel, Elastic, Google Chronicle, AWS Security Lake) with
-**no per-SIEM integration on Onyx's side** — you point your log shipper at the
+**no per-SIEM integration on Orbyte's side** — you point your log shipper at the
 container stdout / log file, filter on the audit logger names, and parse the
 JSON.
 
@@ -14,7 +14,7 @@ AU-6 review, AU-12 generation).
 
 ## How it works
 
-Audit events are plain `INFO` log records emitted on a dedicated **`onyx.audit`**
+Audit events are plain `INFO` log records emitted on a dedicated **`orbyte.audit`**
 logger tree. The **message body of each record is a single JSON object** — we
 serialize the event to JSON ourselves rather than relying on the structured log
 formatter, so the audit line is byte-identical whether the app runs in
@@ -32,11 +32,11 @@ always-emit (an audit event is never silently dropped because of infra trouble).
 
 | Logger | Contents |
 |---|---|
-| `onyx.audit` | Root of the audit tree (filter on this prefix to capture everything). |
-| `onyx.audit.authentication` | OCSF Authentication class events. |
-| `onyx.audit.account_change` | OCSF Account Change class events. |
-| `onyx.audit.api_activity` | OCSF API Activity class events. |
-| `onyx.audit.credential_access` | Credential-decrypt events (predates the generalized schema; see note below). |
+| `orbyte.audit` | Root of the audit tree (filter on this prefix to capture everything). |
+| `orbyte.audit.authentication` | OCSF Authentication class events. |
+| `orbyte.audit.account_change` | OCSF Account Change class events. |
+| `orbyte.audit.api_activity` | OCSF API Activity class events. |
+| `orbyte.audit.credential_access` | Credential-decrypt events (predates the generalized schema; see note below). |
 
 ## Event schema
 
@@ -45,7 +45,7 @@ Cybersecurity Schema Framework) so events map cleanly onto OCSF event classes.
 We emit plain JSON today; every event carries an `ocsf_class` hint so a future
 OCSF-native emitter mode is a formatting change, not a re-instrumentation.
 
-Generalized events (`emit_audit_event`, `backend/onyx/utils/audit.py`):
+Generalized events (`emit_audit_event`, `backend/orbyte/utils/audit.py`):
 
 | Field | Type | Description |
 |---|---|---|
@@ -58,7 +58,7 @@ Generalized events (`emit_audit_event`, `backend/onyx/utils/audit.py`):
 | `actor` | object \| null | `{ user_id, email, api_key_id, auth_type }`. Never contains a secret. |
 | `resource_type` | string \| null | Affected resource type (e.g. `llm_provider`, `user`, `api_key`). |
 | `resource_id` | string \| null | Affected resource identifier (row id or name), normalized to string. |
-| `request_id` | string \| null | Onyx request id, correlates with the rest of the request's logs. |
+| `request_id` | string \| null | Orbyte request id, correlates with the rest of the request's logs. |
 | `endpoint` | string \| null | Route handler that produced the event. |
 | `source_ip` | string \| null | Globally-routable client IP (from `X-Forwarded-For`). |
 | `extra` | object \| null | Additional non-secret context. **Never put secrets here.** |
@@ -66,7 +66,7 @@ Generalized events (`emit_audit_event`, `backend/onyx/utils/audit.py`):
 ### Action taxonomy
 
 The `action` values are a stable, append-only contract (consumers filter on
-them). Current taxonomy (`AuditAction` in `backend/onyx/utils/audit.py`):
+them). Current taxonomy (`AuditAction` in `backend/orbyte/utils/audit.py`):
 
 - **Authentication:** `auth.login`, `auth.login_failure`, `auth.logout`,
   `auth.register`, `auth.password_forgot`, `auth.password_reset`,
@@ -102,35 +102,35 @@ them). Current taxonomy (`AuditAction` in `backend/onyx/utils/audit.py`):
 
 ### Credential-access events (legacy shape)
 
-`onyx.audit.credential_access` predates the generalized schema and keeps its own
+`orbyte.audit.credential_access` predates the generalized schema and keeps its own
 (slightly different) field set for backward compatibility with existing
 consumers — notably `credential_type`, `provider`, `row_id`, `client_ip`,
 `user_id` at the top level (no nested `actor`). It shares the same fail-safe
 plumbing and Redis dedup as the generalized emitter. See
-`backend/onyx/utils/credential_audit.py`.
+`backend/orbyte/utils/credential_audit.py`.
 
 ## Exporting to a SIEM
 
 Because audit events are just JSON log lines on a known logger prefix, any log
 shipper works. The general pattern:
 
-1. Run Onyx with `LOG_FORMAT=json` so the surrounding log records are structured.
+1. Run Orbyte with `LOG_FORMAT=json` so the surrounding log records are structured.
 2. Ship container stdout (or the `backend/log/*.log` files) with Fluent Bit /
    Vector / the CloudWatch agent / Filebeat.
-3. Filter to audit events by `logger` prefix `onyx.audit` and parse the
+3. Filter to audit events by `logger` prefix `orbyte.audit` and parse the
    `message` field as JSON.
 
 Example **Vector** transform that isolates the audit stream:
 
 ```toml
-[transforms.onyx_audit]
+[transforms.orbyte_audit]
 type = "filter"
-inputs = ["onyx_logs"]
-condition = '''starts_with(string!(.logger), "onyx.audit")'''
+inputs = ["orbyte_logs"]
+condition = '''starts_with(string!(.logger), "orbyte.audit")'''
 
-[transforms.onyx_audit_parsed]
+[transforms.orbyte_audit_parsed]
 type = "remap"
-inputs = ["onyx_audit"]
+inputs = ["orbyte_audit"]
 source = '. = parse_json!(.message)'
 ```
 
@@ -139,8 +139,8 @@ Example **Fluent Bit** grep filter:
 ```ini
 [FILTER]
     Name    grep
-    Match   onyx.*
-    Regex   logger ^onyx\.audit
+    Match   orbyte.*
+    Regex   logger ^orbyte\.audit
 ```
 
 > Roadmap: a syslog/CEF formatter, an OCSF-native emitter mode, and an in-product

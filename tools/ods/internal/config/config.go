@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/paths"
 )
 
 // DeployConfig holds deploy settings shared by every `ods deploy` subcommand.
@@ -22,7 +22,7 @@ type DeployCommandConfig struct {
 	TargetWorkflow string `json:"target_workflow,omitempty"`
 }
 
-// Config is the top-level on-disk schema for ~/.config/onyx-dev/config.json.
+// Config is the top-level on-disk schema for ~/.config/orbyte-dev/config.json.
 // New per-command sections should be added as additional fields.
 type Config struct {
 	Deploy     DeployConfig        `json:"deploy,omitempty"`

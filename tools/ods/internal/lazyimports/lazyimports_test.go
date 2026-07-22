@@ -267,19 +267,19 @@ func TestLitellmSingletonEagerImportDetection(t *testing.T) {
 	// Test detection of eager import of litellm_singleton module.
 	testContent := `
 import os
-from onyx.llm.litellm_singleton import litellm  # Should be flagged as eager import
+from orbyte.llm.litellm_singleton import litellm  # Should be flagged as eager import
 from typing import Dict
 
 def some_function():
     # This would be OK - lazy import
-    from onyx.llm.litellm_singleton import litellm
+    from orbyte.llm.litellm_singleton import litellm
     return litellm.some_method()
 `
 
 	testPath := createTempPythonFile(t, testContent)
 	defer func() { _ = os.Remove(testPath) }()
 
-	patterns := createPatterns([]string{"onyx.llm.litellm_singleton"})
+	patterns := createPatterns([]string{"orbyte.llm.litellm_singleton"})
 	result := findEagerImports(testPath, patterns)
 
 	// Should find one violation (line 3)
@@ -287,8 +287,8 @@ def some_function():
 		t.Errorf("Expected 1 violation, got %d", len(result.ViolationLines))
 	}
 
-	if _, ok := result.ViolatedModules["onyx.llm.litellm_singleton"]; !ok {
-		t.Error("Expected onyx.llm.litellm_singleton in violated modules")
+	if _, ok := result.ViolatedModules["orbyte.llm.litellm_singleton"]; !ok {
+		t.Error("Expected orbyte.llm.litellm_singleton in violated modules")
 	}
 
 	if len(result.ViolationLines) > 0 {
@@ -307,20 +307,20 @@ from typing import Dict
 
 def get_litellm():
     # This is OK - lazy import inside function
-    from onyx.llm.litellm_singleton import litellm
+    from orbyte.llm.litellm_singleton import litellm
     return litellm
 
 class SomeClass:
     def method(self):
         # Also OK - lazy import inside method
-        from onyx.llm.litellm_singleton import litellm
+        from orbyte.llm.litellm_singleton import litellm
         return litellm.completion()
 `
 
 	testPath := createTempPythonFile(t, testContent)
 	defer func() { _ = os.Remove(testPath) }()
 
-	patterns := createPatterns([]string{"onyx.llm.litellm_singleton"})
+	patterns := createPatterns([]string{"orbyte.llm.litellm_singleton"})
 	result := findEagerImports(testPath, patterns)
 
 	// Should find no violations
@@ -676,7 +676,7 @@ func TestDefaultLazyImportModules(t *testing.T) {
 		"transformers",
 		"setfit",
 		"unstructured",
-		"onyx.llm.litellm_singleton",
+		"orbyte.llm.litellm_singleton",
 		"litellm",
 		"nltk",
 		"trafilatura",
@@ -697,9 +697,9 @@ func TestDefaultLazyImportModules(t *testing.T) {
 
 	litellmIgnores := modules["litellm"].IgnoreFiles
 	expectedLitellmIgnores := []string{
-		"onyx/llm/litellm_singleton/__init__.py",
-		"onyx/llm/litellm_singleton/config.py",
-		"onyx/llm/litellm_singleton/monkey_patches.py",
+		"orbyte/llm/litellm_singleton/__init__.py",
+		"orbyte/llm/litellm_singleton/config.py",
+		"orbyte/llm/litellm_singleton/monkey_patches.py",
 	}
 	for _, ignore := range expectedLitellmIgnores {
 		if _, ok := litellmIgnores[ignore]; !ok {
@@ -714,15 +714,15 @@ func TestIsValidPythonFile(t *testing.T) {
 		path     string
 		expected bool
 	}{
-		{"regular python file", "onyx/main.py", true},
-		{"non-python file", "onyx/main.go", false},
-		{"test file prefix", "onyx/test_main.py", false},
-		{"test file suffix", "onyx/main_test.py", false},
+		{"regular python file", "orbyte/main.py", true},
+		{"non-python file", "orbyte/main.go", false},
+		{"test file prefix", "orbyte/test_main.py", false},
+		{"test file suffix", "orbyte/main_test.py", false},
 		{"in tests directory", "tests/unit/test_main.py", false},
 		{"in venv directory", "venv/lib/module.py", false},
 		{"in .venv directory", ".venv/lib/module.py", false},
 		{"in __pycache__ directory", "__pycache__/module.cpython-39.pyc", false},
-		{"regular in subdir", "onyx/connectors/file.py", true},
+		{"regular in subdir", "orbyte/connectors/file.py", true},
 	}
 
 	for _, tt := range tests {
@@ -743,7 +743,7 @@ func TestShouldCheckFileForModule(t *testing.T) {
 	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	// Create test file
-	testFile := filepath.Join(tmpDir, "onyx", "llm", "test.py")
+	testFile := filepath.Join(tmpDir, "orbyte", "llm", "test.py")
 	if err := os.MkdirAll(filepath.Dir(testFile), 0755); err != nil {
 		t.Fatalf("Failed to create dirs: %v", err)
 	}
@@ -764,7 +764,7 @@ func TestShouldCheckFileForModule(t *testing.T) {
 	}
 
 	// Test with matching ignore file - should not check
-	settings = NewLazyImportSettings("onyx/llm/test.py")
+	settings = NewLazyImportSettings("orbyte/llm/test.py")
 	if shouldCheckFileForModule(testFile, tmpDir, settings) {
 		t.Error("Expected to NOT check file when it matches ignore file")
 	}

@@ -91,7 +91,7 @@ Craft supports two sandbox backends controlled by `SANDBOX_BACKEND`:
   - `sandbox` — Runs OpenCode agent and Next.js preview server
   - `file-sync` — Sidecar for S3 file synchronization
 
-For local development, see [docs/craft/dev/local-kubernetes.md](/docs/craft/dev/local-kubernetes.md) — one-shot setup via `make craft-up`.
+For local development against the Docker sandbox backend (what this product actually uses), see [docs/craft/dev/local-compose-craft.md](/docs/craft/dev/local-compose-craft.md). The Kubernetes-mode workflow in [docs/craft/dev/local-kubernetes.md](/docs/craft/dev/local-kubernetes.md) depends on the Helm chart, which has been removed from this repo.
 
 **Docker** (self-hosted docker-compose)
 

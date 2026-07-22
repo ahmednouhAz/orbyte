@@ -8,10 +8,10 @@ import {
   hideErrorModal,
   initErrorModal,
 } from "../utils/error-modal.js";
-import { getOnyxDomain } from "../utils/storage.js";
+import { getOrbyteDomain } from "../utils/storage.js";
 
 (function () {
-  let mainIframe = document.getElementById("onyx-iframe");
+  let mainIframe = document.getElementById("orbyte-iframe");
   let preloadedIframe = null;
   const background = document.getElementById("background");
   const content = document.getElementById("content");
@@ -28,7 +28,7 @@ import { getOnyxDomain } from "../utils/storage.js";
   async function preloadChatInterface() {
     preloadedIframe = document.createElement("iframe");
 
-    const domain = await getOnyxDomain();
+    const domain = await getOrbyteDomain();
     preloadedIframe.src = domain + "/chat";
     preloadedIframe.style.opacity = "0";
     preloadedIframe.style.visibility = "hidden";
@@ -103,36 +103,36 @@ import { getOnyxDomain } from "../utils/storage.js";
     });
   }
 
-  function checkOnyxPreference() {
+  function checkOrbytePreference() {
     chrome.storage.local.get(
       [
-        CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB,
-        CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN,
+        CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB,
+        CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN,
       ],
       (items) => {
-        let useOnyxAsDefaultNewTab =
-          items[CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB];
+        let useOrbyteAsDefaultNewTab =
+          items[CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB];
 
-        if (useOnyxAsDefaultNewTab === undefined) {
-          useOnyxAsDefaultNewTab = !!(
+        if (useOrbyteAsDefaultNewTab === undefined) {
+          useOrbyteAsDefaultNewTab = !!(
             localStorage.getItem(
-              CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB
+              CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB
             ) === "1"
           );
           chrome.storage.local.set({
-            [CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB]:
-              useOnyxAsDefaultNewTab,
+            [CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB]:
+              useOrbyteAsDefaultNewTab,
           });
         }
 
-        if (!useOnyxAsDefaultNewTab) {
+        if (!useOrbyteAsDefaultNewTab) {
           chrome.tabs.update({
             url: "chrome://new-tab-page",
           });
           return;
         }
 
-        setIframeSrc(items[CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN] + "/nrf");
+        setIframeSrc(items[CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN] + "/nrf");
       }
     );
   }
@@ -162,7 +162,7 @@ import { getOnyxDomain } from "../utils/storage.js";
         }
 
         setTheme(theme, backgroundImage);
-        checkOnyxPreference();
+        checkOrbytePreference();
       }
     );
   }
@@ -192,7 +192,7 @@ import { getOnyxDomain } from "../utils/storage.js";
         }
 
         mainIframe = preloadedIframe;
-        mainIframe.id = "onyx-iframe";
+        mainIframe.id = "orbyte-iframe";
         mainIframe.style.zIndex = "";
         iframeLoaded = true;
         clearTimeout(iframeLoadTimeout);
@@ -203,15 +203,15 @@ import { getOnyxDomain } from "../utils/storage.js";
   }
 
   chrome.storage.onChanged.addListener(function (changes, namespace) {
-    if (namespace === "local" && changes.useOnyxAsDefaultNewTab) {
-      checkOnyxPreference();
+    if (namespace === "local" && changes.useOrbyteAsDefaultNewTab) {
+      checkOrbytePreference();
     }
   });
 
   window.addEventListener("message", function (event) {
     if (event.data.type === CHROME_MESSAGE.SET_DEFAULT_NEW_TAB) {
-      chrome.storage.local.set({ useOnyxAsDefaultNewTab: event.data.value });
-    } else if (event.data.type === CHROME_MESSAGE.ONYX_APP_LOADED) {
+      chrome.storage.local.set({ useOrbyteAsDefaultNewTab: event.data.value });
+    } else if (event.data.type === CHROME_MESSAGE.ORBYTE_APP_LOADED) {
       clearTimeout(iframeLoadTimeout);
       hideErrorModal();
       fadeInContent();

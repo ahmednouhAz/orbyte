@@ -13,8 +13,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/portutil"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/paths"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/portutil"
 )
 
 // NewBackendCommand creates the parent "backend" command with subcommands for
@@ -64,7 +64,7 @@ Examples:
   ods backend api --port 9090
   ods backend api --no-ee`,
 		Run: func(cmd *cobra.Command, args []string) {
-			runBackendService("api", "onyx.main:app", port, opts)
+			runBackendService("api", "orbyte.main:app", port, opts)
 		},
 	}
 

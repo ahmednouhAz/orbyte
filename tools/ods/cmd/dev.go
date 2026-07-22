@@ -10,7 +10,7 @@ func NewDevCommand() *cobra.Command {
 		Use:     "dev",
 		Aliases: []string{"dc"},
 		Short:   "Manage the devcontainer",
-		Long: `Manage the Onyx devcontainer.
+		Long: `Manage the Orbyte devcontainer.
 
 Wraps the devcontainer CLI with workspace-aware defaults.
 

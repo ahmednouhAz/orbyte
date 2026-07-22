@@ -5,12 +5,12 @@ import (
 )
 
 // NewReleaseCommand creates the parent `ods release` command. Subcommands hang
-// off it (e.g. `ods release opal`) and cut releases of Onyx-published packages.
+// off it (e.g. `ods release opal`) and cut releases of Orbyte-published packages.
 func NewReleaseCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "release",
-		Short: "Cut releases of Onyx-published packages",
-		Long:  "Cut releases of Onyx-published packages.",
+		Short: "Cut releases of Orbyte-published packages",
+		Long:  "Cut releases of Orbyte-published packages.",
 	}
 
 	cmd.AddCommand(NewReleaseOpalCommand())

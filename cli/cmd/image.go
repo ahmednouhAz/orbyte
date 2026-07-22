@@ -10,10 +10,10 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/exitcodes"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/iostreams"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -61,8 +61,8 @@ func newImageGenerateCmd(ios *iostreams.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "generate",
 		Short: "Generate image(s) from a text prompt",
-		Example: `  onyx-cli image generate -p "a red bicycle on a beach" -o bike.png
-  onyx-cli image generate -p "app icon, flat style" --shape square -n 3 -o icon.png`,
+		Example: `  orbyte-cli image generate -p "a red bicycle on a beach" -o bike.png
+  orbyte-cli image generate -p "app icon, flat style" --shape square -n 3 -o icon.png`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runImageGeneration(cmd, ios, opts)
 		},
@@ -76,8 +76,8 @@ func newImageEditCmd(ios *iostreams.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "edit",
 		Short: "Edit or composite existing image(s) guided by a prompt",
-		Example: `  onyx-cli image edit -i photo.png -p "replace the sky with a sunset" -o out.png
-  onyx-cli image edit -i a.png -i b.png -p "combine these into one scene" -o merged.png`,
+		Example: `  orbyte-cli image edit -i photo.png -p "replace the sky with a sunset" -o out.png
+  orbyte-cli image edit -i a.png -i b.png -p "combine these into one scene" -o merged.png`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(opts.inputs) == 0 {
 				return exitcodes.New(exitcodes.BadRequest,
@@ -113,7 +113,7 @@ func buildImageRequest(opts imageOptions, references []models.ImageReferencePayl
 func runImageGeneration(cmd *cobra.Command, ios *iostreams.IOStreams, opts imageOptions) error {
 	if strings.TrimSpace(opts.prompt) == "" {
 		return exitcodes.New(exitcodes.BadRequest,
-			"no prompt provided\n  Usage: onyx-cli image generate -p \"your prompt\"")
+			"no prompt provided\n  Usage: orbyte-cli image generate -p \"your prompt\"")
 	}
 	if !validImageShapes[opts.shape] {
 		return exitcodes.Newf(exitcodes.BadRequest,
@@ -228,7 +228,7 @@ func writeGeneratedImages(images []models.GeneratedImagePayload, output string) 
 }
 
 func imageErrorToExit(err error) error {
-	var apiErr *api.OnyxAPIError
+	var apiErr *api.OrbyteAPIError
 	if errors.As(err, &apiErr) && apiErr.StatusCode == 404 {
 		return exitcodes.New(exitcodes.NotAvailable,
 			"no image generation provider is configured\n"+

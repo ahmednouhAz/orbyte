@@ -4,7 +4,7 @@ This directory contains the implementation of Orbyte's sandbox system for runnin
 
 ## Local Development
 
-Craft requires a local kind cluster — see [Local Kubernetes Development](/docs/craft/dev/local-kubernetes.md). One-shot setup: `make craft-up`.
+Craft requires a local kind cluster — see [Local Kubernetes Development](/docs/craft/dev/local-kubernetes.md). Note: that workflow depends on the Helm chart, which has been removed from this repo; it is kept for reference only.
 
 ## Overview
 

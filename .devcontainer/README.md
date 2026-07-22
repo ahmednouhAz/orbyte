@@ -1,6 +1,6 @@
-# Onyx Dev Container
+# Orbyte Dev Container
 
-A containerized development environment for working on Onyx.
+A containerized development environment for working on Orbyte.
 
 ## What's included
 
@@ -96,11 +96,11 @@ When enabled, it only allows outbound traffic to:
 - Sentry
 - VS Code update servers
 
-To enable it, set `ONYX_DEVCONTAINER_FIREWALL=1` in your host environment before
+To enable it, set `ORBYTE_DEVCONTAINER_FIREWALL=1` in your host environment before
 starting the container (e.g. via `ods dev up`):
 
 ```bash
-export ONYX_DEVCONTAINER_FIREWALL=1
+export ORBYTE_DEVCONTAINER_FIREWALL=1
 ods dev up
 ```
 

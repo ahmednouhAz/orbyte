@@ -1,7 +1,7 @@
 """Contract tests for the mock LLM server.
 
-Each test replays the exact request shapes Onyx's LLM loops send (per
-backend/onyx/chat/llm_loop.py, llm_step.py and deep_research/dr_loop.py) and
+Each test replays the exact request shapes Orbyte's LLM loops send (per
+backend/orbyte/chat/llm_loop.py, llm_step.py and deep_research/dr_loop.py) and
 asserts the mock responds the way those loops need to make progress.
 
 Run:  uv run pytest tests/ -q
@@ -172,7 +172,7 @@ def test_tool_choice_none_forces_text_even_with_tools() -> None:
 
 def test_query_rephrase_flow_echoes_user_text() -> None:
     # Query rephrase/expansion output feeds back into retrieval as the search
-    # query — detected by the prompt marker (Onyx's invoke() still streams at
+    # query — detected by the prompt marker (Orbyte's invoke() still streams at
     # the wire level, so the stream flag can't discriminate). The mock must
     # echo the question's terms, not return filler.
     question = "what is the onboarding process for new connectors?"

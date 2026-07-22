@@ -4,11 +4,11 @@ Each user uploads one file up front, then attaches it to every message. This
 exercises the chat-setup path that loads attached files from object storage
 (MinIO/S3) inside `build_chat_turn` *while the DB connection is held* — the
 suspected connection-pool-hold contributor that plain-text scenarios never
-touch (they attach no files). Set ONYX_SESSION_TURNS > 1 to also accumulate
+touch (they attach no files). Set ORBYTE_SESSION_TURNS > 1 to also accumulate
 files across a growing history (a file-heavy long chat).
 
 Tuning (env):
-    ONYX_FILE_KB   uploaded file size in KB (default 512) — bigger = longer
+    ORBYTE_FILE_KB   uploaded file size in KB (default 512) — bigger = longer
                    object-storage read held across the connection.
 
 Selected explicitly (not in the default mix):
@@ -19,19 +19,19 @@ from __future__ import annotations
 
 import uuid
 
-from onyx_client.chat_user import OnyxChatUser
-from onyx_client.env import env_int
+from orbyte_client.chat_user import OrbyteChatUser
+from orbyte_client.env import env_int
 
 
-class FileAttachmentUser(OnyxChatUser):
+class FileAttachmentUser(OrbyteChatUser):
     abstract = False
 
     scenario_prefix: str = "fileattach"
 
     def setup_files(self) -> None:
-        kb = env_int("ONYX_FILE_KB", 512)
+        kb = env_int("ORBYTE_FILE_KB", 512)
         # ~1KB repeating unit, truncated to the requested size.
-        unit = b"Onyx load-test attachment payload. Lorem ipsum dolor sit. " * 18
+        unit = b"Orbyte load-test attachment payload. Lorem ipsum dolor sit. " * 18
         blob = (unit * max(1, kb))[: kb * 1024]
         filename = f"loadtest-{uuid.uuid4().hex[:8]}.txt"
 
@@ -59,5 +59,5 @@ class FileAttachmentUser(OnyxChatUser):
                 for uf in user_files
             ]
 
-    # chat_turn (the @task) is inherited from OnyxChatUser; it now includes
+    # chat_turn (the @task) is inherited from OrbyteChatUser; it now includes
     # self.file_descriptors in the payload, so every turn attaches the file.

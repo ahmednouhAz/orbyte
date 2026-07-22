@@ -7,12 +7,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/paths"
 	"github.com/spf13/cobra"
 )
 
 const (
-	defaultSkillSource = ".claude/skills/onyx-llm-context"
+	defaultSkillSource = ".claude/skills/orbyte-llm-context"
 	claudeSkillsDir    = ".claude/skills"
 	claudeMDFile       = ".claude/CLAUDE.md"
 	llmContextCloneURL = "https://github.com/onyx-dot-app/onyx-llm-context.git"
@@ -28,15 +28,15 @@ func NewInstallSkillCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "install-skill",
-		Short: "Install onyx-llm-context skills for Claude Code",
-		Long: `Install skills from onyx-llm-context into Claude Code.
+		Short: "Install orbyte-llm-context skills for Claude Code",
+		Long: `Install skills from orbyte-llm-context into Claude Code.
 
 Enforced skills (enforced/) are added as @imports in .claude/CLAUDE.md (project-scoped, git-ignored).
 Manual skills (skills/) are symlinked into ~/.claude/skills/ and invoked via /skill-name.
 
-By default, looks for onyx-llm-context at ~/.claude/skills/onyx-llm-context.`,
+By default, looks for orbyte-llm-context at ~/.claude/skills/orbyte-llm-context.`,
 		Example: `  ods install-skill --clone
-  ods install-skill --source /path/to/onyx-llm-context
+  ods install-skill --source /path/to/orbyte-llm-context
   ods install-skill --copy`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if source == "" {
@@ -49,7 +49,7 @@ By default, looks for onyx-llm-context at ~/.claude/skills/onyx-llm-context.`,
 
 			if _, err := os.Stat(source); os.IsNotExist(err) {
 				if !cloneRepo {
-					return fmt.Errorf("onyx-llm-context not found at %s\n  Re-run with --clone to fetch it automatically", source)
+					return fmt.Errorf("orbyte-llm-context not found at %s\n  Re-run with --clone to fetch it automatically", source)
 				}
 				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Cloning %s → %s\n", llmContextCloneURL, source)
 				gitCmd := exec.Command("git", "clone", llmContextCloneURL, source)
@@ -74,9 +74,9 @@ By default, looks for onyx-llm-context at ~/.claude/skills/onyx-llm-context.`,
 		},
 	}
 
-	cmd.Flags().StringVar(&source, "source", "", "Path to onyx-llm-context (default: ~/.claude/skills/onyx-llm-context)")
+	cmd.Flags().StringVar(&source, "source", "", "Path to orbyte-llm-context (default: ~/.claude/skills/orbyte-llm-context)")
 	cmd.Flags().BoolVar(&copyMode, "copy", false, "Copy files instead of symlinking")
-	cmd.Flags().BoolVar(&cloneRepo, "clone", false, fmt.Sprintf("Clone onyx-llm-context from %s if not already present", llmContextCloneURL))
+	cmd.Flags().BoolVar(&cloneRepo, "clone", false, fmt.Sprintf("Clone orbyte-llm-context from %s if not already present", llmContextCloneURL))
 
 	return cmd
 }

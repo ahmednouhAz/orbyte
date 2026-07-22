@@ -26,8 +26,8 @@ jobs:
 
       - name: Set up Git user
         run: |
-          git config user.name "Onyx Bot [bot]"
-          git config user.email "onyx-bot[bot]@onyx.app"
+          git config user.name "Orbyte Bot [bot]"
+          git config user.email "orbyte-bot[bot]@onyx.app"
 
       - name: Check for existing nightly tag
         id: check_tag

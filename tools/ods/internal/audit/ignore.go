@@ -9,12 +9,12 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/s3"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/s3"
 )
 
 // DefaultIgnoreURL is the S3 location of the audit allowlist. It is fetched at
 // runtime so suppressions can be added/removed without a code change.
-const DefaultIgnoreURL = "s3://onyx-internal-tools/audit/ignores.json"
+const DefaultIgnoreURL = "s3://orbyte-internal-tools/audit/ignores.json"
 
 // expiresLayout is the date format for IgnoreEntry.Expires (inclusive last day).
 const expiresLayout = "2006-01-02"

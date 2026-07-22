@@ -1,4 +1,4 @@
-# Onyx Chat Widget
+# Orbyte Chat Widget
 
 An embeddable, lightweight chat widget that brings AI-powered conversations to any website. Built with [Lit](https://lit.dev/) web components for maximum compatibility and minimal bundle size.
 
@@ -26,15 +26,15 @@ Add these two lines to your website:
 
 ```html
 <!-- Load the widget -->
-<script type="module" src="https://cdn.onyx.app/widget/1.0/dist/onyx-widget.js"></script>
+<script type="module" src="https://cdn.onyx.app/widget/1.0/dist/orbyte-widget.js"></script>
 
 <!-- Configure and display -->
-<onyx-chat-widget
+<orbyte-chat-widget
   backend-url="https://cloud.onyx.app/api"
   api-key="your_api_key_here"
   mode="launcher"
 >
-</onyx-chat-widget>
+</orbyte-chat-widget>
 ```
 
 That's it! The widget will appear as a floating button in the bottom-right corner.
@@ -47,7 +47,7 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 ┌─────────────────────────────────────────┐
 │         Customer Website                │
 │  ┌───────────────────────────────────┐  │
-│  │  <onyx-chat-widget>               │  │
+│  │  <orbyte-chat-widget>               │  │
 │  │  (Web Component)                  │  │
 │  │  ┌─────────────────────────────┐  │  │
 │  │  │    Shadow DOM               │  │  │
@@ -60,7 +60,7 @@ That's it! The widget will appear as a floating button in the bottom-right corne
                │ API Calls (SSE)
                ▼
 ┌──────────────────────────────────────────┐
-│         Onyx Backend                     │
+│         Orbyte Backend                     │
 │  • POST /api/chat/create-chat-session    │
 │  • POST /api/chat/send-chat-message      │
 │  • Streams responses via SSE             │
@@ -78,7 +78,7 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 ### Component Structure
 
 ```
-<onyx-chat-widget>
+<orbyte-chat-widget>
   └─ Shadow DOM
       ├─ Launcher Button (mode="launcher" only)
       └─ Chat Container
@@ -94,7 +94,7 @@ That's it! The widget will appear as a floating button in the bottom-right corne
           └─ Input Area
               ├─ Text Input
               ├─ Send Button
-              └─ "Powered by Onyx" Footer
+              └─ "Powered by Orbyte" Footer
 ```
 
 ## Configuration Options
@@ -103,7 +103,7 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 
 | Attribute     | Type   | Description                                                          |
 | ------------- | ------ | -------------------------------------------------------------------- |
-| `backend-url` | string | Your Onyx backend API URL (or set `VITE_WIDGET_BACKEND_URL` in .env) |
+| `backend-url` | string | Your Orbyte backend API URL (or set `VITE_WIDGET_BACKEND_URL` in .env) |
 | `api-key`     | string | API key for authentication (or set `VITE_WIDGET_API_KEY` in .env)    |
 
 **Note**: For cloud deployment, these must be provided as HTML attributes. For self-hosted deployment, they can be set in `.env` file during build and will be baked into the bundle.
@@ -114,7 +114,7 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 | ------------------ | ------ | ------------- | ---------------------------------------- |
 | `agent-id`         | number | `undefined`   | Specific agent/persona to use            |
 | `agent-name`       | string | `"Assistant"` | Display name in header                   |
-| `logo`             | string | Onyx logo     | URL to custom logo image                 |
+| `logo`             | string | Orbyte logo     | URL to custom logo image                 |
 | `primary-color`    | string  | `#1c1c1c`     | Primary brand color (buttons, accents)   |
 | `background-color` | string  | `#e9e9e9`     | Widget background color                  |
 | `text-color`       | string  | `#000000bf`   | Text color (75% opacity black)           |
@@ -128,14 +128,14 @@ That's it! The widget will appear as a floating button in the bottom-right corne
 **Basic Setup:**
 
 ```html
-<onyx-chat-widget backend-url="https://cloud.onyx.app/api" api-key="on_abc123">
-</onyx-chat-widget>
+<orbyte-chat-widget backend-url="https://cloud.onyx.app/api" api-key="on_abc123">
+</orbyte-chat-widget>
 ```
 
 **Full Customization:**
 
 ```html
-<onyx-chat-widget
+<orbyte-chat-widget
   backend-url="https://cloud.onyx.app/api"
   api-key="on_abc123"
   agent-id="42"
@@ -146,19 +146,19 @@ That's it! The widget will appear as a floating button in the bottom-right corne
   text-color="#1A1A1A"
   mode="launcher"
 >
-</onyx-chat-widget>
+</orbyte-chat-widget>
 ```
 
 **Inline Mode (Embedded):**
 
 ```html
 <div style="width: 400px; height: 600px;">
-  <onyx-chat-widget
+  <orbyte-chat-widget
     backend-url="https://cloud.onyx.app/api"
     api-key="on_abc123"
     mode="inline"
   >
-  </onyx-chat-widget>
+  </orbyte-chat-widget>
 </div>
 ```
 
@@ -172,7 +172,7 @@ A floating button appears in the bottom-right corner. Clicking it opens a chat p
 - **Mobile (<768px)**: Full-screen overlay
 
 ```html
-<onyx-chat-widget mode="launcher"></onyx-chat-widget>
+<orbyte-chat-widget mode="launcher"></orbyte-chat-widget>
 ```
 
 ### Inline Mode
@@ -181,7 +181,7 @@ The widget is embedded directly in your page layout. Perfect for dedicated suppo
 
 ```html
 <div class="chat-container">
-  <onyx-chat-widget mode="inline"></onyx-chat-widget>
+  <orbyte-chat-widget mode="inline"></orbyte-chat-widget>
 </div>
 ```
 
@@ -192,7 +192,7 @@ The widget is embedded directly in your page layout. Perfect for dedicated suppo
 ### Prerequisites
 
 - [Bun](https://bun.sh) 1.3+
-- Access to Onyx backend API
+- Access to Orbyte backend API
 
 ### Setup
 
@@ -255,7 +255,7 @@ widget/
 │   ├── utils/
 │   │   └── storage.ts           # Session persistence
 │   └── assets/
-│       └── logo.ts              # Default Onyx logo (base64)
+│       └── logo.ts              # Default Orbyte logo (base64)
 ├── dist/                        # Build output
 ├── index.html
 ├── package.json
@@ -274,7 +274,7 @@ widget/
 
 ### Backend Endpoints Used
 
-The widget communicates with these Onyx backend endpoints:
+The widget communicates with these Orbyte backend endpoints:
 
 #### 1. Create Chat Session
 
@@ -332,17 +332,17 @@ Response: Server-Sent Events stream
    bun run build:self-hosted
    ```
 
-3. **Deploy `dist/onyx-widget.js` to your server**
+3. **Deploy `dist/orbyte-widget.js` to your server**
 
 4. **Customer embed:**
    ```html
-   <script type="module" src="https://your-cdn.com/onyx-widget.js"></script>
-   <onyx-chat-widget
+   <script type="module" src="https://your-cdn.com/orbyte-widget.js"></script>
+   <orbyte-chat-widget
      agent-id="1"
      agent-name="Support"
      logo="https://path-to-your-logo.com/"
    >
-   </onyx-chat-widget>
+   </orbyte-chat-widget>
    ```
 
 ## Customization
@@ -354,8 +354,8 @@ The widget uses CSS custom properties (CSS variables) for theming. All styles ar
 **Default Colors (aligned with web/src/app/css/colors.css):**
 
 ```css
---theme-primary-05: #1c1c1c; /* Buttons, accents (onyx-ink-95) */
---theme-primary-06: #000000; /* Hover state (onyx-ink-100) */
+--theme-primary-05: #1c1c1c; /* Buttons, accents (orbyte-ink-95) */
+--theme-primary-06: #000000; /* Hover state (orbyte-ink-100) */
 --background-neutral-00: #ffffff; /* Widget background (grey-00) */
 --background-neutral-03: #e6e6e6; /* Background hover (grey-10) */
 --text-04: #000000bf; /* Text (alpha-grey-100-75) */
@@ -366,12 +366,12 @@ The widget uses CSS custom properties (CSS variables) for theming. All styles ar
 **Override via attributes:**
 
 ```html
-<onyx-chat-widget
+<orbyte-chat-widget
   primary-color="#FF6B35"
   background-color="#FFFFFF"
   text-color="#1A1A1A"
 >
-</onyx-chat-widget>
+</orbyte-chat-widget>
 ```
 
 ## Browser Support

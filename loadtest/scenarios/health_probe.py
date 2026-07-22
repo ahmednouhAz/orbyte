@@ -16,12 +16,12 @@ Run (pin probes + drive saturation, then sweep api.workers / threadpoolSize):
     locust ThreadHogUser HealthProbeUser -u 50 -r 5 --host "$LOCUST_HOST"
 
 Env:
-    ONYX_HEALTH_PATH      probe path (default /health; use /api/health when
+    ORBYTE_HEALTH_PATH      probe path (default /health; use /api/health when
                           LOCUST_HOST points at the web/nginx host rather than
                           the api Service directly)
-    ONYX_HEALTH_PROBES    number of probe users to pin (default 1)
-    ONYX_HEALTH_INTERVAL  seconds between probes (default 1.0)
-    ONYX_HEALTH_SLA_MS    fail a probe slower than this (default 10000, the
+    ORBYTE_HEALTH_PROBES    number of probe users to pin (default 1)
+    ORBYTE_HEALTH_INTERVAL  seconds between probes (default 1.0)
+    ORBYTE_HEALTH_SLA_MS    fail a probe slower than this (default 10000, the
                           liveness timeoutSeconds)
 """
 
@@ -33,24 +33,24 @@ import time
 from locust import constant_pacing
 from locust import HttpUser
 from locust import task
-from onyx_client.env import env_float
-from onyx_client.env import env_int
+from orbyte_client.env import env_float
+from orbyte_client.env import env_int
 
 
 class HealthProbeUser(HttpUser):
     # Pin an exact number of probes regardless of -u so the cadence stays stable
     # as the chat load scales up.
-    fixed_count = env_int("ONYX_HEALTH_PROBES", 1)
-    wait_time = constant_pacing(env_float("ONYX_HEALTH_INTERVAL", 1.0))
+    fixed_count = env_int("ORBYTE_HEALTH_PROBES", 1)
+    wait_time = constant_pacing(env_float("ORBYTE_HEALTH_INTERVAL", 1.0))
 
     def on_start(self) -> None:
         # When LOCUST_HOST points at an internal Service (to bypass an external
-        # ALB/WAF), set ONYX_HOST_HEADER so in-cluster nginx routes by Host.
-        host_header = os.environ.get("ONYX_HOST_HEADER")
+        # ALB/WAF), set ORBYTE_HOST_HEADER so in-cluster nginx routes by Host.
+        host_header = os.environ.get("ORBYTE_HOST_HEADER")
         if host_header:
             self.client.headers["Host"] = host_header
-        self._path = os.environ.get("ONYX_HEALTH_PATH", "/health")
-        self._sla_ms = env_float("ONYX_HEALTH_SLA_MS", 10000.0)
+        self._path = os.environ.get("ORBYTE_HEALTH_PATH", "/health")
+        self._sla_ms = env_float("ORBYTE_HEALTH_SLA_MS", 10000.0)
 
     @task
     def probe(self) -> None:

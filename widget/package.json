@@ -1,9 +1,9 @@
 {
-  "name": "onyx-chat-widget",
+  "name": "orbyte-chat-widget",
   "version": "1.0.0",
-  "description": "Embeddable chat widget for Onyx",
+  "description": "Embeddable chat widget for Orbyte",
   "type": "module",
-  "main": "dist/onyx-widget.js",
+  "main": "dist/orbyte-widget.js",
   "types": "dist/types/index.d.ts",
   "files": [
     "dist"

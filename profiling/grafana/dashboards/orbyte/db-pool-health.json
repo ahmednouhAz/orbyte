@@ -72,13 +72,13 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "onyx_db_pool_checked_out{engine=\"sync\"}",
+          "expr": "orbyte_db_pool_checked_out{engine=\"sync\"}",
           "legendFormat": "checked_out",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "onyx_db_pool_size{engine=\"sync\"}",
+          "expr": "orbyte_db_pool_size{engine=\"sync\"}",
           "legendFormat": "pool_size",
           "refId": "B"
         }
@@ -113,7 +113,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "onyx_db_pool_checked_out",
+          "expr": "orbyte_db_pool_checked_out",
           "legendFormat": "{{engine}}",
           "refId": "A"
         }
@@ -147,7 +147,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "onyx_db_connections_held_by_endpoint{engine=\"sync\"} > 0",
+          "expr": "orbyte_db_connections_held_by_endpoint{engine=\"sync\"} > 0",
           "legendFormat": "{{handler}}",
           "refId": "A"
         }
@@ -181,25 +181,25 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.50, sum by (le)(rate(onyx_db_connection_hold_seconds_bucket{engine=\"sync\"}[1m])))",
+          "expr": "histogram_quantile(0.50, sum by (le)(rate(orbyte_db_connection_hold_seconds_bucket{engine=\"sync\"}[1m])))",
           "legendFormat": "sync p50",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.95, sum by (le)(rate(onyx_db_connection_hold_seconds_bucket{engine=\"sync\"}[1m])))",
+          "expr": "histogram_quantile(0.95, sum by (le)(rate(orbyte_db_connection_hold_seconds_bucket{engine=\"sync\"}[1m])))",
           "legendFormat": "sync p95",
           "refId": "B"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.99, sum by (le)(rate(onyx_db_connection_hold_seconds_bucket{engine=\"sync\"}[1m])))",
+          "expr": "histogram_quantile(0.99, sum by (le)(rate(orbyte_db_connection_hold_seconds_bucket{engine=\"sync\"}[1m])))",
           "legendFormat": "sync p99",
           "refId": "C"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.99, sum by (le)(rate(onyx_db_connection_hold_seconds_bucket{engine=\"async\"}[1m])))",
+          "expr": "histogram_quantile(0.99, sum by (le)(rate(orbyte_db_connection_hold_seconds_bucket{engine=\"async\"}[1m])))",
           "legendFormat": "async p99",
           "refId": "D"
         }
@@ -246,13 +246,13 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.99, sum by (le)(rate(onyx_db_connection_hold_seconds_bucket{engine=\"sync\"}[1m])))",
+          "expr": "histogram_quantile(0.99, sum by (le)(rate(orbyte_db_connection_hold_seconds_bucket{engine=\"sync\"}[1m])))",
           "legendFormat": "sync p99",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.99, sum by (le)(rate(onyx_db_connection_hold_seconds_bucket{engine=\"async\"}[1m])))",
+          "expr": "histogram_quantile(0.99, sum by (le)(rate(orbyte_db_connection_hold_seconds_bucket{engine=\"async\"}[1m])))",
           "legendFormat": "async p99",
           "refId": "B"
         }
@@ -295,13 +295,13 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "onyx_db_pool_checked_out{engine=\"async\"}",
+          "expr": "orbyte_db_pool_checked_out{engine=\"async\"}",
           "legendFormat": "async checked_out",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "onyx_db_pool_size{engine=\"async\"}",
+          "expr": "orbyte_db_pool_size{engine=\"async\"}",
           "legendFormat": "async pool_size",
           "refId": "B"
         }
@@ -335,13 +335,13 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "rate(onyx_db_pool_checkout_total{engine=\"sync\"}[30s])",
+          "expr": "rate(orbyte_db_pool_checkout_total{engine=\"sync\"}[30s])",
           "legendFormat": "sync checkouts/s",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "rate(onyx_db_pool_checkin_total{engine=\"sync\"}[30s])",
+          "expr": "rate(orbyte_db_pool_checkin_total{engine=\"sync\"}[30s])",
           "legendFormat": "sync checkins/s",
           "refId": "B"
         }
@@ -382,13 +382,13 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "onyx_db_pool_overflow{engine=\"sync\"}",
+          "expr": "orbyte_db_pool_overflow{engine=\"sync\"}",
           "legendFormat": "overflow (sync)",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "increase(onyx_db_pool_checkout_timeout_total{engine=\"sync\"}[30s])",
+          "expr": "increase(orbyte_db_pool_checkout_timeout_total{engine=\"sync\"}[30s])",
           "legendFormat": "timeouts",
           "refId": "B"
         }
@@ -423,7 +423,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "onyx_db_pool_checked_out{engine=\"sync\"}",
+          "expr": "orbyte_db_pool_checked_out{engine=\"sync\"}",
           "legendFormat": "Checked Out (sync)",
           "refId": "A"
         }
@@ -457,7 +457,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "sum(onyx_db_pool_checkout_timeout_total)",
+          "expr": "sum(orbyte_db_pool_checkout_timeout_total)",
           "legendFormat": "Timeouts",
           "refId": "A"
         }
@@ -494,7 +494,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "onyx_db_pool_checked_out{engine=\"sync\"} / onyx_db_pool_size{engine=\"sync\"} * 100",
+          "expr": "orbyte_db_pool_checked_out{engine=\"sync\"} / orbyte_db_pool_size{engine=\"sync\"} * 100",
           "legendFormat": "Utilization",
           "refId": "A"
         }
@@ -525,7 +525,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "sum(onyx_db_pool_checkout_total{engine=\"sync\"})",
+          "expr": "sum(orbyte_db_pool_checkout_total{engine=\"sync\"})",
           "legendFormat": "Total Checkouts",
           "refId": "A"
         }
@@ -535,7 +535,7 @@
   "refresh": "5s",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": ["onyx", "db-pool", "load-test"],
+  "tags": ["orbyte", "db-pool", "load-test"],
   "templating": {
     "list": [
     {
@@ -554,8 +554,8 @@
     "refresh_intervals": ["5s", "10s", "30s", "1m"]
   },
   "timezone": "",
-  "title": "Onyx DB Pool Health",
-  "uid": "onyx-db-pool-health",
+  "title": "Orbyte DB Pool Health",
+  "uid": "orbyte-db-pool-health",
   "version": 0,
   "weekStart": ""
 }

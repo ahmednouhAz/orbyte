@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/kube"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/kube"
 )
 
 var safeIdentifier = regexp.MustCompile(`^[a-zA-Z0-9_\-]+$`)

@@ -2,9 +2,9 @@
 
 ## Context
 
-`backend/onyx/server/features/build/sandbox/kubernetes/internal/acp_exec_client.py`
+`backend/orbyte/server/features/build/sandbox/kubernetes/internal/acp_exec_client.py`
 (783 lines) and
-`backend/onyx/server/features/build/sandbox/docker/internal/acp_exec_client.py`
+`backend/orbyte/server/features/build/sandbox/docker/internal/acp_exec_client.py`
 (603 lines) are ~95% structurally identical. The ACP JSON-RPC protocol code,
 state management, `send_message` loop, session lifecycle, and event
 dispatch are byte-for-byte the same between them. The only real
@@ -45,7 +45,7 @@ independently of the Docker functional work in the prior PR.
 ## Important Notes
 
 - The base class lives in a neutral location so neither backend imports
-  the other: `backend/onyx/server/features/build/sandbox/acp/base.py`.
+  the other: `backend/orbyte/server/features/build/sandbox/acp/base.py`.
   This is a new top-level subdirectory under `sandbox/`.
 - `SSEKeepalive` is already shared in `sandbox/base.py` from
   docker-compose-2's earlier fix. Leave it there; the new
@@ -67,7 +67,7 @@ independently of the Docker functional work in the prior PR.
 
 ## Implementation Strategy
 
-### New module: `backend/onyx/server/features/build/sandbox/acp/`
+### New module: `backend/orbyte/server/features/build/sandbox/acp/`
 
 Two files:
 
@@ -199,18 +199,18 @@ move.
 ### Files to modify
 
 - **New**:
-  `backend/onyx/server/features/build/sandbox/acp/__init__.py`
-  `backend/onyx/server/features/build/sandbox/acp/base.py`
+  `backend/orbyte/server/features/build/sandbox/acp/__init__.py`
+  `backend/orbyte/server/features/build/sandbox/acp/base.py`
 - **Modified**:
-  `backend/onyx/server/features/build/sandbox/kubernetes/internal/acp_exec_client.py`
-  `backend/onyx/server/features/build/sandbox/docker/internal/acp_exec_client.py`
+  `backend/orbyte/server/features/build/sandbox/kubernetes/internal/acp_exec_client.py`
+  `backend/orbyte/server/features/build/sandbox/docker/internal/acp_exec_client.py`
 - **Possibly affected** (verify imports still resolve):
-  `backend/onyx/server/features/build/session/manager.py` (imports
+  `backend/orbyte/server/features/build/session/manager.py` (imports
   `SSEKeepalive` from `sandbox.base` — unchanged).
-  `backend/onyx/server/features/build/sandbox/docker/docker_sandbox_manager.py`
+  `backend/orbyte/server/features/build/sandbox/docker/docker_sandbox_manager.py`
   (imports `DockerACPExecClient`, `ACPEvent` — both still exported from
   the same module).
-  `backend/onyx/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
+  `backend/orbyte/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
   (imports `ACPExecClient`, `ACPEvent` — both still exported).
 
 ## Tests
@@ -218,11 +218,11 @@ move.
 This is pure code motion — no new behavior to test. Verification is:
 
 - **Existing unit tests must still pass**, especially
-  `backend/tests/unit/onyx/server/features/build/sandbox/test_docker_acp_exec_client.py`
+  `backend/tests/unit/orbyte/server/features/build/sandbox/test_docker_acp_exec_client.py`
   (which exercises Docker's `start` + initialize round-trip via a fake
   framed socket and asserts `is_running` flips correctly on `stop`).
 - **K8s unit test sweep**: run anything under
-  `backend/tests/unit/onyx/server/features/build/sandbox/` to confirm
+  `backend/tests/unit/orbyte/server/features/build/sandbox/` to confirm
   no K8s-specific assertions regress.
 - **Ty + ruff**: the codebase's pre-commit hooks must pass cleanly on
   both subclasses and the base.

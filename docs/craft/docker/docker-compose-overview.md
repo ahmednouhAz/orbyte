@@ -1,6 +1,6 @@
-# Running Onyx Craft on Docker Compose
+# Running Orbyte Craft on Docker Compose
 
-This guide walks through standing up Onyx Craft on the docker-compose
+This guide walks through standing up Orbyte Craft on the docker-compose
 backend with the `opencode serve` HTTP transport (`AGENT_TRANSPORT=serve`).
 It covers the happy path and every gotcha encountered during initial bring-up
 on macOS, so an agent can follow it without re-discovering each issue.
@@ -15,19 +15,19 @@ docker-compose deployers.
 
 ```bash
 # 1. Stage compose files (they're not in any release tag yet).
-WT=/path/to/onyx/checkout            # this repo, checked out on a branch with the Docker backend
-mkdir -p ~/onyx_data/deployment ~/onyx_data/data/nginx
-cp "$WT"/deployment/docker_compose/docker-compose.yml          ~/onyx_data/deployment/
-cp "$WT"/deployment/docker_compose/docker-compose.craft.yml    ~/onyx_data/deployment/
-cp "$WT"/deployment/docker_compose/env.template                ~/onyx_data/deployment/
-cp "$WT"/deployment/data/nginx/app.conf.template               ~/onyx_data/data/nginx/
-cp "$WT"/deployment/data/nginx/run-nginx.sh                    ~/onyx_data/data/nginx/
+WT=/path/to/orbyte/checkout            # this repo, checked out on a branch with the Docker backend
+mkdir -p ~/orbyte_data/deployment ~/orbyte_data/data/nginx
+cp "$WT"/deployment/docker_compose/docker-compose.yml          ~/orbyte_data/deployment/
+cp "$WT"/deployment/docker_compose/docker-compose.craft.yml    ~/orbyte_data/deployment/
+cp "$WT"/deployment/docker_compose/env.template                ~/orbyte_data/deployment/
+cp "$WT"/deployment/data/nginx/app.conf.template               ~/orbyte_data/data/nginx/
+cp "$WT"/deployment/data/nginx/run-nginx.sh                    ~/orbyte_data/data/nginx/
 
 # 2. Run installer in --local mode with craft.
 bash "$WT"/deployment/docker_compose/install.sh --local --include-craft
 
 # 3. Fix the .env (existing-env install path skips these; see "Required env vars" below).
-cat >> ~/onyx_data/deployment/.env <<'ENV'
+cat >> ~/orbyte_data/deployment/.env <<'ENV'
 ENABLE_CRAFT=true
 SANDBOX_BACKEND=docker
 SANDBOX_API_SERVER_URL=http://host.docker.internal:3001
@@ -39,7 +39,7 @@ ENV
 #    unreleased PR" below.
 
 # 5. Bring it up.
-(cd ~/onyx_data/deployment && docker compose -f docker-compose.yml -f docker-compose.craft.yml up -d)
+(cd ~/orbyte_data/deployment && docker compose -f docker-compose.yml -f docker-compose.craft.yml up -d)
 
 # 6. Configure an LLM provider via Admin UI at http://localhost:3001
 #    (Craft will fail with "No default LLM model found" until you do this.)
@@ -50,12 +50,12 @@ ENV
 ## Prerequisites
 
 - macOS with **Docker Desktop** (or OrbStack) — these provide `host.docker.internal`
-  resolution from inside the `onyx_craft_sandbox` bridge network, which the
+  resolution from inside the `orbyte_craft_sandbox` bridge network, which the
   sandbox container needs to reach api_server.
 - On Linux, replace `http://host.docker.internal:3001` with your machine's
   reachable address (or use `--add-host` workarounds). Native Linux Docker
   does *not* resolve `host.docker.internal` by default.
-- ~80 GB free Docker disk. Onyx's full stack pulls ~30 GB; local image
+- ~80 GB free Docker disk. Orbyte's full stack pulls ~30 GB; local image
   builds add another 10–15 GB; build cache balloons to 40+ GB if you let
   it. See [OpenSearch read-only block](#opensearch-flipped-into-read-only-mode-disk-full) below.
 - An LLM API key (Anthropic / OpenAI / etc).
@@ -64,16 +64,16 @@ ENV
 
 ## Required env vars
 
-These must end up in `~/onyx_data/deployment/.env` after install:
+These must end up in `~/orbyte_data/deployment/.env` after install:
 
 | Variable | Required? | Notes |
 |---|---|---|
 | `ENABLE_CRAFT=true` | yes | `--include-craft` sets this (fresh installs and existing `.env`). |
 | `SANDBOX_BACKEND=docker` | yes | `--include-craft` sets this alongside `ENABLE_CRAFT`. |
-| `SANDBOX_API_SERVER_URL=http://host.docker.internal:3001` | yes | Provision raises `ValueError("SANDBOX_API_SERVER_URL must be set")` without it. Must be a URL the sandbox container can reach **from the `onyx_craft_sandbox` bridge** — compose-internal hostnames (`api_server`, `nginx`) won't resolve there. Match the port to `HOST_PORT`. |
+| `SANDBOX_API_SERVER_URL=http://host.docker.internal:3001` | yes | Provision raises `ValueError("SANDBOX_API_SERVER_URL must be set")` without it. Must be a URL the sandbox container can reach **from the `orbyte_craft_sandbox` bridge** — compose-internal hostnames (`api_server`, `nginx`) won't resolve there. Match the port to `HOST_PORT`. |
 | `HOST_PORT=3001` | only if 3000 conflicts | Default is 3000; nginx binds this on the host. Free up 3000 or change here. |
 | `IMAGE_TAG` | optional | Uses the normal compose default (`latest`) unless set. Craft uses this same tag for the sandbox image, so do not set a separate sandbox image for normal deployments. There are **no** Craft-specific app/backend images — Craft is enabled at runtime via `ENABLE_CRAFT=true` (above). See [image architecture](../infra/image-architecture.md). |
-| `ONYX_BACKEND_IMAGE` | only when running unreleased PRs | Lets you override just the backend image without forcing model-server / web-server to the same tag. |
+| `ORBYTE_BACKEND_IMAGE` | only when running unreleased PRs | Lets you override just the backend image without forcing model-server / web-server to the same tag. |
 | `AGENT_TRANSPORT=serve` | for serve transport | `docker-compose.craft.yml` defaults this to `serve` (post-#11402); override to `acp` for the rollback path. Reaches the sandbox container via env passthrough. |
 | `ENABLE_OPENCODE_DEBUGGING=true` | optional | Dev-only pod-log viewer button in Craft UI. Default `false`. |
 
@@ -94,13 +94,13 @@ release. `docker-compose.craft.yml` doesn't exist in any release tag yet
 — craft is `main`-only. Pre-stage from a checkout:
 
 ```bash
-WT=/path/to/onyx
-mkdir -p ~/onyx_data/deployment ~/onyx_data/data/nginx
-cp "$WT"/deployment/docker_compose/docker-compose.yml          ~/onyx_data/deployment/
-cp "$WT"/deployment/docker_compose/docker-compose.craft.yml    ~/onyx_data/deployment/
-cp "$WT"/deployment/docker_compose/env.template                ~/onyx_data/deployment/
-cp "$WT"/deployment/data/nginx/app.conf.template               ~/onyx_data/data/nginx/
-cp "$WT"/deployment/data/nginx/run-nginx.sh                    ~/onyx_data/data/nginx/
+WT=/path/to/orbyte
+mkdir -p ~/orbyte_data/deployment ~/orbyte_data/data/nginx
+cp "$WT"/deployment/docker_compose/docker-compose.yml          ~/orbyte_data/deployment/
+cp "$WT"/deployment/docker_compose/docker-compose.craft.yml    ~/orbyte_data/deployment/
+cp "$WT"/deployment/docker_compose/env.template                ~/orbyte_data/deployment/
+cp "$WT"/deployment/data/nginx/app.conf.template               ~/orbyte_data/data/nginx/
+cp "$WT"/deployment/data/nginx/run-nginx.sh                    ~/orbyte_data/data/nginx/
 ```
 
 ### 2. Run the installer
@@ -126,7 +126,7 @@ On an existing `.env`, `--include-craft` writes `ENABLE_CRAFT=true` and
 does **not** set the host-specific values, so append those yourself:
 
 ```bash
-cat >> ~/onyx_data/deployment/.env <<'ENV'
+cat >> ~/orbyte_data/deployment/.env <<'ENV'
 SANDBOX_API_SERVER_URL=http://host.docker.internal:3001
 HOST_PORT=3001
 ENV
@@ -138,17 +138,17 @@ vars (see next section).
 ### 4. Bring up the stack
 
 ```bash
-cd ~/onyx_data/deployment
+cd ~/orbyte_data/deployment
 docker compose -f docker-compose.yml -f docker-compose.craft.yml up -d
 ```
 
-The compose file references the `onyx_craft_sandbox` network as
+The compose file references the `orbyte_craft_sandbox` network as
 `external: true`. The installer creates it *only on the fresh-install
 path*. If you're updating an existing install with `--include-craft`,
 create it manually:
 
 ```bash
-docker network create onyx_craft_sandbox
+docker network create orbyte_craft_sandbox
 ```
 
 ### 5. Configure an LLM provider
@@ -166,7 +166,7 @@ ValueError: No default LLM model found
 Click **Craft** in the sidebar, send a prompt. Watch the api_server logs:
 
 ```bash
-docker logs -f onyx-api_server-1 2>&1 | grep -E "SANDBOX-SERVE|SESSION-LIFECYCLE"
+docker logs -f orbyte-api_server-1 2>&1 | grep -E "SANDBOX-SERVE|SESSION-LIFECYCLE"
 ```
 
 You should see:
@@ -188,7 +188,7 @@ Build the affected images locally.
 ### Backend image
 
 ```bash
-cd /path/to/onyx
+cd /path/to/orbyte
 docker build \
     -t onyxdotapp/onyx-backend:craft-pr<N> \
     -f backend/Dockerfile \
@@ -201,13 +201,13 @@ no Craft-specific backend image flavor.
 Then in `.env`:
 
 ```
-ONYX_BACKEND_IMAGE=onyxdotapp/onyx-backend:craft-pr<N>
+ORBYTE_BACKEND_IMAGE=onyxdotapp/onyx-backend:craft-pr<N>
 ```
 
 **Do not** change `IMAGE_TAG` to point at your PR build — `IMAGE_TAG`
 applies to *every* image referenced in the compose file (model-server,
 web-server, etc.), and Docker will try to pull
-`onyxdotapp/onyx-model-server:craft-pr<N>` and fail. `ONYX_BACKEND_IMAGE`
+`onyxdotapp/onyx-model-server:craft-pr<N>` and fail. `ORBYTE_BACKEND_IMAGE`
 is a backend-only override.
 
 ### Sandbox image
@@ -222,8 +222,8 @@ Build the sandbox image:
 ```bash
 docker build --network=host \
     -t onyxdotapp/sandbox:pr<N> \
-    -f backend/onyx/server/features/build/sandbox/image/Dockerfile \
-    backend/onyx/server/features/build/sandbox/image/
+    -f backend/orbyte/server/features/build/sandbox/image/Dockerfile \
+    backend/orbyte/server/features/build/sandbox/image/
 ```
 
 `--network=host` bypasses Docker Desktop's HTTP proxy if `deb.debian.org`
@@ -241,7 +241,7 @@ After updating `.env`, force-recreate api_server + background so they
 pick up the new env:
 
 ```bash
-cd ~/onyx_data/deployment
+cd ~/orbyte_data/deployment
 docker compose -f docker-compose.yml -f docker-compose.craft.yml \
     up -d --no-build --force-recreate api_server background
 ```
@@ -249,7 +249,7 @@ docker compose -f docker-compose.yml -f docker-compose.craft.yml \
 `--no-build` is important — without it, compose tries to *build* the
 image (using the `build:` directive that's also in the compose file), and
 fails because the relative `../../backend` build context doesn't resolve
-from `~/onyx_data/deployment`.
+from `~/orbyte_data/deployment`.
 
 ---
 
@@ -257,7 +257,7 @@ from `~/onyx_data/deployment`.
 
 ### macOS bash 3.2: install script aborts with `unbound variable`
 
-Symptom (running `curl -fsSL …/install_onyx.sh | bash`):
+Symptom (running `curl -fsSL …/install_orbyte.sh | bash`):
 
 ```
 /bin/bash: DOCKER_SUDO[@]: unbound variable
@@ -326,11 +326,11 @@ run_docker() {
 Symptom:
 
 ```
-network onyx_craft_sandbox declared as external, but could not be found
-✗ Failed to start Onyx services
+network orbyte_craft_sandbox declared as external, but could not be found
+✗ Failed to start Orbyte services
 ```
 
-Cause: install.sh's `docker network create onyx_craft_sandbox` runs
+Cause: install.sh's `docker network create orbyte_craft_sandbox` runs
 only inside the fresh-install branch (`if [ ! -f $ENV_FILE ]`). When
 the script detects an existing `.env` it takes the update path and skips
 network creation entirely.
@@ -340,14 +340,14 @@ gate so it runs whenever `--include-craft` is set:
 
 ```bash
 if [ "$INCLUDE_CRAFT" = true ]; then
-    SANDBOX_NET="${SANDBOX_DOCKER_NETWORK:-onyx_craft_sandbox}"
+    SANDBOX_NET="${SANDBOX_DOCKER_NETWORK:-orbyte_craft_sandbox}"
     if ! run_docker docker network inspect "$SANDBOX_NET" >/dev/null 2>&1; then
         run_docker docker network create "$SANDBOX_NET" >/dev/null
     fi
 fi
 ```
 
-Workaround until fixed: `docker network create onyx_craft_sandbox` manually.
+Workaround until fixed: `docker network create orbyte_craft_sandbox` manually.
 
 ### `docker-compose.craft.yml` doesn't pass AGENT_TRANSPORT through (pre-#11402)
 
@@ -406,7 +406,7 @@ onyxdotapp/onyx-model-server:craft-pr<N>` after setting
 Cause: `IMAGE_TAG` is referenced by the compose file's `image:` lines
 for *all* services, not just the backend.
 
-Fix: use `ONYX_BACKEND_IMAGE` to override just the backend image.
+Fix: use `ORBYTE_BACKEND_IMAGE` to override just the backend image.
 
 ### `compose up --force-recreate` triggers a build
 
@@ -416,13 +416,13 @@ not found` when the image-tag points at a local-only tag.
 Cause: when `image:` lookup fails to pull from registry, compose falls
 back to the `build:` directive in the compose file. The build context
 (`../../backend`) is relative to the compose file's directory, which
-won't resolve from `~/onyx_data/deployment`.
+won't resolve from `~/orbyte_data/deployment`.
 
 Fix: pass `--no-build` to `docker compose up`.
 
 ### `compose down/up` leaves orphan containers
 
-Symptom: `Conflict. The container name "/onyx-cache-1" is already in
+Symptom: `Conflict. The container name "/orbyte-cache-1" is already in
 use by container "…"` even though `down` reported it was removed.
 
 Cause: a previous `up --force-recreate` interleaved with a partial
@@ -471,7 +471,7 @@ Fix:
 ```bash
 lsof -nP -iTCP:3000 -sTCP:LISTEN     # find PID
 # either kill it, or:
-echo "HOST_PORT=3001" >> ~/onyx_data/deployment/.env
+echo "HOST_PORT=3001" >> ~/orbyte_data/deployment/.env
 # then bring up the stack; access at http://localhost:3001
 ```
 
@@ -506,7 +506,7 @@ thinks exists but can't reach.
 Fix:
 
 ```bash
-docker exec onyx-relational_db-1 psql -U postgres -c \
+docker exec orbyte-relational_db-1 psql -U postgres -c \
     "DELETE FROM sandbox WHERE id = '<sandbox-uuid>';"
 ```
 
@@ -526,8 +526,8 @@ Fix: kill the container + its volume:
 
 ```bash
 docker rm -f sandbox-<id>
-docker volume rm onyx-craft-sandbox-<id>
-docker exec onyx-relational_db-1 psql -U postgres -c \
+docker volume rm orbyte-craft-sandbox-<id>
+docker exec orbyte-relational_db-1 psql -U postgres -c \
     "DELETE FROM sandbox WHERE id = '<full-uuid>';"
 ```
 
@@ -539,15 +539,15 @@ Next Craft prompt re-provisions with the current code's env injection.
 
 1. **API server has the serve methods** (post-#11402 code is loaded):
    ```bash
-   docker exec onyx-api_server-1 grep -c "_serve_base_url\|_read_opencode_password" \
-       /app/onyx/server/features/build/sandbox/docker/docker_sandbox_manager.py
+   docker exec orbyte-api_server-1 grep -c "_serve_base_url\|_read_opencode_password" \
+       /app/orbyte/server/features/build/sandbox/docker/docker_sandbox_manager.py
    # Expected: 2
    ```
 
 2. **`SandboxBackend.DOCKER` exists** (post-#11222 code is loaded):
    ```bash
-   docker exec onyx-api_server-1 python -c \
-       "from onyx.server.features.build.configs import SandboxBackend; print(list(SandboxBackend))"
+   docker exec orbyte-api_server-1 python -c \
+       "from orbyte.server.features.build.configs import SandboxBackend; print(list(SandboxBackend))"
    # Expected: [..., <SandboxBackend.DOCKER: 'docker'>]
    ```
 
@@ -572,7 +572,7 @@ Next Craft prompt re-provisions with the current code's env injection.
 
 6. **opencode-serve is reachable** from api_server:
    ```bash
-   docker exec onyx-api_server-1 curl -fsS \
+   docker exec orbyte-api_server-1 curl -fsS \
        -u "opencode:$(docker inspect sandbox-<id8> --format '{{range .Config.Env}}{{println .}}{{end}}' \
                        | grep '^OPENCODE_SERVER_PASSWORD=' | cut -d= -f2-)" \
        http://sandbox-<id8>:4096/doc \
@@ -582,7 +582,7 @@ Next Craft prompt re-provisions with the current code's env injection.
 
 7. **Logs show the full serve-transport sequence** when a prompt is sent:
    ```bash
-   docker logs -f onyx-api_server-1 2>&1 | grep -E "SANDBOX-SERVE|SESSION-LIFECYCLE"
+   docker logs -f orbyte-api_server-1 2>&1 | grep -E "SANDBOX-SERVE|SESSION-LIFECYCLE"
    ```
    You should see `ensure_opencode_session`, `Created PodEventBus`,
    `opencode-serve ready`, `_send_message_via_serve`, `send_message completed`
@@ -594,7 +594,7 @@ Next Craft prompt re-provisions with the current code's env injection.
 
 ```bash
 # Stop the stack (keeps data):
-cd ~/onyx_data/deployment
+cd ~/orbyte_data/deployment
 docker compose -f docker-compose.yml -f docker-compose.craft.yml down
 
 # Or use the installer:

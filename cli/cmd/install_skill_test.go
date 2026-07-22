@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/embedded"
-	"github.com/onyx-dot-app/onyx/cli/internal/testutil"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/embedded"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/testutil"
 )
 
 func TestInstallSkillCmd_BasicInstall(t *testing.T) {
@@ -34,7 +34,7 @@ func TestInstallSkillCmd_BasicInstall(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	canonicalPath := filepath.Join(tmpDir, ".agents", "skills", "onyx-cli", "SKILL.md")
+	canonicalPath := filepath.Join(tmpDir, ".agents", "skills", "orbyte-cli", "SKILL.md")
 	content, err := os.ReadFile(canonicalPath)
 	if err != nil {
 		t.Fatalf("expected canonical file at %s, got error: %v", canonicalPath, err)
@@ -62,7 +62,7 @@ func TestInstallSkillCmd_GlobalInstall(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	canonicalPath := filepath.Join(tmpHome, ".agents", "skills", "onyx-cli", "SKILL.md")
+	canonicalPath := filepath.Join(tmpHome, ".agents", "skills", "orbyte-cli", "SKILL.md")
 	content, err := os.ReadFile(canonicalPath)
 	if err != nil {
 		t.Fatalf("expected canonical file at %s, got error: %v", canonicalPath, err)
@@ -143,7 +143,7 @@ func TestInstallSkillCmd_CopyMode(t *testing.T) {
 	}
 
 	// Verify canonical copy exists.
-	canonicalPath := filepath.Join(tmpDir, ".agents", "skills", "onyx-cli", "SKILL.md")
+	canonicalPath := filepath.Join(tmpDir, ".agents", "skills", "orbyte-cli", "SKILL.md")
 	content, err := os.ReadFile(canonicalPath)
 	if err != nil {
 		t.Fatalf("expected canonical file at %s, got error: %v", canonicalPath, err)
@@ -153,7 +153,7 @@ func TestInstallSkillCmd_CopyMode(t *testing.T) {
 	}
 
 	// Verify claude-code agent copy exists and is a real file, not a symlink.
-	claudePath := filepath.Join(tmpDir, ".claude", "skills", "onyx-cli", "SKILL.md")
+	claudePath := filepath.Join(tmpDir, ".claude", "skills", "orbyte-cli", "SKILL.md")
 	info, err := os.Lstat(claudePath)
 	if err != nil {
 		t.Fatalf("expected claude-code copy at %s, got error: %v", claudePath, err)

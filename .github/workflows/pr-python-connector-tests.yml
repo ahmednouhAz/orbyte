@@ -149,19 +149,19 @@ jobs:
         with:
           filters: |
             hubspot:
-              - 'backend/onyx/connectors/hubspot/**'
+              - 'backend/orbyte/connectors/hubspot/**'
               - 'backend/tests/daily/connectors/hubspot/**'
               - 'uv.lock'
             salesforce:
-              - 'backend/onyx/connectors/salesforce/**'
+              - 'backend/orbyte/connectors/salesforce/**'
               - 'backend/tests/daily/connectors/salesforce/**'
               - 'uv.lock'
             github:
-              - 'backend/onyx/connectors/github/**'
+              - 'backend/orbyte/connectors/github/**'
               - 'backend/tests/daily/connectors/github/**'
               - 'uv.lock'
             file_processing:
-              - 'backend/onyx/file_processing/**'
+              - 'backend/orbyte/file_processing/**'
               - 'uv.lock'
 
       - name: Pull production backend image
@@ -182,7 +182,7 @@ jobs:
         env:
           PROD_IMAGE: ${{ env.RUNS_ON_ECR_CACHE }}:nightly-llm-it-backend-${{ github.run_id }}
         run: |
-          docker run -d --name onyx-connector-tests --user root \
+          docker run -d --name orbyte-connector-tests --user root \
             -v "${{ github.workspace }}:/workspace" \
             -w /workspace \
             -e PYTHONPATH=./backend \
@@ -213,7 +213,7 @@ jobs:
           # interpreter, where the image's deps already live. pip ignores
           # pyproject.toml's [tool.uv] overrides, so --require-hashes resolves
           # directly without uv's --no-config workaround.
-          docker exec onyx-connector-tests bash -c '
+          docker exec orbyte-connector-tests bash -c '
             set -euo pipefail
             python -m pip install --no-deps --require-hashes \
               -r backend/requirements/default.txt \
@@ -225,7 +225,7 @@ jobs:
       - name: Run Tests (excluding HubSpot, Salesforce, GitHub, and Coda)
         shell: script -q -e -c "bash --noprofile --norc -eo pipefail {0}"
         run: |
-          docker exec onyx-connector-tests bash -c '
+          docker exec orbyte-connector-tests bash -c '
             python -m pytest \
               -n 8 \
               --dist loadfile \
@@ -244,7 +244,7 @@ jobs:
         if: ${{ github.event_name == 'schedule' || steps.changes.outputs.hubspot == 'true' || steps.changes.outputs.file_processing == 'true' }}
         shell: script -q -e -c "bash --noprofile --norc -eo pipefail {0}"
         run: |
-          docker exec onyx-connector-tests bash -c '
+          docker exec orbyte-connector-tests bash -c '
             python -m pytest \
               -n 8 \
               --dist loadfile \
@@ -259,7 +259,7 @@ jobs:
         if: ${{ github.event_name == 'schedule' || steps.changes.outputs.salesforce == 'true' || steps.changes.outputs.file_processing == 'true' }}
         shell: script -q -e -c "bash --noprofile --norc -eo pipefail {0}"
         run: |
-          docker exec onyx-connector-tests bash -c '
+          docker exec orbyte-connector-tests bash -c '
             python -m pytest \
               -n 8 \
               --dist loadfile \
@@ -274,7 +274,7 @@ jobs:
         if: ${{ github.event_name == 'schedule' || steps.changes.outputs.github == 'true' || steps.changes.outputs.file_processing == 'true' }}
         shell: script -q -e -c "bash --noprofile --norc -eo pipefail {0}"
         run: |
-          docker exec onyx-connector-tests bash -c '
+          docker exec orbyte-connector-tests bash -c '
             python -m pytest \
               -n 8 \
               --dist loadfile \
@@ -287,7 +287,7 @@ jobs:
 
       - name: Stop test container
         if: always()
-        run: docker rm -f onyx-connector-tests || true
+        run: docker rm -f orbyte-connector-tests || true
 
       - name: Alert on Failure
         if: failure() && github.event_name == 'schedule'

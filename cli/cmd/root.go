@@ -1,4 +1,4 @@
-// Package cmd implements Cobra CLI commands for the Onyx CLI.
+// Package cmd implements Cobra CLI commands for the Orbyte CLI.
 package cmd
 
 import (
@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/version"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/config"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/iostreams"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/version"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -71,9 +71,9 @@ func Execute() error {
 	}{}
 
 	rootCmd := &cobra.Command{
-		Use:   "onyx-cli",
-		Short: "CLI for Onyx knowledge and search",
-		Long:  "Onyx CLI — query enterprise knowledge from the terminal or as an agent tool.",
+		Use:   "orbyte-cli",
+		Short: "CLI for Orbyte knowledge and search",
+		Long:  "Orbyte CLI — query enterprise knowledge from the terminal or as an agent tool.",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			if opts.Debug {
 				log.SetLevel(log.DebugLevel)

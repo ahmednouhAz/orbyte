@@ -11,16 +11,16 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "backend/onyx/sandbox_proxy/**"
-      - "backend/onyx/server/features/build/configs.py"
-      - "backend/onyx/server/features/build/sandbox/docker/**"
-      - "backend/onyx/server/features/build/sandbox/image/Dockerfile"
-      - "backend/onyx/server/features/build/sandbox/image/firewall-init.sh"
-      - "backend/onyx/server/features/build/sandbox/labels.py"
-      - "backend/onyx/server/features/build/sandbox/util/opencode_config.py"
+      - "backend/orbyte/sandbox_proxy/**"
+      - "backend/orbyte/server/features/build/configs.py"
+      - "backend/orbyte/server/features/build/sandbox/docker/**"
+      - "backend/orbyte/server/features/build/sandbox/image/Dockerfile"
+      - "backend/orbyte/server/features/build/sandbox/image/firewall-init.sh"
+      - "backend/orbyte/server/features/build/sandbox/labels.py"
+      - "backend/orbyte/server/features/build/sandbox/util/opencode_config.py"
       - "backend/tests/unit/sandbox_proxy/**"
-      - "backend/tests/unit/onyx/server/features/build/sandbox/test_docker_manager_config.py"
-      - "backend/tests/unit/onyx/server/features/build/sandbox/test_opencode_config.py"
+      - "backend/tests/unit/orbyte/server/features/build/sandbox/test_docker_manager_config.py"
+      - "backend/tests/unit/orbyte/server/features/build/sandbox/test_opencode_config.py"
       - "backend/tests/external_dependency_unit/sandbox_proxy/**"
       - "deployment/docker_compose/docker-compose.yml"
       - "deployment/docker_compose/docker-compose.craft.yml"
@@ -79,7 +79,7 @@ jobs:
             --env-file env.template config)
           echo "$rendered" | grep -q "sandbox-proxy:"
           echo "$rendered" | grep -A1 "sandbox_proxy_ca:" | grep -q "name: sandbox_proxy_ca"
-          echo "$rendered" | grep -A1 "onyx_craft_sandbox:" | grep -q "name: onyx_craft_sandbox"
+          echo "$rendered" | grep -A1 "orbyte_craft_sandbox:" | grep -q "name: orbyte_craft_sandbox"
 
       # Pins the contract install.sh --include-craft's `inspect`-guarded block
       # relies on: after `create`, `inspect` exits 0 for both network and
@@ -88,9 +88,9 @@ jobs:
       # uses (install.sh checks `inspect` first, then creates if missing).
       - name: Pre-create compose-external resources
         run: |
-          docker network create onyx_craft_sandbox
+          docker network create orbyte_craft_sandbox
           docker volume create sandbox_proxy_ca
-          docker network inspect onyx_craft_sandbox >/dev/null
+          docker network inspect orbyte_craft_sandbox >/dev/null
           docker volume inspect sandbox_proxy_ca >/dev/null
 
       # The DockerEventsLookup external-dep tests spin up real busybox
@@ -105,8 +105,8 @@ jobs:
             -xvs \
             --durations=8 \
             backend/tests/unit/sandbox_proxy/ \
-            backend/tests/unit/onyx/server/features/build/sandbox/test_docker_manager_config.py \
-            backend/tests/unit/onyx/server/features/build/sandbox/test_opencode_config.py
+            backend/tests/unit/orbyte/server/features/build/sandbox/test_docker_manager_config.py \
+            backend/tests/unit/orbyte/server/features/build/sandbox/test_opencode_config.py
 
       - name: Run DockerEventsLookup external-dep tests
         shell: script -q -e -c "bash --noprofile --norc -eo pipefail {0}"

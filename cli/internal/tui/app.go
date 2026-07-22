@@ -1,4 +1,4 @@
-// Package tui implements the Bubble Tea TUI for Onyx CLI.
+// Package tui implements the Bubble Tea TUI for Orbyte CLI.
 package tui
 
 import (
@@ -12,14 +12,14 @@ import (
 	"charm.land/bubbles/v2/textinput"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/config"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/models"
 )
 
 // Model is the root Bubble Tea model.
 type Model struct {
-	config config.OnyxCliConfig
+	config config.OrbyteCliConfig
 	client api.ClientAPI
 
 	viewport *viewport
@@ -55,7 +55,7 @@ type Model struct {
 }
 
 // NewModel creates a new TUI model.
-func NewModel(cfg config.OnyxCliConfig, client api.ClientAPI) Model {
+func NewModel(cfg config.OrbyteCliConfig, client api.ClientAPI) Model {
 	parentID := -1
 
 	return Model{
@@ -72,7 +72,7 @@ func NewModel(cfg config.OnyxCliConfig, client api.ClientAPI) Model {
 }
 
 // NewFirstRunModel creates a TUI model that auto-enters configure mode on startup.
-func NewFirstRunModel(cfg config.OnyxCliConfig) Model {
+func NewFirstRunModel(cfg config.OrbyteCliConfig) Model {
 	model := NewModel(cfg, nil)
 	model.startMode = startFirstRun
 	return model

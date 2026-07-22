@@ -4,11 +4,11 @@
 
 > **Altitude note.** Kept deliberately high-level per the project owner's request: this is a *map*, not a line-by-line spec. Each PR phase (see `05-pr-roadmap.md`) gets its own detailed-analysis session that grills the owner before coding. Treat file lists and shapes here as the intended structure, to be confirmed/refined per phase.
 
-> **⚠️ DECISION OVERRIDE (2026-06-29) — chat logic is NOT shared.** See the matching callout in `05-pr-roadmap.md`. The owner reversed Approach C's shared-seam plan *for chat code*: nothing chat-related is extracted into `@onyx-ai/shared`. **Everywhere this document lists `web/lib/shared/src/contracts/*` or `web/lib/shared/src/utils/*` (e.g. `ndjson.ts`, `messageTree.ts`, `chatHistory.ts`, `streaming.ts`, `chat.ts`, `files.ts`, `agents.ts`, `projects.ts`, `fileDescriptors.ts`), read it as `mobile/src/chat/*` — mobile-owned, no web re-points, no shims.** The "Shared message-tree fns", "Shared `createNdjsonBuffer()`", and the shared-`dist`/`watch.mjs` integration notes below are superseded: mobile owns these copies and web is untouched. `@onyx-ai/shared` keeps receiving only cross-platform **design** primitives. Implemented in PR 2 under `mobile/src/chat/` (`streamingModels.ts`, `interfaces.ts`, `ndjson.ts`, `messageTree.ts`, `__tests__/`).
+> **⚠️ DECISION OVERRIDE (2026-06-29) — chat logic is NOT shared.** See the matching callout in `05-pr-roadmap.md`. The owner reversed Approach C's shared-seam plan *for chat code*: nothing chat-related is extracted into `@orbyte-ai/shared`. **Everywhere this document lists `web/lib/shared/src/contracts/*` or `web/lib/shared/src/utils/*` (e.g. `ndjson.ts`, `messageTree.ts`, `chatHistory.ts`, `streaming.ts`, `chat.ts`, `files.ts`, `agents.ts`, `projects.ts`, `fileDescriptors.ts`), read it as `mobile/src/chat/*` — mobile-owned, no web re-points, no shims.** The "Shared message-tree fns", "Shared `createNdjsonBuffer()`", and the shared-`dist`/`watch.mjs` integration notes below are superseded: mobile owns these copies and web is untouched. `@orbyte-ai/shared` keeps receiving only cross-platform **design** primitives. Implemented in PR 2 under `mobile/src/chat/` (`streamingModels.ts`, `interfaces.ts`, `ndjson.ts`, `messageTree.ts`, `__tests__/`).
 
 ## Database design
 
-**N/A — no backend or database changes.** The mobile client talks to the existing Onyx backend and its existing schema. All "data model" work is client-side (in-memory zustand + TanStack Query cache, plus MMKV persistence already configured). The relevant backend tables (`chat_session.project_id`, `user_file`, `persona`, `project`, `Project__UserFile`) already exist and are documented in `01-research.md`.
+**N/A — no backend or database changes.** The mobile client talks to the existing Orbyte backend and its existing schema. All "data model" work is client-side (in-memory zustand + TanStack Query cache, plus MMKV persistence already configured). The relevant backend tables (`chat_session.project_id`, `user_file`, `persona`, `project`, `Project__UserFile`) already exist and are documented in `01-research.md`.
 
 ## Client data model
 
@@ -49,13 +49,13 @@ No classes. The new surface is functions + types + hooks. Key seams:
 ## New files
 
 ### Shared package (`web/lib/shared/src/`)
-**No new shared files.** Per the PR 2 Decision the chat pure layer is mobile-native; nothing chat-related enters `@onyx-ai/shared`.
+**No new shared files.** Per the PR 2 Decision the chat pure layer is mobile-native; nothing chat-related enters `@orbyte-ai/shared`.
 
 ### Mobile-native chat layer (`mobile/src/chat/`) — per the PR 2 Decision the entire chat pure layer lives in mobile, **not** shared
 | File | Responsibility |
 |------|----------------|
 | `ndjson.ts` | `createNdjsonBuffer<T>()` — pure line-buffer NDJSON parser (mirrors web's `handleSSEStream` parsing core). |
-| `contracts/streaming.ts` | Minimal `Packet` wrapper, `Placement`, `PacketType` (core subset), `MessageStart/Delta/End`, `Stop`/`StopReason`, `PacketError`, `ChatHeartbeat`, `MessageResponseIDInfo`. `MessageStart.final_documents` typed `unknown[] \| null` (no `OnyxDocument`). Rich packet types added later, per their phase. |
+| `contracts/streaming.ts` | Minimal `Packet` wrapper, `Placement`, `PacketType` (core subset), `MessageStart/Delta/End`, `Stop`/`StopReason`, `PacketError`, `ChatHeartbeat`, `MessageResponseIDInfo`. `MessageStart.final_documents` typed `unknown[] \| null` (no `OrbyteDocument`). Rich packet types added later, per their phase. |
 | `contracts/chat.ts` | `Message` (minimal), `ChatState`, `ChatSession`/`BackendChatSession`/`BackendMessage`, send-message request body type, create-session request/response. |
 | `contracts/files.ts` | `FileDescriptor`, `ChatFileType`, `UserFileStatus`. |
 | `contracts/agents.ts` | `MinimalAgent` (selection subset), `AgentStarterMessage`. |
@@ -122,7 +122,7 @@ mobile/src/
 - **Navigation** — `(app)` group mounts under the existing `AuthGate` in `mobile/src/app/_layout.tsx`; sidebar (`mobile/src/components/sidebar`) surfaces sessions/projects.
 - **Query cache** — extend `mobile/src/api/query-keys.ts` + reuse the persisted client in `mobile/src/query/client.ts`. **Required (not conditional):** chat content is sensitive by nature, so the chat session-list + session-detail/message query keys **must** be added to the `dehydrateOptions` PII-exclusion list (alongside the existing `me` exclusion) in PR 1, **before any chat history is persisted to MMKV**. Consequence: chat history is not cached to disk and refetches on launch — the correct PII-safe default (mirrors the `me`-exclusion pattern).
 - **No web changes** — the mobile chat port touches no web files. `web/src/lib/search/streamingUtils.ts`, `.../messageTree.ts`, and `.../fileUtils.ts` stay web-owned; mobile reimplements the parser/tree/file-descriptor logic natively in `mobile/src/chat/`.
-- **No shared-build coupling** — nothing chat-related enters `@onyx-ai/shared`, so there's no dist-rebuild/`file:`-relink dependency for the chat port. (`@onyx-ai/shared` keeps its existing design-token + interactive/typography + `numbers`/`format` surface.)
+- **No shared-build coupling** — nothing chat-related enters `@orbyte-ai/shared`, so there's no dist-rebuild/`file:`-relink dependency for the chat port. (`@orbyte-ai/shared` keeps its existing design-token + interactive/typography + `numbers`/`format` surface.)
 
 ## Important notes before implementation
 
@@ -130,8 +130,8 @@ mobile/src/
 - **Never persist `chatSessionStore`** — it holds `AbortController`s and live streams. Keep it strictly separate from the persisted TanStack cache; on relaunch, rehydrate a session via `GET get-chat-session` + the mobile-native `processRawChatHistory`.
 - **Batch flushes ~50ms** and memoize rows on `packetCount` (not array identity) — the single biggest streaming-perf lever; port web's `stillCurrent`/abort guards so a backgrounded stream can't write into the wrong session.
 - **Send gating** — block send until attached files are indexed (`token_count != null`); surface a `FAILED`/stuck status instead of blocking forever (3s status polling, mirror `ProjectsContext`).
-- **Keep the mobile `contracts/streaming.ts` minimal** — only the core packet types now; add rich types in their deferred phases. Avoid dragging web's full `OnyxDocument` shape across until citations land.
+- **Keep the mobile `contracts/streaming.ts` minimal** — only the core packet types now; add rich types in their deferred phases. Avoid dragging web's full `OrbyteDocument` shape across until citations land.
 - **Renderer foundation in PR 3, renderers as follow-ups** — build the `MessageRenderer` contract + `findRenderer` dispatch in PR 3 (registering only `MessageTextRenderer`) so rich-chat features are *additive registrations*, not core rewrites. The agentic-timeline composition layer (`AgentTimeline`) is itself deferred — the **first** timeline renderer PR (9b) builds it; the dispatch seam it plugs into already exists from PR 3. Do **not** build the rich renderers in core — only the seam.
 - **Agent/project selection is implicit** — carried by the session's `persona_id`/`project_id` at create-time; there is no per-message agent param. Selecting an agent for an *existing* session is not supported by the backend (matches web) — start a new session.
-- **Error handling** — `ERROR`/`PacketError` packets set the assistant node to an error state; raise `OnyxError`-style messages only on the backend (client surfaces `ApiError` messages). No `HTTPException` concerns here (client-only).
+- **Error handling** — `ERROR`/`PacketError` packets set the assistant node to an error state; raise `OrbyteError`-style messages only on the backend (client surfaces `ApiError` messages). No `HTTPException` concerns here (client-only).
 - **`expires=` / Celery** — N/A (no backend tasks introduced).

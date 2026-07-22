@@ -2,7 +2,7 @@
 
 ## Issues to Address
 
-When the Onyx Craft agent dispatches a subagent via the `task` tool, the
+When the Orbyte Craft agent dispatches a subagent via the `task` tool, the
 transcript today renders a single collapsible card showing the prompt and
 the subagent's final output (`web/src/app/craft/components/tool-cards/TaskBody.tsx`).
 The subagent's intermediate activity — the tool calls it issues while
@@ -34,14 +34,14 @@ disrupting the main chat.
   strictly filters on parent session ID, dropping them. That filter is the
   load-bearing change.
 - **The DB schema already supports nested tool calls — no migration
-  needed.** Per `backend/onyx/db/models.py:2911-2970`, `tool_call` has a
+  needed.** Per `backend/orbyte/db/models.py:2911-2970`, `tool_call` has a
   `parent_tool_call_id` self-reference (nullable) and `parent_chat_message_id`
   is nullable with an explicit comment for the nested case. Subagent
   type lives in `tool_call_arguments`; status is derivable from
   response-presence; step count is `count(*) WHERE parent_tool_call_id = X`.
 - **Reference landscape.** Replit hides subagents; Lovable's subagents are
   read-only; Cursor uses a popover; Claude Code does a full chat swap.
-  Onyx Craft's subagents are substantive, parallel-capable, and
+  Orbyte Craft's subagents are substantive, parallel-capable, and
   side-effectful, but the universal panel gives us a third option:
   subagent transcript lives in the side panel as a transient tab,
   keeping the main chat fully visible.
@@ -164,7 +164,7 @@ New / changed:
 - **`OutputPanel.tsx`** (changed, lightly) — extend the tab-row
   rendering and body switch to handle `kind: "subagent"`. Tab chrome
   shows the subagent type badge instead of a file icon.
-- **`backend/onyx/chat/...`** (changed) — wherever tool calls are
+- **`backend/orbyte/chat/...`** (changed) — wherever tool calls are
   persisted during streaming, persist subagent children as
   `tool_call` rows with `parent_tool_call_id` set. Exact file
   depends on the existing persistence path; nested writes should

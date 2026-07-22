@@ -9,8 +9,8 @@ import (
 	"charm.land/bubbles/v2/textinput"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/config"
 )
 
 type startMode int
@@ -108,7 +108,7 @@ func (m Model) handleConfigureSubmit(text string) (Model, tea.Cmd) {
 		apiKey := m.configState.apiKey
 		testCmd := func() tea.Msg {
 			defer cancel()
-			testCfg := config.OnyxCliConfig{
+			testCfg := config.OrbyteCliConfig{
 				ServerURL: serverURL,
 				APIKey:    apiKey,
 			}

@@ -41,7 +41,7 @@ env:
   MOCK_LLM_RESPONSE: true
 
   # Visual regression S3 bucket (shared across all jobs)
-  PLAYWRIGHT_S3_BUCKET: onyx-playwright-artifacts
+  PLAYWRIGHT_S3_BUCKET: orbyte-playwright-artifacts
 
 jobs:
   changes:
@@ -331,9 +331,9 @@ jobs:
           # host-gateway address); opt in so the SSRF guard allows it. Cloud-
           # metadata/link-local stays blocked regardless.
           MCP_SERVER_ALLOW_PRIVATE_NETWORK=true
-          ONYX_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
-          ONYX_MODEL_SERVER_IMAGE=${ECR_CACHE}:playwright-test-model-server-${RUN_ID}
-          ONYX_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
+          ORBYTE_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
+          ORBYTE_MODEL_SERVER_IMAGE=${ECR_CACHE}:playwright-test-model-server-${RUN_ID}
+          ORBYTE_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
           EOF
 
       - name: Log in to ECR pull-through cache
@@ -351,7 +351,7 @@ jobs:
 
       - name: Seed dev license
         run: |
-          docker exec -e ONYX_DEV_LICENSE onyx-api_server-1 \
+          docker exec -e ORBYTE_DEV_LICENSE orbyte-api_server-1 \
             python -m scripts.seed_dev_license
 
       - name: Run Playwright tests
@@ -466,8 +466,8 @@ jobs:
           # host-gateway address); opt in so the SSRF guard allows it. Cloud-
           # metadata/link-local stays blocked regardless.
           MCP_SERVER_ALLOW_PRIVATE_NETWORK=true
-          ONYX_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
-          ONYX_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
+          ORBYTE_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
+          ORBYTE_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
           EOF
 
       - name: Log in to ECR pull-through cache
@@ -483,7 +483,7 @@ jobs:
 
       - name: Seed dev license
         run: |
-          docker exec -e ONYX_DEV_LICENSE onyx-api_server-1 \
+          docker exec -e ORBYTE_DEV_LICENSE orbyte-api_server-1 \
             python -m scripts.seed_dev_license
 
       - name: Run Playwright tests (lite)

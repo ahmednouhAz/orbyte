@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "onyx-devtools"
-description = "Developer utilities for working on onyx.app"
-authors = [{ name = "Onyx AI", email = "founders@onyx.app" }]
+description = "Developer utilities for working on orbyte"
+authors = [{ name = "Orbyte AI", email = "founders@onyx.app" }]
 readme = "README.md"
 requires-python = ">=3.9"
 keywords = [
-  "onyx", "cli", "devtools", "tools", "tooling",
+  "orbyte", "cli", "devtools", "tools", "tooling",
 ]
 classifiers = [
     "Programming Language :: Go",

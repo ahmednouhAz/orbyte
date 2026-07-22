@@ -11,7 +11,7 @@ aren't worth automating.
 
 1. Log in as the standard worker user.
 2. Navigate to `/craft/v1/tasks`. If the route redirects to `/app`, the
-   Onyx Craft feature flag is off and the spec soft-skips.
+   Orbyte Craft feature flag is off and the spec soft-skips.
 3. Click the "New scheduled task" button (or fall back to
    `/craft/v1/tasks/new` if the list is in its empty state) and fill the
    create form: a unique name, the prompt `say hi`, and an interval
@@ -37,7 +37,7 @@ update them in lockstep: `new-task-button`, `task-name-input`,
 npx playwright test scheduled-tasks
 ```
 
-Requires the full Onyx stack running locally: web, API, Postgres, Redis,
+Requires the full Orbyte stack running locally: web, API, Postgres, Redis,
 and the dedicated `celery_worker_scheduled_tasks` worker. Without the
 worker the run never reaches a terminal state and the test times out at
 step 6.
@@ -59,7 +59,7 @@ Those properties rely on review and the manual checklist below.
 Drive these by hand once per material change to the dispatch / executor
 path:
 
-- **Every-2-min task vs an Onyx-search prompt.** Walk away for 6 minutes,
+- **Every-2-min task vs an Orbyte-search prompt.** Walk away for 6 minutes,
   come back, confirm three runs with complete sessions and sensible
   `summary` text.
 - **Mon/Wed/Fri 9 AM.** Verify `next_run_at` is correct and a force-tick

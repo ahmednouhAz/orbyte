@@ -9,9 +9,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/config"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/config"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/paths"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/prompt"
 )
 
 const (

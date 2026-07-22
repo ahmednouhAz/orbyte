@@ -20,9 +20,9 @@ func GitRoot() (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-// DataDir returns the data directory for onyx-dev tools.
-// On Linux/macOS: ~/.local/share/onyx-dev/
-// On Windows: %LOCALAPPDATA%/onyx-dev/
+// DataDir returns the data directory for orbyte-dev tools.
+// On Linux/macOS: ~/.local/share/orbyte-dev/
+// On Windows: %LOCALAPPDATA%/orbyte-dev/
 func DataDir() string {
 	var base string
 	if runtime.GOOS == "windows" {
@@ -44,12 +44,12 @@ func DataDir() string {
 			base = filepath.Join(home, ".local", "share")
 		}
 	}
-	return filepath.Join(base, "onyx-dev")
+	return filepath.Join(base, "orbyte-dev")
 }
 
-// ConfigDir returns the per-user config directory for onyx-dev tools.
-// On Linux/macOS: ~/.config/onyx-dev/ (respects XDG_CONFIG_HOME)
-// On Windows:    %APPDATA%/onyx-dev/
+// ConfigDir returns the per-user config directory for orbyte-dev tools.
+// On Linux/macOS: ~/.config/orbyte-dev/ (respects XDG_CONFIG_HOME)
+// On Windows:    %APPDATA%/orbyte-dev/
 func ConfigDir() string {
 	var base string
 	if runtime.GOOS == "windows" {
@@ -71,7 +71,7 @@ func ConfigDir() string {
 			base = filepath.Join(home, ".config")
 		}
 	}
-	return filepath.Join(base, "onyx-dev")
+	return filepath.Join(base, "orbyte-dev")
 }
 
 // ConfigFilePath returns the path to the ods config file.

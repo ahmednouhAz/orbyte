@@ -58,17 +58,17 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(onyx_doc_perm_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.50, sum(rate(orbyte_doc_perm_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p50",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(onyx_doc_perm_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.95, sum(rate(orbyte_doc_perm_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p95",
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.99, sum(rate(onyx_doc_perm_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.99, sum(rate(orbyte_doc_perm_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p99",
           "refId": "C"
         }
@@ -104,17 +104,17 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(onyx_doc_perm_sync_db_update_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.50, sum(rate(orbyte_doc_perm_sync_db_update_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p50",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(onyx_doc_perm_sync_db_update_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.95, sum(rate(orbyte_doc_perm_sync_db_update_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p95",
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.99, sum(rate(onyx_doc_perm_sync_db_update_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.99, sum(rate(orbyte_doc_perm_sync_db_update_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p99",
           "refId": "C"
         }
@@ -150,7 +150,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(onyx_doc_perm_sync_docs_processed_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
+          "expr": "sum(rate(orbyte_doc_perm_sync_docs_processed_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
           "legendFormat": "{{connector_type}}",
           "refId": "A"
         }
@@ -186,7 +186,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(onyx_doc_perm_sync_errors_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
+          "expr": "sum(rate(orbyte_doc_perm_sync_errors_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
           "legendFormat": "{{connector_type}}",
           "refId": "A"
         }
@@ -236,12 +236,12 @@
       },
       "targets": [
         {
-          "expr": "sum(onyx_doc_perm_sync_docs_processed_total{connector_type=~\"$connector_type\"})",
+          "expr": "sum(orbyte_doc_perm_sync_docs_processed_total{connector_type=~\"$connector_type\"})",
           "legendFormat": "Docs Synced",
           "refId": "A"
         },
         {
-          "expr": "sum(onyx_doc_perm_sync_errors_total{connector_type=~\"$connector_type\"})",
+          "expr": "sum(orbyte_doc_perm_sync_errors_total{connector_type=~\"$connector_type\"})",
           "legendFormat": "Errors",
           "refId": "B"
         }
@@ -284,17 +284,17 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(onyx_group_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.50, sum(rate(orbyte_group_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p50",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(onyx_group_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.95, sum(rate(orbyte_group_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p95",
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.99, sum(rate(onyx_group_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.99, sum(rate(orbyte_group_sync_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p99",
           "refId": "C"
         }
@@ -330,17 +330,17 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(onyx_group_sync_upsert_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.50, sum(rate(orbyte_group_sync_upsert_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p50",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(onyx_group_sync_upsert_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.95, sum(rate(orbyte_group_sync_upsert_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p95",
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.99, sum(rate(onyx_group_sync_upsert_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
+          "expr": "histogram_quantile(0.99, sum(rate(orbyte_group_sync_upsert_duration_seconds_bucket{connector_type=~\"$connector_type\"}[$__rate_interval])) by (le, connector_type))",
           "legendFormat": "{{connector_type}} p99",
           "refId": "C"
         }
@@ -376,12 +376,12 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(onyx_group_sync_groups_processed_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
+          "expr": "sum(rate(orbyte_group_sync_groups_processed_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
           "legendFormat": "{{connector_type}} groups",
           "refId": "A"
         },
         {
-          "expr": "sum(rate(onyx_group_sync_users_processed_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
+          "expr": "sum(rate(orbyte_group_sync_users_processed_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
           "legendFormat": "{{connector_type}} users",
           "refId": "B"
         }
@@ -417,7 +417,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(onyx_group_sync_errors_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
+          "expr": "sum(rate(orbyte_group_sync_errors_total{connector_type=~\"$connector_type\"}[$__rate_interval])) by (connector_type) * 60",
           "legendFormat": "{{connector_type}}",
           "refId": "A"
         }
@@ -467,17 +467,17 @@
       },
       "targets": [
         {
-          "expr": "sum(onyx_group_sync_groups_processed_total{connector_type=~\"$connector_type\"})",
+          "expr": "sum(orbyte_group_sync_groups_processed_total{connector_type=~\"$connector_type\"})",
           "legendFormat": "Groups",
           "refId": "A"
         },
         {
-          "expr": "sum(onyx_group_sync_users_processed_total{connector_type=~\"$connector_type\"})",
+          "expr": "sum(orbyte_group_sync_users_processed_total{connector_type=~\"$connector_type\"})",
           "legendFormat": "Users",
           "refId": "B"
         },
         {
-          "expr": "sum(onyx_group_sync_errors_total{connector_type=~\"$connector_type\"})",
+          "expr": "sum(orbyte_group_sync_errors_total{connector_type=~\"$connector_type\"})",
           "legendFormat": "Errors",
           "refId": "C"
         }
@@ -520,7 +520,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(onyx_celery_task_duration_seconds_bucket{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task|check_for_doc_permissions_sync|check_for_external_group_sync\"}[$__rate_interval])) by (le, task_name))",
+          "expr": "histogram_quantile(0.95, sum(rate(orbyte_celery_task_duration_seconds_bucket{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task|check_for_doc_permissions_sync|check_for_external_group_sync\"}[$__rate_interval])) by (le, task_name))",
           "legendFormat": "{{task_name}} p95",
           "refId": "A"
         }
@@ -556,12 +556,12 @@
       },
       "targets": [
         {
-          "expr": "sum(increase(onyx_celery_task_completed_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\", outcome=\"success\"}[$__rate_interval])) by (task_name)",
+          "expr": "sum(increase(orbyte_celery_task_completed_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\", outcome=\"success\"}[$__rate_interval])) by (task_name)",
           "legendFormat": "{{task_name}} success",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(onyx_celery_task_completed_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\", outcome=\"failure\"}[$__rate_interval])) by (task_name)",
+          "expr": "sum(increase(orbyte_celery_task_completed_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\", outcome=\"failure\"}[$__rate_interval])) by (task_name)",
           "legendFormat": "{{task_name}} failure",
           "refId": "B"
         }
@@ -597,17 +597,17 @@
       },
       "targets": [
         {
-          "expr": "sum(increase(onyx_celery_task_revoked_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\"}[$__rate_interval])) by (task_name)",
+          "expr": "sum(increase(orbyte_celery_task_revoked_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\"}[$__rate_interval])) by (task_name)",
           "legendFormat": "{{task_name}} revoked",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(onyx_celery_task_retried_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\"}[$__rate_interval])) by (task_name)",
+          "expr": "sum(increase(orbyte_celery_task_retried_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\"}[$__rate_interval])) by (task_name)",
           "legendFormat": "{{task_name}} retried",
           "refId": "B"
         },
         {
-          "expr": "sum(increase(onyx_celery_task_rejected_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\"}[$__rate_interval])) by (task_name)",
+          "expr": "sum(increase(orbyte_celery_task_rejected_total{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\"}[$__rate_interval])) by (task_name)",
           "legendFormat": "{{task_name}} rejected",
           "refId": "C"
         }
@@ -643,7 +643,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(onyx_celery_task_queue_wait_seconds_bucket{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\"}[$__rate_interval])) by (le, task_name))",
+          "expr": "histogram_quantile(0.95, sum(rate(orbyte_celery_task_queue_wait_seconds_bucket{task_name=~\"connector_permission_sync_generator_task|connector_external_group_sync_generator_task\"}[$__rate_interval])) by (le, task_name))",
           "legendFormat": "{{task_name}} p95",
           "refId": "A"
         }
@@ -651,7 +651,7 @@
     }
   ],
   "schemaVersion": 39,
-  "tags": ["onyx", "permissions", "sync"],
+  "tags": ["orbyte", "permissions", "sync"],
   "templating": {
     "list": [
       {
@@ -667,14 +667,14 @@
         "allValue": ".*",
         "current": { "selected": true, "text": "All", "value": "$__all" },
         "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-        "definition": "label_values(onyx_doc_perm_sync_duration_seconds_bucket, connector_type)",
+        "definition": "label_values(orbyte_doc_perm_sync_duration_seconds_bucket, connector_type)",
         "includeAll": true,
         "label": "Connector Type",
         "multi": true,
         "name": "connector_type",
         "options": [],
         "query": {
-          "query": "label_values(onyx_doc_perm_sync_duration_seconds_bucket, connector_type)",
+          "query": "label_values(orbyte_doc_perm_sync_duration_seconds_bucket, connector_type)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -690,8 +690,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Onyx Permission Sync",
-  "uid": "onyx-permission-sync",
+  "title": "Orbyte Permission Sync",
+  "uid": "orbyte-permission-sync",
   "version": 1,
   "weekStart": ""
 }

@@ -1,4 +1,4 @@
-"""Generate OpenAPI schema and Python client for Onyx API.
+"""Generate OpenAPI schema and Python client for Orbyte API.
 
 This script is bundled with the ods wheel and executed by the Go binary
 to generate the OpenAPI schema without starting the full API server.
@@ -34,11 +34,11 @@ def generate_schema(output_path: str, tagged_for_docs: str | None = None) -> boo
         # Import here to avoid requiring backend dependencies when not generating schema
         from fastapi.openapi.utils import get_openapi
 
-        from onyx.main import app as app_fn
+        from orbyte.main import app as app_fn
     except ImportError as e:
         print(f"Error: Failed to import required modules: {e}", file=sys.stderr)
         print(
-            "Make sure you are running from a venv with onyx[backend] installed.",
+            "Make sure you are running from a venv with orbyte[backend] installed.",
             file=sys.stderr,
         )
         return False
@@ -106,7 +106,7 @@ def generate_client(
     Returns True on success, False on failure.
     """
     if output_dir is None:
-        output_dir = str(Path(openapi_json_path).parent / "onyx_openapi_client")
+        output_dir = str(Path(openapi_json_path).parent / "orbyte_openapi_client")
 
     # Optionally strip tags so all endpoints go under DefaultApi
     schema_path = openapi_json_path
@@ -129,7 +129,7 @@ def generate_client(
         "-o",
         output_dir,
         "--package-name",
-        "onyx_openapi_client",
+        "orbyte_openapi_client",
         "--skip-validate-spec",
         "--openapi-normalizer",
         "SIMPLIFY_ONEOF_ANYOF=true,SET_OAS3_NULLABLE=true",
@@ -156,7 +156,7 @@ def generate_client(
 
 def main() -> int:  # noqa: PLR0911
     parser = argparse.ArgumentParser(
-        description="Generate OpenAPI schema and Python client for Onyx API"
+        description="Generate OpenAPI schema and Python client for Orbyte API"
     )
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 

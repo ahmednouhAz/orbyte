@@ -1,16 +1,16 @@
 # DEVCONTAINER OVERLAY
 
-Running **inside the Onyx dev container**. These notes are additive to the root
+Running **inside the Orbyte dev container**. These notes are additive to the root
 `/workspace/CLAUDE.md`; on conflict with a host-oriented instruction there, prefer these.
 
 ## No Docker daemon in here
 
-Don't use `docker` / `docker exec` / `docker compose`. Onyx services run as sibling
-containers on the `onyx_default` network, reachable directly by hostname — so the root
-guide's `docker exec -it onyx-relational_db-1 psql ...` won't work. Use
+Don't use `docker` / `docker exec` / `docker compose`. Orbyte services run as sibling
+containers on the `orbyte_default` network, reachable directly by hostname — so the root
+guide's `docker exec -it orbyte-relational_db-1 psql ...` won't work. Use
 `psql -h relational_db -U postgres -c "<SQL>"` instead.
 
-## Service hostnames (`onyx_default` network)
+## Service hostnames (`orbyte_default` network)
 
 Each is also exported as an env var:
 

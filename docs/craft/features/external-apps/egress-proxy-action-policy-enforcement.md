@@ -30,11 +30,11 @@ deliberately left open — this plan keeps the contract independent of both.
 ## Important Notes
 
 - **Source-of-truth boundaries** (don't reinvent):
-  - Catalog + recognition rules: `onyx/external_apps/providers/actions.py`
+  - Catalog + recognition rules: `orbyte/external_apps/providers/actions.py`
     (`EndpointSpec`, `MatchRule = RestRoute | GraphQLOp`). Per-provider catalogs
     in `providers/{slack,linear,google_calendar}.py`.
   - Stored admin choices: `external_app_policy` rows via
-    `onyx/db/external_app.py::get_policies`.
+    `orbyte/db/external_app.py::get_policies`.
   - App identity + URL patterns: `external_app.upstream_url_patterns`
     (the existing app-match layer — reuse it).
 - **Two-level matching.** App match (regex on `upstream_url_patterns`) already
@@ -43,7 +43,7 @@ deliberately left open — this plan keeps the contract independent of both.
   method + path regex; `GraphQLOp` keys off the parsed request body's operation
   type + root field.
 - **Provider-owned matching.** The action-match logic should live next to the
-  catalog (in `onyx/external_apps`), exposing a generic function the proxy
+  catalog (in `orbyte/external_apps`), exposing a generic function the proxy
   calls. Keep provider specifics out of the proxy; the proxy stays a thin
   policy *consumer*.
 - **One resolution function.** Extract the current inline logic into a single
@@ -70,7 +70,7 @@ deliberately left open — this plan keeps the contract independent of both.
 
 1. **Extract resolution into a shared home.** Move the stored-override-else-`ASK`
    logic out of `action_policy_views` into a single `resolve_policy` in the
-   `onyx/external_apps` (or `onyx/db/external_app.py`) domain layer; have the
+   `orbyte/external_apps` (or `orbyte/db/external_app.py`) domain layer; have the
    API view call it. No behaviour change — this just creates the seam the proxy
    shares.
 2. **Add an action matcher.** A provider-owned function that, given a connected

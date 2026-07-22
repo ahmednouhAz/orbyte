@@ -24,12 +24,12 @@ jobs:
           version: "0.11.25"
       - run: |
           GOOS=linux GOARCH=amd64 CGO_ENABLED=0 uv build --wheel
-          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 ONYX_CLI_REUSE_BINARY=1 \
-            ONYX_CLI_WHEEL_PLATFORM_TAG=musllinux_1_2_x86_64 \
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 ORBYTE_CLI_REUSE_BINARY=1 \
+            ORBYTE_CLI_WHEEL_PLATFORM_TAG=musllinux_1_2_x86_64 \
             uv build --wheel
           GOOS=linux GOARCH=arm64 CGO_ENABLED=0 uv build --wheel
-          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 ONYX_CLI_REUSE_BINARY=1 \
-            ONYX_CLI_WHEEL_PLATFORM_TAG=musllinux_1_2_aarch64 \
+          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 ORBYTE_CLI_REUSE_BINARY=1 \
+            ORBYTE_CLI_WHEEL_PLATFORM_TAG=musllinux_1_2_aarch64 \
             uv build --wheel
 
           for goos in windows darwin; do
@@ -41,7 +41,7 @@ jobs:
       - name: Upload built wheels
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: onyx-cli-wheels
+          name: orbyte-cli-wheels
           path: cli/dist/*.whl
           if-no-files-found: error
           retention-days: 7
@@ -240,7 +240,7 @@ jobs:
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # ratchet:actions/download-artifact@v4
         with:
-          name: onyx-cli-wheels
+          name: orbyte-cli-wheels
           path: cli/dist
 
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # zizmor: ignore[cache-poisoning]
@@ -272,12 +272,12 @@ jobs:
             unzip -q "$wheel" -d "$extract_dir"
             binary="$(
               find "$extract_dir" \
-                \( -path '*.data/scripts/onyx-cli' -o -path '*.data/scripts/onyx-cli.exe' \) \
+                \( -path '*.data/scripts/orbyte-cli' -o -path '*.data/scripts/orbyte-cli.exe' \) \
                 -type f \
                 -print -quit
             )"
             if [ -z "$binary" ]; then
-              echo "No onyx-cli binary found in $wheel" >&2
+              echo "No orbyte-cli binary found in $wheel" >&2
               exit 1
             fi
 
@@ -306,7 +306,7 @@ jobs:
               data = json.loads(sarif_path.read_text())
               for run in data.get("runs", []):
                   run["automationDetails"] = {
-                      "id": f"onyx-cli-govulncheck/{sarif_path.stem}",
+                      "id": f"orbyte-cli-govulncheck/{sarif_path.stem}",
                   }
                   results = []
                   upload_levels = {"error", "warning"}

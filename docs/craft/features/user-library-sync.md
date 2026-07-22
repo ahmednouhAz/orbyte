@@ -7,13 +7,13 @@ How user-uploaded files (PDFs, spreadsheets, slides) get from the user's library
 Three layers, mirroring the skills pipeline:
 
 ```
-HTTP layer        backend/onyx/server/features/build/user_library/api.py
+HTTP layer        backend/orbyte/server/features/build/user_library/api.py
   │ thin: validate input, call db helpers, return response
   ▼
-DB layer          backend/onyx/server/features/build/db/user_library.py
+DB layer          backend/orbyte/server/features/build/db/user_library.py
   │ owns: file_store I/O, Document upserts, ownership checks, quota
   ▼
-Sandbox sync      backend/onyx/server/features/build/sandbox/user_library.py
+Sandbox sync      backend/orbyte/server/features/build/sandbox/user_library.py
                   builds FileSet from DB + file_store, pushes via push daemon
 ```
 
@@ -71,7 +71,7 @@ Empty filesets push too (clears stale files via the swap).
 
 ## 4. DB layer API
 
-`backend/onyx/server/features/build/db/user_library.py`:
+`backend/orbyte/server/features/build/db/user_library.py`:
 
 | Function | Purpose |
 |----------|---------|
@@ -79,7 +79,7 @@ Empty filesets push too (clears stale files via the swap).
 | `get_user_storage_bytes(db, user_id)` | SQL aggregation for quota |
 | `build_document_id(user_id, path)` | Deterministic doc_id |
 | `list_user_files(db, user_id)` | All CRAFT_FILE docs for the user |
-| `fetch_user_file_for_user(db, doc_id, user_id)` | Lookup + ownership check; raises `OnyxError(NOT_FOUND)` on miss |
+| `fetch_user_file_for_user(db, doc_id, user_id)` | Lookup + ownership check; raises `OrbyteError(NOT_FOUND)` on miss |
 | `store_user_file(db, ..., file_path, content, mime_type)` | Save to file store + upsert Document. Returns `(doc_id, file_id, old_blob_id_to_delete)`. The new blob is saved first; the caller must pass `old_blob_id_to_delete` to `cleanup_old_blobs` after their final commit. |
 | `cleanup_old_blobs(blob_ids)` | Delete superseded blobs. Must be called after the final DB commit — if called before and the commit fails, the document rolls back to point at the now-deleted blob. |
 | `create_directory_record(db, user_id, connector_id, credential_id, dir_path)` | Virtual directory document (no file store object) |
@@ -95,19 +95,19 @@ Encoded in the document_id prefix: `CRAFT_FILE__{user_id}__{hash}`. `fetch_user_
 ## 6. Files
 
 **New:**
-- `backend/onyx/server/features/build/sandbox/user_library.py` — sync module
+- `backend/orbyte/server/features/build/sandbox/user_library.py` — sync module
 - `backend/tests/integration/tests/craft/k8s/test_user_library_sync.py` — API-driven k8s integration tests against the Helm-installed kind lane with real API, web_server, Celery, backing services, sandbox proxy, and sandbox pods
 - `backend/tests/external_dependency_unit/craft/test_user_library_fileset.py` — direct fileset/sync helper coverage
 
 **Modified:**
-- `backend/onyx/server/features/build/db/user_library.py` — added all the CRUD/storage helpers
-- `backend/onyx/server/features/build/user_library/api.py` — thinned to call db helpers; `PersistentDocumentWriter` usage removed; `HTTPException` → `OnyxError`
-- `backend/onyx/server/features/build/session/manager.py` — `_hydrate_user_library` called in both `create_session__no_commit` and `get_or_create_empty_session`
-- `backend/onyx/skills/push.py` — per-failure logging (consistent with user_library push logging)
+- `backend/orbyte/server/features/build/db/user_library.py` — added all the CRUD/storage helpers
+- `backend/orbyte/server/features/build/user_library/api.py` — thinned to call db helpers; `PersistentDocumentWriter` usage removed; `HTTPException` → `OrbyteError`
+- `backend/orbyte/server/features/build/session/manager.py` — `_hydrate_user_library` called in both `create_session__no_commit` and `get_or_create_empty_session`
+- `backend/orbyte/skills/push.py` — per-failure logging (consistent with user_library push logging)
 - `backend/tests/integration/tests/craft/k8s/k8s_fixtures.py` — `SandboxHandle.provision_api_user` returns a `WorkspaceProxy` for API-created users, eliminating duplicated `_provision_with_status` helpers
 
 **Deleted:**
-- `backend/onyx/server/features/build/indexing/persistent_document_writer.py`
+- `backend/orbyte/server/features/build/indexing/persistent_document_writer.py`
 - `backend/tests/external_dependency_unit/craft/test_persistent_document_writer.py`
 
 ## 7. Tests

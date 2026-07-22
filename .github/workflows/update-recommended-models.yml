@@ -1,4 +1,4 @@
-### Regenerates backend/onyx/llm/well_known_providers/recommended-models.json
+### Regenerates backend/orbyte/llm/well_known_providers/recommended-models.json
 ### from the OpenRouter catalog (via backend/scripts/update_recommended_models.py)
 ### and opens a reviewed PR when the model set changed. The file is live
 ### production config — deployments poll it from GitHub raw main — so changes
@@ -57,7 +57,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          FILE: backend/onyx/llm/well_known_providers/recommended-models.json
+          FILE: backend/orbyte/llm/well_known_providers/recommended-models.json
         # Fixed branch + force-push (unlike release-devtools' skip-if-exists):
         # the content changes week over week, so an already-open PR should be
         # refreshed with the latest regeneration, not left stale.

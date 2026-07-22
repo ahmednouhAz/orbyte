@@ -1,12 +1,12 @@
-"""Incremental parser for the Onyx chat NDJSON stream.
+"""Incremental parser for the Orbyte chat NDJSON stream.
 
 Vendored from backend/tests/integration/common_utils/managers/chat.py
-(analyze_response) and backend/onyx/server/query_and_chat/streaming_models.py,
+(analyze_response) and backend/orbyte/server/query_and_chat/streaming_models.py,
 restructured to process one line at a time so milestone latencies can be
 recorded the moment a packet arrives.
 
 MUST stay stdlib-only: this module runs inside Locust under gevent
-monkey-patching, where importing onyx.* (grpc, psycopg, etc.) breaks.
+monkey-patching, where importing orbyte.* (grpc, psycopg, etc.) breaks.
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from dataclasses import field
 
 # Packet type strings (subset of StreamingType in
-# backend/onyx/server/query_and_chat/streaming_models.py — keep in sync).
+# backend/orbyte/server/query_and_chat/streaming_models.py — keep in sync).
 MESSAGE_START = "message_start"
 MESSAGE_DELTA = "message_delta"
 SEARCH_TOOL_START = "search_tool_start"

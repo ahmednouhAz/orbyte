@@ -22,8 +22,8 @@ environment.
 ```
 Session creation failed: (403) Forbidden
 secrets "sandbox-<id>-opencode-auth" is forbidden:
-User "system:serviceaccount:onyx:onyx-workload-access" cannot
-get resource "secrets" in API group "" in the namespace "onyx-sandboxes"
+User "system:serviceaccount:orbyte:orbyte-workload-access" cannot
+get resource "secrets" in API group "" in the namespace "orbyte-sandboxes"
 ```
 
 **Root cause:** the api server's Role in the sandbox namespace was
@@ -60,7 +60,7 @@ branch (see §1.3 — the path that calls `replace_namespaced_secret` after
 a create conflict) will intermittently 403. `list`/`watch` are not used
 on secrets at all.
 
-`backend/onyx/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
+`backend/orbyte/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
 is the source of truth for which k8s resources the api server touches —
 grep for `_core_api.` method calls if you need to re-derive the verb set.
 
@@ -124,7 +124,7 @@ returned `ProviderModelNotFoundError`. The sandbox's
 `OPENCODE_CONFIG_CONTENT` only contained `openai`.
 
 **Root cause:** `fetch_all_build_mode_llm_providers` in
-`backend/onyx/server/features/build/db/build_session.py` filters with
+`backend/orbyte/server/features/build/db/build_session.py` filters with
 `LLMProviderModel.name.like("build-mode-%")`. Providers without the
 `build-mode-` name prefix are silently dropped during sandbox
 provisioning.
@@ -233,7 +233,7 @@ advance.
 ### 2.2 Auth
 
 - `OPENCODE_SERVER_USERNAME = "opencode"` (constant in
-  `backend/onyx/server/features/build/configs.py`). **Not** `"onyx"` —
+  `backend/orbyte/server/features/build/configs.py`). **Not** `"orbyte"` —
   this tripped up curl-based debugging.
 - Password comes from the `OPENCODE_SERVER_PASSWORD` env (mounted from
   the per-pod Secret). Both the api server (HTTP Basic) and any
@@ -243,7 +243,7 @@ advance.
 
 | Error / log line | Meaning |
 |---|---|
-| `secrets … is forbidden … namespace "onyx-sandboxes"` | §1.1 — api-server Role missing `secrets` verbs |
+| `secrets … is forbidden … namespace "orbyte-sandboxes"` | §1.1 — api-server Role missing `secrets` verbs |
 | `[Errno 111] Connection refused` on POST `/session` | opencode-serve not bound to `:4096`. Cold pod, crashloop, or process death |
 | `ProviderModelNotFoundError` w/ bundled-model suggestions | Provider not registered in opencode (silent drop from env config), or config not loaded |
 | `Sandbox … has status provisioning and is being created by another request` | Intentional guard. Two concurrent requests on the same user's mid-provision sandbox |
@@ -255,8 +255,8 @@ advance.
 
 **What providers does THIS sandbox actually have loaded?**
 ```bash
-SBX=$(kubectl -n onyx-sandboxes get pods -o name | head -1 | sed 's|pod/||')
-kubectl -n onyx-sandboxes exec "$SBX" -c sandbox -- sh -c 'echo "$OPENCODE_CONFIG_CONTENT"' \
+SBX=$(kubectl -n orbyte-sandboxes get pods -o name | head -1 | sed 's|pod/||')
+kubectl -n orbyte-sandboxes exec "$SBX" -c sandbox -- sh -c 'echo "$OPENCODE_CONFIG_CONTENT"' \
   | python3 -c 'import sys, json; d=json.load(sys.stdin); print("enabled:", d.get("enabled_providers")); print("keys:", list(d.get("provider",{}).keys()))'
 ```
 
@@ -266,9 +266,9 @@ lines after the first prompt. If a provider is in the env var but
 missing from this log, opencode silently dropped it (usually a JSON
 shape problem or missing API key).
 
-**Test the opencode API directly** (auth user is `opencode`, NOT `onyx`):
+**Test the opencode API directly** (auth user is `opencode`, NOT `orbyte`):
 ```bash
-kubectl -n onyx-sandboxes exec sandbox-<id> -c sandbox -- sh -c '
+kubectl -n orbyte-sandboxes exec sandbox-<id> -c sandbox -- sh -c '
   curl -s -u "opencode:$OPENCODE_SERVER_PASSWORD" http://localhost:4096/doc \
     | python3 -m json.tool | head -20
 '
@@ -276,7 +276,7 @@ kubectl -n onyx-sandboxes exec sandbox-<id> -c sandbox -- sh -c '
 
 **Tail opencode logs across pods (with `stern`):**
 ```bash
-stern -n onyx-sandboxes sandbox -c sandbox
+stern -n orbyte-sandboxes sandbox -c sandbox
 ```
 
 ---
@@ -304,7 +304,7 @@ stern -n onyx-sandboxes sandbox -c sandbox
 
 1. Check the pod's actual image digest:
    ```bash
-   kubectl -n onyx-sandboxes get pod sandbox-<id> \
+   kubectl -n orbyte-sandboxes get pod sandbox-<id> \
      -o jsonpath='{.status.containerStatuses[?(@.name=="sandbox")].imageID}'
    ```
 2. Compare with the digest of the image you just pushed.
@@ -329,8 +329,8 @@ actually needs.
 |---|---|---|
 | App-aligned sandbox tags | Avoids app/sandbox version skew; Kubernetes immutable tags avoid mutable-tag cache traps without adding a registry check to every sandbox pod start | release workflow + sandbox PodTemplate defaults |
 | Recreate pod on Secret content change | Fixes §1.3 — env doesn't refresh on Secret update | `_provision_opencode_secret` or the provisioning caller |
-| `secrets` verbs in the chart-managed sandbox-namespace Role | Stops the §1.1 403 from recurring on every fresh deploy | Onyx helm chart's sandbox-rbac template |
-| Pre-seed `build-mode-*` providers in admin onboarding | Avoid the silent-skip filter trap in §1.4 | Onyx admin / setup wizard |
+| `secrets` verbs in the chart-managed sandbox-namespace Role | Stops the §1.1 403 from recurring on every fresh deploy | Orbyte helm chart's sandbox-rbac template |
+| Pre-seed `build-mode-*` providers in admin onboarding | Avoid the silent-skip filter trap in §1.4 | Orbyte admin / setup wizard |
 | Surface "sandbox provisioning" via 409 + Retry-After | Instead of `RuntimeError` → JSON dump, return a clean wait/retry signal the FE can poll on | `session/manager._stream_cli_agent_response` |
 | Wait for opencode-serve `/doc` before reporting RUNNING | Closes the "k8s-ready but opencode-not-bound" window where the first prompt races a cold opencode | `KubernetesSandboxManager.provision` (landed alongside this doc) |
 

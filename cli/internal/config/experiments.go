@@ -41,6 +41,6 @@ func ExperimentsText(f Features) string {
 		text += fmt.Sprintf("    flag: %s  env: %s  config: %s\n\n", e.Flag, e.EnvVar, e.Config)
 	}
 	text += "Toggle via CLI flag, environment variable, or config file.\n"
-	text += "Example: onyx-cli chat --no-stream-markdown"
+	text += "Example: orbyte-cli chat --no-stream-markdown"
 	return text
 }

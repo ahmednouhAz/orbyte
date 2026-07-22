@@ -7,8 +7,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/audit"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/audit"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/prompt"
 )
 
 // AuditIgnoreAddOptions holds options for `ods audit ignore add`.

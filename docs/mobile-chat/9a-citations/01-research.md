@@ -4,7 +4,7 @@
 
 ## Requirement
 
-Port Onyx **web's chat citations + cited-sources experience** to the mobile React Native app
+Port Orbyte **web's chat citations + cited-sources experience** to the mobile React Native app
 (`mobile/`): type + process the citation/document streaming packets, render inline `[N]`
 citation markers in the streamed answer, and render a cited-sources surface (a "Sources"
 affordance + a list of source rows), matching web's behaviour and — where the platform allows —
@@ -28,7 +28,7 @@ streaming markdown renderer — **rejected** as too fragile for the value. Hidin
 **rejected** (loses the claim→source bond).
 
 ### Why the constraint exists (recorded so it isn't re-litigated)
-- **Web** renders the answer with `react-markdown` (a JS element tree); Onyx overrides the `a`
+- **Web** renders the answer with `react-markdown` (a JS element tree); Orbyte overrides the `a`
   node (`MemoizedAnchor`) to swap each `[[N]](url)` link for a custom `SourceTag` chip + hover
   card. Every node is a React element it can replace.
 - **Mobile** uses `react-native-streamdown` → `react-native-enriched-markdown`, a **native**
@@ -116,7 +116,7 @@ model_index?}, obj:{ type, ... } }`. No `data:` SSE prefix.
 
 - **Citation — the ONLY citation packet:** `CitationInfo`
   `{ type:"citation_info", citation_number:int, document_id:str }`
-  (`backend/onyx/server/query_and_chat/streaming_models.py:144`). Web's enum also declares
+  (`backend/orbyte/server/query_and_chat/streaming_models.py:144`). Web's enum also declares
   `citation_start`/`citation_end` — **the backend never emits them; ignore.**
 - **Document packets** (each `{ type, documents: SearchDoc[] }`):
   - `SearchToolDocumentsDelta` — `type:"search_tool_documents_delta"` (internal + web search).
@@ -125,7 +125,7 @@ model_index?}, obj:{ type, ... } }`. No `data:` SSE prefix.
 - **`message_start`** carries `final_documents: SearchDoc[] | null` (authoritative cited-doc set)
   + `pre_answer_processing_seconds`. (Backend `AgentResponseStart` does NOT send web's `id`/
   `content` on this packet.)
-- **`SearchDoc`** (`backend/onyx/context/search/models.py:283`): `document_id:str`,
+- **`SearchDoc`** (`backend/orbyte/context/search/models.py:283`): `document_id:str`,
   `semantic_identifier:str`, `link:str|null`, `blurb:str`, `source_type:str`, `score:number|null`,
   `updated_at:str(ISO)|null`, `match_highlights:str[]`, `metadata:Record<string,string|string[]>`,
   `is_internet:bool`, `chunk_ind:int`, `boost:int`, `hidden:bool`, plus nullable
@@ -135,7 +135,7 @@ model_index?}, obj:{ type, ... } }`. No `data:` SSE prefix.
   Mobile's `isComplete` already keys on `STOP`.
 
 ### The pivotal inline-marker fact
-`backend/onyx/chat/citation_processor.py:496,506`: the inline marker is emitted as
+`backend/orbyte/chat/citation_processor.py:496,506`: the inline marker is emitted as
 `[[{num}]]({link})` where **`link = search_doc.link or ""`**. So:
 - **Web/linked docs** → the marker URL **is** the document link → `onLinkPress(event.url)` can open
   it directly, **no citation-state resolution needed for the tap**.
@@ -215,14 +215,14 @@ Center on a pure, incremental `citationProcessor.ts` (ref-based `useCitationProc
 new via `nextPacketIndex`, in-place mutation, primitive change-proxies `citationCount`/`docCount`/
 `resolveVersion`) so a 2000-token / 30-citation answer never re-parses; the Sources bar/sheet are
 memoized siblings that re-render only when counts change, never per token. A pure
-`transformCitationMarkers(displayed, resolve)` rewrites `[[n]](url)` → a controlled `onyxcite://n`
+`transformCitationMarkers(displayed, resolve)` rewrites `[[n]](url)` → a controlled `orbytecite://n`
 href when resolved, elides the partial trailing marker, and downgrades forward-refs to inert plain
 text; tap routing resolves `n → doc → openDocument`.
 - **Trade-offs:** deterministic streaming edges + O(new-packets) processing + memoized UI; but the
   robustness machinery is **largely undercut by the pre-baked-URL fact** (doc packets precede the
   answer and the marker carries its own URL, so forward-ref gating buys little), and the
-  `onyxcite://` rewrite adds a fragile per-frame transform.
-- **Risks:** renderer may filter a custom `onyxcite://` scheme in `onLinkPress`; partial-marker
+  `orbytecite://` rewrite adds a fragile per-frame transform.
+- **Risks:** renderer may filter a custom `orbytecite://` scheme in `onLinkPress`; partial-marker
   regex edge cases (`[not a cite]`, real `[[x]](y)` links); superscript may not be expressible.
 
 ### Approach C — Flexibility / Reusable-Foundation: one processor + a `processed` channel + shared source layer
@@ -246,7 +246,7 @@ just raw packets) — the channel 9b's timeline/search/tool renderers read; (c) 
 ## Cross-comparison
 
 - **Inline tap-path:** A's insight (pre-baked marker URL + doc-packets-precede-answer) makes the
-  common web-doc case trivial and **undercuts B's forward-ref/`onyxcite://` machinery** — B's
+  common web-doc case trivial and **undercuts B's forward-ref/`orbytecite://` machinery** — B's
   genuinely useful core (an incremental cursor) is already present in C (and in web). So B's extras
   mostly don't pay for themselves at chat scale.
 - **Alignment with the roadmap:** 9b is **next** and explicitly needs a packet processor to extend
@@ -276,7 +276,7 @@ streaming-robustness machinery that the pre-baked-marker-URL fact largely render
 state — since the marker URL is pre-baked (`[[n]](link)`, `link = search_doc.link or ""`),
 `onLinkPress(event.url)` opens web/linked docs directly, and empty-URL file markers degrade to
 opening the Sources sheet. We therefore **drop B's forward-reference gating and the
-`onyxcite://` marker-rewrite transform** entirely.
+`orbytecite://` marker-rewrite transform** entirely.
 
 Net shape: C's reusable seams (processor + `processed` channel + shared source layer) + A's lean
 inline path + none of B's rewrite/gating complexity.

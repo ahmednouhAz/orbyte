@@ -9,14 +9,14 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/docker"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/postgres"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/s3"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/docker"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/paths"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/postgres"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/prompt"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/s3"
 )
 
-const seededSnapshotURL = "s3://onyx-internal-tools/seeded.dump"
+const seededSnapshotURL = "s3://orbyte-internal-tools/seeded.dump"
 
 // DBRestoreOptions holds options for the db restore command.
 type DBRestoreOptions struct {
@@ -39,7 +39,7 @@ The format is automatically detected based on file extension:
   - .sql files: restored with psql (plain SQL)
 
 If just a filename is provided (without path), the file is looked up
-in the default snapshots directory (~/.local/share/onyx-dev/snapshots/).
+in the default snapshots directory (~/.local/share/orbyte-dev/snapshots/).
 
 Use --fetch-seeded to download and restore a pre-seeded database snapshot
 from S3 (requires network access or AWS credentials).
@@ -158,7 +158,7 @@ func runDBRestore(input string, opts *DBRestoreOptions) {
 	log.Infof("Restoring database '%s' from: %s", config.Database, inputPath)
 
 	// Copy file to container.
-	containerTmpFile := "/tmp/onyx_restore_tmp"
+	containerTmpFile := "/tmp/orbyte_restore_tmp"
 	if err := docker.CopyToContainer(container, inputPath, containerTmpFile); err != nil {
 		log.Fatalf("Failed to copy file to container: %v", err)
 	}

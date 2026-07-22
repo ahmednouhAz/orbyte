@@ -47,7 +47,7 @@ browser open, and clicks any past run to open the completed session.
   `next_run_at`), `QUEUE_ONE` for Run Now (works when paused, doesn't
   touch `next_run_at`).
 - **Runs execute as the task author.**
-  `create_session__no_commit(user_id=task.user_id)` — skills, Onyx search,
+  `create_session__no_commit(user_id=task.user_id)` — skills, Orbyte search,
   OAuth grants, approval policies all flow through the same user-scoped
   paths the interactive UI uses.
 - **Soft-delete preserves history.** `deleted=true` stops dispatch; runs
@@ -149,9 +149,9 @@ session create. No `attempts` counter (no retries in V1).
 
 ## API Spec
 
-All endpoints raise `OnyxError`; typed FastAPI returns. Mounted at
+All endpoints raise `OrbyteError`; typed FastAPI returns. Mounted at
 `/api/build/scheduled-tasks` (existing `/build` prefix,
-`require_onyx_craft_enabled` gating). Scoped to the authenticated user; no
+`require_orbyte_craft_enabled` gating). Scoped to the authenticated user; no
 admin view in V1.
 
 - `GET    /scheduled-tasks` — list payload (id, name, human-readable

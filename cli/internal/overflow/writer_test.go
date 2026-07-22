@@ -104,7 +104,7 @@ func TestWriter_MultipleChunks(t *testing.T) {
 }
 
 func TestSaveFull(t *testing.T) {
-	path, err := SaveFull("onyx-test-*.txt", "hello world")
+	path, err := SaveFull("orbyte-test-*.txt", "hello world")
 	if err != nil {
 		t.Fatalf("SaveFull failed: %v", err)
 	}

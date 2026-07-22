@@ -9,8 +9,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/git"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/prompt"
 )
 
 const opalTagPrefix = "opal/v"
@@ -32,8 +32,8 @@ func NewReleaseOpalCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "opal",
-		Short: "Cut a new @onyx-ai/opal release by pushing an opal/vX.Y.Z tag",
-		Long: `Cut a new @onyx-ai/opal release by pushing an opal/vX.Y.Z tag.
+		Short: "Cut a new @orbyte-ai/opal release by pushing an opal/vX.Y.Z tag",
+		Long: `Cut a new @orbyte-ai/opal release by pushing an opal/vX.Y.Z tag.
 
 The opal/v* tags are the source of truth for the version — web/lib/opal/package.json
 stays at 0.0.0 and release-opal.yml sets the published version from the tag. This
@@ -105,7 +105,7 @@ func releaseOpal(opts *ReleaseOpalOptions) {
 	}
 
 	if !opts.Yes {
-		if !prompt.Confirm(fmt.Sprintf("Tag and push %s to publish @onyx-ai/opal? (Y/n): ", tag)) {
+		if !prompt.Confirm(fmt.Sprintf("Tag and push %s to publish @orbyte-ai/opal? (Y/n): ", tag)) {
 			log.Info("Exiting...")
 			return
 		}

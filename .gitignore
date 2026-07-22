@@ -20,13 +20,13 @@
 
 # testing
 /web/test-results/
-backend/onyx/agent_search/main/test_data.json
+backend/orbyte/agent_search/main/test_data.json
 backend/tests/regression/answer_quality/test_data.json
 backend/tests/regression/search_quality/eval-*
 backend/tests/regression/search_quality/search_eval_config.yaml
 backend/tests/regression/search_quality/*.json
-backend/onyx/evals/data/
-backend/onyx/evals/one_off/*.json
+backend/orbyte/evals/data/
+backend/orbyte/evals/one_off/*.json
 *.log
 *.csv
 

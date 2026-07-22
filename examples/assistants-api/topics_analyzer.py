@@ -51,14 +51,14 @@ def analyze_topics(topics: list[str]) -> None:
     openai_api_key = os.environ.get(
         "OPENAI_API_KEY", "<your OpenAI API key if not set as env var>"
     )
-    onyx_api_key = os.environ.get(
-        "DANSWER_API_KEY", "<your Onyx API key if not set as env var>"
+    orbyte_api_key = os.environ.get(
+        "DANSWER_API_KEY", "<your Orbyte API key if not set as env var>"
     )
     client = OpenAI(
         api_key=openai_api_key,
         base_url="http://localhost:8080/openai-assistants",
         default_headers={
-            "Authorization": f"Bearer {onyx_api_key}",
+            "Authorization": f"Bearer {orbyte_api_key}",
         },
     )
 

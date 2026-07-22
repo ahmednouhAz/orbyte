@@ -1,6 +1,6 @@
 # Craft V0 — Current Architecture
 
-A snapshot of how Onyx Craft (a.k.a. "Build") is wired today, before the V1 work
+A snapshot of how Orbyte Craft (a.k.a. "Build") is wired today, before the V1 work
 in this directory lands. The goal of this doc is to give a reader the mental
 model needed to read the V1 plans in this directory without having to spelunk
 the code themselves.
@@ -18,7 +18,7 @@ links in the deeper sections.
   where a user (or, in V1, a scheduled trigger) prompts an agent that runs
   end-to-end inside a sandbox and produces durable artifacts.
 - **Build** — historical name for Craft. Still the name of the backend
-  module (`backend/onyx/server/features/build/`), the DB tables (`build_session`,
+  module (`backend/orbyte/server/features/build/`), the DB tables (`build_session`,
   `build_message`), and most of the code. Treat "Build" and "Craft" as synonyms
   when reading the code; the V1 plans don't rename the modules.
 - **Session** (`BuildSession`, table `build_session`) — one user-initiated
@@ -105,7 +105,7 @@ links in the deeper sections.
   runs on a schedule. Each scheduled run gets a brand-new session. See
   `triggers.md`.
 - **Approval** — V1 concept: a gate on risky agent actions (external
-  writes, deliveries, destructive ops) enforced in Onyx-controlled paths.
+  writes, deliveries, destructive ops) enforced in Orbyte-controlled paths.
   See `approvals.md`.
 
 ## High-Level Shape
@@ -127,7 +127,7 @@ in the session's `outputs/` directory and is surfaced to the user as artifacts.
 └──────────────────────┬──────────────────────────────┘
                        │  /api/build/...  (cookie auth)
                        ▼
-┌──────────── backend/onyx/server/features/build ─────────┐
+┌──────────── backend/orbyte/server/features/build ─────────┐
 │  api/        — FastAPI routers                          │
 │  session/    — SessionManager (lifecycle, streaming)    │
 │  db/         — BuildSession, Sandbox, Artifact, etc.    │
@@ -152,7 +152,7 @@ in the session's `outputs/` directory and is surfaced to the user as artifacts.
 └──────────────────────────────────────────────────────┘
 ```
 
-## Database Models (`backend/onyx/db/models.py`)
+## Database Models (`backend/orbyte/db/models.py`)
 
 Five tables drive Craft today, all under the `build_*` / `sandbox` / `artifact`
 / `snapshot` names. No `craft_*` table exists yet — the V1 plans add them.

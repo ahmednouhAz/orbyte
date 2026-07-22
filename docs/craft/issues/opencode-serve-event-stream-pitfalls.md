@@ -11,9 +11,9 @@ the original assumptions were wrong, and the resilience patterns the
 translator now applies. Future work in the optional final section.
 
 The relevant code lives under
-`backend/onyx/server/features/build/sandbox/opencode/serve_client.py`
+`backend/orbyte/server/features/build/sandbox/opencode/serve_client.py`
 and the unit tests under
-`backend/tests/unit/onyx/server/features/build/sandbox/test_translate_opencode_event.py`.
+`backend/tests/unit/orbyte/server/features/build/sandbox/test_translate_opencode_event.py`.
 
 ---
 

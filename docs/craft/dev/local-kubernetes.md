@@ -1,11 +1,19 @@
 # Local Kubernetes Development
 
-How to develop Onyx against a local kind cluster, with the vscode debugger
+> **Note:** The Helm chart this workflow depends on (`deployment/helm/`) has
+> been removed from this repository — this product deploys via Docker
+> Compose only, and Craft's Docker-mode sandbox backend (see
+> [local-compose-craft.md](./local-compose-craft.md)) is what real
+> deployments actually use. `make craft-up` and the scripts below no longer
+> work as documented. This page is kept for reference only; restoring it
+> would mean restoring the Helm chart.
+
+How to develop Orbyte against a local kind cluster, with the vscode debugger
 attached to api_server / celery / web.
 
 ## When you need this
 
-This is the canonical local setup for **Onyx Craft (build mode)** — sandboxes
+This is the canonical local setup for **Orbyte Craft (build mode)** — sandboxes
 are real Kubernetes pods, so there is no longer a non-cluster shortcut.
 Non-Craft work can still use the docker-compose deps + vscode debugger path
 described in [CONTRIBUTING.md](/CONTRIBUTING.md); use that when you don't
@@ -13,7 +21,7 @@ need a sandbox.
 
 For iterating on the **docker** sandbox backend specifically
 (`SANDBOX_BACKEND=docker`, the self-host compose path) — typically when
-touching `backend/onyx/sandbox_proxy/` or the docker manager — see
+touching `backend/orbyte/sandbox_proxy/` or the docker manager — see
 [local-compose-craft.md](./local-compose-craft.md) instead.
 
 ## Prerequisites
@@ -51,14 +59,14 @@ sudo chmod 0440 /etc/sudoers.d/telepresence
 One sudo prompt at session start; the daemon stays alive afterward:
 
 ```bash
-telepresence connect -n onyx
+telepresence connect -n orbyte
 ```
 
 ## kubectl context
 
 Every script in this doc — and the `make craft-up` wrapper — refuses to
-operate unless your `kubectl` context is exactly `kind-onyx-dev`. This is
-a deliberate safety guard: the `onyx` namespace also exists in production
+operate unless your `kubectl` context is exactly `kind-orbyte-dev`. This is
+a deliberate safety guard: the `orbyte` namespace also exists in production
 EKS, and `helm uninstall` / `kubectl delete` on the wrong cluster is
 catastrophic.
 
@@ -77,13 +85,13 @@ kubectl config current-context
 Switch to the kind cluster:
 
 ```bash
-kubectl config use-context kind-onyx-dev
+kubectl config use-context kind-orbyte-dev
 ```
 
 **Verify before anything destructive** (uninstall, namespace delete, etc.):
 
 ```bash
-kubectl config current-context    # expect: kind-onyx-dev
+kubectl config current-context    # expect: kind-orbyte-dev
 ```
 
 ## One-time setup
@@ -104,7 +112,7 @@ the vscode `(k8s)` launch profile's preLaunchTask connects + intercepts
 automatically. Outside vscode:
 
 ```bash
-telepresence connect -n onyx
+telepresence connect -n orbyte
 ```
 
 ### What `craft-up` does
@@ -115,7 +123,7 @@ can also invoke them individually for tighter rebuild loops.
 **1. Bring up the cluster.** Delegates to
 [`deployment/helm/dev/k8s-up.sh`](/deployment/helm/dev/k8s-up.sh). The
 script is idempotent and refuses to run unless your kubectl context is
-`kind-onyx-dev`. It also installs the telepresence traffic-manager once
+`kind-orbyte-dev`. It also installs the telepresence traffic-manager once
 per cluster. New clusters use the `kindest/node:v1.33.1` node image so Craft's
 native init sidecar pod shape is supported. Existing clusters are not recreated;
 set `KIND_NODE_IMAGE` to override the default for a newly created cluster.
@@ -123,11 +131,11 @@ set `KIND_NODE_IMAGE` to override the default for a newly created cluster.
 Watch pods (vespa and CNPG-postgres take a minute or two on first boot):
 
 ```bash
-kubectl -n onyx get pods -w
+kubectl -n orbyte get pods -w
 ```
 
 The chart pins images to the `:edge` tag in
-[`values-localdev.yaml`](/deployment/helm/charts/onyx/values-localdev.yaml)
+[`values-localdev.yaml`](/deployment/helm/charts/orbyte/values-localdev.yaml)
 with `pullPolicy: Always`, so in-cluster pods track nightly builds off `main`
 rather than the released `:latest`.
 
@@ -148,8 +156,8 @@ which is equivalent to:
 
 ```bash
 docker build -t onyxdotapp/sandbox:dev \
-  backend/onyx/server/features/build/sandbox/image
-kind load docker-image onyxdotapp/sandbox:dev --name onyx-dev
+  backend/orbyte/server/features/build/sandbox/image
+kind load docker-image onyxdotapp/sandbox:dev --name orbyte-dev
 ```
 
 The image tag (`onyxdotapp/sandbox:dev`) must match `SANDBOX_CONTAINER_IMAGE`
@@ -158,7 +166,7 @@ in your `.env.k8s` and the chart's `sandbox.image.*` values.
 Verify it's present in the kind node:
 
 ```bash
-docker exec onyx-dev-control-plane crictl images | grep sandbox
+docker exec orbyte-dev-control-plane crictl images | grep sandbox
 ```
 
 ---
@@ -168,16 +176,16 @@ with `unable to setup PKI infrastructure: no operator deployment found`
 against Docker Desktop's bundled kubernetes. Use kind (the default in
 `k8s-up.sh`) or a deployed dev cluster (`st-dev`).
 
-**Recovery: `onyx-sandboxes` namespace exists without Helm ownership.** If a
-previous `k8s-up.sh` (or any manual `kubectl create namespace onyx-sandboxes`)
+**Recovery: `orbyte-sandboxes` namespace exists without Helm ownership.** If a
+previous `k8s-up.sh` (or any manual `kubectl create namespace orbyte-sandboxes`)
 created the sandbox namespace before the chart could, helm install bails out
 with `exists and cannot be imported into the current release`. Adopt the
 namespace, then re-run `k8s-up.sh`:
 
 ```bash
-kubectl label   namespace onyx-sandboxes app.kubernetes.io/managed-by=Helm --overwrite
-kubectl annotate namespace onyx-sandboxes meta.helm.sh/release-name=onyx --overwrite
-kubectl annotate namespace onyx-sandboxes meta.helm.sh/release-namespace=onyx --overwrite
+kubectl label   namespace orbyte-sandboxes app.kubernetes.io/managed-by=Helm --overwrite
+kubectl annotate namespace orbyte-sandboxes meta.helm.sh/release-name=orbyte --overwrite
+kubectl annotate namespace orbyte-sandboxes meta.helm.sh/release-namespace=orbyte --overwrite
 ```
 
 ## Daily workflow
@@ -202,25 +210,25 @@ The recipes you'll hit in your first week:
 
 ```bash
 # Watch pods come up / go down
-kubectl -n onyx get pods -w
+kubectl -n orbyte get pods -w
 
 # Tail logs from one pod
-kubectl -n onyx logs -f <pod>
+kubectl -n orbyte logs -f <pod>
 
 # Stream logs across all api_server replicas (uses stern)
-stern -n onyx onyx-api-server
+stern -n orbyte orbyte-api-server
 
 # Shell into the postgres primary
-kubectl -n onyx exec -it onyx-pg-1 -- psql -U postgres
+kubectl -n orbyte exec -it orbyte-pg-1 -- psql -U postgres
 
 # Restart api_server after a chart edit
-kubectl -n onyx rollout restart deployment/onyx-api-server
+kubectl -n orbyte rollout restart deployment/orbyte-api-server
 
 # Delete one sandbox pod (test a recovery path)
-kubectl -n onyx-sandboxes delete pod <name>
+kubectl -n orbyte-sandboxes delete pod <name>
 
 # Inspect cluster events (most-recent 30)
-kubectl -n onyx get events --sort-by=.lastTimestamp | tail -30
+kubectl -n orbyte get events --sort-by=.lastTimestamp | tail -30
 ```
 
 ### Set up your `.env.k8s`
@@ -249,7 +257,7 @@ in the file too.
 
 `OPENSEARCH_ADMIN_PASSWORD` is the one cluster-random value — leave it as
 `<AUTO_FROM_CLUSTER>` in your `.env.k8s`. The `k8s: telepresence intercept
-api_server` preLaunchTask reads the `onyx-opensearch` Secret and rewrites
+api_server` preLaunchTask reads the `orbyte-opensearch` Secret and rewrites
 that one line before each launch, so the password stays in sync even
 across `k8s-up.sh` reinstalls (which rotate it).
 
@@ -259,10 +267,10 @@ if you missed a step.
 
 ### Run your local processes
 
-Open the debug panel and pick **Run All Onyx Services (k8s)** — web + api +
+Open the debug panel and pick **Run All Orbyte Services (k8s)** — web + api +
 every celery worker + beat. Model server stays in-cluster.
 
-Each `(k8s)` config has `telepresence intercept onyx-api-server` as its
+Each `(k8s)` config has `telepresence intercept orbyte-api-server` as its
 `preLaunchTask`. vscode dedupes the task across the compound, so one run
 connects + (re)creates the intercept idempotently. No manual telepresence
 invocation needed.
@@ -296,26 +304,26 @@ Visit `http://localhost:3000` once running.
 | Frontend (`web/`) | ~instant | Next.js HMR. |
 | Helm chart templates / values | 10–30s | Re-run `k8s-up.sh`. |
 | Backend image (`Dockerfile`) | 60–180s | `docker build` → `kind load docker-image` → `kubectl rollout restart`. |
-| Sandbox image (`backend/onyx/server/features/build/sandbox/image/`) | 60–180s | Same. New sandboxes pick up the new image immediately. |
+| Sandbox image (`backend/orbyte/server/features/build/sandbox/image/`) | 60–180s | Same. New sandboxes pick up the new image immediately. |
 
 ### Building and loading local images
 
 ```bash
 docker build -t onyxdotapp/onyx-backend:dev backend/
-kind load docker-image onyxdotapp/onyx-backend:dev --name onyx-dev
+kind load docker-image onyxdotapp/onyx-backend:dev --name orbyte-dev
 
 # Point the chart at it (once per session). Override global.pullPolicy
 # only when you're running a locally-built tag like :dev that isn't on
 # docker.io — otherwise the localdev default (Always) is what you want
 # so the nightly :edge tag refreshes.
-helm upgrade onyx deployment/helm/charts/onyx \
-  -n onyx \
-  -f deployment/helm/charts/onyx/values-localdev.yaml \
+helm upgrade orbyte deployment/helm/charts/orbyte \
+  -n orbyte \
+  -f deployment/helm/charts/orbyte/values-localdev.yaml \
   --set global.pullPolicy=IfNotPresent \
   --set api.image.tag=dev \
   --set celery_shared.image.tag=dev
 
-kubectl -n onyx rollout restart deployment/onyx-api-server
+kubectl -n orbyte rollout restart deployment/orbyte-api-server
 ```
 
 `kind load` ships straight to the kind node's containerd — no registry push.
@@ -329,7 +337,7 @@ external-dependency-unit tests against a temp dir. See
 
 ### End of day
 
-Run **`k8s: pause cluster`** (or `docker stop onyx-dev-control-plane`) to stop
+Run **`k8s: pause cluster`** (or `docker stop orbyte-dev-control-plane`) to stop
 the kind node container. PVC data lives inside that container, so postgres,
 redis, opensearch, vespa, and minio state all survive. Resume with
 **`k8s: resume cluster`** — the kubelet reconciles pods automatically.
@@ -354,7 +362,7 @@ are host-paths inside the kind node container.
 Clean slate without nuking the cluster:
 
 ```bash
-kubectl -n onyx delete pvc --all
+kubectl -n orbyte delete pvc --all
 deployment/helm/dev/k8s-up.sh
 ```
 
@@ -371,8 +379,8 @@ For Craft development, the required vars (already in the template) are:
 ENABLE_CRAFT=true
 SANDBOX_BACKEND=kubernetes
 SANDBOX_CONTAINER_IMAGE=onyxdotapp/sandbox:dev
-SANDBOX_API_SERVER_URL=http://onyx-api-service.onyx.svc.cluster.local:8080
-ONYX_SANDBOX_PUSH_PRIVATE_KEY=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+SANDBOX_API_SERVER_URL=http://orbyte-api-service.orbyte.svc.cluster.local:8080
+ORBYTE_SANDBOX_PUSH_PRIVATE_KEY=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
 ```
 
 The `onyxdotapp/sandbox:dev` image referenced here is **local-only**; build
@@ -383,7 +391,7 @@ before launching the api_server.
 
 ### Sandbox pods stuck in `ImagePullBackOff`
 
-**Symptoms:** Pods in the `onyx-sandboxes` namespace fail to start, with
+**Symptoms:** Pods in the `orbyte-sandboxes` namespace fail to start, with
 `ImagePullBackOff` or `ErrImagePull` for `onyxdotapp/sandbox:dev`. Build
 sessions hang at PROVISIONING.
 
@@ -399,11 +407,11 @@ make craft-sandbox-image
 
 (equivalent to `docker build` + `kind load docker-image`).
 
-### api_server can't resolve `onyx-pg-rw` (or other in-cluster DNS)
+### api_server can't resolve `orbyte-pg-rw` (or other in-cluster DNS)
 
 **Symptoms:** Your local api_server (run from vscode) crashes on startup
 with `Name or service not known` / `Temporary failure in name resolution`
-for `onyx-pg-rw`, `onyx-minio`, etc.
+for `orbyte-pg-rw`, `orbyte-minio`, etc.
 
 **Cause:** telepresence is not connected, so your host DNS doesn't know
 about the in-cluster Service records.
@@ -412,7 +420,7 @@ about the in-cluster Service records.
 
 ```bash
 telepresence status        # should report "Connected"
-telepresence connect -n onyx
+telepresence connect -n orbyte
 ```
 
 The vscode `(k8s)` launch profiles wire `k8s: telepresence intercept
@@ -424,30 +432,30 @@ running api_server outside vscode.
 **Symptoms:** `kubectl get pods` returns prod pods (or empty when you
 expect kind pods), or destructive commands surprise you.
 
-**Cause:** Your kubectl current-context isn't `kind-onyx-dev` — it's
+**Cause:** Your kubectl current-context isn't `kind-orbyte-dev` — it's
 probably `docker-desktop`, a real EKS context, or a different kind cluster.
 
 **Recovery:**
 
 ```bash
 kubectl config current-context              # see what you're on
-kubectl config use-context kind-onyx-dev    # switch
+kubectl config use-context kind-orbyte-dev    # switch
 kubectl config current-context              # verify
 ```
 
 The `k8s-up.sh` / `k8s-down.sh` / `craft-up.sh` / `craft-down.sh` scripts
 all refuse to operate unless the current context is exactly
-`kind-onyx-dev`, so this won't bite you when going through them — only on
+`kind-orbyte-dev`, so this won't bite you when going through them — only on
 ad-hoc `kubectl` invocations.
 
 ### Craft tab missing from the sidebar (and `/craft` 404s)
 
 The web doesn't read `ENABLE_CRAFT` directly. The sidebar (`AppSidebar.tsx`)
 and the `/craft` route guard (`app/craft/layout.tsx`) both check
-`combinedSettings.settings.onyx_craft_enabled`, which is computed by the
-backend in `is_onyx_craft_enabled(user)`
-(`backend/onyx/server/features/build/utils.py`) and returned from
-`GET /api/settings` (`backend/onyx/server/settings/api.py`).
+`combinedSettings.settings.orbyte_craft_enabled`, which is computed by the
+backend in `is_orbyte_craft_enabled(user)`
+(`backend/orbyte/server/features/build/utils.py`) and returned from
+`GET /api/settings` (`backend/orbyte/server/settings/api.py`).
 
 That backend check returns **`False`** when:
 
@@ -457,15 +465,15 @@ That backend check returns **`False`** when:
 2. **The api_server you're hitting doesn't have `ENABLE_CRAFT=true`.** Most
    common cause: running the plain `API Server` launch (loads `.vscode/.env`)
    instead of the `(k8s)` launch (loads `.vscode/.env.k8s`). The `(k8s)`
-   compound and `Run All Onyx Services (k8s)` are the only profiles that
+   compound and `Run All Orbyte Services (k8s)` are the only profiles that
    source `.env.k8s`.
 
 Confirm by hitting `/api/settings` while logged in and checking
-`onyx_craft_enabled`:
+`orbyte_craft_enabled`:
 
 ```bash
 # from a logged-in browser session, copy the cookie and:
-curl -sS http://localhost:3000/api/settings -H "Cookie: <paste>" | jq .settings.onyx_craft_enabled
+curl -sS http://localhost:3000/api/settings -H "Cookie: <paste>" | jq .settings.orbyte_craft_enabled
 ```
 
 If that returns `true` but the tab is still missing, hard-reload (the
@@ -476,6 +484,6 @@ just-flipped flag).
 
 - [CONTRIBUTING.md — Development Setup](/CONTRIBUTING.md#development-setup)
 - [deployment/helm/README.md](/deployment/helm/README.md)
-- [backend/onyx/server/features/build/sandbox/README.md](/backend/onyx/server/features/build/sandbox/README.md)
+- [backend/orbyte/server/features/build/sandbox/README.md](/backend/orbyte/server/features/build/sandbox/README.md)
 - [Telepresence docs](https://www.telepresence.io/docs/)
 - [kind docs](https://kind.sigs.k8s.io/)

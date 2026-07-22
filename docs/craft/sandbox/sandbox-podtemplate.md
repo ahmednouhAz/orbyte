@@ -8,7 +8,7 @@ except a handful of per-pod values is static infrastructure config — container
 images, ports, volumes, security contexts, init/sidecar containers, node
 selector, tolerations, resource sizing, proxy CA wiring. This duplicates what
 Helm already owns for the rest of the sandbox stack (namespace, RBAC, network
-policy, egress proxy — all in `deployment/helm/charts/onyx/templates/`) and
+policy, egress proxy — all in `deployment/helm/charts/orbyte/templates/`) and
 means any change to the pod's shape requires a backend image rebuild + deploy
 rather than a `helm upgrade`.
 
@@ -63,7 +63,7 @@ genuinely dynamic per-pod fields.
   `SANDBOX_BACKEND=kubernetes`) so a missing/misnamed template fails loudly
   rather than deep inside `provision()`.
 - Gate the new template on `ENABLE_CRAFT` via the existing
-  `onyx.craftEnabled` helper in `_helpers.tpl`, matching the other sandbox
+  `orbyte.craftEnabled` helper in `_helpers.tpl`, matching the other sandbox
   templates.
 
 ## Implementation Strategy

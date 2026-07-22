@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Onyx",
+  "name": "Orbyte",
   "version": "1.1",
-  "description": "Onyx lets you research, create, and automate with LLMs powered by your team's unique knowledge",
+  "description": "Orbyte lets you research, create, and automate with LLMs powered by your team's unique knowledge",
   "permissions": [
     "sidePanel",
     "storage",
@@ -29,7 +29,7 @@
   },
   "options_page": "src/pages/options.html",
   "chrome_url_overrides": {
-    "newtab": "src/pages/onyx_home.html"
+    "newtab": "src/pages/orbyte_home.html"
   },
   "commands": {
     "toggleNewTabOverride": {
@@ -37,7 +37,7 @@
         "default": "Ctrl+Shift+O",
         "mac": "Command+Shift+O"
       },
-      "description": "Toggle Onyx New Tab Override"
+      "description": "Toggle Orbyte New Tab Override"
     },
     "openSidePanel": {
       "suggested_key": {
@@ -45,14 +45,14 @@
         "windows": "Alt+O",
         "mac": "MacCtrl+O"
       },
-      "description": "Open Onyx Side Panel"
+      "description": "Open Orbyte Side Panel"
     }
   },
   "side_panel": {
     "default_path": "src/pages/panel.html"
   },
   "omnibox": {
-    "keyword": "onyx"
+    "keyword": "orbyte"
   },
   "content_scripts": [
     {

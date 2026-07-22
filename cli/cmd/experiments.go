@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/config"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/iostreams"
 	"github.com/spf13/cobra"
 )
 

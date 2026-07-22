@@ -1,11 +1,11 @@
 import {
   CHROME_SPECIFIC_STORAGE_KEYS,
-  DEFAULT_ONYX_DOMAIN,
+  DEFAULT_ORBYTE_DOMAIN,
 } from "../utils/constants.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-  const domainInput = document.getElementById("onyxDomain");
-  const useOnyxAsDefaultToggle = document.getElementById("useOnyxAsDefault");
+  const domainInput = document.getElementById("orbyteDomain");
+  const useOrbyteAsDefaultToggle = document.getElementById("useOrbyteAsDefault");
   const continueBtn = document.getElementById("continueBtn");
   const backBtn = document.getElementById("backBtn");
   const finishBtn = document.getElementById("finishBtn");
@@ -121,20 +121,20 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function handleFinish() {
-    const domain = domainInput.value.trim() || DEFAULT_ONYX_DOMAIN;
-    const useOnyxAsDefault = useOnyxAsDefaultToggle.checked;
+    const domain = domainInput.value.trim() || DEFAULT_ORBYTE_DOMAIN;
+    const useOrbyteAsDefault = useOrbyteAsDefaultToggle.checked;
 
     chrome.storage.local.set(
       {
-        [CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN]: domain,
-        [CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB]:
-          useOnyxAsDefault,
+        [CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN]: domain,
+        [CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB]:
+          useOrbyteAsDefault,
         [CHROME_SPECIFIC_STORAGE_KEYS.THEME]: currentTheme,
         [CHROME_SPECIFIC_STORAGE_KEYS.ONBOARDING_COMPLETE]: true,
       },
       () => {
         // Open a new tab if they enabled the new tab feature, otherwise just close
-        if (useOnyxAsDefault) {
+        if (useOrbyteAsDefault) {
           chrome.tabs.create({}, () => {
             window.close();
           });
@@ -149,15 +149,15 @@ document.addEventListener("DOMContentLoaded", function () {
   function loadStoredValues() {
     chrome.storage.local.get(
       {
-        [CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN]: "",
-        [CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB]: true,
+        [CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN]: "",
+        [CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB]: true,
       },
       (result) => {
-        if (result[CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN]) {
-          domainInput.value = result[CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN];
+        if (result[CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN]) {
+          domainInput.value = result[CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN];
         }
-        useOnyxAsDefaultToggle.checked =
-          result[CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB];
+        useOrbyteAsDefaultToggle.checked =
+          result[CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB];
       }
     );
   }

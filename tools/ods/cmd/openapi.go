@@ -4,13 +4,13 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/openapi"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/openapi"
 )
 
 // Default paths relative to git root
 const (
 	DefaultSchemaPath = "backend/generated/openapi.json"
-	DefaultClientDir  = "backend/generated/onyx_openapi_client"
+	DefaultClientDir  = "backend/generated/orbyte_openapi_client"
 )
 
 // OpenAPIOptions holds options for the openapi command.
@@ -27,11 +27,11 @@ func NewOpenAPICommand() *cobra.Command {
 		Short: "OpenAPI schema and client generation",
 		Long: `OpenAPI schema and client generation commands.
 
-Generate the OpenAPI schema from the Onyx API without starting the server,
+Generate the OpenAPI schema from the Orbyte API without starting the server,
 and optionally generate a Python client from the schema.
 
 Requirements:
-  - Python with onyx[backend] installed (use the project venv)
+  - Python with orbyte[backend] installed (use the project venv)
   - For client generation: openapi-generator-cli (installed with ods)
 
 Examples:
@@ -56,14 +56,14 @@ func NewOpenAPISchemaCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "schema",
 		Short: "Generate OpenAPI schema JSON",
-		Long: `Generate the OpenAPI schema JSON file from the Onyx API.
+		Long: `Generate the OpenAPI schema JSON file from the Orbyte API.
 
 This extracts the API schema without starting the full API server.
 The schema can be used for documentation, client generation, and API validation.
 
 Requirements:
-  - Must be run from within the onyx repository
-  - Python with onyx[backend] installed (use the project venv)
+  - Must be run from within the orbyte repository
+  - Python with orbyte[backend] installed (use the project venv)
 
 Examples:
   ods openapi schema                         # Generate to backend/generated/openapi.json
@@ -121,7 +121,7 @@ Examples:
 	}
 
 	cmd.Flags().StringVarP(&opts.SchemaPath, "input", "i", "", "Path to the OpenAPI schema JSON file (default: backend/generated/openapi.json)")
-	cmd.Flags().StringVarP(&opts.ClientOutputDir, "output", "o", "", "Output directory for the generated client (default: backend/generated/onyx_openapi_client)")
+	cmd.Flags().StringVarP(&opts.ClientOutputDir, "output", "o", "", "Output directory for the generated client (default: backend/generated/orbyte_openapi_client)")
 
 	return cmd
 }
@@ -160,8 +160,8 @@ This is equivalent to running 'ods openapi schema' followed by 'ods openapi clie
 but in a single operation.
 
 Requirements:
-  - Must be run from within the onyx repository
-  - Python with onyx[backend] installed (use the project venv)
+  - Must be run from within the orbyte repository
+  - Python with orbyte[backend] installed (use the project venv)
   - openapi-generator-cli (installed with ods dependencies)
 
 Examples:
@@ -174,7 +174,7 @@ Examples:
 	}
 
 	cmd.Flags().StringVarP(&opts.OutputPath, "output", "o", "", "Output path for the OpenAPI schema (default: backend/generated/openapi.json)")
-	cmd.Flags().StringVar(&opts.ClientOutputDir, "client-output", "", "Output directory for the generated client (default: backend/generated/onyx_openapi_client)")
+	cmd.Flags().StringVar(&opts.ClientOutputDir, "client-output", "", "Output directory for the generated client (default: backend/generated/orbyte_openapi_client)")
 
 	return cmd
 }

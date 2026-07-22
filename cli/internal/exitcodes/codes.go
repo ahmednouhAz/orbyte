@@ -1,4 +1,4 @@
-// Package exitcodes defines semantic exit codes for the Onyx CLI.
+// Package exitcodes defines semantic exit codes for the Orbyte CLI.
 package exitcodes
 
 import "fmt"

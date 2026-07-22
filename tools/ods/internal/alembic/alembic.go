@@ -10,9 +10,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/docker"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/postgres"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/docker"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/paths"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/postgres"
 )
 
 // Schema represents an Alembic schema configuration.
@@ -151,8 +151,8 @@ func runViaDockerExec(args []string, schema Schema) error {
 // legacyAlembicContainerNames are fallback names tried after the
 // project-specific name.
 var legacyAlembicContainerNames = []string{
-	"onyx-api_server-1",
-	"onyx-stack-api_server-1",
+	"orbyte-api_server-1",
+	"orbyte-stack-api_server-1",
 	"api_server",
 }
 

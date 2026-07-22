@@ -6,7 +6,7 @@ Companion to [`docs/craft/opencode-serve-migration.md`](../opencode-serve-migrat
 
 The public contract (`Generator[ACPEvent, None, None]` returned by `send_message`) is unchanged from the existing ACP clients. Callers (`session/manager.py`, `scheduled_tasks/executor.py`, SSE encoding to the browser, packet logger) require no changes.
 
-File: `backend/onyx/server/features/build/sandbox/opencode/serve_client.py` (the empty `sandbox/opencode/` directory already exists).
+File: `backend/orbyte/server/features/build/sandbox/opencode/serve_client.py` (the empty `sandbox/opencode/` directory already exists).
 
 ## Scope
 
@@ -64,7 +64,7 @@ class OpencodeServeClient:
         Idempotent. Safe to call from any API replica."""
 
     def delete_session(self, opencode_session_id: str, *, directory: str) -> bool:
-        """Best-effort DELETE /session/{id}. Returns false on failure; Onyx
+        """Best-effort DELETE /session/{id}. Returns false on failure; Orbyte
         session deletion must not depend on this cleanup succeeding."""
 
     # --- the load-bearing method ------------------------------------------
@@ -316,13 +316,13 @@ The current ACP path's reliance on `GeneratorExit` propagating into a `cancel()`
 Required env on the API server side:
 - `OPENCODE_SERVE_PORT` (default `4096`)
 - `OPENCODE_SERVER_PASSWORD_SOURCE` — where to read the per-pod password from. Two options, pick one:
-  - From a Kubernetes Secret per pod (matches the existing `ONYX_PAT` pattern).
+  - From a Kubernetes Secret per pod (matches the existing `ORBYTE_PAT` pattern).
   - Derived deterministically from a cluster-wide secret + sandbox-id (cheaper; same security boundary since the pod env is the secret store either way).
 
 The client takes `password` in its constructor — the *sandbox manager* is responsible for sourcing it. Keep `OpencodeServeClient` ignorant of where the password came from.
 
 HTTP details:
-- `Authorization: Basic ${base64(username:password)}` where `username` defaults to `"onyx"` (opencode accepts any non-empty username when password is set).
+- `Authorization: Basic ${base64(username:password)}` where `username` defaults to `"orbyte"` (opencode accepts any non-empty username when password is set).
 - `Accept: text/event-stream` on `/event`; `Accept: application/json` otherwise.
 - `Content-Type: application/json` on POST/PATCH.
 
@@ -362,12 +362,12 @@ The unit tests are the load-bearing wire-contract lock. The external-dependency-
 ## Code shape (skeleton)
 
 ```python
-# backend/onyx/server/features/build/sandbox/opencode/serve_client.py
+# backend/orbyte/server/features/build/sandbox/opencode/serve_client.py
 class OpencodeServeClient:
     def __init__(self, base_url, password, *, event_bus, client_info=None, timeouts=None):
         self._base_url = base_url.rstrip("/")
         self._auth = (
-            httpx.BasicAuth("onyx", password) if password else None
+            httpx.BasicAuth("orbyte", password) if password else None
         )
         self._timeouts = timeouts or ClientTimeouts()
         # Unary-only client. ``request_timeout`` bounds GET/POST against /session,
@@ -420,7 +420,7 @@ The earlier "open questions" section is now decided. Each decision is paired wit
 
 `OpencodeServeClient` handles `permission.asked` internally. **It does not surface to the frontend**, and it does not yield a `RequestPermissionRequest` event to the consumer.
 
-In production, Onyx-generated `opencode.json` already pins `*: allow` for every tool category we use (`sandbox/util/opencode_config.py:build_opencode_config`). Permission asks therefore should never fire. If one does, that means opencode has introduced a new permission category we haven't configured yet — treat it as a config-drift bug.
+In production, Orbyte-generated `opencode.json` already pins `*: allow` for every tool category we use (`sandbox/util/opencode_config.py:build_opencode_config`). Permission asks therefore should never fire. If one does, that means opencode has introduced a new permission category we haven't configured yet — treat it as a config-drift bug.
 
 Behavior:
 - **Default response:** auto-allow (`POST /session/.../permissions/{id}` body `{"response": "once"}`). Matches today's ACP-path behavior (opencode never asked because everything was wide open).
@@ -431,11 +431,11 @@ Path B (real user approvals UI) is a product feature, not a migration requiremen
 
 ### 2. `OPENCODE_SERVER_PASSWORD` source — per-pod K8s Secret
 
-Each sandbox pod gets its own Secret containing a freshly generated password, mounted as `OPENCODE_SERVER_PASSWORD` env on the `sandbox` container. The sandbox manager generates the password and creates the Secret as part of `provision()`, alongside the existing `ONYX_PAT` Secret it already manages.
+Each sandbox pod gets its own Secret containing a freshly generated password, mounted as `OPENCODE_SERVER_PASSWORD` env on the `sandbox` container. The sandbox manager generates the password and creates the Secret as part of `provision()`, alongside the existing `ORBYTE_PAT` Secret it already manages.
 
 Why not a cluster-wide derived secret:
 - Lateral movement: if an agent inside one sandbox can exfiltrate the cluster secret, it knows every sandbox's password. Per-pod containment limits the blast radius to one sandbox.
-- We already do per-pod Secret provisioning for `ONYX_PAT`; reusing the pattern keeps the K8s manager symmetric.
+- We already do per-pod Secret provisioning for `ORBYTE_PAT`; reusing the pattern keeps the K8s manager symmetric.
 - Operational overhead is ~10 lines of `kubernetes.client.V1Secret` creation, and the existing cleanup path (pod delete cascades to Secret) handles teardown.
 
 `OpencodeServeClient`'s constructor accepts `password: str | None` (None for dev/local). Where the password comes from is the sandbox manager's problem, not the client's.
@@ -462,7 +462,7 @@ The terminator `message.updated` payload carries everything needed for cost obse
 ```
 
 Implementation:
-1. Add `OPENCODE_TURN` to `LLMFlow` enum in `backend/onyx/tracing/flows.py`.
+1. Add `OPENCODE_TURN` to `LLMFlow` enum in `backend/orbyte/tracing/flows.py`.
 2. In `send_message`, open a generation span via `traced_llm_call(flow=LLMFlow.OPENCODE_TURN, model=…, provider=…)` at the start of the turn. `model`/`provider` come from `opencode.json` config (passed into the client by the sandbox manager) or are filled in from the first `session.next.model.switched` event.
 3. On terminator, set span attributes `cost`, `tokens.input`, `tokens.output`, `tokens.total`, `tokens.reasoning`, `tokens.cache.read`, `tokens.cache.write` and close.
 4. No span fields for per-token latency — opencode is making the underlying LLM call, not us. Aggregate cost/tokens is the observability we have.

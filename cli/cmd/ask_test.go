@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/exitcodes"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/iostreams"
 )
 
 func iosWithStdin(content string) *iostreams.IOStreams {
@@ -40,8 +40,8 @@ func TestResolveQuestion(t *testing.T) {
 		{
 			name: "positional_arg_only",
 			ios:  iosTTY(),
-			args: []string{"What is Onyx?"},
-			want: "What is Onyx?",
+			args: []string{"What is Orbyte?"},
+			want: "What is Orbyte?",
 		},
 		{
 			name:   "prompt_only",

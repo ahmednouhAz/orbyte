@@ -49,7 +49,7 @@ jobs:
           TAG_VERSION="${GITHUB_REF_NAME#opal/v}"
           npm version "${TAG_VERSION}" --no-git-tag-version --allow-same-version
 
-      # Opal's CSS build inlines @onyx-ai/shared's generated design tokens, and its
+      # Opal's CSS build inlines @orbyte-ai/shared's generated design tokens, and its
       # dts build (tsup `dts: { resolve: true }`) inlines shared's contracts types
       # (TextFont/TextColor) — so shared's full build (tokens + ts) must run first.
       # The published opal is then self-contained.

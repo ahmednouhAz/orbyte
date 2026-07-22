@@ -553,7 +553,7 @@ jobs:
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            ORBYTE_VERSION=${{ github.ref_name }}
             NODE_OPTIONS=--max-old-space-size=8192
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
@@ -635,7 +635,7 @@ jobs:
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            ORBYTE_VERSION=${{ github.ref_name }}
             NODE_OPTIONS=--max-old-space-size=8192
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
@@ -787,7 +787,7 @@ jobs:
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            ORBYTE_VERSION=${{ github.ref_name }}
             NEXT_PUBLIC_CLOUD_ENABLED=true
             WEB_FRAME_PROTECTION_ENABLED=false
             NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
@@ -880,7 +880,7 @@ jobs:
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            ORBYTE_VERSION=${{ github.ref_name }}
             NEXT_PUBLIC_CLOUD_ENABLED=true
             WEB_FRAME_PROTECTION_ENABLED=false
             NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
@@ -1028,7 +1028,7 @@ jobs:
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            ORBYTE_VERSION=${{ github.ref_name }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:latest
@@ -1100,7 +1100,7 @@ jobs:
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            ORBYTE_VERSION=${{ github.ref_name }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:latest
@@ -1256,7 +1256,7 @@ jobs:
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            ORBYTE_VERSION=${{ github.ref_name }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:latest
@@ -1342,7 +1342,7 @@ jobs:
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            ORBYTE_VERSION=${{ github.ref_name }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:latest
@@ -1436,7 +1436,7 @@ jobs:
       context-exists: ${{ steps.exists.outputs.context-exists }}
     env:
       REGISTRY_IMAGE: onyxdotapp/sandbox
-      SANDBOX_CONTEXT: backend/onyx/server/features/build/sandbox/image
+      SANDBOX_CONTEXT: backend/orbyte/server/features/build/sandbox/image
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # ratchet:actions/checkout@v6
@@ -1552,8 +1552,8 @@ jobs:
         id: build
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
         with:
-          context: ./backend/onyx/server/features/build/sandbox/image
-          file: ./backend/onyx/server/features/build/sandbox/image/Dockerfile
+          context: ./backend/orbyte/server/features/build/sandbox/image
+          file: ./backend/orbyte/server/features/build/sandbox/image/Dockerfile
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: |
@@ -1625,8 +1625,8 @@ jobs:
         id: build
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
         with:
-          context: ./backend/onyx/server/features/build/sandbox/image
-          file: ./backend/onyx/server/features/build/sandbox/image/Dockerfile
+          context: ./backend/orbyte/server/features/build/sandbox/image
+          file: ./backend/orbyte/server/features/build/sandbox/image/Dockerfile
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: |

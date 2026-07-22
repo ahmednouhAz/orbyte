@@ -16,11 +16,11 @@ func clearEnvVars(t *testing.T) {
 
 func writeConfig(t *testing.T, dir string, data []byte) {
 	t.Helper()
-	onyxDir := filepath.Join(dir, "onyx-cli")
-	if err := os.MkdirAll(onyxDir, 0o755); err != nil {
+	orbyteDir := filepath.Join(dir, "orbyte-cli")
+	if err := os.MkdirAll(orbyteDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(onyxDir, "config.json"), data, 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(orbyteDir, "config.json"), data, 0o644); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -69,14 +69,14 @@ func TestLoadFromFile(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", dir)
 
 	data, _ := json.Marshal(map[string]interface{}{
-		"server_url":         "https://my-onyx.example.com",
+		"server_url":         "https://my-orbyte.example.com",
 		"api_key":            "test-key-123",
 		"default_persona_id": 5,
 	})
 	writeConfig(t, dir, data)
 
 	cfg := Load()
-	if cfg.ServerURL != "https://my-onyx.example.com" {
+	if cfg.ServerURL != "https://my-orbyte.example.com" {
 		t.Errorf("got %s", cfg.ServerURL)
 	}
 	if cfg.APIKey != "test-key-123" {
@@ -175,7 +175,7 @@ func TestSaveAndReload(t *testing.T) {
 	dir := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", dir)
 
-	cfg := OnyxCliConfig{
+	cfg := OrbyteCliConfig{
 		ServerURL:      "https://saved.example.com",
 		APIKey:         "saved-key",
 		DefaultAgentID: 10,
@@ -244,7 +244,7 @@ func TestSaveCreatesParentDirs(t *testing.T) {
 	nested := filepath.Join(dir, "deep", "nested")
 	t.Setenv("XDG_CONFIG_HOME", nested)
 
-	if err := Save(OnyxCliConfig{APIKey: "test"}); err != nil {
+	if err := Save(OrbyteCliConfig{APIKey: "test"}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -272,7 +272,7 @@ func TestAPIURL(t *testing.T) {
 }
 
 func TestAPIURLEmptyPrefix(t *testing.T) {
-	t.Setenv("ONYX_API_PREFIX", "")
+	t.Setenv("ORBYTE_API_PREFIX", "")
 	cases := []struct {
 		input string
 		want  string

@@ -4,7 +4,7 @@
 
 ## What it does
 
-Brings the Onyx chat experience to the native mobile app: a user opens the app, picks an agent (or uses the default), and has a streaming conversation grounded in the company's knowledge — optionally inside a project, optionally with documents/photos attached to a message. It mirrors the web product's behavior and talks to the **same backend, unchanged**; only the client is new.
+Brings the Orbyte chat experience to the native mobile app: a user opens the app, picks an agent (or uses the default), and has a streaming conversation grounded in the company's knowledge — optionally inside a project, optionally with documents/photos attached to a message. It mirrors the web product's behavior and talks to the **same backend, unchanged**; only the client is new.
 
 ## How it works (end-to-end walkthrough)
 
@@ -37,7 +37,7 @@ Agents, projects, and attachments layer on top of this core without changing it:
                     ┌───────────────▼───────────────┐                 │ apiFetch (JSON)
                     │  chatSessionStore (zustand)    │                 ▼
                     │  per-session messageTree,      │          ┌─────────────┐
-                    │  chatState, AbortController    │          │  Onyx       │
+                    │  chatState, AbortController    │          │  Orbyte       │
                     └───────────────┬───────────────┘          │  backend    │
                        drives ▲     │ updates                   │ (unchanged) │
                     ┌──────────┴─────▼───────────────┐          └──────▲──────┘
@@ -91,7 +91,7 @@ Agents, projects, and attachments layer on top of this core without changing it:
 ## Key decisions & why
 
 - **`expo/fetch` for streaming, `apiFetch` for everything else** — RN's legacy fetch has no readable body; `expo/fetch` (SDK 56 default) exposes `response.body.getReader()`, letting us reuse the web's exact NDJSON parsing. JSON list calls stay on the existing `apiFetch` choke-point (bearer + error normalization).
-- **Keep the whole chat pure layer mobile-native; share nothing** — the parser, message tree, history rebuild, and packet→display mapping are all written in `mobile/src/chat/`, with web keeping its own copies. The shared-package machinery (a `@onyx-ai/shared` util + a web re-point + jest/dist coupling) is more moving parts than the ~200 lines of duplication it removes; pre-production the backend protocol is stable, so drift is low and cheap to re-extract later if it bites. Web stays untouched. (Approach C dropped to "no shared chat code" per the **PR 2 Decision (2026-06-26)**.)
+- **Keep the whole chat pure layer mobile-native; share nothing** — the parser, message tree, history rebuild, and packet→display mapping are all written in `mobile/src/chat/`, with web keeping its own copies. The shared-package machinery (a `@orbyte-ai/shared` util + a web re-point + jest/dist coupling) is more moving parts than the ~200 lines of duplication it removes; pre-production the backend protocol is stable, so drift is low and cheap to re-extract later if it bites. Web stays untouched. (Approach C dropped to "no shared chat code" per the **PR 2 Decision (2026-06-26)**.)
 - **Two-tier state: TanStack Query for lists, zustand for the live stream** — lists benefit from the existing MMKV persistence + refetch; the streaming tree holds an `AbortController` and must *not* be persisted, so it lives in a separate, ephemeral zustand store.
 - **FlashList v2 non-inverted with `maintainVisibleContentPosition`** — the modern v2 pattern for chat; pins to the bottom while streaming without yanking a user who scrolled up.
 

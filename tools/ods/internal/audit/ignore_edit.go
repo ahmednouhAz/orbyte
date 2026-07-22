@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/s3"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/s3"
 )
 
 // MarshalIgnores serializes entries as the on-disk allowlist JSON document.

@@ -9,13 +9,13 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/imgdiff"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/s3"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/imgdiff"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/s3"
 )
 
 const (
 	// DefaultS3Bucket is the default S3 bucket for Playwright visual regression artifacts.
-	DefaultS3Bucket = "onyx-playwright-artifacts"
+	DefaultS3Bucket = "orbyte-playwright-artifacts"
 
 	// DefaultScreenshotDir is the default local directory for captured screenshots,
 	// relative to the repository root.
@@ -132,7 +132,7 @@ When --project is specified, the following defaults are applied:
   --output    → web/output/screenshot-diff/<project>/index.html
   --rev       → main
 
-The bucket defaults to "onyx-playwright-artifacts" and can be overridden
+The bucket defaults to "orbyte-playwright-artifacts" and can be overridden
 with the PLAYWRIGHT_S3_BUCKET environment variable.
 
 A summary.json file is always written next to the HTML report. If there
@@ -218,7 +218,7 @@ Examples:
   # Fully manual
   ods screenshot-diff upload-baselines \
     --dir ./web/output/screenshots/ \
-    --dest s3://onyx-playwright-artifacts/baselines/admin/main/`,
+    --dest s3://orbyte-playwright-artifacts/baselines/admin/main/`,
 		Run: func(cmd *cobra.Command, args []string) {
 			runUploadBaselines(opts)
 		},

@@ -1,11 +1,11 @@
 import {
   CHROME_SPECIFIC_STORAGE_KEYS,
-  DEFAULT_ONYX_DOMAIN,
+  DEFAULT_ORBYTE_DOMAIN,
 } from "../utils/constants.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-  const domainInput = document.getElementById("onyxDomain");
-  const useOnyxAsDefaultToggle = document.getElementById("useOnyxAsDefault");
+  const domainInput = document.getElementById("orbyteDomain");
+  const useOrbyteAsDefaultToggle = document.getElementById("useOrbyteAsDefault");
   const statusContainer = document.getElementById("statusContainer");
   const statusElement = document.getElementById("status");
   const newTabButton = document.getElementById("newTab");
@@ -32,16 +32,16 @@ document.addEventListener("DOMContentLoaded", function () {
   function loadStoredValues() {
     chrome.storage.local.get(
       {
-        [CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN]: DEFAULT_ONYX_DOMAIN,
-        [CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB]: false,
+        [CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN]: DEFAULT_ORBYTE_DOMAIN,
+        [CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB]: false,
         [CHROME_SPECIFIC_STORAGE_KEYS.THEME]: "dark",
       },
       (result) => {
         if (domainInput)
-          domainInput.value = result[CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN];
-        if (useOnyxAsDefaultToggle)
-          useOnyxAsDefaultToggle.checked =
-            result[CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB];
+          domainInput.value = result[CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN];
+        if (useOrbyteAsDefaultToggle)
+          useOrbyteAsDefaultToggle.checked =
+            result[CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB];
 
         currentTheme = result[CHROME_SPECIFIC_STORAGE_KEYS.THEME] || "dark";
         updateThemeIcon(currentTheme);
@@ -53,21 +53,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function saveSettings() {
     const domain = domainInput.value.trim();
-    const useOnyxAsDefault = useOnyxAsDefaultToggle
-      ? useOnyxAsDefaultToggle.checked
+    const useOrbyteAsDefault = useOrbyteAsDefaultToggle
+      ? useOrbyteAsDefaultToggle.checked
       : false;
 
     chrome.storage.local.set(
       {
-        [CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN]: domain,
-        [CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB]:
-          useOnyxAsDefault,
+        [CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN]: domain,
+        [CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB]:
+          useOrbyteAsDefault,
         [CHROME_SPECIFIC_STORAGE_KEYS.THEME]: currentTheme,
       },
       () => {
         showStatusMessage(
-          useOnyxAsDefault
-            ? "Settings updated. Open a new tab to test it out. Click on the extension icon to bring up Onyx from any page."
+          useOrbyteAsDefault
+            ? "Settings updated. Open a new tab to test it out. Click on the extension icon to bring up Orbyte from any page."
             : "Settings updated."
         );
       }
@@ -76,18 +76,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showStatusMessage(message) {
     if (statusElement) {
-      const useOnyxAsDefault = useOnyxAsDefaultToggle
-        ? useOnyxAsDefaultToggle.checked
+      const useOrbyteAsDefault = useOrbyteAsDefaultToggle
+        ? useOrbyteAsDefaultToggle.checked
         : false;
 
       statusElement.textContent =
         message ||
-        (useOnyxAsDefault
-          ? "Settings updated. Open a new tab to test it out. Click on the extension icon to bring up Onyx from any page."
+        (useOrbyteAsDefault
+          ? "Settings updated. Open a new tab to test it out. Click on the extension icon to bring up Orbyte from any page."
           : "Settings updated.");
 
       if (newTabButton) {
-        newTabButton.style.display = useOnyxAsDefault ? "block" : "none";
+        newTabButton.style.display = useOrbyteAsDefault ? "block" : "none";
       }
     }
 
@@ -126,8 +126,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (useOnyxAsDefaultToggle) {
-    useOnyxAsDefaultToggle.addEventListener("change", saveSettings);
+  if (useOrbyteAsDefaultToggle) {
+    useOrbyteAsDefaultToggle.addEventListener("change", saveSettings);
   }
 
   if (themeToggle) {

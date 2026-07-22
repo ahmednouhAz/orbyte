@@ -7,18 +7,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   async function loadSetting() {
     const result = await chrome.storage.local.get({
-      [CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB]: false,
+      [CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB]: false,
     });
     if (defaultNewTabToggle) {
       defaultNewTabToggle.checked =
-        result[CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB];
+        result[CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB];
     }
   }
 
   async function toggleSetting() {
     const currentValue = defaultNewTabToggle.checked;
     await chrome.storage.local.set({
-      [CHROME_SPECIFIC_STORAGE_KEYS.USE_ONYX_AS_DEFAULT_NEW_TAB]: currentValue,
+      [CHROME_SPECIFIC_STORAGE_KEYS.USE_ORBYTE_AS_DEFAULT_NEW_TAB]: currentValue,
     });
   }
 

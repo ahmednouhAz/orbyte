@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
-	"github.com/onyx-dot-app/onyx/cli/internal/testutil"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/models"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/testutil"
 )
 
 func TestGenerateImage_Success(t *testing.T) {
@@ -49,9 +49,9 @@ func TestGenerateImage_404(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for 404")
 	}
-	var apiErr *api.OnyxAPIError
+	var apiErr *api.OrbyteAPIError
 	if !errors.As(err, &apiErr) {
-		t.Fatalf("want *OnyxAPIError, got %T: %v", err, err)
+		t.Fatalf("want *OrbyteAPIError, got %T: %v", err, err)
 	}
 	if apiErr.StatusCode != 404 {
 		t.Errorf("status = %d, want 404", apiErr.StatusCode)

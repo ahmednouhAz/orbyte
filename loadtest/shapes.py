@@ -2,8 +2,8 @@
 
 StepRampShape holds the user count at successive plateaus so the knee where
 the system stops keeping up is visible in the timeline. Opt-in only: the
-locustfile binds it when ONYX_SHAPE=stepramp, since Locust auto-activates any
-shape it finds and overrides -u/-r. Tune via ONYX_RAMP_STAGES / _DWELL /
+locustfile binds it when ORBYTE_SHAPE=stepramp, since Locust auto-activates any
+shape it finds and overrides -u/-r. Tune via ORBYTE_RAMP_STAGES / _DWELL /
 _SPAWN (see README).
 """
 
@@ -17,9 +17,9 @@ _DEFAULT_STAGES = "25,50,100,200"
 
 
 def _stage_users() -> list[int]:
-    raw = os.environ.get("ONYX_RAMP_STAGES", _DEFAULT_STAGES)
+    raw = os.environ.get("ORBYTE_RAMP_STAGES", _DEFAULT_STAGES)
     users = [int(part) for part in raw.split(",") if part.strip()]
-    # Empty/garbage (e.g. ONYX_RAMP_STAGES="") would make tick() stop instantly
+    # Empty/garbage (e.g. ORBYTE_RAMP_STAGES="") would make tick() stop instantly
     # with no users ever spawned — fall back to the default instead.
     if not users:
         users = [int(p) for p in _DEFAULT_STAGES.split(",")]
@@ -29,8 +29,8 @@ def _stage_users() -> list[int]:
 class StepRampShape(LoadTestShape):
     # Clamp to sane minimums: a non-positive dwell makes end times non-increasing
     # (test stops immediately) and a non-positive spawn rate stalls spawning.
-    dwell_s: int = max(1, int(os.environ.get("ONYX_RAMP_DWELL", "300")))
-    spawn_rate: float = max(0.1, float(os.environ.get("ONYX_RAMP_SPAWN", "5")))
+    dwell_s: int = max(1, int(os.environ.get("ORBYTE_RAMP_DWELL", "300")))
+    spawn_rate: float = max(0.1, float(os.environ.get("ORBYTE_RAMP_SPAWN", "5")))
 
     def __init__(self) -> None:
         super().__init__()

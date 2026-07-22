@@ -2,7 +2,7 @@ let sidePanel = null;
 
 function createSidePanel() {
   sidePanel = document.createElement("div");
-  sidePanel.id = "onyx-side-panel";
+  sidePanel.id = "orbyte-side-panel";
   sidePanel.style.cssText = `
     position: fixed;
     top: 0;
@@ -23,9 +23,9 @@ function createSidePanel() {
   `;
 
   chrome.runtime.sendMessage(
-    { action: ACTIONS.GET_CURRENT_ONYX_DOMAIN },
+    { action: ACTIONS.GET_CURRENT_ORBYTE_DOMAIN },
     function (response) {
-      iframe.src = response[CHROME_SPECIFIC_STORAGE_KEYS.ONYX_DOMAIN];
+      iframe.src = response[CHROME_SPECIFIC_STORAGE_KEYS.ORBYTE_DOMAIN];
     }
   );
 

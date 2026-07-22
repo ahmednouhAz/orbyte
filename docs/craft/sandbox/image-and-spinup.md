@@ -6,13 +6,13 @@ motivation isn't obvious from the diff.
 
 Related files:
 
-- `backend/onyx/server/features/build/sandbox/image/Dockerfile`
-- `backend/onyx/server/features/build/sandbox/image/initial-requirements.in`
-- `backend/onyx/server/features/build/sandbox/image/initial-requirements.txt`
-- `backend/onyx/server/features/build/sandbox/image/sandbox_daemon/snapshot.py`
-- `backend/onyx/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
-- `backend/onyx/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh`
-- `deployment/helm/charts/onyx/templates/sandbox-namespace.yaml`
+- `backend/orbyte/server/features/build/sandbox/image/Dockerfile`
+- `backend/orbyte/server/features/build/sandbox/image/initial-requirements.in`
+- `backend/orbyte/server/features/build/sandbox/image/initial-requirements.txt`
+- `backend/orbyte/server/features/build/sandbox/image/sandbox_daemon/snapshot.py`
+- `backend/orbyte/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
+- `backend/orbyte/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh`
+- `deployment/helm/charts/orbyte/templates/sandbox-namespace.yaml`
 
 ## SHA-pinned base + helper images
 
@@ -33,7 +33,7 @@ drift.
 The sandbox image used to include a pod-side storage client for snapshot
 upload/download. That is no longer part of the architecture: the sidecar tars
 and untars local filesystem state, and the API server persists snapshot bytes
-through the normal Onyx FileStore.
+through the normal Orbyte FileStore.
 
 Do not add AWS CLI, `s5cmd`, or provider-specific object-store CLIs back to the
 sandbox image for snapshots. If a future feature needs durable storage, route it
@@ -82,7 +82,7 @@ We keep only:
 - **Sandbox daemon dependencies**: `fastapi`, `uvicorn[standard]`,
   `pydantic`, `cryptography`.
 - **Skill-specific runtime**: `google-genai` (image-generation skill),
-  `onyx-cli`.
+  `orbyte-cli`.
 
 We deliberately do **not** pre-install the heavy ML/CV stack
 (`opencv-python`, `scikit-learn`, `scikit-image`, `scipy`, `xgboost`,
@@ -99,7 +99,7 @@ The pptx skill needs LibreOffice + poppler-utils + extra fonts +
 pptxgenjs in the image (~700 MB). Skills themselves are pushed by the
 API server at session setup, but their **runtime tools** must be in
 the image already (the in-pod `soffice` / `pdftoppm` / `pptxgenjs` calls
-from `onyx/skills/builtin/pptx/scripts/`).
+from `orbyte/skills/builtin/pptx/scripts/`).
 
 - Prod / default: `ENABLE_SKILLS=true` — full image, all skills work.
 - Dev kind clusters / CI: `ENABLE_SKILLS=false` — ~700 MB smaller, but
@@ -113,7 +113,7 @@ To toggle in dev:
 ```
 docker build --build-arg ENABLE_SKILLS=false \
     -t onyxdotapp/sandbox:dev-noskills \
-    backend/onyx/server/features/build/sandbox/image
+    backend/orbyte/server/features/build/sandbox/image
 ```
 
 If you add a new skill that depends on a heavy system package (Chrome,
@@ -177,8 +177,8 @@ Bring this section back up if any of:
 
 ## Recorded benchmark — 2026-05-21
 
-Captured on a local `kind-onyx-dev` cluster, `REPS=3` cold + warm runs
-per image via `backend/onyx/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh`.
+Captured on a local `kind-orbyte-dev` cluster, `REPS=3` cold + warm runs
+per image via `backend/orbyte/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh`.
 Cold = `crictl rmi` + `kind load` + pod create + `kubectl wait Ready`;
 warm = pod create + Ready with image already on the node.
 
@@ -213,7 +213,7 @@ Caveats:
 The harness lives at:
 
 ```
-backend/onyx/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh
+backend/orbyte/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh
 ```
 
 It accepts one or more locally-built sandbox image tags and, per image,
@@ -224,7 +224,7 @@ pod-create→Ready. Image sizes are read from `docker image inspect`.
 
 ### Prereqs
 
-- Local kind cluster on the `kind-onyx-dev` context (see
+- Local kind cluster on the `kind-orbyte-dev` context (see
   `docs/craft/dev/local-kubernetes.md`). The script refuses to run against
   any other kubectl context as a safety guard.
 - Tools on `$PATH`: `docker`, `kind`, `kubectl`, `python3`.
@@ -236,10 +236,10 @@ pod-create→Ready. Image sizes are read from `docker image inspect`.
 make craft-sandbox-image            # → onyxdotapp/sandbox:dev
 docker build --build-arg ENABLE_SKILLS=false \
     -t onyxdotapp/sandbox:candidate \
-    backend/onyx/server/features/build/sandbox/image
+    backend/orbyte/server/features/build/sandbox/image
 
 # 2. Benchmark both (3 reps each scenario by default)
-REPS=3 backend/onyx/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh \
+REPS=3 backend/orbyte/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh \
     onyxdotapp/sandbox:dev \
     onyxdotapp/sandbox:candidate
 ```
@@ -252,8 +252,8 @@ each scenario, ready to paste into a PR description.
 | Var | Default | Notes |
 |---|---|---|
 | `REPS` | `3` | Iterations per scenario per image. |
-| `NS` | `onyx-sandboxes` | Namespace bench pods live in (auto-created). |
-| `KIND_CLUSTER` | `onyx-dev` | Used for `kind load --name` + context check. |
+| `NS` | `orbyte-sandboxes` | Namespace bench pods live in (auto-created). |
+| `KIND_CLUSTER` | `orbyte-dev` | Used for `kind load --name` + context check. |
 | `KIND_NODE` | `<cluster>-control-plane` | Node where `crictl rmi` runs. |
 | `WAIT_TIMEOUT` | `300s` | `kubectl wait` timeout per pod. |
 

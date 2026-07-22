@@ -41,7 +41,7 @@
 3. Update the scheduled-run banner and Craft chat panel to make the in-flight state clear. Disable the normal chat input while the scheduled run is still being driven by the executor; re-enable the normal input once the run reaches a terminal state so the user can ask follow-up questions in the same session.
 4. Add a live scheduled-session event path on the api-server. Given a scheduled-run session, verify ownership, resolve the sandbox pod, open opencode-serve `/event`, filter events by the session id, and stream matching events to the browser over SSE. The frontend merges those events into the existing session store while preserving scroll behavior. Stop the live subscription once the run reaches a terminal state.
 5. Make the executor's persisted progress good enough for recovery. Keep committing persisted tool progress, plans, and finalized message chunks during the run so page reloads and SSE reconnects can hydrate from durable state.
-6. Preserve current boundaries: scheduled sessions stay out of the Craft sidebar, ownership checks continue to use the existing session and scheduled-task ownership paths, and all backend errors should use `OnyxError` when touching these APIs.
+6. Preserve current boundaries: scheduled sessions stay out of the Craft sidebar, ownership checks continue to use the existing session and scheduled-task ownership paths, and all backend errors should use `OrbyteError` when touching these APIs.
 7. Update the scheduled-tasks product doc to remove the old "wait until complete" limitation and describe live viewing with follow-up messages available after the scheduled run finishes.
 
 ## Test cases

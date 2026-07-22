@@ -45,7 +45,7 @@ updates:
     labels:
       - "dependabot:javascript"
   - package-ecosystem: "bun"
-    directory: "/backend/onyx/server/features/build/sandbox/image/templates/outputs/web"
+    directory: "/backend/orbyte/server/features/build/sandbox/image/templates/outputs/web"
     schedule:
       interval: "weekly"
     cooldown:
@@ -57,7 +57,7 @@ updates:
       - "dependabot:javascript"
       - "dependabot:sandbox"
   - package-ecosystem: "docker"
-    directory: "/backend/onyx/server/features/build/sandbox/image"
+    directory: "/backend/orbyte/server/features/build/sandbox/image"
     schedule:
       interval: "weekly"
     cooldown:

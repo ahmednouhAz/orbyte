@@ -11,9 +11,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/exitcodes"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/iostreams"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +33,7 @@ func TestSearch_NoQuery(t *testing.T) {
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return exitcodes.New(exitcodes.BadRequest,
-				"no query provided\n  Usage: onyx-cli search \"your query\"")
+				"no query provided\n  Usage: orbyte-cli search \"your query\"")
 		}
 		return origRunE(cmd, args)
 	}
@@ -405,7 +405,7 @@ func TestWriteSearchJSON_OverLimitIsValidJSON(t *testing.T) {
 func TestWriteSearchJSON_TempSaveFailureEmitsFullResponse(t *testing.T) {
 	// Dropped results must never be unrecoverable: with no temp copy, the
 	// full over-limit response is emitted instead of a truncated envelope.
-	t.Setenv("TMPDIR", "/nonexistent-onyx-cli-test")
+	t.Setenv("TMPDIR", "/nonexistent-orbyte-cli-test")
 	var out, errOut bytes.Buffer
 	ios := &iostreams.IOStreams{Out: &out, ErrOut: &errOut}
 	output := searchOutput{Results: makeSearchResults(20, 500)}

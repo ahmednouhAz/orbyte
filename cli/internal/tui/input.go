@@ -25,7 +25,7 @@ var slashCommands = []slashCommand{
 	{"/connectors", "Open connectors in browser"},
 	{"/settings", "Open settings in browser"},
 	{"/experiments", "List experimental features"},
-	{"/quit", "Exit Onyx CLI"},
+	{"/quit", "Exit Orbyte CLI"},
 }
 
 // Commands that take arguments (filled in with trailing space on Tab/Enter).

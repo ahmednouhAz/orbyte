@@ -32,7 +32,7 @@ Pulled from `01-research.md` / `02-high-level-design.md` / `03-detailed-design.m
   are **styled tappable links**, not custom chips. Wire `onLinkPress` through
   `mobile/src/components/chat/StreamingMarkdown.tsx`.
 - **The marker URL is pre-baked.** Backend emits `[[{num}]]({link})` with `link = search_doc.link
-  or ""` (`backend/onyx/chat/citation_processor.py:496,506`). So `onLinkPress(event.url)` opens the
+  or ""` (`backend/orbyte/chat/citation_processor.py:496,506`). So `onLinkPress(event.url)` opens the
   doc directly — **no citation-state lookup for the tap**. Empty-URL `[[n]]()` = file source with no
   link (the edge case; reachable via the Sources sheet).
 - **Only one citation packet exists:** `CitationInfo {citation_number, document_id}` (`citation_info`).
@@ -148,7 +148,7 @@ https://docs.cohere.com/docs/rag-citations
 Every "standard/recommended" claim is verified: in-app browser via `openBrowserAsync` (Expo docs,
 above); "no custom-node hook in enriched-markdown, only `markdownStyle` + `onLinkPress`" (published
 API reference, Phase 1); "marker URL pre-baked as `[[n]](link)`, `link = search_doc.link or ""`"
-(code-verified `backend/onyx/chat/citation_processor.py:496,506`); "only `citation_info` emitted, no
+(code-verified `backend/orbyte/chat/citation_processor.py:496,506`); "only `citation_info` emitted, no
 `citation_start/end`" (code-verified `streaming_models.py`). No unverified assertions remain.
 
 ### 5. Maintainability: PASS

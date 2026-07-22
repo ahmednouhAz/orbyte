@@ -13,8 +13,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/git"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/prompt"
 )
 
 const cherryPickPRLabel = "cherry-pick 🍒"

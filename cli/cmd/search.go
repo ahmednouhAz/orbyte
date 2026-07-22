@@ -9,15 +9,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
-	"github.com/onyx-dot-app/onyx/cli/internal/overflow"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/exitcodes"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/iostreams"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/models"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/overflow"
 	"github.com/spf13/cobra"
 )
 
-// searchOutputResult is the per-document JSON shape `onyx-cli search` prints
-// (without --raw). One `content` field per result, no Onyx-internal jargon.
+// searchOutputResult is the per-document JSON shape `orbyte-cli search` prints
+// (without --raw). One `content` field per result, no Orbyte-internal jargon.
 type searchOutputResult struct {
 	Title      string  `json:"title"`
 	URL        *string `json:"url"`
@@ -26,7 +26,7 @@ type searchOutputResult struct {
 	UpdatedAt  *string `json:"updated_at"`
 }
 
-// searchOutput is the top-level wrapper for `onyx-cli search` default stdout.
+// searchOutput is the top-level wrapper for `orbyte-cli search` default stdout.
 type searchOutput struct {
 	Results    []searchOutputResult `json:"results"`
 	Truncation *searchTruncation    `json:"truncation,omitempty"`
@@ -82,7 +82,7 @@ func writeSearchJSON(ios *iostreams.IOStreams, output searchOutput, truncateAt i
 		return nil
 	}
 
-	fullPath, err := overflow.SaveFull("onyx-search-*.json", string(data))
+	fullPath, err := overflow.SaveFull("orbyte-search-*.json", string(data))
 	if err != nil {
 		// Without the temp copy, dropped results would be unrecoverable —
 		// emit the full response instead (valid JSON beats the byte bound).
@@ -238,11 +238,11 @@ func newSearchCmd(ios *iostreams.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "search [query]",
 		Short: "Search company knowledge and return ranked documents",
-		Long: `Search the Onyx knowledge base and return ranked, cited documents.
+		Long: `Search the Orbyte knowledge base and return ranked, cited documents.
 
 Results are retrieved using the full search pipeline: LLM query expansion,
 hybrid retrieval, document selection, and context expansion — the same
-search quality as the Onyx chat interface.
+search quality as the Orbyte chat interface.
 
 By default, output is a lean JSON shape tuned for LLM consumers:
 {"results": [{title, url, source_type, content, updated_at}, ...]}.
@@ -255,12 +255,12 @@ results are dropped so stdout stays valid JSON; a "truncation" object carries
 metadata (total_results, shown_results, full_response_path, ...) and the full
 response is saved to a temp file.`,
 		Args: cobra.MaximumNArgs(1),
-		Example: `  onyx-cli search "What is our deployment process?"
-  onyx-cli search --source slack "auth migration status"
-  onyx-cli search --days 30 "recent production incidents"
-  onyx-cli search --agent-id 5 "engineering roadmap"
-  onyx-cli search --raw "API documentation" | jq '.results[].title'
-  onyx-cli search --no-query-expansion "exact error message text"`,
+		Example: `  orbyte-cli search "What is our deployment process?"
+  orbyte-cli search --source slack "auth migration status"
+  orbyte-cli search --days 30 "recent production incidents"
+  orbyte-cli search --agent-id 5 "engineering roadmap"
+  orbyte-cli search --raw "API documentation" | jq '.results[].title'
+  orbyte-cli search --no-query-expansion "exact error message text"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, client, err := requireClient()
 			if err != nil {
@@ -269,7 +269,7 @@ response is saved to a temp file.`,
 
 			if len(args) == 0 {
 				return exitcodes.New(exitcodes.BadRequest,
-					"no query provided\n  Usage: onyx-cli search \"your query\"")
+					"no query provided\n  Usage: orbyte-cli search \"your query\"")
 			}
 
 			if cmd.Flags().Changed("days") {

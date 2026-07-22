@@ -23,8 +23,7 @@ reviews:
     - `contributing_guides/best_practices.md` — Best practices for contributing to the codebase
     - `CLAUDE.md` — Project instructions and coding standards
     - `backend/alembic/README.md` — Migration guidance, including multi-tenant migration behavior
-    - `deployment/helm/charts/onyx/values-lite.yaml` — Lite deployment Helm values and service assumptions
-    - `deployment/docker_compose/docker-compose.onyx-lite.yml` — Lite deployment Docker Compose overlay and disabled service behavior
+    - `deployment/docker_compose/docker-compose.orbyte-lite.yml` — Lite deployment Docker Compose overlay and disabled service behavior
 
   ignore:
     files:
@@ -65,25 +64,25 @@ reviews:
         single-tenant mode, avoid introducing unnecessary tenant-specific
         requirements or cloud-only control-plane dependencies.
 
-    - name: Onyx lite compatibility
+    - name: Orbyte lite compatibility
       description: >
-        Code changes must consider both regular Onyx deployments and Onyx lite
+        Code changes must consider both regular Orbyte deployments and Orbyte lite
         deployments. Lite deployments disable the vector DB, Redis, model
         servers, and background workers by default, use PostgreSQL-backed
         cache/auth/file storage, and rely on the API server to handle
         background work. Do not assume those services are available unless the
         code path is explicitly limited to full deployments.
 
-    - name: OnyxError over HTTPException
+    - name: OrbyteError over HTTPException
       description: >
         Never raise HTTPException directly in business code. Use
-        `raise OnyxError(OnyxErrorCode.XXX, "message")` from
-        `onyx.error_handling.exceptions`. A global FastAPI exception handler
-        converts OnyxError into structured JSON responses with
+        `raise OrbyteError(OrbyteErrorCode.XXX, "message")` from
+        `orbyte.error_handling.exceptions`. A global FastAPI exception handler
+        converts OrbyteError into structured JSON responses with
         {"error_code": "...", "detail": "..."}. Error codes are defined in
-        `onyx.error_handling.error_codes.OnyxErrorCode`. For upstream errors
+        `orbyte.error_handling.error_codes.OrbyteErrorCode`. For upstream errors
         with dynamic HTTP status codes, use `status_code_override`:
-        `raise OnyxError(OnyxErrorCode.BAD_GATEWAY, detail, status_code_override=upstream_status)`.
+        `raise OrbyteError(OrbyteErrorCode.BAD_GATEWAY, detail, status_code_override=upstream_status)`.
       include:
         - backend/**/*.py
 

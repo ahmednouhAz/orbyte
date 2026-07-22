@@ -64,7 +64,7 @@ jobs:
       - name: Start Docker containers
         id: start_docker
         env:
-          ONYX_MODEL_SERVER_IMAGE: ${{ env.RUNS_ON_ECR_CACHE }}:model-server-${{ github.run_id }}
+          ORBYTE_MODEL_SERVER_IMAGE: ${{ env.RUNS_ON_ECR_CACHE }}:model-server-${{ github.run_id }}
         run: |
           cd deployment/docker_compose
           docker compose \

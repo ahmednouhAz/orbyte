@@ -40,11 +40,11 @@ env:
   PERM_SYNC_SHAREPOINT_CERTIFICATE_PASSWORD: ${{ secrets.PERM_SYNC_SHAREPOINT_CERTIFICATE_PASSWORD }}
   PERM_SYNC_SHAREPOINT_DIRECTORY_ID: ${{ secrets.PERM_SYNC_SHAREPOINT_DIRECTORY_ID }}
   EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
-  GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN: ${{ secrets.ONYX_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN }}
-  GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC: ${{ secrets.ONYX_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC }}
-  GITHUB_ADMIN_EMAIL: ${{ secrets.ONYX_GITHUB_ADMIN_EMAIL }}
-  GITHUB_TEST_USER_1_EMAIL: ${{ secrets.ONYX_GITHUB_TEST_USER_1_EMAIL }}
-  GITHUB_TEST_USER_2_EMAIL: ${{ secrets.ONYX_GITHUB_TEST_USER_2_EMAIL }}
+  GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN: ${{ secrets.ORBYTE_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN }}
+  GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC: ${{ secrets.ORBYTE_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC }}
+  GITHUB_ADMIN_EMAIL: ${{ secrets.ORBYTE_GITHUB_ADMIN_EMAIL }}
+  GITHUB_TEST_USER_1_EMAIL: ${{ secrets.ORBYTE_GITHUB_TEST_USER_1_EMAIL }}
+  GITHUB_TEST_USER_2_EMAIL: ${{ secrets.ORBYTE_GITHUB_TEST_USER_2_EMAIL }}
 
 jobs:
   changes:
@@ -276,7 +276,7 @@ jobs:
           POSTGRES_USE_NULL_POOL=true
           REQUIRE_EMAIL_VERIFICATION=false
           DISABLE_TELEMETRY=true
-          ONYX_MODEL_SERVER_IMAGE=${ECR_CACHE}:integration-test-model-server-test-${RUN_ID}
+          ORBYTE_MODEL_SERVER_IMAGE=${ECR_CACHE}:integration-test-model-server-test-${RUN_ID}
           INTEGRATION_TESTS_MODE=true
           MCP_SERVER_ENABLED=true
           # The MCP client tests register a mock MCP server on a private/loopback
@@ -336,7 +336,7 @@ jobs:
         if: contains(matrix.test-dir.path, 'tests/cli')
         run: |
           cd cli
-          GOARCH=arm64 GOOS=linux go build -o ${{ github.workspace }}/onyx-cli-test .
+          GOARCH=arm64 GOOS=linux go build -o ${{ github.workspace }}/orbyte-cli-test .
 
       - name: Install Python deps and generate OpenAPI client
         uses: ./.github/actions/install-deps-and-generate-openapi-client
@@ -354,12 +354,12 @@ jobs:
 
             # Mount CLI binary into the container if it exists (CLI tests only)
             CLI_VOLUME=""
-            if [ -f "${{ github.workspace }}/onyx-cli-test" ]; then
-              CLI_VOLUME="-v ${{ github.workspace }}/onyx-cli-test:/usr/local/bin/onyx-cli-test:ro"
-              CLI_VOLUME="$CLI_VOLUME -e ONYX_CLI_BINARY=/usr/local/bin/onyx-cli-test"
+            if [ -f "${{ github.workspace }}/orbyte-cli-test" ]; then
+              CLI_VOLUME="-v ${{ github.workspace }}/orbyte-cli-test:/usr/local/bin/orbyte-cli-test:ro"
+              CLI_VOLUME="$CLI_VOLUME -e ORBYTE_CLI_BINARY=/usr/local/bin/orbyte-cli-test"
             fi
 
-            docker run --rm --network onyx_default \
+            docker run --rm --network orbyte_default \
               --name test-runner \
               --env-file deployment/docker_compose/.env \
               -v ${{ github.workspace }}:/workspace \
@@ -408,7 +408,7 @@ jobs:
               -e MOCK_CONNECTOR_SERVER_PORT=8001 \
               -e ENABLE_PAID_ENTERPRISE_EDITION_FEATURES=${{ matrix.edition == 'ee' && 'true' || 'false' }} \
               -e ENABLE_CRAFT=true \
-              -e ONYX_DEV_LICENSE \
+              -e ORBYTE_DEV_LICENSE \
               ${{ env.RUNS_ON_ECR_CACHE }}:integration-test-devcontainer-${{ github.run_id }} \
               uv run --no-sync pytest -v --tb=short -rs tests/integration/${{ matrix.test-dir.path }}
 
@@ -430,7 +430,7 @@ jobs:
           path: ${{ github.workspace }}/docker-compose.log
       # ------------------------------------------------------------
 
-  onyx-lite-tests:
+  orbyte-lite-tests:
     needs: [build-devcontainer-image]
     permissions:
       id-token: write # Required for OIDC-based AWS credential exchange
@@ -439,7 +439,7 @@ jobs:
       [
         runs-on,
         runner=4cpu-linux-arm64,
-        "run-id=${{ github.run_id }}-onyx-lite-tests",
+        "run-id=${{ github.run_id }}-orbyte-lite-tests",
         "extras=ecr-cache",
       ]
     timeout-minutes: 10
@@ -461,7 +461,7 @@ jobs:
         with:
           ecr-registry: ${{ vars.ECR_REGISTRY }}
 
-      - name: Create .env file for Onyx Lite Docker Compose
+      - name: Create .env file for Orbyte Lite Docker Compose
         run: |
           cat <<EOF > deployment/docker_compose/.env
           ENABLE_PAID_ENTERPRISE_EDITION_FEATURES=true
@@ -475,29 +475,29 @@ jobs:
 
       # The api_server runs in-process inside pytest via FastAPI TestClient
       # (see tests/integration/conftest.py); only Postgres is needed from
-      # compose for Onyx Lite.
-      - name: Start Docker containers (onyx-lite)
+      # compose for Orbyte Lite.
+      - name: Start Docker containers (orbyte-lite)
         run: |
           cd deployment/docker_compose
           docker compose -f docker-compose.yml -f docker-compose.orbyte-lite.yml -f docker-compose.dev.yml up -d \
             --wait --wait-timeout 300 \
             relational_db
-        id: start_docker_onyx_lite
+        id: start_docker_orbyte_lite
 
       - name: Install Python deps and generate OpenAPI client
         uses: ./.github/actions/install-deps-and-generate-openapi-client
         with:
           devcontainer-image: ${{ env.RUNS_ON_ECR_CACHE }}:integration-test-devcontainer-${{ github.run_id }}
 
-      - name: Run Onyx Lite Integration Tests
+      - name: Run Orbyte Lite Integration Tests
         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # ratchet:nick-fields/retry@v4.0.0
         with:
           timeout_minutes: 20
           max_attempts: 3
           retry_wait_seconds: 10
           command: |
-            echo "Running onyx-lite integration tests..."
-            docker run --rm --network onyx_default \
+            echo "Running orbyte-lite integration tests..."
+            docker run --rm --network orbyte_default \
               --name test-runner \
               -v ${{ github.workspace }}:/workspace \
               -w /workspace/backend \
@@ -516,25 +516,25 @@ jobs:
               -e AUTH_BACKEND=postgres \
               -e OPENAI_API_KEY=${OPENAI_API_KEY} \
               -e TEST_WEB_HOSTNAME=test-runner \
-              -e ONYX_DEV_LICENSE \
+              -e ORBYTE_DEV_LICENSE \
               ${{ env.RUNS_ON_ECR_CACHE }}:integration-test-devcontainer-${{ github.run_id }} \
               uv run --no-sync pytest -v --tb=short -rs tests/integration/tests/no_vectordb
 
-      - name: Dump all-container logs (onyx-lite)
+      - name: Dump all-container logs (orbyte-lite)
         if: always()
         run: |
           cd deployment/docker_compose
           docker compose -f docker-compose.yml -f docker-compose.orbyte-lite.yml -f docker-compose.dev.yml \
-            logs --no-color > $GITHUB_WORKSPACE/docker-compose-onyx-lite.log || true
+            logs --no-color > $GITHUB_WORKSPACE/docker-compose-orbyte-lite.log || true
 
-      - name: Upload logs (onyx-lite)
+      - name: Upload logs (orbyte-lite)
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: docker-all-logs-onyx-lite
-          path: ${{ github.workspace }}/docker-compose-onyx-lite.log
+          name: docker-all-logs-orbyte-lite
+          path: ${{ github.workspace }}/docker-compose-orbyte-lite.log
 
-      - name: Stop Docker containers (onyx-lite)
+      - name: Stop Docker containers (orbyte-lite)
         if: always()
         run: |
           cd deployment/docker_compose
@@ -576,7 +576,7 @@ jobs:
           REQUIRE_EMAIL_VERIFICATION=false \
           DISABLE_TELEMETRY=true \
           OPENAI_DEFAULT_API_KEY=${OPENAI_API_KEY} \
-          ONYX_MODEL_SERVER_IMAGE=${ECR_CACHE}:integration-test-model-server-test-${RUN_ID} \
+          ORBYTE_MODEL_SERVER_IMAGE=${ECR_CACHE}:integration-test-model-server-test-${RUN_ID} \
           DEV_MODE=true \
           docker compose -f docker-compose.multitenant-dev.yml up -d \
             --wait --wait-timeout 300 \
@@ -599,7 +599,7 @@ jobs:
           RUN_ID: ${{ github.run_id }}
         run: |
           echo "Running multi-tenant integration tests..."
-          docker run --rm --network onyx_default \
+          docker run --rm --network orbyte_default \
             --name test-runner \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace/backend \
@@ -618,7 +618,7 @@ jobs:
             -e S3_ENDPOINT_URL=http://minio:9000 \
             -e S3_AWS_ACCESS_KEY_ID=minioadmin \
             -e S3_AWS_SECRET_ACCESS_KEY=minioadmin \
-            -e S3_FILE_STORE_BUCKET_NAME=onyx-file-store-bucket \
+            -e S3_FILE_STORE_BUCKET_NAME=orbyte-file-store-bucket \
             -e OPENAI_API_KEY=${OPENAI_API_KEY} \
             -e OPENAI_DEFAULT_API_KEY=${OPENAI_API_KEY} \
             -e EXA_API_KEY=${EXA_API_KEY} \
@@ -663,7 +663,7 @@ jobs:
     # matrix was legitimately skipped).
     runs-on: ubuntu-slim
     timeout-minutes: 5
-    needs: [changes, integration-tests, onyx-lite-tests, multitenant-tests]
+    needs: [changes, integration-tests, orbyte-lite-tests, multitenant-tests]
     if: ${{ always() }}
     steps:
       - name: Check job status
@@ -671,7 +671,7 @@ jobs:
           CHANGES_RESULT: ${{ needs.changes.result }}
           RUN_TESTS: ${{ needs.changes.outputs.integration }}
           INTEGRATION_RESULT: ${{ needs.integration-tests.result }}
-          LITE_RESULT: ${{ needs.onyx-lite-tests.result }}
+          LITE_RESULT: ${{ needs.orbyte-lite-tests.result }}
           MULTITENANT_RESULT: ${{ needs.multitenant-tests.result }}
         run: |
           # Fail closed if `changes` didn't succeed. Otherwise an empty
@@ -689,7 +689,7 @@ jobs:
           if [ "${INTEGRATION_RESULT}" != "success" ] \
              || [ "${LITE_RESULT}" != "success" ] \
              || [ "${MULTITENANT_RESULT}" != "success" ]; then
-            echo "Test results: integration-tests=${INTEGRATION_RESULT}, onyx-lite-tests=${LITE_RESULT}, multitenant-tests=${MULTITENANT_RESULT}"
+            echo "Test results: integration-tests=${INTEGRATION_RESULT}, orbyte-lite-tests=${LITE_RESULT}, multitenant-tests=${MULTITENANT_RESULT}"
             exit 1
           fi
           echo "All tests passed."

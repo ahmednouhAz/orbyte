@@ -8,11 +8,11 @@
     if (selectionIcon) return;
 
     selectionIcon = document.createElement("div");
-    selectionIcon.id = "onyx-selection-icon";
+    selectionIcon.id = "orbyte-selection-icon";
 
     const img = document.createElement("img");
     img.src = chrome.runtime.getURL("public/icon32.png");
-    img.alt = "Search with Onyx";
+    img.alt = "Search with Orbyte";
 
     selectionIcon.appendChild(img);
     document.body.appendChild(selectionIcon);
@@ -83,7 +83,7 @@
         (response) => {
           if (chrome.runtime.lastError) {
             console.error(
-              "[Onyx] Error sending message:",
+              "[Orbyte] Error sending message:",
               chrome.runtime.lastError.message
             );
           } else {
@@ -97,8 +97,8 @@
 
   document.addEventListener("mouseup", (e) => {
     if (
-      e.target.id === "onyx-selection-icon" ||
-      e.target.closest("#onyx-selection-icon")
+      e.target.id === "orbyte-selection-icon" ||
+      e.target.closest("#orbyte-selection-icon")
     ) {
       return;
     }
@@ -117,8 +117,8 @@
 
   document.addEventListener("mousedown", (e) => {
     if (
-      e.target.id !== "onyx-selection-icon" &&
-      !e.target.closest("#onyx-selection-icon")
+      e.target.id !== "orbyte-selection-icon" &&
+      !e.target.closest("#orbyte-selection-icon")
     ) {
       const selection = window.getSelection();
       const selectedText = selection.toString().trim();

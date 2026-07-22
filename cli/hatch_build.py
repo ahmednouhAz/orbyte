@@ -18,10 +18,10 @@ class CustomBuildHook(BuildHookInterface):
         # Set platform tag for cross-compilation
         goos = os.getenv("GOOS")
         goarch = os.getenv("GOARCH")
-        wheel_platform_tag = os.getenv("ONYX_CLI_WHEEL_PLATFORM_TAG")
+        wheel_platform_tag = os.getenv("ORBYTE_CLI_WHEEL_PLATFORM_TAG")
         if wheel_platform_tag:
             if goos != "linux":
-                msg = "ONYX_CLI_WHEEL_PLATFORM_TAG is only supported with GOOS=linux"
+                msg = "ORBYTE_CLI_WHEEL_PLATFORM_TAG is only supported with GOOS=linux"
                 raise ValueError(msg)
             build_data["tag"] = f"py3-none-{wheel_platform_tag}"
         elif manygo.is_goos(goos) and manygo.is_goarch(goarch):
@@ -36,9 +36,9 @@ class CustomBuildHook(BuildHookInterface):
         tag = os.getenv("GITHUB_REF_NAME", "dev").removeprefix(f"{tag_prefix}/")
         commit = os.getenv("GITHUB_SHA", "none")
 
-        if os.getenv("ONYX_CLI_REUSE_BINARY") == "1":
+        if os.getenv("ORBYTE_CLI_REUSE_BINARY") == "1":
             if not os.path.exists(binary_name):
-                msg = f"ONYX_CLI_REUSE_BINARY=1 set, but {binary_name!r} does not exist"
+                msg = f"ORBYTE_CLI_REUSE_BINARY=1 set, but {binary_name!r} does not exist"
                 raise FileNotFoundError(msg)
             print(f"Reusing Go binary '{binary_name}'...")
         else:

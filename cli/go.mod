@@ -1,4 +1,4 @@
-module github.com/onyx-dot-app/onyx/cli
+module github.com/orbyte-dot-app/orbyte/cli
 
 go 1.26.4
 

@@ -25,7 +25,7 @@ exactly one app (`resolve_app_for_url`, first match wins), so an app
 grant covers every action in a match by construction.
 
 **Scope.** This targets the egress-proxy gate
-(`backend/onyx/sandbox_proxy/addons/gate.py`) only. The other approval
+(`backend/orbyte/sandbox_proxy/addons/gate.py`) only. The other approval
 mechanism touching scheduled runs — ACP `RequestPermissionRequest`,
 which marks the run `AWAITING_APPROVAL` (`executor.py`) — is owned by
 the approvals project and is unchanged.
@@ -152,9 +152,9 @@ grant:
   instances share an `app_type`); the planned run-history feedback loop
   keys its one-click enable off this id.
 
-The gate's grant lookup lives in `backend/onyx/db/scheduled_task.py`;
+The gate's grant lookup lives in `backend/orbyte/db/scheduled_task.py`;
 pre-decided inserts go through `insert_action_approval` in
-`backend/onyx/server/features/build/db/action_approval.py`.
+`backend/orbyte/server/features/build/db/action_approval.py`.
 
 ## API
 

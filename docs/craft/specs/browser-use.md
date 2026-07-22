@@ -45,13 +45,13 @@ aliases.
 
 ### The `browser` built-in skill
 
-`backend/onyx/skills/builtin/browser/SKILL.md` is `agent-browser`'s own core
+`backend/orbyte/skills/builtin/browser/SKILL.md` is `agent-browser`'s own core
 usage guide (pulled from `agent-browser skills get core --full`, version-matched
 to the pinned CLI) with every `agent-browser` rewritten to `browser`, the install
-lines dropped (pre-installed), and a short Onyx note (headless; pinned session;
+lines dropped (pre-installed), and a short Orbyte note (headless; pinned session;
 no `--session`). It's a normal seeded built-in skill:
 
-- Registered in `onyx/skills/built_in.py` with `is_available` keyed on
+- Registered in `orbyte/skills/built_in.py` with `is_available` keyed on
   `ENABLE_BROWSER`.
 - Row seeded by migration `c4e7b1a9f2d3_seed_browser_built_in_skill`.
 - **Gated per-deployment**, not per-user: the registry's `is_available` returns
@@ -67,7 +67,7 @@ No dedicated AGENTS.md section is needed.
 
 ## Gating
 
-`ENABLE_BROWSER` (`onyx/server/features/build/configs.py`, api-server runtime
+`ENABLE_BROWSER` (`orbyte/server/features/build/configs.py`, api-server runtime
 env, default ON): must match the sandbox image's build-time `ENABLE_BROWSER` ARG
 (also default ON). It's the single signal of "does this deployment's image
 include the browser runtime," and gates the built-in `browser` skill via the

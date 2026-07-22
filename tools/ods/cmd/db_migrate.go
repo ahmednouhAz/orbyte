@@ -4,7 +4,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/alembic"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/alembic"
 )
 
 // MigrateOptions holds common options for migration commands.

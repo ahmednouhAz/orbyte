@@ -30,8 +30,8 @@
     "description": "Backend testing guide covering all 4 test types, fixtures, and conventions"
   },
   {
-    "scope": ["backend/onyx/connectors/**"],
-    "path": "backend/onyx/connectors/README.md",
+    "scope": ["backend/orbyte/connectors/**"],
+    "path": "backend/orbyte/connectors/README.md",
     "description": "Connector development guide covering design, interfaces, and required changes"
   },
   {
@@ -46,12 +46,12 @@
   },
   {
     "scope": [],
-    "path": "deployment/helm/charts/onyx/values-lite.yaml",
+    "path": "deployment/helm/charts/orbyte/values-lite.yaml",
     "description": "Lite deployment Helm values and service assumptions"
   },
   {
     "scope": [],
-    "path": "deployment/docker_compose/docker-compose.onyx-lite.yml",
+    "path": "deployment/docker_compose/docker-compose.orbyte-lite.yml",
     "description": "Lite deployment Docker Compose overlay and disabled service behavior"
   }
 ]

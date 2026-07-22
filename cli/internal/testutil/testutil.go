@@ -8,14 +8,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/api"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/config"
+	"github.com/orbyte-dot-app/orbyte/cli/internal/iostreams"
 )
 
 // NewClient creates a test API client pointed at the given URL.
 func NewClient(url string) *api.Client {
-	return api.NewClient(config.OnyxCliConfig{ServerURL: url, APIKey: "test-key"})
+	return api.NewClient(config.OrbyteCliConfig{ServerURL: url, APIKey: "test-key"})
 }
 
 // StatusServer returns an httptest.Server that always responds with the given status code.
@@ -25,9 +25,9 @@ func StatusServer(status int) *httptest.Server {
 	}))
 }
 
-// OnyxServer returns an httptest.Server that simulates the Onyx backend.
+// OrbyteServer returns an httptest.Server that simulates the Orbyte backend.
 // Routes are mounted under /api to match the production URL layout.
-func OnyxServer(meStatus int) *httptest.Server {
+func OrbyteServer(meStatus int) *httptest.Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/me", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(meStatus)
@@ -56,8 +56,8 @@ func DeadServerURL() string {
 func IsolateConfig(t *testing.T, serverURL string) {
 	t.Helper()
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
-	t.Setenv("ONYX_SERVER_URL", serverURL)
-	t.Setenv("ONYX_PAT", "test-key")
+	t.Setenv("ORBYTE_SERVER_URL", serverURL)
+	t.Setenv("ORBYTE_PAT", "test-key")
 }
 
 // TestIOStreams returns an IOStreams backed by buffers for testing.

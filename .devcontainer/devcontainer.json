@@ -1,10 +1,10 @@
 {
-  "name": "Onyx Dev Sandbox",
+  "name": "Orbyte Dev Sandbox",
   "image": "onyxdotapp/onyx-devcontainer@sha256:e63a35c635b513c47547de7655e0c0dd8caf2232fa0981c82af6223072a22e01",
   "runArgs": [
     "--cap-add=NET_ADMIN",
     "--cap-add=NET_RAW",
-    "--network=onyx_default"
+    "--network=orbyte_default"
   ],
   "mounts": [
     "source=${localEnv:HOME}/.claude,target=/home/dev/.claude,type=bind",
@@ -13,17 +13,17 @@
     "source=${localEnv:HOME}/.zshrc,target=/home/dev/.zshrc.host,type=bind,readonly",
     "source=${localEnv:HOME}/.gitconfig,target=/home/dev/.gitconfig,type=bind,readonly",
     "source=${localEnv:HOME}/.config/nvim,target=/home/dev/.config/nvim,type=bind,readonly",
-    "source=onyx-devcontainer-cache,target=/home/dev/.cache,type=volume",
-    "source=onyx-devcontainer-local,target=/home/dev/.local,type=volume",
-    "source=onyx-devcontainer-venv,target=/workspace/.venv,type=volume",
-    "source=onyx-devcontainer-web-node-modules,target=/workspace/web/node_modules,type=volume",
-    "source=onyx-devcontainer-web-next,target=/workspace/web/.next,type=volume"
+    "source=orbyte-devcontainer-cache,target=/home/dev/.cache,type=volume",
+    "source=orbyte-devcontainer-local,target=/home/dev/.local,type=volume",
+    "source=orbyte-devcontainer-venv,target=/workspace/.venv,type=volume",
+    "source=orbyte-devcontainer-web-node-modules,target=/workspace/web/node_modules,type=volume",
+    "source=orbyte-devcontainer-web-next,target=/workspace/web/.next,type=volume"
   ],
   "containerEnv": {
     "COLORTERM": "truecolor",
     "GH_TOKEN": "${localEnv:GH_TOKEN}",
     "MODEL_SERVER_HOST": "inference_model_server",
-    "ONYX_DEVCONTAINER_FIREWALL": "${localEnv:ONYX_DEVCONTAINER_FIREWALL}",
+    "ORBYTE_DEVCONTAINER_FIREWALL": "${localEnv:ORBYTE_DEVCONTAINER_FIREWALL}",
     "OPENSEARCH_HOST": "opensearch",
     "POSTGRES_HOST": "relational_db",
     "REDIS_HOST": "cache",
@@ -34,9 +34,9 @@
   },
   "remoteUser": "${localEnv:DEVCONTAINER_REMOTE_USER:dev}",
   "updateRemoteUserUID": false,
-  "initializeCommand": "docker network create onyx_default 2>/dev/null || true",
+  "initializeCommand": "docker network create orbyte_default 2>/dev/null || true",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
-  "postStartCommand": "sudo bash /workspace/.devcontainer/init-dev-user.sh && if [ \"${ONYX_DEVCONTAINER_FIREWALL:-}\" = \"1\" ]; then sudo bash /workspace/.devcontainer/init-firewall.sh; else echo 'Devcontainer firewall disabled. Set ONYX_DEVCONTAINER_FIREWALL=1 on the host before starting the container to enable it.'; fi",
+  "postStartCommand": "sudo bash /workspace/.devcontainer/init-dev-user.sh && if [ \"${ORBYTE_DEVCONTAINER_FIREWALL:-}\" = \"1\" ]; then sudo bash /workspace/.devcontainer/init-firewall.sh; else echo 'Devcontainer firewall disabled. Set ORBYTE_DEVCONTAINER_FIREWALL=1 on the host before starting the container to enable it.'; fi",
   "waitFor": "postStartCommand"
 }

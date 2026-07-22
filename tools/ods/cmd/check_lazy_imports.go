@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/lazyimports"
+	"github.com/orbyte-dot-app/orbyte/tools/ods/internal/lazyimports"
 )
 
 // NewCheckLazyImportsCommand creates the check-lazy-imports command.
@@ -26,8 +26,8 @@ provided, all backend Python files are scanned.
 
 Examples:
   ods check-lazy-imports                     # Check all backend Python files
-  ods check-lazy-imports onyx/llm/           # Check only files in onyx/llm/
-  ods check-lazy-imports onyx/chat/chat.py   # Check a specific file`,
+  ods check-lazy-imports orbyte/llm/           # Check only files in orbyte/llm/
+  ods check-lazy-imports orbyte/chat/chat.py   # Check a specific file`,
 		Run: func(cmd *cobra.Command, args []string) {
 			runCheckLazyImports(args)
 		},
