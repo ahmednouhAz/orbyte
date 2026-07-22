@@ -271,9 +271,25 @@ def setup_postgres(db_session: Session) -> None:
         except ValueError as e:
             logger.warning("Failed to upsert LLM provider during setup: %s", e)
             return
-        update_default_provider(
-            provider_id=new_llm_provider.id, model_name=llm_model, db_session=db_session
-        )
+        try:
+            update_default_provider(
+                provider_id=new_llm_provider.id,
+                model_name=llm_model,
+                db_session=db_session,
+            )
+        except ValueError as e:
+            # This dev-env preset always creates an OpenAI-type provider, so
+            # GEN_AI_MODEL_VERSION only resolves here if it names a real
+            # OpenAI model. A non-OpenAI value (e.g. an Ollama model name set
+            # for local/offline use) isn't a startup-fatal error - the admin
+            # is expected to configure the real provider via the Admin UI;
+            # this preset is just a dev convenience for the OpenAI case.
+            logger.warning(
+                "Failed to set default model during setup (GEN_AI_MODEL_VERSION=%r "
+                "may not be a valid model for this preset OpenAI provider): %s",
+                llm_model,
+                e,
+            )
 
 
 def update_default_multipass_indexing(db_session: Session) -> None:
