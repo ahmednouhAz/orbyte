@@ -23,7 +23,7 @@ export const STEP_CONFIG: Record<OnboardingStep, StepConfig> = {
   },
   [OnboardingStep.LlmSetup]: {
     index: 2,
-    title: "Almost there! Connect your models to start chatting.",
+    title: "Almost there! Configure your local LLM to start chatting.",
     buttonText: "Next",
     iconPercentage: 70,
   },

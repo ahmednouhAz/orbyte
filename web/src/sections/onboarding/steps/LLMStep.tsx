@@ -23,6 +23,25 @@ interface SelectedProvider {
   isCustomProvider: boolean;
 }
 
+// Self-hosted providers are Orbyte's primary, no-external-dependency path -
+// list them first so a new admin sees "configure your local model" before
+// the secondary, optional cloud provider cards.
+const SELF_HOSTED_PROVIDER_NAMES = new Set([
+  "ollama_chat",
+  "lm_studio",
+  "openai_compatible",
+]);
+
+function sortSelfHostedFirst(
+  descriptors: WellKnownLLMProviderDescriptor[]
+): WellKnownLLMProviderDescriptor[] {
+  return [...descriptors].sort((a, b) => {
+    const aSelfHosted = SELF_HOSTED_PROVIDER_NAMES.has(a.name) ? 0 : 1;
+    const bSelfHosted = SELF_HOSTED_PROVIDER_NAMES.has(b.name) ? 0 : 1;
+    return aSelfHosted - bSelfHosted;
+  });
+}
+
 function LLMProviderSkeleton() {
   return (
     <div className="flex justify-between h-full w-full p-1 rounded-12 border border-border-01 bg-background-neutral-01 animate-pulse">
@@ -91,7 +110,7 @@ const LLMStep = memo(
     disabled,
   }: LLMStepProps) => {
     const { llmProviderOptions, isLoading } = useLLMProviderOptions();
-    const llmDescriptors = llmProviderOptions ?? [];
+    const llmDescriptors = sortSelfHostedFirst(llmProviderOptions ?? []);
 
     const [selectedProvider, setSelectedProvider] =
       useState<SelectedProvider | null>(null);
@@ -131,8 +150,8 @@ const LLMStep = memo(
           >
             <ContentAction
               icon={SvgCpu}
-              title="Connect your LLM models"
-              description="Orbyte supports both self-hosted models and popular providers."
+              title="Configure your local LLM to start chatting"
+              description="Orbyte runs fully locally - connect a self-hosted model like Ollama below. Cloud providers are also supported, but optional."
               sizePreset="main-ui"
               variant="section"
               padding="lg"

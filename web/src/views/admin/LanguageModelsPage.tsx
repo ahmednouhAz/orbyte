@@ -57,9 +57,20 @@ interface ProviderGroup {
 
 const PROVIDER_GROUPS: ProviderGroup[] = [
   {
-    title: "Add Provider",
-    description: "Orbyte supports both popular providers and self-hosted models.",
+    title: "Self-hosted & Custom",
+    description:
+      "Orbyte is built to run fully locally. Connect a self-hosted model like Ollama to get started - no external API key required.",
     emphasis: true,
+    providerNames: [
+      LLMProviderName.OLLAMA_CHAT,
+      LLMProviderName.LM_STUDIO,
+      LLMProviderName.OPENAI_COMPATIBLE,
+    ],
+    includeCustom: true,
+  },
+  {
+    title: "Cloud Providers",
+    description: "Optional - connect a hosted provider instead of, or alongside, a local model.",
     providerNames: [
       LLMProviderName.OPENAI,
       LLMProviderName.ANTHROPIC,
@@ -76,15 +87,6 @@ const PROVIDER_GROUPS: ProviderGroup[] = [
       LLMProviderName.NEBIUS_TOKENFACTORY,
       LLMProviderName.BIFROST,
     ],
-  },
-  {
-    title: "Self-hosted & Custom",
-    providerNames: [
-      LLMProviderName.OLLAMA_CHAT,
-      LLMProviderName.LM_STUDIO,
-      LLMProviderName.OPENAI_COMPATIBLE,
-    ],
-    includeCustom: true,
   },
 ];
 
