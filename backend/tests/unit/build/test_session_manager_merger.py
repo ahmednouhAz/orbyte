@@ -16,10 +16,10 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.server.features.build.connect_app import ConnectAppRequest
-from onyx.server.features.build.packets import ApprovalRequestedPacket
-from onyx.server.features.build.packets import ConnectAppRequestPacket
-from onyx.server.features.build.session import streaming as streaming_mod
+from orbyte.server.features.build.connect_app import ConnectAppRequest
+from orbyte.server.features.build.packets import ApprovalRequestedPacket
+from orbyte.server.features.build.packets import ConnectAppRequestPacket
+from orbyte.server.features.build.session import streaming as streaming_mod
 
 
 def _collect_with_timeout(

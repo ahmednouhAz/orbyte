@@ -11,8 +11,8 @@ import time
 import httpx
 import pytest
 
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SandboxBackend
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SandboxBackend
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser
@@ -97,7 +97,7 @@ def test_dev_resources_not_blocked_by_origin_gate(
     _wait_for_webapp_ready(pool_api_user, session_id)
 
     resp = _proxy_get(
-        pool_api_user, session_id, "_next/static/onyx-origin-gate-probe.js"
+        pool_api_user, session_id, "_next/static/orbyte-origin-gate-probe.js"
     )
     # 404 for a nonexistent asset is fine; the gate rejects before routing,
     # so a 403 means Origin/sec-fetch-* leaked through the proxy or the

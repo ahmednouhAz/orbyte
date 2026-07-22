@@ -4,8 +4,8 @@ from collections.abc import Generator
 
 import pytest
 
-from onyx.utils.variable_functionality import fetch_versioned_implementation
-from onyx.utils.variable_functionality import global_version
+from orbyte.utils.variable_functionality import fetch_versioned_implementation
+from orbyte.utils.variable_functionality import global_version
 
 
 @pytest.fixture()

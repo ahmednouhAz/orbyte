@@ -10,9 +10,9 @@ Usage:
 import json
 import sys
 
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.search_settings import get_current_search_settings
+from orbyte.db.engine.sql_engine import get_session_with_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.search_settings import get_current_search_settings
 
 
 def get_tenant_index_name(tenant_id: str) -> dict[str, str]:

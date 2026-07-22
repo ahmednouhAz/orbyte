@@ -7,17 +7,17 @@ from uuid import UUID
 from pydantic import BaseModel
 from pydantic import Field
 
-from onyx.auth.schemas import UserRole
-from onyx.configs.constants import MessageType
-from onyx.configs.constants import QAFeedbackType
-from onyx.context.search.models import SavedSearchDoc
-from onyx.context.search.models import SearchDoc
-from onyx.db.enums import AccessType
-from onyx.server.documents.models import DocumentSource
-from onyx.server.documents.models import IndexAttemptSnapshot
-from onyx.server.documents.models import IndexingStatus
-from onyx.server.documents.models import InputType
-from onyx.server.query_and_chat.streaming_models import GeneratedImage
+from orbyte.auth.schemas import UserRole
+from orbyte.configs.constants import MessageType
+from orbyte.configs.constants import QAFeedbackType
+from orbyte.context.search.models import SavedSearchDoc
+from orbyte.context.search.models import SearchDoc
+from orbyte.db.enums import AccessType
+from orbyte.server.documents.models import DocumentSource
+from orbyte.server.documents.models import IndexAttemptSnapshot
+from orbyte.server.documents.models import IndexingStatus
+from orbyte.server.documents.models import InputType
+from orbyte.server.query_and_chat.streaming_models import GeneratedImage
 
 """
 These data models are used to represent the data on the testing side of things.

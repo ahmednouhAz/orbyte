@@ -14,29 +14,29 @@ import httpx
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.enums import AccessType
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import SandboxStatus
-from onyx.db.enums import SkillSharePermission
-from onyx.db.models import Connector
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Credential
-from onyx.db.models import Sandbox
-from onyx.db.models import Skill
-from onyx.db.models import User
-from onyx.db.models import User__UserGroup
-from onyx.db.models import UserGroup
-from onyx.db.models import UserGroup__ConnectorCredentialPair
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SandboxBackend
-from onyx.server.features.skill.models import SkillPatchRequest
-from onyx.server.features.skill.models import SkillResponse
-from onyx.server.features.skill.models import SkillUserShareRequest
-from onyx.skills.built_in import BUILT_IN_SKILLS
-from onyx.skills.built_in import BuiltInSkillDefinition
-from onyx.skills.push import build_skills_fileset_for_user
-from onyx.skills.push import push_skill_to_affected_sandboxes
+from orbyte.configs.constants import DocumentSource
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.enums import SkillSharePermission
+from orbyte.db.models import Connector
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Credential
+from orbyte.db.models import Sandbox
+from orbyte.db.models import Skill
+from orbyte.db.models import User
+from orbyte.db.models import User__UserGroup
+from orbyte.db.models import UserGroup
+from orbyte.db.models import UserGroup__ConnectorCredentialPair
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SandboxBackend
+from orbyte.server.features.skill.models import SkillPatchRequest
+from orbyte.server.features.skill.models import SkillResponse
+from orbyte.server.features.skill.models import SkillUserShareRequest
+from orbyte.skills.built_in import BUILT_IN_SKILLS
+from orbyte.skills.built_in import BuiltInSkillDefinition
+from orbyte.skills.push import build_skills_fileset_for_user
+from orbyte.skills.push import push_skill_to_affected_sandboxes
 from tests.integration.common_utils.managers.skill import SkillManager
 from tests.integration.common_utils.managers.user import UserManager
 from tests.integration.common_utils.managers.user_group import UserGroupManager
@@ -242,9 +242,9 @@ def _seed_custom_skill(
 ) -> Skill:
     import hashlib
 
-    from onyx.configs.constants import FileOrigin
-    from onyx.db.models import Skill__UserGroup
-    from onyx.file_store.file_store import get_default_file_store
+    from orbyte.configs.constants import FileOrigin
+    from orbyte.db.models import Skill__UserGroup
+    from orbyte.file_store.file_store import get_default_file_store
 
     bundle_bytes = _bundle(slug, body)
     file_store = get_default_file_store()
@@ -794,7 +794,7 @@ class TestSkillPushLowLevel:
         pycache.mkdir()
         (pycache / "foo.pyc").write_bytes(b"\x00\x01")
 
-        monkeypatch.setattr("onyx.skills.built_in.BUILTIN_SKILLS_PATH", skills_root)
+        monkeypatch.setattr("orbyte.skills.built_in.BUILTIN_SKILLS_PATH", skills_root)
         monkeypatch.setitem(
             BUILT_IN_SKILLS,
             slug,

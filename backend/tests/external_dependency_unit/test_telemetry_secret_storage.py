@@ -2,13 +2,13 @@
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import KV_CUSTOMER_UUID_KEY
-from onyx.configs.constants import KV_INSTANCE_DOMAIN_KEY
-from onyx.db.encrypted_kv_store import load_encrypted_kv
-from onyx.db.models import EncryptedKeyValueStore
-from onyx.db.models import KVStore
-from onyx.key_value_store.interface import unwrap_str
-from onyx.utils import telemetry
+from orbyte.configs.constants import KV_CUSTOMER_UUID_KEY
+from orbyte.configs.constants import KV_INSTANCE_DOMAIN_KEY
+from orbyte.db.encrypted_kv_store import load_encrypted_kv
+from orbyte.db.models import EncryptedKeyValueStore
+from orbyte.db.models import KVStore
+from orbyte.key_value_store.interface import unwrap_str
+from orbyte.utils import telemetry
 from tests.external_dependency_unit.conftest import create_test_user
 
 

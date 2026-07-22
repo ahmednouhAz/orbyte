@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import uuid4
 
-from onyx.db.models import UserRole
+from orbyte.db.models import UserRole
 from tests.integration.common_utils.managers.api_key import APIKeyManager
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.chat import ChatSessionManager

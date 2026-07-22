@@ -4,23 +4,23 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.llm import can_user_access_llm_provider
-from onyx.db.llm import fetch_user_group_ids
-from onyx.db.llm import update_default_provider
-from onyx.db.llm import upsert_llm_provider
-from onyx.db.models import LLMProvider as LLMProviderModel
-from onyx.db.models import LLMProvider__Persona
-from onyx.db.models import LLMProvider__UserGroup
-from onyx.db.models import ModelConfiguration
-from onyx.db.models import Persona
-from onyx.db.models import User
-from onyx.db.models import User__UserGroup
-from onyx.db.models import UserGroup
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.factory import get_llm_for_persona
-from onyx.server.manage.llm.models import LLMProviderUpsertRequest
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.llm import can_user_access_llm_provider
+from orbyte.db.llm import fetch_user_group_ids
+from orbyte.db.llm import update_default_provider
+from orbyte.db.llm import upsert_llm_provider
+from orbyte.db.models import LLMProvider as LLMProviderModel
+from orbyte.db.models import LLMProvider__Persona
+from orbyte.db.models import LLMProvider__UserGroup
+from orbyte.db.models import ModelConfiguration
+from orbyte.db.models import Persona
+from orbyte.db.models import User
+from orbyte.db.models import User__UserGroup
+from orbyte.db.models import UserGroup
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.llm.factory import get_llm_for_persona
+from orbyte.server.manage.llm.models import LLMProviderUpsertRequest
+from orbyte.server.manage.llm.models import ModelConfigurationUpsertRequest
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.llm_provider import LLMProviderManager

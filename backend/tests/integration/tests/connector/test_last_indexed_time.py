@@ -19,9 +19,9 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
-from onyx.db.models import IndexingStatus
-from onyx.server.documents.models import CCPairFullInfo
-from onyx.server.documents.models import ConnectorIndexingStatusLite
+from orbyte.db.models import IndexingStatus
+from orbyte.server.documents.models import CCPairFullInfo
+from orbyte.server.documents.models import ConnectorIndexingStatusLite
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
 from tests.integration.common_utils.managers.credential import CredentialManager

@@ -7,10 +7,10 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SandboxBackend
-from onyx.server.features.build.user_library.api import DeleteFileResponse
-from onyx.server.features.build.user_library.api import UploadResponse
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SandboxBackend
+from orbyte.server.features.build.user_library.api import DeleteFileResponse
+from orbyte.server.features.build.user_library.api import UploadResponse
 from tests.integration.tests.craft.k8s.k8s_fixtures import SandboxHandle
 from tests.integration.tests.craft.k8s.k8s_fixtures import WorkspaceProxy
 from tests.integration.tests.craft.user_library_http import delete_user_library_file

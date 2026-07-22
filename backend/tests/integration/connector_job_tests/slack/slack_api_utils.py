@@ -16,9 +16,9 @@ from uuid import uuid4
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-from onyx.connectors.slack.connector import get_channel_messages
-from onyx.connectors.slack.models import ChannelType
-from onyx.connectors.slack.utils import make_paginated_slack_api_call
+from orbyte.connectors.slack.connector import get_channel_messages
+from orbyte.connectors.slack.models import ChannelType
+from orbyte.connectors.slack.utils import make_paginated_slack_api_call
 
 
 def _get_slack_channel_id(channel: ChannelType) -> str:

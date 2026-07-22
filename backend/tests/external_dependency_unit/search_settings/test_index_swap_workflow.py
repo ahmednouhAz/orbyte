@@ -16,15 +16,15 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.connectors.models import IndexAttemptMetadata
-from onyx.context.search.models import SavedSearchSettings
-from onyx.db.enums import EmbeddingPrecision
-from onyx.db.enums import SwitchoverType
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import IndexModelStatus
-from onyx.db.search_settings import create_search_settings
-from onyx.db.swap_index import check_and_perform_index_swap
-from onyx.indexing.indexing_pipeline import index_doc_batch_prepare
+from orbyte.connectors.models import IndexAttemptMetadata
+from orbyte.context.search.models import SavedSearchSettings
+from orbyte.db.enums import EmbeddingPrecision
+from orbyte.db.enums import SwitchoverType
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import IndexModelStatus
+from orbyte.db.search_settings import create_search_settings
+from orbyte.db.swap_index import check_and_perform_index_swap
+from orbyte.indexing.indexing_pipeline import index_doc_batch_prepare
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair
 from tests.external_dependency_unit.indexing_helpers import get_doc_row
 from tests.external_dependency_unit.indexing_helpers import get_filerecord
@@ -136,7 +136,7 @@ class TestInstantIndexSwap:
         # Vespa is patched out — we're testing the postgres + file_store
         # side effects, not the document-index integration.
         with patch(
-            "onyx.db.swap_index.get_all_document_indices",
+            "orbyte.db.swap_index.get_all_document_indices",
             return_value=[],
         ):
             old_settings = check_and_perform_index_swap(db_session)
@@ -180,7 +180,7 @@ class TestInstantIndexSwap:
         )
 
         with patch(
-            "onyx.db.swap_index.get_all_document_indices",
+            "orbyte.db.swap_index.get_all_document_indices",
             return_value=[],
         ):
             old_settings = check_and_perform_index_swap(db_session)

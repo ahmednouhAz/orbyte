@@ -17,17 +17,17 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.configs.constants import FileOrigin
-from onyx.connectors.models import InputType
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import AccessType
-from onyx.db.enums import ChatSessionSharedStatus
-from onyx.db.models import ChatSession
-from onyx.db.models import Document
-from onyx.db.models import ToolCall
-from onyx.file_store.file_store import get_default_file_store
-from onyx.file_store.models import FileDescriptor
-from onyx.server.documents.models import DocumentSource
+from orbyte.configs.constants import FileOrigin
+from orbyte.connectors.models import InputType
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import ChatSessionSharedStatus
+from orbyte.db.models import ChatSession
+from orbyte.db.models import Document
+from orbyte.db.models import ToolCall
+from orbyte.file_store.file_store import get_default_file_store
+from orbyte.file_store.models import FileDescriptor
+from orbyte.server.documents.models import DocumentSource
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.api_key import APIKeyManager

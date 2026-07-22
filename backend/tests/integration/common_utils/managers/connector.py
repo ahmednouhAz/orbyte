@@ -1,10 +1,10 @@
 from typing import Any
 from uuid import uuid4
 
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
-from onyx.server.documents.models import ConnectorUpdateRequest
-from onyx.server.documents.models import DocumentSource
+from orbyte.connectors.models import InputType
+from orbyte.db.enums import AccessType
+from orbyte.server.documents.models import ConnectorUpdateRequest
+from orbyte.server.documents.models import DocumentSource
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestConnector

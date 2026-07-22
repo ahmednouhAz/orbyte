@@ -70,14 +70,14 @@ def test_classify_category_axis() -> None:
     # read under connectors/ -> connector, regardless of name shape
     assert (
         classify_var(
-            "CONFLUENCE_ACCESS_TOKEN", {"backend/onyx/connectors/confluence/c.py"}
+            "CONFLUENCE_ACCESS_TOKEN", {"backend/orbyte/connectors/confluence/c.py"}
         )[0]
         == "connector"
     )
     # dev/test/eval -> internal (high precision)
     assert classify_var("DEV_MODE", set())[0] == "internal"
     assert classify_var("MOCK_LLM_RESPONSE", set())[0] == "internal"
-    assert classify_var("ONYX_EVAL_API_KEY", set())[0] == "internal"
+    assert classify_var("ORBYTE_EVAL_API_KEY", set())[0] == "internal"
     # operator-facing knob -> tunable
     assert classify_var("AGENT_MAX_QUERY_RETRIEVAL_RESULTS", set())[0] == "tunable"
 
@@ -91,7 +91,7 @@ def test_classify_retrieval_not_misread_as_eval() -> None:
 def test_classify_sensitive_orthogonal_to_category() -> None:
     # a connector credential is both connector AND sensitive
     cat, sensitive = classify_var(
-        "JIRA_API_TOKEN", {"backend/onyx/connectors/jira/connector.py"}
+        "JIRA_API_TOKEN", {"backend/orbyte/connectors/jira/connector.py"}
     )
     assert cat == "connector"
     assert sensitive is True
@@ -102,7 +102,7 @@ def _names(src: str) -> set[str]:
 
     tree = ast.parse(src)
     environ_aliases, getenv_aliases = _scan_os_imports(tree)
-    visitor = EnvVisitor("backend/onyx/x.py", False, environ_aliases, getenv_aliases)
+    visitor = EnvVisitor("backend/orbyte/x.py", False, environ_aliases, getenv_aliases)
     visitor.visit(tree)
     return {r.name for r in visitor.reads}
 

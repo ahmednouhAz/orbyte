@@ -10,10 +10,10 @@
 # from pydantic import BaseModel
 
 # from model_server.constants import MODEL_WARM_UP_STRING
-# from model_server.legacy.onyx_torch_model import ConnectorClassifier
-# from model_server.legacy.onyx_torch_model import HybridClassifier
+# from model_server.legacy.orbyte_torch_model import ConnectorClassifier
+# from model_server.legacy.orbyte_torch_model import HybridClassifier
 # from model_server.utils import simple_log_function_time
-# from onyx.utils.logger import setup_logger
+# from orbyte.utils.logger import setup_logger
 # from shared_configs.configs import CONNECTOR_CLASSIFIER_MODEL_REPO
 # from shared_configs.configs import CONNECTOR_CLASSIFIER_MODEL_TAG
 # from shared_configs.configs import INDEXING_ONLY
@@ -254,7 +254,7 @@
 
 #     input_ids, attention_mask = tokenize_connector_classification_query(
 #         ["GitHub"],
-#         "onyx classifier query google doc",
+#         "orbyte classifier query google doc",
 #         connector_classifier_tokenizer,
 #         connector_classifier.connector_end_token_id,
 #     )

@@ -11,18 +11,18 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.configs.constants import PUBLIC_DOC_PAT
-from onyx.context.search.models import IndexFilters
-from onyx.context.search.models import InferenceChunk
-from onyx.db.enums import EmbeddingPrecision
-from onyx.document_index.interfaces_new import DocumentIndex as DocumentIndexNew
-from onyx.document_index.interfaces_new import DocumentSectionRequest
-from onyx.document_index.interfaces_new import MetadataUpdateRequest
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.opensearch_document_index import (
+from orbyte.configs.constants import PUBLIC_DOC_PAT
+from orbyte.context.search.models import IndexFilters
+from orbyte.context.search.models import InferenceChunk
+from orbyte.db.enums import EmbeddingPrecision
+from orbyte.document_index.interfaces_new import DocumentIndex as DocumentIndexNew
+from orbyte.document_index.interfaces_new import DocumentSectionRequest
+from orbyte.document_index.interfaces_new import MetadataUpdateRequest
+from orbyte.document_index.interfaces_new import TenantState
+from orbyte.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
-from onyx.indexing.models import DocMetadataAwareIndexChunk
+from orbyte.indexing.models import DocMetadataAwareIndexChunk
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.document_index.conftest import EMBEDDING_DIM
 from tests.external_dependency_unit.document_index.conftest import make_chunk

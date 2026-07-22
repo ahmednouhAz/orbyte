@@ -15,9 +15,9 @@ import sys
 
 from sqlalchemy import select
 
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.models import User
+from orbyte.db.engine.sql_engine import get_session_with_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.models import User
 
 
 def get_tenant_users(tenant_id: str) -> dict:

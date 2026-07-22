@@ -9,6 +9,6 @@ api_keys.py
 vespa-app.zip
 dynamic_config_storage/
 celerybeat-schedule*
-onyx/connectors/salesforce/data/
+orbyte/connectors/salesforce/data/
 .test.env
 /generated

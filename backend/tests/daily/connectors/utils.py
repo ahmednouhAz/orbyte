@@ -4,18 +4,18 @@ from typing import TypeVar
 
 from pydantic import BaseModel
 
-from onyx.connectors.connector_runner import CheckpointOutputWrapper
-from onyx.connectors.interfaces import BaseConnector
-from onyx.connectors.interfaces import CheckpointedConnector
-from onyx.connectors.interfaces import CheckpointedConnectorWithPermSync
-from onyx.connectors.interfaces import SecondsSinceUnixEpoch
-from onyx.connectors.models import ConnectorCheckpoint
-from onyx.connectors.models import ConnectorFailure
-from onyx.connectors.models import Document
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.models import ImageSection
-from onyx.connectors.models import TabularSection
-from onyx.connectors.models import TextSection
+from orbyte.connectors.connector_runner import CheckpointOutputWrapper
+from orbyte.connectors.interfaces import BaseConnector
+from orbyte.connectors.interfaces import CheckpointedConnector
+from orbyte.connectors.interfaces import CheckpointedConnectorWithPermSync
+from orbyte.connectors.interfaces import SecondsSinceUnixEpoch
+from orbyte.connectors.models import ConnectorCheckpoint
+from orbyte.connectors.models import ConnectorFailure
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.models import ImageSection
+from orbyte.connectors.models import TabularSection
+from orbyte.connectors.models import TextSection
 
 _ITERATION_LIMIT = 100_000
 

@@ -1,6 +1,6 @@
 """Manual test harness for the coding-agent loop.
 
-Usage (from repo root, with venv active and Onyx services running):
+Usage (from repo root, with venv active and Orbyte services running):
 
     source .venv/bin/activate
     python -m backend.scripts.coding_agent_test \\
@@ -24,19 +24,19 @@ import argparse
 import queue
 from uuid import uuid4
 
-from onyx.chat.emitter import Emitter
-from onyx.coding_agent.mock_tools import CODING_AGENT_QUERY_KEY
-from onyx.coding_agent.mock_tools import CODING_AGENT_REPO_KEY
-from onyx.coding_agent.mock_tools import CODING_AGENT_TOOL_NAME
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.models import User
-from onyx.llm.factory import get_default_llm
-from onyx.llm.factory import get_llm_token_counter
-from onyx.server.query_and_chat.placement import Placement
-from onyx.tools.fake_tools.coding_agent import run_coding_agent_call
-from onyx.tools.models import ToolCallKickoff
-from onyx.utils.logger import setup_logger
+from orbyte.chat.emitter import Emitter
+from orbyte.coding_agent.mock_tools import CODING_AGENT_QUERY_KEY
+from orbyte.coding_agent.mock_tools import CODING_AGENT_REPO_KEY
+from orbyte.coding_agent.mock_tools import CODING_AGENT_TOOL_NAME
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.models import User
+from orbyte.llm.factory import get_default_llm
+from orbyte.llm.factory import get_llm_token_counter
+from orbyte.server.query_and_chat.placement import Placement
+from orbyte.tools.fake_tools.coding_agent import run_coding_agent_call
+from orbyte.tools.models import ToolCallKickoff
+from orbyte.utils.logger import setup_logger
 
 logger = setup_logger()
 

@@ -6,9 +6,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
-from onyx.db.engine.pg_ssl import create_pg_ssl_context
-from onyx.db.engine.sql_engine import build_connection_string
-from onyx.db.models import PublicBase
+from orbyte.db.engine.pg_ssl import create_pg_ssl_context
+from orbyte.db.engine.sql_engine import build_connection_string
+from orbyte.db.models import PublicBase
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

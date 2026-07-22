@@ -6,7 +6,7 @@ imports, so a disabled container exits without loading torch / the model stack.
 
 import sys
 
-from onyx.utils.logger import setup_logger
+from orbyte.utils.logger import setup_logger
 from shared_configs.configs import DISABLE_MODEL_SERVER
 
 logger = setup_logger()

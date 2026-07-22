@@ -5,14 +5,14 @@ from uuid import uuid4
 import httpx
 import pytest
 
-from onyx.auth.schemas import UserRole
-from onyx.configs.constants import ANONYMOUS_USER_EMAIL
-from onyx.configs.constants import ANONYMOUS_USER_UUID
-from onyx.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
-from onyx.server.documents.models import PaginatedReturn
-from onyx.server.manage.models import UserInfo
-from onyx.server.models import FullUserSnapshot
-from onyx.server.models import InvitedUserSnapshot
+from orbyte.auth.schemas import UserRole
+from orbyte.configs.constants import ANONYMOUS_USER_EMAIL
+from orbyte.configs.constants import ANONYMOUS_USER_UUID
+from orbyte.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
+from orbyte.server.documents.models import PaginatedReturn
+from orbyte.server.manage.models import UserInfo
+from orbyte.server.models import FullUserSnapshot
+from orbyte.server.models import InvitedUserSnapshot
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.constants import GENERAL_HEADERS
 from tests.integration.common_utils.http_client import client

@@ -123,7 +123,7 @@ def main() -> None:
         help="List documents with hierarchy data",
     )
     parser.add_argument("--list-indices", action="store_true", help="List all indices")
-    parser.add_argument("--index", default="onyx_index", help="OpenSearch index name")
+    parser.add_argument("--index", default="orbyte_index", help="OpenSearch index name")
     parser.add_argument("--limit", type=int, default=10, help="Limit for list queries")
 
     args = parser.parse_args()

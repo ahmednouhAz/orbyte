@@ -12,14 +12,14 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.configs.constants import ONYX_CLOUD_TENANT_ID
-from onyx.redis import redis_tenant_work_gating as twg
-from onyx.redis.redis_pool import get_redis_client
-from onyx.redis.redis_tenant_work_gating import _SET_KEY
-from onyx.redis.redis_tenant_work_gating import cleanup_expired
-from onyx.redis.redis_tenant_work_gating import get_active_tenants
-from onyx.redis.redis_tenant_work_gating import mark_tenant_active
-from onyx.redis.redis_tenant_work_gating import maybe_mark_tenant_active
+from orbyte.configs.constants import ORBYTE_CLOUD_TENANT_ID
+from orbyte.redis import redis_tenant_work_gating as twg
+from orbyte.redis.redis_pool import get_redis_client
+from orbyte.redis.redis_tenant_work_gating import _SET_KEY
+from orbyte.redis.redis_tenant_work_gating import cleanup_expired
+from orbyte.redis.redis_tenant_work_gating import get_active_tenants
+from orbyte.redis.redis_tenant_work_gating import mark_tenant_active
+from orbyte.redis.redis_tenant_work_gating import maybe_mark_tenant_active
 
 
 @pytest.fixture(autouse=True)
@@ -33,7 +33,7 @@ def _multi_tenant_true() -> Generator[None, None, None]:
 @pytest.fixture(autouse=True)
 def _clean_set() -> Generator[None, None, None]:
     """Clear the active_tenants sorted set before and after each test."""
-    client = get_redis_client(tenant_id=ONYX_CLOUD_TENANT_ID)
+    client = get_redis_client(tenant_id=ORBYTE_CLOUD_TENANT_ID)
     client.delete(_SET_KEY)
     yield
     client.delete(_SET_KEY)
@@ -124,7 +124,7 @@ def test_cleanup_expired_removes_only_stale_members() -> None:
     the stale one."""
     now_ms = int(time.time() * 1000)
 
-    client = get_redis_client(tenant_id=ONYX_CLOUD_TENANT_ID)
+    client = get_redis_client(tenant_id=ORBYTE_CLOUD_TENANT_ID)
     client.zadd(_SET_KEY, mapping={"tenant_old": now_ms - 10 * 60 * 1000})
     client.zadd(_SET_KEY, mapping={"tenant_new": now_ms})
 
@@ -153,7 +153,7 @@ def test_rendered_key_is_cloud_prefixed() -> None:
     Redis key should be `cloud:active_tenants`, not bare `active_tenants`."""
     mark_tenant_active("tenant_a")
 
-    from onyx.redis.redis_pool import RedisPool
+    from orbyte.redis.redis_pool import RedisPool
 
     raw = RedisPool().get_raw_client()
     assert raw.zscore("cloud:active_tenants", "tenant_a") is not None
@@ -164,7 +164,7 @@ def test_maybe_mark_is_noop_when_gating_disabled() -> None:
     """Writer-side API: when the feature flag is off, the call must not
     write to Redis so deploys are inert."""
     with patch(
-        "onyx.server.runtime.onyx_runtime.OnyxRuntime.get_tenant_work_gating_enabled",
+        "orbyte.server.runtime.orbyte_runtime.OrbyteRuntime.get_tenant_work_gating_enabled",
         return_value=False,
     ):
         maybe_mark_tenant_active("tenant_a")
@@ -175,7 +175,7 @@ def test_maybe_mark_is_noop_when_gating_disabled() -> None:
 def test_maybe_mark_writes_when_gating_enabled() -> None:
     """Writer-side API: when the feature flag is on, the call must write."""
     with patch(
-        "onyx.server.runtime.onyx_runtime.OnyxRuntime.get_tenant_work_gating_enabled",
+        "orbyte.server.runtime.orbyte_runtime.OrbyteRuntime.get_tenant_work_gating_enabled",
         return_value=True,
     ):
         maybe_mark_tenant_active("tenant_a")

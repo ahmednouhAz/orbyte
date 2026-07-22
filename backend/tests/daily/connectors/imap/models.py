@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from onyx.connectors.models import Document
+from orbyte.connectors.models import Document
 from tests.daily.connectors.utils import to_text_sections
 
 

@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.connectors.gong.connector import GongConnector
-from onyx.connectors.models import Document
+from orbyte.connectors.gong.connector import GongConnector
+from orbyte.connectors.models import Document
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(
@@ -31,7 +31,7 @@ def gong_connector(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_gong_basic(

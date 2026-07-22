@@ -6,11 +6,11 @@ from uuid import uuid4
 import httpx
 import pytest
 
-from onyx.db.enums import SkillAccessLevel
-from onyx.db.enums import SkillSharePermission
-from onyx.server.features.skill.models import SkillPatchRequest
-from onyx.server.features.skill.models import SkillResponse
-from onyx.server.features.skill.models import SkillUserShareRequest
+from orbyte.db.enums import SkillAccessLevel
+from orbyte.db.enums import SkillSharePermission
+from orbyte.server.features.skill.models import SkillPatchRequest
+from orbyte.server.features.skill.models import SkillResponse
+from orbyte.server.features.skill.models import SkillUserShareRequest
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.skill import SkillManager

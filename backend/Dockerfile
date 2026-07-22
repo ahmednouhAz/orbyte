@@ -65,16 +65,16 @@ Edition features outside of personal development or testing purposes. Please rea
 founders@onyx.app for more information. Please visit https://github.com/onyx-dot-app/onyx"
 
 # DO_NOT_TRACK is used to disable telemetry for Unstructured
-ENV ONYX_RUNNING_IN_DOCKER="true" \
+ENV ORBYTE_RUNNING_IN_DOCKER="true" \
     DO_NOT_TRACK="true" \
     PLAYWRIGHT_BROWSERS_PATH="/app/.cache/ms-playwright"
 
 # Create non-root user for security best practices
-RUN groupadd -g 1001 onyx && \
-    useradd -u 1001 -g onyx -m -s /bin/bash onyx && \
-    mkdir -p /var/log/onyx && \
-    chmod 755 /var/log/onyx && \
-    chown onyx:onyx /var/log/onyx
+RUN groupadd -g 1001 orbyte && \
+    useradd -u 1001 -g orbyte -m -s /bin/bash orbyte && \
+    mkdir -p /var/log/orbyte && \
+    chmod 755 /var/log/orbyte && \
+    chown orbyte:orbyte /var/log/orbyte
 
 # Install runtime system dependencies only (no build toolchain).
 # curl included just for users' convenience
@@ -119,7 +119,7 @@ COPY --from=builder \
 # Install the Chromium browser used by Playwright and its OS-level runtime libraries. Must run after
 # the site-packages copy above so the playwright CLI is available.
 #
-# perl-base is part of the base Python Debian image but not needed for Onyx functionality; it is
+# perl-base is part of the base Python Debian image but not needed for Orbyte functionality; it is
 # removed for CVE surface reduction (requires --allow-remove-essential). It must be removed AFTER the
 # first `playwright install-deps`, because the font/X11 packages that install-deps pulls in run perl
 # scripts in their dpkg configure step. The second `playwright install-deps` then restores any
@@ -154,36 +154,36 @@ tiktoken.get_encoding('cl100k_base')"
 WORKDIR /app
 
 # Enterprise Version Files
-COPY --chown=onyx:onyx ./ee /app/ee
+COPY --chown=orbyte:orbyte ./ee /app/ee
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Set up application files
-COPY --chown=onyx:onyx ./onyx /app/onyx
-COPY --chown=onyx:onyx ./shared_configs /app/shared_configs
-COPY --chown=onyx:onyx ./alembic /app/alembic
-COPY --chown=onyx:onyx ./alembic_tenants /app/alembic_tenants
-COPY --chown=onyx:onyx ./alembic.ini /app/alembic.ini
+COPY --chown=orbyte:orbyte ./orbyte /app/orbyte
+COPY --chown=orbyte:orbyte ./shared_configs /app/shared_configs
+COPY --chown=orbyte:orbyte ./alembic /app/alembic
+COPY --chown=orbyte:orbyte ./alembic_tenants /app/alembic_tenants
+COPY --chown=orbyte:orbyte ./alembic.ini /app/alembic.ini
 COPY supervisord.conf /usr/etc/supervisord.conf
-COPY --chown=onyx:onyx ./static /app/static
-COPY --chown=onyx:onyx ./keys /app/keys
+COPY --chown=orbyte:orbyte ./static /app/static
+COPY --chown=orbyte:orbyte ./keys /app/keys
 
 # Escape hatch scripts
-COPY --chown=onyx:onyx ./scripts/debugging /app/scripts/debugging
-COPY --chown=onyx:onyx ./scripts/force_delete_connector_by_id.py /app/scripts/force_delete_connector_by_id.py
-COPY --chown=onyx:onyx ./scripts/supervisord_entrypoint.sh /app/scripts/supervisord_entrypoint.sh
-COPY --chown=onyx:onyx ./scripts/reencrypt_secrets.py /app/scripts/reencrypt_secrets.py
-COPY --chown=onyx:onyx ./scripts/rotate_llm_provider_keys.py /app/scripts/rotate_llm_provider_keys.py
-COPY --chown=onyx:onyx ./scripts/seed_dev_license.py /app/scripts/seed_dev_license.py
+COPY --chown=orbyte:orbyte ./scripts/debugging /app/scripts/debugging
+COPY --chown=orbyte:orbyte ./scripts/force_delete_connector_by_id.py /app/scripts/force_delete_connector_by_id.py
+COPY --chown=orbyte:orbyte ./scripts/supervisord_entrypoint.sh /app/scripts/supervisord_entrypoint.sh
+COPY --chown=orbyte:orbyte ./scripts/reencrypt_secrets.py /app/scripts/reencrypt_secrets.py
+COPY --chown=orbyte:orbyte ./scripts/rotate_llm_provider_keys.py /app/scripts/rotate_llm_provider_keys.py
+COPY --chown=orbyte:orbyte ./scripts/seed_dev_license.py /app/scripts/seed_dev_license.py
 RUN chmod +x /app/scripts/supervisord_entrypoint.sh
 
 # Put logo in assets
-COPY --chown=onyx:onyx ./assets /app/assets
+COPY --chown=orbyte:orbyte ./assets /app/assets
 
 ENV PYTHONPATH=/app
 
-# Default ONYX_VERSION, typically overriden during builds by GitHub Actions.
-ARG ONYX_VERSION=0.0.0-dev
-ENV ONYX_VERSION=${ONYX_VERSION}
+# Default ORBYTE_VERSION, typically overriden during builds by GitHub Actions.
+ARG ORBYTE_VERSION=0.0.0-dev
+ENV ORBYTE_VERSION=${ORBYTE_VERSION}
 
 # Use jemalloc instead of glibc malloc to reduce memory fragmentation
 # in long-running Python processes (API server, Celery workers).

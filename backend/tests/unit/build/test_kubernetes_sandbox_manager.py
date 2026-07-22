@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from orbyte.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
 

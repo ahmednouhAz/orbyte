@@ -92,7 +92,7 @@ def test_ingestion_post_returns_501(
     admin_user: DATestUser,
 ) -> None:
     resp = client.post(
-        f"{API_SERVER_URL}/onyx-api/ingestion",
+        f"{API_SERVER_URL}/orbyte-api/ingestion",
         json={"document": {}},
         headers=_headers(admin_user),
     )
@@ -103,7 +103,7 @@ def test_ingestion_delete_returns_501(
     admin_user: DATestUser,
 ) -> None:
     resp = client.delete(
-        f"{API_SERVER_URL}/onyx-api/ingestion/fake-doc-id",
+        f"{API_SERVER_URL}/orbyte-api/ingestion/fake-doc-id",
         headers=_headers(admin_user),
     )
     assert resp.status_code == 501

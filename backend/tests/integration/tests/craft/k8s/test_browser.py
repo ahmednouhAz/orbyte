@@ -13,9 +13,9 @@ from __future__ import annotations
 import pytest
 from kubernetes import client
 
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SANDBOX_NAMESPACE
-from onyx.server.features.build.configs import SandboxBackend
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SANDBOX_NAMESPACE
+from orbyte.server.features.build.configs import SandboxBackend
 from tests.integration.tests.craft.k8s.k8s_fixtures import pod_exec
 from tests.integration.tests.craft.k8s.k8s_fixtures import PoolSession
 

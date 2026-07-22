@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SkillSharePermission
-from onyx.db.models import User
-from onyx.db.models import UserRole
-from onyx.db.skill import fetch_skill
-from onyx.db.skill import list_skills
-from onyx.db.skill import SkillAccessPolicy
-from onyx.db.skill import update_skill_fields
+from orbyte.db.enums import SkillSharePermission
+from orbyte.db.models import User
+from orbyte.db.models import UserRole
+from orbyte.db.skill import fetch_skill
+from orbyte.db.skill import list_skills
+from orbyte.db.skill import SkillAccessPolicy
+from orbyte.db.skill import update_skill_fields
 from tests.external_dependency_unit.craft.db_helpers import add_user_to_group
 from tests.external_dependency_unit.craft.db_helpers import make_group
 from tests.external_dependency_unit.craft.db_helpers import make_skill

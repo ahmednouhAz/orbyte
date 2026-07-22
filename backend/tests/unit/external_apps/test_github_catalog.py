@@ -12,13 +12,13 @@ import json
 
 import pytest
 
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.matching.request import MatchContext
-from onyx.external_apps.matching.request import ProxiedRequest
-from onyx.external_apps.matching.rules import rule_matches
-from onyx.external_apps.providers.github import GitHubAction
-from onyx.external_apps.providers.registry import get_endpoint_catalog
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.external_apps.matching.request import MatchContext
+from orbyte.external_apps.matching.request import ProxiedRequest
+from orbyte.external_apps.matching.rules import rule_matches
+from orbyte.external_apps.providers.github import GitHubAction
+from orbyte.external_apps.providers.registry import get_endpoint_catalog
 
 _CATALOG = get_endpoint_catalog(ExternalAppType.GITHUB)
 
@@ -44,45 +44,45 @@ def _graphql(query: str) -> bytes:
         # REST routes resolve unchanged.
         ("GET", "/user", {GitHubAction.USER_READ}),
         ("GET", "/user/repos", {GitHubAction.REPOS_READ}),
-        ("GET", "/repos/onyx/onyx", {GitHubAction.REPOS_READ}),
-        ("GET", "/repos/onyx/onyx/issues", {GitHubAction.ISSUES_READ}),
-        ("GET", "/repos/onyx/onyx/issues/12", {GitHubAction.ISSUES_READ}),
-        ("GET", "/repos/onyx/onyx/pulls", {GitHubAction.PULLS_READ}),
+        ("GET", "/repos/orbyte/orbyte", {GitHubAction.REPOS_READ}),
+        ("GET", "/repos/orbyte/orbyte/issues", {GitHubAction.ISSUES_READ}),
+        ("GET", "/repos/orbyte/orbyte/issues/12", {GitHubAction.ISSUES_READ}),
+        ("GET", "/repos/orbyte/orbyte/pulls", {GitHubAction.PULLS_READ}),
         ("GET", "/search/issues", {GitHubAction.SEARCH_READ}),
-        ("POST", "/repos/onyx/onyx/issues", {GitHubAction.ISSUES_CREATE}),
+        ("POST", "/repos/orbyte/orbyte/issues", {GitHubAction.ISSUES_CREATE}),
         (
             "POST",
-            "/repos/onyx/onyx/issues/12/comments",
+            "/repos/orbyte/orbyte/issues/12/comments",
             {GitHubAction.COMMENTS_CREATE},
         ),
         # Git data + repo content surface (the gh / API-driven workflows).
-        ("GET", "/repos/onyx/onyx/branches", {GitHubAction.REFS_READ}),
+        ("GET", "/repos/orbyte/orbyte/branches", {GitHubAction.REFS_READ}),
         # Slash-bearing ref / branch names via the trailing wildcard.
-        ("GET", "/repos/onyx/onyx/branches/feature/x", {GitHubAction.REFS_READ}),
-        ("GET", "/repos/onyx/onyx/git/ref/heads/main", {GitHubAction.REFS_READ}),
+        ("GET", "/repos/orbyte/orbyte/branches/feature/x", {GitHubAction.REFS_READ}),
+        ("GET", "/repos/orbyte/orbyte/git/ref/heads/main", {GitHubAction.REFS_READ}),
         (
             "GET",
-            "/repos/onyx/onyx/contents/backend/onyx/main.py",
+            "/repos/orbyte/orbyte/contents/backend/orbyte/main.py",
             {GitHubAction.CONTENTS_READ},
         ),
-        ("GET", "/repos/onyx/onyx/git/trees/abc123", {GitHubAction.GIT_DATA_READ}),
-        ("GET", "/repos/onyx/onyx/commits", {GitHubAction.GIT_DATA_READ}),
-        ("GET", "/repos/onyx/onyx/commits/abc123", {GitHubAction.GIT_DATA_READ}),
-        ("GET", "/repos/onyx/onyx/releases", {GitHubAction.RELEASES_READ}),
-        ("GET", "/repos/onyx/onyx/releases/latest", {GitHubAction.RELEASES_READ}),
+        ("GET", "/repos/orbyte/orbyte/git/trees/abc123", {GitHubAction.GIT_DATA_READ}),
+        ("GET", "/repos/orbyte/orbyte/commits", {GitHubAction.GIT_DATA_READ}),
+        ("GET", "/repos/orbyte/orbyte/commits/abc123", {GitHubAction.GIT_DATA_READ}),
+        ("GET", "/repos/orbyte/orbyte/releases", {GitHubAction.RELEASES_READ}),
+        ("GET", "/repos/orbyte/orbyte/releases/latest", {GitHubAction.RELEASES_READ}),
         # Writes.
         (
             "PUT",
-            "/repos/onyx/onyx/contents/backend/onyx/main.py",
+            "/repos/orbyte/orbyte/contents/backend/orbyte/main.py",
             {GitHubAction.CONTENTS_WRITE},
         ),
         (
             "DELETE",
-            "/repos/onyx/onyx/contents/backend/onyx/main.py",
+            "/repos/orbyte/orbyte/contents/backend/orbyte/main.py",
             {GitHubAction.CONTENTS_WRITE},
         ),
-        ("POST", "/repos/onyx/onyx/git/refs", {GitHubAction.REFS_WRITE}),
-        ("POST", "/repos/onyx/onyx/pulls", {GitHubAction.PULLS_CREATE}),
+        ("POST", "/repos/orbyte/orbyte/git/refs", {GitHubAction.REFS_WRITE}),
+        ("POST", "/repos/orbyte/orbyte/pulls", {GitHubAction.PULLS_CREATE}),
     ],
 )
 def test_rest_route_resolves_to_exactly_one_action(
@@ -103,7 +103,7 @@ def test_rest_route_resolves_to_exactly_one_action(
             {GitHubAction.REPO_GRAPHQL_READ},
         ),
         (
-            'query { repository(owner:"onyx", name:"onyx")'
+            'query { repository(owner:"orbyte", name:"orbyte")'
             " { issue(number:12) { title } } }",
             {GitHubAction.REPO_GRAPHQL_READ},
         ),
@@ -125,7 +125,7 @@ def test_rest_route_resolves_to_exactly_one_action(
         ),
         # `gh repo list OWNER` reads via `repositoryOwner`.
         (
-            'query { repositoryOwner(login:"onyx") { login } }',
+            'query { repositoryOwner(login:"orbyte") { login } }',
             {GitHubAction.REPO_GRAPHQL_READ},
         ),
         # `gh pr create` may use the `createPullRequest` mutation.
@@ -144,7 +144,7 @@ def test_graphql_op_resolves_to_exactly_one_action(
 def test_uncatalogued_graphql_op_matches_nothing() -> None:
     """A root field outside the catalog matches no action — the proxy then falls
     back to the whole-domain ASK gate rather than injecting under a catalog action."""
-    query = 'query { organization(login:"onyx") { login } }'
+    query = 'query { organization(login:"orbyte") { login } }'
     assert _matching_actions("POST", "/graphql", _graphql(query)) == set()
 
 

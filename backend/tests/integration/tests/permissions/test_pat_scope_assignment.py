@@ -1,6 +1,6 @@
 """Integration tests for assigning scopes when minting a PAT via the user API."""
 
-from onyx.db.enums import Permission
+from orbyte.db.enums import Permission
 from tests.integration.common_utils.managers.pat import PATManager
 from tests.integration.common_utils.test_models import DATestUser
 

@@ -4,10 +4,10 @@ from pathlib import Path
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import Document
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.slab.connector import SlabConnector
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.slab.connector import SlabConnector
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(TestSecret.SLAB_BOT_TOKEN)
@@ -24,7 +24,7 @@ def slab_connector(
     test_secrets: dict[TestSecret, str],
 ) -> SlabConnector:
     connector = SlabConnector(
-        base_url="https://onyx-test.slab.com/",
+        base_url="https://orbyte-test.slab.com/",
     )
     connector.load_credentials(
         {

@@ -9,12 +9,12 @@ from __future__ import annotations
 
 import pytest
 
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.providers import registry
-from onyx.external_apps.providers.actions import EndpointSpec
-from onyx.external_apps.providers.actions import ExternalAppAction
-from onyx.external_apps.providers.actions import RestRoute
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.external_apps.providers import registry
+from orbyte.external_apps.providers.actions import EndpointSpec
+from orbyte.external_apps.providers.actions import ExternalAppAction
+from orbyte.external_apps.providers.actions import RestRoute
 
 
 class _TestAction(ExternalAppAction):

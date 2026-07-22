@@ -14,7 +14,7 @@ import httpx
 from starlette.requests import Request
 from starlette.responses import Response
 
-from onyx.server.features.build import webapp_proxy
+from orbyte.server.features.build import webapp_proxy
 
 
 def _make_request(headers: list[tuple[bytes, bytes]] | None = None) -> Request:
@@ -86,7 +86,7 @@ def test_proxy_strips_browser_context_request_headers() -> None:
 
     request = _make_request(
         headers=[
-            (b"origin", b"https://cloud.onyx.app"),
+            (b"origin", b"https://cloud.orbyte.app"),
             (b"sec-fetch-mode", b"cors"),
             (b"sec-fetch-site", b"same-origin"),
             (b"sec-fetch-dest", b"empty"),

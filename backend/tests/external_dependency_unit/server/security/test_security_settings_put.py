@@ -18,18 +18,18 @@ from sqlalchemy import delete
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import SecuritySettings as SecuritySettingsRow
-from onyx.db.models import User
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.security import api as security_api
-from onyx.server.security import store as security_store
-from onyx.server.security.api import put_security_settings_endpoint
-from onyx.server.security.models import SecuritySettingsOverrides
-from onyx.server.security.store import _build_env_defaults
-from onyx.server.security.store import _install_cache_for_test
-from onyx.server.security.store import invalidate_security_cache
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.models import SecuritySettings as SecuritySettingsRow
+from orbyte.db.models import User
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.server.security import api as security_api
+from orbyte.server.security import store as security_store
+from orbyte.server.security.api import put_security_settings_endpoint
+from orbyte.server.security.models import SecuritySettingsOverrides
+from orbyte.server.security.store import _build_env_defaults
+from orbyte.server.security.store import _install_cache_for_test
+from orbyte.server.security.store import invalidate_security_cache
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 
@@ -112,14 +112,14 @@ def test_put_cross_field_validation_against_effective_state(
 ) -> None:
     """A payload that's individually valid but violates the merged invariant
     (min > max) must be rejected with INVALID_INPUT."""
-    from onyx.configs import app_configs
+    from orbyte.configs import app_configs
 
     # Force env max=8 so payload min=10 violates after merge.
     monkeypatch.setattr(app_configs, "PASSWORD_MAX_LENGTH", 8, raising=False)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         _put({"password_min_length": 10})
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is OrbyteErrorCode.INVALID_INPUT
 
     assert _load_row_as_dict() is None
 
@@ -134,21 +134,21 @@ def test_put_accepts_password_min_length_zero() -> None:
 
 
 def test_put_extra_field_rejected_as_invalid_input() -> None:
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         _put({"this_field_does_not_exist": True})
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is OrbyteErrorCode.INVALID_INPUT
 
 
 def test_put_malformed_json_rejected_as_invalid_input() -> None:
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         _put(b"{not valid json")
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is OrbyteErrorCode.INVALID_INPUT
 
 
 def test_put_non_object_body_rejected_as_invalid_input() -> None:
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         _put(b"[1, 2, 3]")
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is OrbyteErrorCode.INVALID_INPUT
 
 
 def test_put_single_tenant_allows_operator_locked_fields() -> None:
@@ -160,9 +160,9 @@ def test_put_single_tenant_allows_operator_locked_fields() -> None:
 
 def test_put_rejects_max_length_below_floor() -> None:
     """``password_max_length`` is floored at PASSWORD_MAX_LENGTH_FLOOR."""
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         _put({"password_max_length": 3})
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is OrbyteErrorCode.INVALID_INPUT
     assert _load_row_as_dict() is None
 
 
@@ -178,9 +178,9 @@ def test_put_multi_tenant_rejects_operator_locked_field(
     monkeypatch.setattr(security_api, "MULTI_TENANT", True)
     monkeypatch.setattr(security_store, "MULTI_TENANT", True)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         _put({"password_min_length": 12})
-    assert exc_info.value.error_code is OnyxErrorCode.INSUFFICIENT_PERMISSIONS
+    assert exc_info.value.error_code is OrbyteErrorCode.INSUFFICIENT_PERMISSIONS
 
     assert _load_row_as_dict() is None
 
@@ -244,7 +244,7 @@ def test_concurrent_puts_under_invariant_pressure_never_corrupt(
     min<=max invariant: the lock serializes them and the post-merge
     validator rejects the loser. Persisted state is never invalid.
     """
-    from onyx.configs import app_configs
+    from orbyte.configs import app_configs
 
     # Pin env so natural defaults don't accidentally satisfy a bad ordering.
     monkeypatch.setattr(app_configs, "PASSWORD_MIN_LENGTH", 8, raising=False)
@@ -268,7 +268,7 @@ def test_concurrent_puts_under_invariant_pressure_never_corrupt(
     rejections = [
         e
         for e in errors
-        if isinstance(e, OnyxError) and e.error_code is OnyxErrorCode.INVALID_INPUT
+        if isinstance(e, OrbyteError) and e.error_code is OrbyteErrorCode.INVALID_INPUT
     ]
     assert len(rejections) == 1
     assert len(errors) == 1

@@ -1,4 +1,4 @@
-"""External dependency tests for onyx.file_store.staging.
+"""External dependency tests for orbyte.file_store.staging.
 
 Exercises the raw-file persistence hook used by the docfetching pipeline
 against a real file store (Postgres + MinIO/S3), since mocking the store
@@ -14,13 +14,13 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import FileOrigin
-from onyx.connectors.interfaces import BaseConnector
-from onyx.db.file_record import delete_filerecord_by_file_id
-from onyx.db.file_record import get_filerecord_by_file_id
-from onyx.file_store.file_store import get_default_file_store
-from onyx.file_store.staging import build_raw_file_callback
-from onyx.file_store.staging import stage_raw_file
+from orbyte.configs.constants import FileOrigin
+from orbyte.connectors.interfaces import BaseConnector
+from orbyte.db.file_record import delete_filerecord_by_file_id
+from orbyte.db.file_record import get_filerecord_by_file_id
+from orbyte.file_store.file_store import get_default_file_store
+from orbyte.file_store.staging import build_raw_file_callback
+from orbyte.file_store.staging import stage_raw_file
 
 
 @pytest.fixture(scope="function")

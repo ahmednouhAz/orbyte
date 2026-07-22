@@ -3,7 +3,7 @@
 Applies the curation rules in update_recommended_models_rules.json (trusted
 vendors + model-family regexes) to the official OpenRouter catalog
 (https://openrouter.ai/api/v1/models) and rewrites
-backend/onyx/llm/well_known_providers/recommended-models.json with the newest
+backend/orbyte/llm/well_known_providers/recommended-models.json with the newest
 matching models per provider section. The rules file is the human-editable
 knob: which families are recommendable, how many models to keep, id/display
 name overrides, pinned defaults.
@@ -43,7 +43,7 @@ BACKEND_DIR = SCRIPT_DIR.parent
 
 OPENROUTER_MODELS_URL = "https://openrouter.ai/api/v1/models"
 DEFAULT_OUTPUT = (
-    BACKEND_DIR / "onyx" / "llm" / "well_known_providers" / "recommended-models.json"
+    BACKEND_DIR / "orbyte" / "llm" / "well_known_providers" / "recommended-models.json"
 )
 DEFAULT_RULES = SCRIPT_DIR / "update_recommended_models_rules.json"
 

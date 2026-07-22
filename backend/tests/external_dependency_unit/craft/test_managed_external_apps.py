@@ -1,4 +1,4 @@
-"""Onyx-managed (cloud) built-in external apps: registry invariants + cloud guards.
+"""Orbyte-managed (cloud) built-in external apps: registry invariants + cloud guards.
 
 Covers the cloud lockdown in ``external_apps_api`` (admins may only
 enable/disable + set policies on built-in apps; never create, edit
@@ -18,24 +18,24 @@ import pytest
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-import onyx.server.features.build.external_apps.api as api
-from onyx.db.enums import ExternalAppType
-from onyx.db.external_app import create_external_app
-from onyx.db.external_app import get_built_in_external_app
-from onyx.db.models import Skill
-from onyx.db.models import User
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.external_apps.providers.registry import fetch_onyx_managed_built_in_apps
-from onyx.external_apps.providers.registry import PROVIDERS
-from onyx.server.features.build.external_apps.models import (
+import orbyte.server.features.build.external_apps.api as api
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.external_app import create_external_app
+from orbyte.db.external_app import get_built_in_external_app
+from orbyte.db.models import Skill
+from orbyte.db.models import User
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.external_apps.providers.registry import fetch_orbyte_managed_built_in_apps
+from orbyte.external_apps.providers.registry import PROVIDERS
+from orbyte.server.features.build.external_apps.models import (
     CreateBuiltInExternalAppRequest,
 )
-from onyx.server.features.build.external_apps.models import UpdateExternalAppRequest
-from onyx.skills.built_in import EXTERNAL_APP_BUILT_IN_SKILL_IDS
+from orbyte.server.features.build.external_apps.models import UpdateExternalAppRequest
+from orbyte.skills.built_in import EXTERNAL_APP_BUILT_IN_SKILL_IDS
 
 _BUILT_IN_SLUGS = list(EXTERNAL_APP_BUILT_IN_SKILL_IDS.values())
-_MANAGED_APP_TYPES = [d.app_type for d in fetch_onyx_managed_built_in_apps()]
+_MANAGED_APP_TYPES = [d.app_type for d in fetch_orbyte_managed_built_in_apps()]
 _GMAIL_CREDS = {"client_id": "cid", "client_secret": "sec"}
 _GMAIL_PATTERNS = ["https://gmail\\.googleapis\\.com/gmail/.*"]
 
@@ -111,9 +111,9 @@ def _create_request(
 # ---------------------------------------------------------------------------
 
 
-def test_all_built_ins_are_onyx_managed() -> None:
+def test_all_built_ins_are_orbyte_managed() -> None:
     """Every built-in skill id has a registered provider, and all are currently
-    Onyx-managed. When a future built-in opts out (not an ``OnyxManagedExtApp``,
+    Orbyte-managed. When a future built-in opts out (not an ``OrbyteManagedExtApp``,
     e.g. admins supply their own OAuth app), update this deliberately."""
     built_in = set(EXTERNAL_APP_BUILT_IN_SKILL_IDS)
     assert set(PROVIDERS) == built_in  # provider registry ↔ built-in skill ids
@@ -133,13 +133,13 @@ def test_cloud_blocks_built_in_create(
     monkeypatch.setattr(api, "MULTI_TENANT", True)
     monkeypatch.setattr(api, "push_skill_to_affected_sandboxes", _noop)
 
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(OrbyteError) as exc:
         api.create_built_in_external_app(
             request=_create_request(),
             _=test_user,
             db_session=db_session,
         )
-    assert exc.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc.value.error_code == OrbyteErrorCode.INVALID_INPUT
     assert get_built_in_external_app(db_session, ExternalAppType.GMAIL) is None
 
 
@@ -149,7 +149,7 @@ def test_cloud_patch_toggles_enablement_and_protects_creds_and_config(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """The PATCH path flips enablement for a managed built-in; credentials +
-    gateway config are Onyx-owned and ignored even when the request carries them,
+    gateway config are Orbyte-owned and ignored even when the request carries them,
     and the response blanks them."""
     _seed_built_in(db_session, ExternalAppType.GMAIL, _GMAIL_CREDS)
     gmail = get_built_in_external_app(db_session, ExternalAppType.GMAIL)
@@ -161,7 +161,7 @@ def test_cloud_patch_toggles_enablement_and_protects_creds_and_config(
     monkeypatch.setattr(api, "push_skill_to_affected_sandboxes", _noop)
 
     # The request supplies config fields too; for a managed app they must be
-    # silently ignored (Onyx-owned), with only enablement applied.
+    # silently ignored (Orbyte-owned), with only enablement applied.
     resp = api.update_external_app_admin(
         external_app_id=app_id,
         request=UpdateExternalAppRequest(
@@ -199,13 +199,13 @@ def test_cloud_blocks_built_in_delete(
 
     monkeypatch.setattr(api, "MULTI_TENANT", True)
 
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(OrbyteError) as exc:
         api.delete_external_app_admin(
             external_app_id=app_id,
             _=test_user,
             db_session=db_session,
         )
-    assert exc.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc.value.error_code == OrbyteErrorCode.INVALID_INPUT
     assert get_built_in_external_app(db_session, ExternalAppType.GMAIL) is not None
 
 

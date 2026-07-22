@@ -15,14 +15,14 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy import delete
 
-from onyx.cache.interface import CacheBackend
-from onyx.cache.postgres_backend import PostgresCacheBackend
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.models import CacheStore
-from onyx.db.models import KVStore
-from onyx.key_value_store.interface import KvKeyNotFoundError
-from onyx.key_value_store.store import PgRedisKVStore
-from onyx.key_value_store.store import REDIS_KEY_PREFIX
+from orbyte.cache.interface import CacheBackend
+from orbyte.cache.postgres_backend import PostgresCacheBackend
+from orbyte.db.engine.sql_engine import get_session_with_tenant
+from orbyte.db.models import CacheStore
+from orbyte.db.models import KVStore
+from orbyte.key_value_store.interface import KvKeyNotFoundError
+from orbyte.key_value_store.store import PgRedisKVStore
+from orbyte.key_value_store.store import REDIS_KEY_PREFIX
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 
 

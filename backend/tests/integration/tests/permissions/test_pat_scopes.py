@@ -2,7 +2,7 @@
 
 import pytest
 
-from onyx.db.enums import Permission
+from orbyte.db.enums import Permission
 from tests.integration.common_utils.http_client import request_status
 from tests.integration.common_utils.managers.pat import PATManager
 from tests.integration.common_utils.test_models import DATestUser

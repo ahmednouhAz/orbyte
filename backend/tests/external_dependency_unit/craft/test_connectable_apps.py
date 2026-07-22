@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from onyx.db.external_app import get_connectable_apps_for_user
-from onyx.server.features.build.sandbox.util.agent_instructions import (
+from orbyte.db.external_app import get_connectable_apps_for_user
+from orbyte.server.features.build.sandbox.util.agent_instructions import (
     build_connectable_apps_list,
 )
 from tests.external_dependency_unit.craft.db_helpers import make_external_app

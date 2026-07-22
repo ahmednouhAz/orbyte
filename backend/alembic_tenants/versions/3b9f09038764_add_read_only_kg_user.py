@@ -9,8 +9,8 @@ Create Date: 2025-05-11 11:05:11.436977
 from sqlalchemy import text
 
 from alembic import op
-from onyx.configs.app_configs import DB_READONLY_PASSWORD
-from onyx.configs.app_configs import DB_READONLY_USER
+from orbyte.configs.app_configs import DB_READONLY_PASSWORD
+from orbyte.configs.app_configs import DB_READONLY_USER
 
 # revision identifiers, used by Alembic.
 revision = "3b9f09038764"

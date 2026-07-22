@@ -1,7 +1,7 @@
 from uuid import uuid4
 
-from onyx.db.models import UserRole
-from onyx.server.api_key.models import APIKeyArgs
+from orbyte.db.models import UserRole
+from orbyte.server.api_key.models import APIKeyArgs
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.constants import GENERAL_HEADERS
 from tests.integration.common_utils.http_client import client

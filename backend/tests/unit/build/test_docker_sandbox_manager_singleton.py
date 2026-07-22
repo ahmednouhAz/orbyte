@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.server.features.build.sandbox.docker.docker_sandbox_manager import (
+from orbyte.server.features.build.sandbox.docker.docker_sandbox_manager import (
     DockerSandboxManager,
 )
 

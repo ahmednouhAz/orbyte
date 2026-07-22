@@ -20,25 +20,25 @@ from unittest.mock import patch
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.docprocessing.targeted_reindex_task import (
+from orbyte.background.celery.tasks.docprocessing.targeted_reindex_task import (
     run_targeted_reindex,
 )
-from onyx.background.indexing.run_targeted_reindex import CCPairReindexResult
-from onyx.db.enums import IndexingStatus
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import IndexAttempt
-from onyx.db.models import IndexAttemptError
-from onyx.db.models import TargetedReindexJob
-from onyx.db.models import TargetedReindexJobTarget
-from onyx.db.search_settings import get_current_search_settings
-from onyx.db.targeted_reindex import create_targeted_reindex_job
-from onyx.db.targeted_reindex import resolve_error_ids_to_targets
-from onyx.db.targeted_reindex import TargetSpec
+from orbyte.background.indexing.run_targeted_reindex import CCPairReindexResult
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import IndexAttemptError
+from orbyte.db.models import TargetedReindexJob
+from orbyte.db.models import TargetedReindexJobTarget
+from orbyte.db.search_settings import get_current_search_settings
+from orbyte.db.targeted_reindex import create_targeted_reindex_job
+from orbyte.db.targeted_reindex import resolve_error_ids_to_targets
+from orbyte.db.targeted_reindex import TargetSpec
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
 
 _PROCESSOR_PATH = (
-    "onyx.background.celery.tasks.docprocessing."
+    "orbyte.background.celery.tasks.docprocessing."
     "targeted_reindex_task.process_targets_for_cc_pair"
 )
 
@@ -296,7 +296,7 @@ def test_task_does_not_resolve_error_when_doc_landed_for_other_cc_pair(
 
         # Processor lands shared-doc for cc_pair A, fails it for cc_pair B.
         def _by_cc_pair(*_args, **kwargs):  # type: ignore[no-untyped-def]
-            from onyx.background.indexing.run_targeted_reindex import (
+            from orbyte.background.indexing.run_targeted_reindex import (
                 CCPairReindexResult,
             )
 
@@ -421,7 +421,7 @@ def test_task_marks_job_failed_on_mid_task_exception(
     with (
         _patch_processor(landed_doc_ids={"doc-1"}),
         patch(
-            "onyx.background.celery.tasks.docprocessing."
+            "orbyte.background.celery.tasks.docprocessing."
             "targeted_reindex_task.resolve_failure_derived_targets",
             side_effect=RuntimeError("simulated mid-task crash"),
         ),

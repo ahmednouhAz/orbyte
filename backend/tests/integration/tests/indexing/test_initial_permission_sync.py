@@ -7,18 +7,18 @@ import httpx
 import pytest
 from sqlalchemy import select
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.mock_connector.connector import EXTERNAL_USER_EMAILS
-from onyx.connectors.mock_connector.connector import EXTERNAL_USER_GROUP_IDS
-from onyx.connectors.mock_connector.connector import MockConnectorCheckpoint
-from onyx.connectors.models import Document
-from onyx.connectors.models import InputType
-from onyx.db.document import get_documents_by_ids
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import AccessType
-from onyx.db.enums import IndexingStatus
-from onyx.db.enums import PermissionSyncStatus
-from onyx.db.models import DocPermissionSyncAttempt
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.mock_connector.connector import EXTERNAL_USER_EMAILS
+from orbyte.connectors.mock_connector.connector import EXTERNAL_USER_GROUP_IDS
+from orbyte.connectors.mock_connector.connector import MockConnectorCheckpoint
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import InputType
+from orbyte.db.document import get_documents_by_ids
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.enums import PermissionSyncStatus
+from orbyte.db.models import DocPermissionSyncAttempt
 from tests.integration.common_utils.constants import MOCK_CONNECTOR_SERVER_HOST
 from tests.integration.common_utils.constants import MOCK_CONNECTOR_SERVER_PORT
 from tests.integration.common_utils.managers.cc_pair import CCPairManager

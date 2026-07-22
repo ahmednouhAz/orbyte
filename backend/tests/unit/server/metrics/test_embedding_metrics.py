@@ -2,17 +2,17 @@
 
 from unittest.mock import patch
 
-from onyx.server.metrics.embedding import _client_duration
-from onyx.server.metrics.embedding import _embedding_input_chars_total
-from onyx.server.metrics.embedding import _embedding_requests_total
-from onyx.server.metrics.embedding import _embedding_texts_total
-from onyx.server.metrics.embedding import _embeddings_in_progress
-from onyx.server.metrics.embedding import LOCAL_PROVIDER_LABEL
-from onyx.server.metrics.embedding import observe_embedding_client
-from onyx.server.metrics.embedding import provider_label
-from onyx.server.metrics.embedding import PROVIDER_LABEL_NAME
-from onyx.server.metrics.embedding import TEXT_TYPE_LABEL_NAME
-from onyx.server.metrics.embedding import track_embedding_in_progress
+from orbyte.server.metrics.embedding import _client_duration
+from orbyte.server.metrics.embedding import _embedding_input_chars_total
+from orbyte.server.metrics.embedding import _embedding_requests_total
+from orbyte.server.metrics.embedding import _embedding_texts_total
+from orbyte.server.metrics.embedding import _embeddings_in_progress
+from orbyte.server.metrics.embedding import LOCAL_PROVIDER_LABEL
+from orbyte.server.metrics.embedding import observe_embedding_client
+from orbyte.server.metrics.embedding import provider_label
+from orbyte.server.metrics.embedding import PROVIDER_LABEL_NAME
+from orbyte.server.metrics.embedding import TEXT_TYPE_LABEL_NAME
+from orbyte.server.metrics.embedding import track_embedding_in_progress
 from shared_configs.enums import EmbeddingProvider
 from shared_configs.enums import EmbedTextType
 

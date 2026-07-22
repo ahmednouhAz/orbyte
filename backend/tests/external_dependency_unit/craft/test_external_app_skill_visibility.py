@@ -23,11 +23,11 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from onyx.db.models import User
-from onyx.db.models import UserRole
-from onyx.db.skill import fetch_skill
-from onyx.db.skill import list_skills
-from onyx.db.skill import SkillAccessPolicy
+from orbyte.db.models import User
+from orbyte.db.models import UserRole
+from orbyte.db.skill import fetch_skill
+from orbyte.db.skill import list_skills
+from orbyte.db.skill import SkillAccessPolicy
 from tests.external_dependency_unit.craft.db_helpers import make_external_app
 from tests.external_dependency_unit.craft.db_helpers import make_skill
 from tests.external_dependency_unit.craft.db_helpers import make_user

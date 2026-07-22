@@ -3,10 +3,10 @@
 Covers:
 
 * The new ``get_relevant_external_group_sync_attempts_for_cc_pair`` helper
-  in ``onyx.db.permission_sync_attempt`` — including the source-wide query
+  in ``orbyte.db.permission_sync_attempt`` — including the source-wide query
   used for cc-pair-agnostic sources (Confluence, Jira).
 * The migrated ``GET /admin/cc-pair/{id}/permission-sync-attempts`` route,
-  now wrapped in ``CCPairSyncAttemptsResponse`` and raising ``OnyxError``.
+  now wrapped in ``CCPairSyncAttemptsResponse`` and raising ``OrbyteError``.
 * The new ``GET /admin/cc-pair/{id}/external-group-sync-attempts`` route.
 
 We invoke the FastAPI route functions directly with a constructed admin
@@ -23,25 +23,25 @@ from datetime import timezone
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import PermissionSyncStatus
-from onyx.db.models import Connector
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Credential
-from onyx.db.models import User
-from onyx.db.models import UserRole
-from onyx.db.permission_sync_attempt import create_doc_permission_sync_attempt
-from onyx.db.permission_sync_attempt import create_external_group_sync_attempt
-from onyx.db.permission_sync_attempt import (
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.models import InputType
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import PermissionSyncStatus
+from orbyte.db.models import Connector
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Credential
+from orbyte.db.models import User
+from orbyte.db.models import UserRole
+from orbyte.db.permission_sync_attempt import create_doc_permission_sync_attempt
+from orbyte.db.permission_sync_attempt import create_external_group_sync_attempt
+from orbyte.db.permission_sync_attempt import (
     get_relevant_external_group_sync_attempts_for_cc_pair,
 )
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.documents.cc_pair import get_cc_pair_external_group_sync_attempts
-from onyx.server.documents.cc_pair import get_cc_pair_permission_sync_attempts
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.server.documents.cc_pair import get_cc_pair_external_group_sync_attempts
+from orbyte.server.documents.cc_pair import get_cc_pair_permission_sync_attempts
 from tests.external_dependency_unit.conftest import create_test_user
 
 # Every applicable=True path here depends on the EE-only ``sync_params``
@@ -195,7 +195,7 @@ class TestGetCcPairPermissionSyncAttemptsRoute:
     def test_raises_not_found_for_unknown_cc_pair(self, db_session: Session) -> None:
         admin = _admin_user(db_session)
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(OrbyteError) as exc_info:
             get_cc_pair_permission_sync_attempts(
                 cc_pair_id=999_999,
                 page_num=0,
@@ -204,7 +204,7 @@ class TestGetCcPairPermissionSyncAttemptsRoute:
                 db_session=db_session,
             )
 
-        assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+        assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
 
     def test_applicable_false_when_source_does_not_require_doc_sync(
         self,
@@ -316,7 +316,7 @@ class TestGetCcPairExternalGroupSyncAttemptsRoute:
     def test_raises_not_found_for_unknown_cc_pair(self, db_session: Session) -> None:
         admin = _admin_user(db_session)
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(OrbyteError) as exc_info:
             get_cc_pair_external_group_sync_attempts(
                 cc_pair_id=999_999,
                 page_num=0,
@@ -325,7 +325,7 @@ class TestGetCcPairExternalGroupSyncAttemptsRoute:
                 db_session=db_session,
             )
 
-        assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+        assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
 
     def test_applicable_false_when_source_has_no_group_sync(
         self,

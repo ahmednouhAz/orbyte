@@ -6,11 +6,11 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.connectors.gmail.connector import GmailConnector
-from onyx.connectors.models import Document
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.models import SlimDocument
-from tests.unit.onyx.connectors.utils import load_everything_from_checkpoint_connector
+from orbyte.connectors.gmail.connector import GmailConnector
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.models import SlimDocument
+from tests.unit.orbyte.connectors.utils import load_everything_from_checkpoint_connector
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(TestSecret.GOOGLE_GMAIL_SERVICE_ACCOUNT_JSON_STR)
@@ -20,54 +20,54 @@ _THREAD_1_END_TIME = 1730569000
 
 """
 This thread was 4 emails long:
-    admin@onyx-test.com -> test-group-1@onyx-test.com (conaining test_user_1 and test_user_2)
-    test_user_1@onyx-test.com -> admin@onyx-test.com
-    admin@onyx-test.com -> test_user_2@onyx-test.com + BCC: test_user_3@onyx-test.com
-    test_user_3@onyx-test.com -> admin@onyx-test.com
+    admin@orbyte-test.com -> test-group-1@orbyte-test.com (conaining test_user_1 and test_user_2)
+    test_user_1@orbyte-test.com -> admin@orbyte-test.com
+    admin@orbyte-test.com -> test_user_2@orbyte-test.com + BCC: test_user_3@orbyte-test.com
+    test_user_3@orbyte-test.com -> admin@orbyte-test.com
 """
 _THREAD_1_BY_ID: dict[str, dict[str, Any]] = {
     "192edefb315737c3": {
-        "email": "admin@onyx-test.com",
+        "email": "admin@orbyte-test.com",
         "sections_count": 4,
         "primary_owners": set(
             [
-                "admin@onyx-test.com",
-                "test_user_1@onyx-test.com",
-                "test_user_3@onyx-test.com",
+                "admin@orbyte-test.com",
+                "test_user_1@orbyte-test.com",
+                "test_user_3@orbyte-test.com",
             ]
         ),
         "secondary_owners": set(
             [
-                "test-group-1@onyx-test.com",
-                "admin@onyx-test.com",
-                "test_user_2@onyx-test.com",
-                "test_user_3@onyx-test.com",
+                "test-group-1@orbyte-test.com",
+                "admin@orbyte-test.com",
+                "test_user_2@orbyte-test.com",
+                "test_user_3@orbyte-test.com",
             ]
         ),
     },
     "192edf020d2f5def": {
-        "email": "test_user_1@onyx-test.com",
+        "email": "test_user_1@orbyte-test.com",
         "sections_count": 2,
-        "primary_owners": set(["admin@onyx-test.com", "test_user_1@onyx-test.com"]),
-        "secondary_owners": set(["test-group-1@onyx-test.com", "admin@onyx-test.com"]),
+        "primary_owners": set(["admin@orbyte-test.com", "test_user_1@orbyte-test.com"]),
+        "secondary_owners": set(["test-group-1@orbyte-test.com", "admin@orbyte-test.com"]),
     },
     "192edf020ae90aab": {
-        "email": "test_user_2@onyx-test.com",
+        "email": "test_user_2@orbyte-test.com",
         "sections_count": 2,
-        "primary_owners": set(["admin@onyx-test.com"]),
+        "primary_owners": set(["admin@orbyte-test.com"]),
         "secondary_owners": set(
-            ["test-group-1@onyx-test.com", "test_user_2@onyx-test.com"]
+            ["test-group-1@orbyte-test.com", "test_user_2@orbyte-test.com"]
         ),
     },
     "192edf18316015fa": {
-        "email": "test_user_3@onyx-test.com",
+        "email": "test_user_3@orbyte-test.com",
         "sections_count": 2,
-        "primary_owners": set(["admin@onyx-test.com", "test_user_3@onyx-test.com"]),
+        "primary_owners": set(["admin@orbyte-test.com", "test_user_3@orbyte-test.com"]),
         "secondary_owners": set(
             [
-                "admin@onyx-test.com",
-                "test_user_2@onyx-test.com",
-                "test_user_3@onyx-test.com",
+                "admin@orbyte-test.com",
+                "test_user_2@orbyte-test.com",
+                "test_user_3@orbyte-test.com",
             ]
         ),
     },
@@ -75,7 +75,7 @@ _THREAD_1_BY_ID: dict[str, dict[str, Any]] = {
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_slim_docs_retrieval(
@@ -102,7 +102,7 @@ def test_slim_docs_retrieval(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_docs_retrieval(

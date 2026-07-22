@@ -1,10 +1,10 @@
 """Seed a dev license blob into the DB for CI test environments.
 
 Usage (docker):
-    docker exec -e ONYX_DEV_LICENSE onyx-api_server-1 \
+    docker exec -e ORBYTE_DEV_LICENSE orbyte-api_server-1 \
         python -m scripts.seed_dev_license
 
-Reads ONYX_DEV_LICENSE from the environment. Empty values no-op so the
+Reads ORBYTE_DEV_LICENSE from the environment. Empty values no-op so the
 script can be invoked unconditionally (e.g. local dev runs without a
 license to hand). Accepts both PEM-armored and raw base64 license blobs;
 verifies the RSA-4096 signature before persisting.
@@ -16,13 +16,13 @@ import sys
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
-from ee.onyx.db.license import upsert_license  # noqa: E402
-from ee.onyx.utils.license import verify_license_signature  # noqa: E402
-from onyx.db.engine.sql_engine import get_session_with_current_tenant  # noqa: E402
-from onyx.db.engine.sql_engine import SqlEngine  # noqa: E402
+from ee.orbyte.db.license import upsert_license  # noqa: E402
+from ee.orbyte.utils.license import verify_license_signature  # noqa: E402
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant  # noqa: E402
+from orbyte.db.engine.sql_engine import SqlEngine  # noqa: E402
 
-_PEM_BEGIN = "-----BEGIN ONYX LICENSE-----"
-_PEM_END = "-----END ONYX LICENSE-----"
+_PEM_BEGIN = "-----BEGIN ORBYTE LICENSE-----"
+_PEM_END = "-----END ORBYTE LICENSE-----"
 
 
 def _strip_pem_delimiters(content: str) -> str:
@@ -33,9 +33,9 @@ def _strip_pem_delimiters(content: str) -> str:
 
 
 def main() -> None:
-    blob = os.environ.get("ONYX_DEV_LICENSE", "").strip()
+    blob = os.environ.get("ORBYTE_DEV_LICENSE", "").strip()
     if not blob:
-        print("ONYX_DEV_LICENSE empty: skipping license seed")
+        print("ORBYTE_DEV_LICENSE empty: skipping license seed")
         return
 
     license_data = _strip_pem_delimiters(blob)

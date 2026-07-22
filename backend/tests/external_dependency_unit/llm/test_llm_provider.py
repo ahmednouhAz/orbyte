@@ -13,26 +13,26 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import LLMModelFlowType
-from onyx.db.llm import fetch_existing_llm_provider
-from onyx.db.llm import remove_llm_provider
-from onyx.db.llm import update_default_provider
-from onyx.db.llm import upsert_llm_provider
-from onyx.db.models import UserRole
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.interfaces import LLM
-from onyx.server.manage.llm.api import (
+from orbyte.db.enums import LLMModelFlowType
+from orbyte.db.llm import fetch_existing_llm_provider
+from orbyte.db.llm import remove_llm_provider
+from orbyte.db.llm import update_default_provider
+from orbyte.db.llm import upsert_llm_provider
+from orbyte.db.models import UserRole
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.llm.interfaces import LLM
+from orbyte.server.manage.llm.api import (
     test_default_provider as run_test_default_provider,
 )
-from onyx.server.manage.llm.api import (
+from orbyte.server.manage.llm.api import (
     test_llm_configuration as run_test_llm_configuration,
 )
-from onyx.server.manage.llm.models import LLMProviderUpsertRequest
-from onyx.server.manage.llm.models import LLMProviderView
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
-from onyx.server.manage.llm.models import TestLLMRequest as LLMTestRequest
+from orbyte.server.manage.llm.models import LLMProviderUpsertRequest
+from orbyte.server.manage.llm.models import LLMProviderView
+from orbyte.server.manage.llm.models import ModelConfigurationUpsertRequest
+from orbyte.server.manage.llm.models import TestLLMRequest as LLMTestRequest
 
 
 def _create_mock_admin() -> MagicMock:
@@ -98,7 +98,7 @@ class TestLLMConfigurationEndpoint:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_success
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_success
             ):
                 # This should complete without exception
                 run_test_llm_configuration(
@@ -123,16 +123,16 @@ class TestLLMConfigurationEndpoint:
         finally:
             db_session.rollback()
 
-    def test_failed_llm_test_raises_onyx_error(
+    def test_failed_llm_test_raises_orbyte_error(
         self,
         db_session: Session,
         provider_name: str,  # noqa: ARG002
     ) -> None:
         """
-        Test that a failed LLM test raises an OnyxError with VALIDATION_ERROR.
+        Test that a failed LLM test raises an OrbyteError with VALIDATION_ERROR.
 
         When test_llm returns an error message, the endpoint should raise
-        an OnyxError with the error details.
+        an OrbyteError with the error details.
         """
         error_message = "Invalid API key: Authentication failed"
 
@@ -142,9 +142,9 @@ class TestLLMConfigurationEndpoint:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_failure
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_failure
             ):
-                with pytest.raises(OnyxError) as exc_info:
+                with pytest.raises(OrbyteError) as exc_info:
                     run_test_llm_configuration(
                         test_llm_request=LLMTestRequest(
                             provider=LlmProviderNames.OPENAI,
@@ -157,7 +157,7 @@ class TestLLMConfigurationEndpoint:
                         db_session=db_session,
                     )
 
-                assert exc_info.value.error_code == OnyxErrorCode.VALIDATION_ERROR
+                assert exc_info.value.error_code == OrbyteErrorCode.VALIDATION_ERROR
                 assert exc_info.value.detail == error_message
 
         finally:
@@ -187,7 +187,7 @@ class TestLLMConfigurationEndpoint:
             )
 
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 # Test with api_key_changed=False - should use stored key
                 run_test_llm_configuration(
@@ -236,7 +236,7 @@ class TestLLMConfigurationEndpoint:
             )
 
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 # Test with api_key_changed=True - should use new key
                 run_test_llm_configuration(
@@ -297,7 +297,7 @@ class TestLLMConfigurationEndpoint:
             )
 
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 # Test with custom_config_changed=False - should use stored config
                 run_test_llm_configuration(
@@ -339,7 +339,7 @@ class TestLLMConfigurationEndpoint:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 for model_name in test_models:
                     run_test_llm_configuration(
@@ -425,7 +425,7 @@ class TestDefaultProviderEndpoint:
 
             # Step 2: Call run_test_default_provider - should use provider 1's default model
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 run_test_default_provider(_=_create_mock_admin())
 
@@ -455,7 +455,7 @@ class TestDefaultProviderEndpoint:
 
             # Step 4: Call run_test_default_provider - should still use provider 1
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 run_test_default_provider(_=_create_mock_admin())
 
@@ -485,7 +485,7 @@ class TestDefaultProviderEndpoint:
 
             # Step 6: Call run_test_default_provider - should use new model on provider 1
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 run_test_default_provider(_=_create_mock_admin())
 
@@ -499,7 +499,7 @@ class TestDefaultProviderEndpoint:
 
             # Step 8: Call run_test_default_provider - should use provider 2
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 run_test_default_provider(_=_create_mock_admin())
 
@@ -520,7 +520,7 @@ class TestDefaultProviderEndpoint:
         Test that when no default provider exists, the endpoint raises an exception.
         """
         # Clear any existing providers to ensure no default exists
-        from onyx.db.llm import fetch_existing_llm_providers
+        from orbyte.db.llm import fetch_existing_llm_providers
 
         try:
             existing_providers = fetch_existing_llm_providers(
@@ -537,10 +537,10 @@ class TestDefaultProviderEndpoint:
                 remove_llm_provider(db_session, provider.id)
 
             # Now run_test_default_provider should fail
-            with pytest.raises(OnyxError) as exc_info:
+            with pytest.raises(OrbyteError) as exc_info:
                 run_test_default_provider(_=_create_mock_admin())
 
-            assert exc_info.value.error_code == OnyxErrorCode.VALIDATION_ERROR
+            assert exc_info.value.error_code == OrbyteErrorCode.VALIDATION_ERROR
             assert "No LLM Provider setup" in exc_info.value.detail
 
         finally:
@@ -580,12 +580,12 @@ class TestDefaultProviderEndpoint:
 
             # Test should fail
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_failure
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_failure
             ):
-                with pytest.raises(OnyxError) as exc_info:
+                with pytest.raises(OrbyteError) as exc_info:
                     run_test_default_provider(_=_create_mock_admin())
 
-                assert exc_info.value.error_code == OnyxErrorCode.VALIDATION_ERROR
+                assert exc_info.value.error_code == OrbyteErrorCode.VALIDATION_ERROR
                 assert exc_info.value.detail == error_message
 
         finally:

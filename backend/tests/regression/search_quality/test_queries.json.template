@@ -1,6 +1,6 @@
 [
     {
-        "question": "What is Onyx?",
+        "question": "What is Orbyte?",
         "ground_truth": [
             {
                 "doc_source": "web",

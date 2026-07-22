@@ -4,7 +4,7 @@
 
 ```bash
 # Navigate to backend directory
-cd onyx/backend
+cd orbyte/backend
 
 # Step 1: Generate CSV of tenants to clean (5-10 min)
 PYTHONPATH=. python scripts/tenant_cleanup/no_bastion_analyze_tenants.py

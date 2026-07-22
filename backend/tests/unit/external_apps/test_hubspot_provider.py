@@ -13,12 +13,12 @@ from urllib.parse import urlparse
 
 import pytest
 
-from onyx.db.enums import ExternalAppType
-from onyx.db.models import User
-from onyx.external_apps.providers.base import OAuthFlowSpec
-from onyx.external_apps.providers.hubspot import HubspotProvider
-from onyx.external_apps.providers.registry import PROVIDERS
-from onyx.server.features.build.external_apps import oauth as oauth_route
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.models import User
+from orbyte.external_apps.providers.base import OAuthFlowSpec
+from orbyte.external_apps.providers.hubspot import HubspotProvider
+from orbyte.external_apps.providers.registry import PROVIDERS
+from orbyte.server.features.build.external_apps import oauth as oauth_route
 
 
 def _provider() -> HubspotProvider:

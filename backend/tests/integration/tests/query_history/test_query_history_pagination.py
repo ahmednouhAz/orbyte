@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytest
 
-from onyx.configs.constants import QAFeedbackType
+from orbyte.configs.constants import QAFeedbackType
 from tests.integration.common_utils.managers.query_history import QueryHistoryManager
 from tests.integration.common_utils.test_models import DAQueryHistoryEntry
 from tests.integration.common_utils.test_models import DATestUser

@@ -5,11 +5,11 @@ from uuid import UUID
 
 import httpx
 
-from ee.onyx.server.query_history.models import ChatSessionMinimal
-from ee.onyx.server.query_history.models import ChatSessionSnapshot
-from onyx.configs.constants import QAFeedbackType
-from onyx.db.enums import TaskStatus
-from onyx.server.documents.models import PaginatedReturn
+from ee.orbyte.server.query_history.models import ChatSessionMinimal
+from ee.orbyte.server.query_history.models import ChatSessionSnapshot
+from orbyte.configs.constants import QAFeedbackType
+from orbyte.db.enums import TaskStatus
+from orbyte.server.documents.models import PaginatedReturn
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.constants import MAX_DELAY
 from tests.integration.common_utils.http_client import client

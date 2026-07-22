@@ -16,12 +16,12 @@ from unittest.mock import patch
 
 import pytest
 
-from ee.onyx.background.celery.tasks.cloud import tasks as cloud_tasks
-from onyx.configs.constants import ONYX_CLOUD_TENANT_ID
-from onyx.redis import redis_tenant_work_gating as twg
-from onyx.redis.redis_pool import get_redis_client
-from onyx.redis.redis_tenant_work_gating import _SET_KEY
-from onyx.redis.redis_tenant_work_gating import mark_tenant_active
+from ee.orbyte.background.celery.tasks.cloud import tasks as cloud_tasks
+from orbyte.configs.constants import ORBYTE_CLOUD_TENANT_ID
+from orbyte.redis import redis_tenant_work_gating as twg
+from orbyte.redis.redis_pool import get_redis_client
+from orbyte.redis.redis_tenant_work_gating import _SET_KEY
+from orbyte.redis.redis_tenant_work_gating import mark_tenant_active
 
 _TENANT_A = "tenant_aaaa0000-0000-0000-0000-000000000001"
 _TENANT_B = "tenant_bbbb0000-0000-0000-0000-000000000002"
@@ -40,7 +40,7 @@ def _multi_tenant_true() -> Generator[None, None, None]:
 def _clean_redis() -> Generator[None, None, None]:
     """Clear the active set AND the per-task full-fanout timestamp so each
     test starts fresh."""
-    r = get_redis_client(tenant_id=ONYX_CLOUD_TENANT_ID)
+    r = get_redis_client(tenant_id=ORBYTE_CLOUD_TENANT_ID)
     r.delete(_SET_KEY)
     r.delete(f"{_FANOUT_KEY_PREFIX}:test_task")
     r.delete("runtime:tenant_work_gating:enabled")
@@ -71,19 +71,19 @@ def _invoke_generator(
         patch.object(cloud_tasks, "get_all_tenant_ids", return_value=list(tenant_ids)),
         patch.object(cloud_tasks, "get_gated_tenants", return_value=set()),
         patch(
-            "onyx.server.runtime.onyx_runtime.OnyxRuntime.get_tenant_work_gating_enabled",
+            "orbyte.server.runtime.orbyte_runtime.OrbyteRuntime.get_tenant_work_gating_enabled",
             return_value=enabled,
         ),
         patch(
-            "onyx.server.runtime.onyx_runtime.OnyxRuntime.get_tenant_work_gating_enforce",
+            "orbyte.server.runtime.orbyte_runtime.OrbyteRuntime.get_tenant_work_gating_enforce",
             return_value=enforce,
         ),
         patch(
-            "onyx.server.runtime.onyx_runtime.OnyxRuntime.get_tenant_work_gating_full_fanout_interval_seconds",
+            "orbyte.server.runtime.orbyte_runtime.OrbyteRuntime.get_tenant_work_gating_full_fanout_interval_seconds",
             return_value=full_fanout_interval_seconds,
         ),
         patch(
-            "onyx.server.runtime.onyx_runtime.OnyxRuntime.get_tenant_work_gating_ttl_seconds",
+            "orbyte.server.runtime.orbyte_runtime.OrbyteRuntime.get_tenant_work_gating_ttl_seconds",
             return_value=ttl_seconds,
         ),
     ):
@@ -105,7 +105,7 @@ def _seed_recent_full_fanout_timestamp() -> None:
     full-fanout on first invocation."""
     import time as _t
 
-    r = get_redis_client(tenant_id=ONYX_CLOUD_TENANT_ID)
+    r = get_redis_client(tenant_id=ORBYTE_CLOUD_TENANT_ID)
     r.set(f"{_FANOUT_KEY_PREFIX}:test_task", str(int(_t.time() * 1000)))
 
 

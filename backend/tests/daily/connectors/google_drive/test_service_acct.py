@@ -5,8 +5,8 @@ from urllib.parse import urlparse
 
 import pytest
 
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
-from onyx.connectors.google_utils.google_utils import execute_paginated_retrieval
+from orbyte.connectors.google_drive.connector import GoogleDriveConnector
+from orbyte.connectors.google_utils.google_utils import execute_paginated_retrieval
 from tests.daily.connectors.google_drive.consts_and_utils import _pick
 from tests.daily.connectors.google_drive.consts_and_utils import ADMIN_EMAIL
 from tests.daily.connectors.google_drive.consts_and_utils import ADMIN_FILE_IDS
@@ -109,7 +109,7 @@ pytestmark = pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_ST
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_include_all(
@@ -186,7 +186,7 @@ def test_include_all(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_include_shared_drives_only_with_size_threshold(
@@ -243,7 +243,7 @@ def test_include_shared_drives_only_with_size_threshold(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_include_shared_drives_only(
@@ -311,7 +311,7 @@ def test_include_shared_drives_only(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_include_my_drives_only(
@@ -363,7 +363,7 @@ def test_include_my_drives_only(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_drive_one_only(
@@ -408,7 +408,7 @@ def test_drive_one_only(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_folder_and_shared_drive(
@@ -458,7 +458,7 @@ def test_folder_and_shared_drive(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_folders_only(
@@ -534,7 +534,7 @@ def test_shared_folder_owned_by_external_user(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_shared_with_me(
@@ -577,7 +577,7 @@ def test_shared_with_me(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_specific_emails(
@@ -608,7 +608,7 @@ def test_specific_emails(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def get_specific_folders_in_my_drive(
@@ -638,7 +638,7 @@ def get_specific_folders_in_my_drive(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_specific_user_emails_restricted_folder(
@@ -678,7 +678,7 @@ def test_specific_user_emails_restricted_folder(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_specific_user_email_shared_with_me(
@@ -714,7 +714,7 @@ def test_specific_user_email_shared_with_me(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_slim_retrieval_does_not_call_permissions_list(
@@ -737,7 +737,7 @@ def test_slim_retrieval_does_not_call_permissions_list(
     )
 
     with patch(
-        "onyx.connectors.google_drive.connector.execute_paginated_retrieval",
+        "orbyte.connectors.google_drive.connector.execute_paginated_retrieval",
         wraps=execute_paginated_retrieval,
     ) as mock_paginated:
         for batch in connector.retrieve_all_slim_docs():

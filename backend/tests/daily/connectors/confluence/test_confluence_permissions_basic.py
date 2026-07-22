@@ -5,15 +5,15 @@ from unittest.mock import patch
 
 import pytest
 
-from ee.onyx.external_permissions.confluence.doc_sync import confluence_doc_sync
-from onyx.access.models import DocExternalAccess
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.confluence.connector import ConfluenceConnector
-from onyx.connectors.credentials_provider import OnyxStaticCredentialsProvider
-from onyx.connectors.models import HierarchyNode
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.utils import DocumentRow
-from onyx.db.utils import SortOrder
+from ee.orbyte.external_permissions.confluence.doc_sync import confluence_doc_sync
+from orbyte.access.models import DocExternalAccess
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.confluence.connector import ConfluenceConnector
+from orbyte.connectors.credentials_provider import OrbyteStaticCredentialsProvider
+from orbyte.connectors.models import HierarchyNode
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.utils import DocumentRow
+from orbyte.db.utils import SortOrder
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.utils.secret_names import TestSecret
 
@@ -29,7 +29,7 @@ def confluence_connector(
         is_cloud=True,
     )
 
-    credentials_provider = OnyxStaticCredentialsProvider(
+    credentials_provider = OrbyteStaticCredentialsProvider(
         None,
         DocumentSource.CONFLUENCE,
         {
@@ -44,7 +44,7 @@ def confluence_connector(
 # This should never fail because even if the docs in the cloud change,
 # the full doc ids retrieved should always be a subset of the slim doc ids
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_confluence_connector_permissions(
@@ -90,9 +90,9 @@ def test_confluence_connector_permissions(
     )
 
 
-@patch("ee.onyx.external_permissions.confluence.doc_sync.OnyxDBCredentialsProvider")
+@patch("ee.orbyte.external_permissions.confluence.doc_sync.OrbyteDBCredentialsProvider")
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_confluence_connector_restriction_handling(
@@ -110,7 +110,7 @@ def test_confluence_connector_restriction_handling(
         "confluence_username": os.environ["CONFLUENCE_USER_NAME"],
         "confluence_access_token": test_secrets[TestSecret.CONFLUENCE_ACCESS_TOKEN],
     }
-    # this prevents redis calls inside of OnyxConfluence
+    # this prevents redis calls inside of OrbyteConfluence
     mock_provider_instance.is_dynamic.return_value = False
     # Make the class return our configured instance when called
     mock_db_provider_class.return_value = mock_provider_instance

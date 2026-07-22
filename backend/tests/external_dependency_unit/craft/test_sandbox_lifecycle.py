@@ -21,24 +21,24 @@ import pytest
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import BuildSessionStatus
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import BuildSession
-from onyx.db.models import Sandbox
-from onyx.db.models import User
-from onyx.server.features.build.db.sandbox import create_sandbox__no_commit
-from onyx.server.features.build.db.sandbox import create_snapshot__no_commit
-from onyx.server.features.build.db.sandbox import get_running_sandboxes
-from onyx.server.features.build.sandbox.models import FileSet
-from onyx.server.features.build.sandbox.models import FilesystemEntry
-from onyx.server.features.build.sandbox.models import LLMProviderConfig
-from onyx.server.features.build.sandbox.models import SandboxInfo
-from onyx.server.features.build.sandbox.user_library import USER_LIBRARY_MOUNT_PATH
-from onyx.server.features.build.session.api import restore_session
-from onyx.server.features.build.session.manager import SessionManager
-from onyx.server.features.build.session.sandbox_lifecycle import is_sandbox_idle
-from onyx.server.features.build.session.sandbox_lifecycle import provision_sandbox
-from onyx.skills.push import SKILLS_MOUNT_PATH
+from orbyte.db.enums import BuildSessionStatus
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import BuildSession
+from orbyte.db.models import Sandbox
+from orbyte.db.models import User
+from orbyte.server.features.build.db.sandbox import create_sandbox__no_commit
+from orbyte.server.features.build.db.sandbox import create_snapshot__no_commit
+from orbyte.server.features.build.db.sandbox import get_running_sandboxes
+from orbyte.server.features.build.sandbox.models import FileSet
+from orbyte.server.features.build.sandbox.models import FilesystemEntry
+from orbyte.server.features.build.sandbox.models import LLMProviderConfig
+from orbyte.server.features.build.sandbox.models import SandboxInfo
+from orbyte.server.features.build.sandbox.user_library import USER_LIBRARY_MOUNT_PATH
+from orbyte.server.features.build.session.api import restore_session
+from orbyte.server.features.build.session.manager import SessionManager
+from orbyte.server.features.build.session.sandbox_lifecycle import is_sandbox_idle
+from orbyte.server.features.build.session.sandbox_lifecycle import provision_sandbox
+from orbyte.skills.push import SKILLS_MOUNT_PATH
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.common.craft.payloads import default_llm_config
 from tests.common.craft.stubs import StubSandboxManager
@@ -250,7 +250,7 @@ class TestHealthCheckFailureRecovery:
 
         # restore_session reads ``get_sandbox_manager`` from sessions_api.
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "orbyte.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
@@ -322,7 +322,7 @@ class TestRestoreFailureRecovery:
         stub_sandbox_manager.cleanup_session_workspace_silent = True
 
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "orbyte.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
@@ -605,15 +605,15 @@ class TestManagedContentPushOrdering:
             stub.setup_session_workspace_silent = True
 
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "orbyte.server.features.build.session.api.get_sandbox_manager",
             lambda: stub,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.session.manager.get_sandbox_manager",
+            "orbyte.server.features.build.session.manager.get_sandbox_manager",
             lambda: stub,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.sandbox.factory._sandbox_manager_instance",
+            "orbyte.server.features.build.sandbox.factory._sandbox_manager_instance",
             stub,
         )
 

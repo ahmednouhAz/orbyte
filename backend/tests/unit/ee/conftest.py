@@ -15,11 +15,11 @@ def _enable_ee_for_directory(enable_ee: None) -> None:
 def _capture_audit_logger(
     caplog: pytest.LogCaptureFixture,
 ) -> Generator[None, None, None]:
-    """Attach caplog's handler to ``onyx.audit`` so audit tests can assert on
+    """Attach caplog's handler to ``orbyte.audit`` so audit tests can assert on
     caplog: the subsystem sets ``propagate=False``, so records don't reach
     pytest's root handler. No-op for tests that emit no audit events.
     """
-    audit_logger = logging.getLogger("onyx.audit")
+    audit_logger = logging.getLogger("orbyte.audit")
     audit_logger.addHandler(caplog.handler)
     try:
         yield

@@ -18,20 +18,20 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.llm import fetch_existing_llm_provider
-from onyx.db.llm import remove_llm_provider
-from onyx.db.llm import upsert_llm_provider
-from onyx.db.models import UserRole
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.api import _mask_string
-from onyx.server.manage.llm.api import put_llm_provider
-from onyx.server.manage.llm.api import test_llm_configuration as run_llm_config_test
-from onyx.server.manage.llm.models import LLMProviderUpsertRequest
-from onyx.server.manage.llm.models import LLMProviderView
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
-from onyx.server.manage.llm.models import TestLLMRequest as LLMTestRequest
+from orbyte.db.llm import fetch_existing_llm_provider
+from orbyte.db.llm import remove_llm_provider
+from orbyte.db.llm import upsert_llm_provider
+from orbyte.db.models import UserRole
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.server.manage.llm.api import _mask_string
+from orbyte.server.manage.llm.api import put_llm_provider
+from orbyte.server.manage.llm.api import test_llm_configuration as run_llm_config_test
+from orbyte.server.manage.llm.models import LLMProviderUpsertRequest
+from orbyte.server.manage.llm.models import LLMProviderView
+from orbyte.server.manage.llm.models import ModelConfigurationUpsertRequest
+from orbyte.server.manage.llm.models import TestLLMRequest as LLMTestRequest
 from tests.external_dependency_unit.mock_llm import LLM
 
 
@@ -93,7 +93,7 @@ class TestLLMProviderChanges:
         try:
             provider = _create_test_provider(db_session, provider_name)
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -101,7 +101,7 @@ class TestLLMProviderChanges:
                     api_base="https://attacker.example.com",
                 )
 
-                with pytest.raises(OnyxError) as exc_info:
+                with pytest.raises(OrbyteError) as exc_info:
                     put_llm_provider(
                         llm_provider_upsert_request=update_request,
                         is_creation=False,
@@ -109,7 +109,7 @@ class TestLLMProviderChanges:
                         db_session=db_session,
                     )
 
-                assert exc_info.value.error_code == OnyxErrorCode.VALIDATION_ERROR
+                assert exc_info.value.error_code == OrbyteErrorCode.VALIDATION_ERROR
                 assert "cannot be changed without changing the API key" in str(
                     exc_info.value.detail
                 )
@@ -127,7 +127,7 @@ class TestLLMProviderChanges:
         try:
             provider = _create_test_provider(db_session, provider_name)
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -163,7 +163,7 @@ class TestLLMProviderChanges:
                 db_session, provider_name, api_base=original_api_base
             )
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -194,7 +194,7 @@ class TestLLMProviderChanges:
         try:
             view = _create_test_provider(db_session, provider_name, api_base=None)
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 update_request = LLMProviderUpsertRequest(
                     id=view.id,
                     name=provider_name,
@@ -229,7 +229,7 @@ class TestLLMProviderChanges:
                 db_session, provider_name, api_base=original_api_base
             )
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -237,7 +237,7 @@ class TestLLMProviderChanges:
                     api_base=None,
                 )
 
-                with pytest.raises(OnyxError) as exc_info:
+                with pytest.raises(OrbyteError) as exc_info:
                     put_llm_provider(
                         llm_provider_upsert_request=update_request,
                         is_creation=False,
@@ -245,7 +245,7 @@ class TestLLMProviderChanges:
                         db_session=db_session,
                     )
 
-                assert exc_info.value.error_code == OnyxErrorCode.VALIDATION_ERROR
+                assert exc_info.value.error_code == OrbyteErrorCode.VALIDATION_ERROR
                 assert "cannot be changed without changing the API key" in str(
                     exc_info.value.detail
                 )
@@ -265,7 +265,7 @@ class TestLLMProviderChanges:
         try:
             provider = _create_test_provider(db_session, provider_name)
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", False):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", False):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -294,7 +294,7 @@ class TestLLMProviderChanges:
         api_key_changed (since there's no existing key to protect).
         """
         try:
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 create_request = LLMProviderUpsertRequest(
                     name=provider_name,
                     provider=LlmProviderNames.OPENAI,
@@ -331,7 +331,7 @@ class TestLLMProviderChanges:
                 custom_config={"SOME_CONFIG": "original_value"},
             )
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -340,7 +340,7 @@ class TestLLMProviderChanges:
                     custom_config_changed=True,
                 )
 
-                with pytest.raises(OnyxError) as exc_info:
+                with pytest.raises(OrbyteError) as exc_info:
                     put_llm_provider(
                         llm_provider_upsert_request=update_request,
                         is_creation=False,
@@ -348,7 +348,7 @@ class TestLLMProviderChanges:
                         db_session=db_session,
                     )
 
-                assert exc_info.value.error_code == OnyxErrorCode.VALIDATION_ERROR
+                assert exc_info.value.error_code == OrbyteErrorCode.VALIDATION_ERROR
                 assert "cannot be changed without changing the API key" in str(
                     exc_info.value.detail
                 )
@@ -367,7 +367,7 @@ class TestLLMProviderChanges:
         try:
             provider = _create_test_provider(db_session, provider_name)
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -376,7 +376,7 @@ class TestLLMProviderChanges:
                     custom_config_changed=True,
                 )
 
-                with pytest.raises(OnyxError) as exc_info:
+                with pytest.raises(OrbyteError) as exc_info:
                     put_llm_provider(
                         llm_provider_upsert_request=update_request,
                         is_creation=False,
@@ -384,7 +384,7 @@ class TestLLMProviderChanges:
                         db_session=db_session,
                     )
 
-                assert exc_info.value.error_code == OnyxErrorCode.VALIDATION_ERROR
+                assert exc_info.value.error_code == OrbyteErrorCode.VALIDATION_ERROR
                 assert "cannot be changed without changing the API key" in str(
                     exc_info.value.detail
                 )
@@ -408,7 +408,7 @@ class TestLLMProviderChanges:
                 custom_config={"AWS_REGION_NAME": "us-east-1"},
             )
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -445,7 +445,7 @@ class TestLLMProviderChanges:
                 db_session, provider_name, custom_config=original_config
             )
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", True):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", True):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -483,7 +483,7 @@ class TestLLMProviderChanges:
                 custom_config={"AWS_REGION_NAME": "us-east-1"},
             )
 
-            with patch("onyx.server.manage.llm.api.MULTI_TENANT", False):
+            with patch("orbyte.server.manage.llm.api.MULTI_TENANT", False):
                 update_request = LLMProviderUpsertRequest(
                     id=provider.id,
                     name=provider_name,
@@ -530,7 +530,7 @@ def test_upload_with_custom_config_then_change(
 
     try:
         # Patch the test_llm method
-        with patch("onyx.server.manage.llm.api.test_llm", side_effect=capture_test_llm):
+        with patch("orbyte.server.manage.llm.api.test_llm", side_effect=capture_test_llm):
             run_llm_config_test(
                 LLMTestRequest(
                     provider=provider_name,
@@ -650,7 +650,7 @@ def test_preserves_masked_sensitive_custom_config_on_provider_update(
             db_session=db_session,
         )
 
-        with patch("onyx.server.manage.llm.api.MULTI_TENANT", False):
+        with patch("orbyte.server.manage.llm.api.MULTI_TENANT", False):
             put_llm_provider(
                 llm_provider_upsert_request=LLMProviderUpsertRequest(
                     id=view.id,
@@ -726,7 +726,7 @@ def test_preserves_masked_sensitive_custom_config_on_test_request(
             db_session=db_session,
         )
 
-        with patch("onyx.server.manage.llm.api.test_llm", side_effect=capture_test_llm):
+        with patch("orbyte.server.manage.llm.api.test_llm", side_effect=capture_test_llm):
             run_llm_config_test(
                 LLMTestRequest(
                     id=provider.id,
@@ -806,7 +806,7 @@ def test_vertex_workload_identity_provider_create(
         assert "vertex_credentials" not in stored.custom_config
 
         # The LLM built for this provider must not forward vertex_credentials to LiteLLM.
-        with patch("onyx.server.manage.llm.api.test_llm", side_effect=capture_test_llm):
+        with patch("orbyte.server.manage.llm.api.test_llm", side_effect=capture_test_llm):
             run_llm_config_test(
                 LLMTestRequest(
                     id=stored.id,
@@ -838,7 +838,7 @@ def test_vertex_workload_identity_rejects_missing_project(
     default_model_name = "gemini-2.5-pro"
 
     try:
-        with pytest.raises(OnyxError) as excinfo:
+        with pytest.raises(OrbyteError) as excinfo:
             put_llm_provider(
                 llm_provider_upsert_request=LLMProviderUpsertRequest(
                     name=name,
@@ -860,7 +860,7 @@ def test_vertex_workload_identity_rejects_missing_project(
                 user=_create_mock_admin(),
                 db_session=db_session,
             )
-        assert excinfo.value.error_code == OnyxErrorCode.VALIDATION_ERROR
+        assert excinfo.value.error_code == OrbyteErrorCode.VALIDATION_ERROR
     finally:
         db_session.rollback()
         _cleanup_provider(db_session, name)
@@ -904,7 +904,7 @@ def test_vertex_service_account_backwards_compat_routes_credentials(
             db_session=db_session,
         )
 
-        with patch("onyx.server.manage.llm.api.test_llm", side_effect=capture_test_llm):
+        with patch("orbyte.server.manage.llm.api.test_llm", side_effect=capture_test_llm):
             run_llm_config_test(
                 LLMTestRequest(
                     id=stored.id,

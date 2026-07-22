@@ -11,13 +11,13 @@ import sqlalchemy as sa
 from urllib.parse import urlparse, urlunparse
 from httpx import HTTPStatusError
 import httpx
-from onyx.db.search_settings import SearchSettings
-from onyx.document_index.vespa.shared_utils.utils import get_vespa_http_client
-from onyx.document_index.vespa.shared_utils.utils import (
+from orbyte.db.search_settings import SearchSettings
+from orbyte.document_index.vespa.shared_utils.utils import get_vespa_http_client
+from orbyte.document_index.vespa.shared_utils.utils import (
     replace_invalid_doc_id_characters,
 )
-from onyx.document_index.vespa_constants import DOCUMENT_ID_ENDPOINT
-from onyx.utils.logger import setup_logger
+from orbyte.document_index.vespa_constants import DOCUMENT_ID_ENDPOINT
+from orbyte.utils.logger import setup_logger
 import os
 
 logger = setup_logger()

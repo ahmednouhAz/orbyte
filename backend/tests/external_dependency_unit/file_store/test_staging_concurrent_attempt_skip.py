@@ -16,11 +16,11 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import IndexingStatus
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import IndexAttempt
-from onyx.file_store.staging import reap_prior_attempt_staged_files
-from onyx.file_store.staging import stage_raw_file
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import IndexAttempt
+from orbyte.file_store.staging import reap_prior_attempt_staged_files
+from orbyte.file_store.staging import stage_raw_file
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
@@ -83,7 +83,7 @@ def test_sweep_skips_files_owned_by_non_terminal_attempt(
     """A concurrent in-progress attempt's staged files must survive the
     start-of-run sweep, even though they belong to a different attempt
     on the same cc_pair."""
-    from onyx.db.search_settings import get_current_search_settings
+    from orbyte.db.search_settings import get_current_search_settings
 
     settings = get_current_search_settings(db_session)
 
@@ -128,7 +128,7 @@ def test_sweep_skips_files_owned_by_non_terminal_attempt(
     # Only the terminal attempt's file should have been reaped.
     assert deleted_count == 1
 
-    from onyx.db.file_record import get_filerecord_by_file_id_optional
+    from orbyte.db.file_record import get_filerecord_by_file_id_optional
 
     db_session.expire_all()
 
@@ -143,7 +143,7 @@ def test_sweep_skips_files_owned_by_non_terminal_attempt(
     ), "current attempt's own file must NOT be reaped (excluded by current_attempt_id)"
 
     # Cleanup: remove the survivors so other tests don't see them.
-    from onyx.file_store.file_store import get_default_file_store
+    from orbyte.file_store.file_store import get_default_file_store
 
     fs = get_default_file_store()
     for fid in (file_for_in_progress, file_for_current):
@@ -161,7 +161,7 @@ def test_sweep_skips_files_owned_by_not_started_attempt(
     """A `NOT_STARTED` attempt is also non-terminal — its staged files
     must survive the sweep. This covers the case where a worker wrote
     files but crashed before the attempt status moved out of NOT_STARTED."""
-    from onyx.db.search_settings import get_current_search_settings
+    from orbyte.db.search_settings import get_current_search_settings
 
     settings = get_current_search_settings(db_session)
 
@@ -189,7 +189,7 @@ def test_sweep_skips_files_owned_by_not_started_attempt(
 
     assert deleted_count == 0
 
-    from onyx.db.file_record import get_filerecord_by_file_id_optional
+    from orbyte.db.file_record import get_filerecord_by_file_id_optional
 
     db_session.expire_all()
 
@@ -198,7 +198,7 @@ def test_sweep_skips_files_owned_by_not_started_attempt(
     ), "NOT_STARTED attempt's staged file must NOT be reaped"
 
     # Cleanup
-    from onyx.file_store.file_store import get_default_file_store
+    from orbyte.file_store.file_store import get_default_file_store
 
     fs = get_default_file_store()
     try:
@@ -215,7 +215,7 @@ def test_sweep_reaps_orphan_with_no_owning_attempt(
     """Files tagged with an `index_attempt_id` that doesn't match any
     real `IndexAttempt` row (deleted by retention, never recorded) are
     still reapable — nothing is going to consume them."""
-    from onyx.db.search_settings import get_current_search_settings
+    from orbyte.db.search_settings import get_current_search_settings
 
     settings = get_current_search_settings(db_session)
     current = _make_attempt(
@@ -241,7 +241,7 @@ def test_sweep_reaps_orphan_with_no_owning_attempt(
 
     assert deleted_count == 1
 
-    from onyx.db.file_record import get_filerecord_by_file_id_optional
+    from orbyte.db.file_record import get_filerecord_by_file_id_optional
 
     db_session.expire_all()
     assert get_filerecord_by_file_id_optional(file_for_orphan, db_session) is None, (

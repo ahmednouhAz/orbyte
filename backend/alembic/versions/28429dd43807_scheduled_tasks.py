@@ -209,11 +209,11 @@ def upgrade() -> None:
     # ------------------------------------------------------------------
     # NotificationType:
     #   The `notification.notif_type` column is declared with
-    #   `native_enum=False` (see backend/onyx/db/models.py), i.e. stored as
+    #   `native_enum=False` (see backend/orbyte/db/models.py), i.e. stored as
     #   a varchar with no native PG enum type. Adding new enum values is
     #   therefore a pure Python-side change — no DDL needed.
     #
-    #   New values added (in onyx/configs/constants.py):
+    #   New values added (in orbyte/configs/constants.py):
     #     - "scheduled_task_failed"
     #     - "scheduled_task_awaiting_approval"
     # ------------------------------------------------------------------

@@ -18,13 +18,13 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.db.models import Skill
-from onyx.db.models import User
-from onyx.external_apps.providers.slack import SlackAction
-from onyx.skills.built_in import SLACK
-from onyx.skills.push import build_skills_fileset_for_user
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.models import Skill
+from orbyte.db.models import User
+from orbyte.external_apps.providers.slack import SlackAction
+from orbyte.skills.built_in import SLACK
+from orbyte.skills.push import build_skills_fileset_for_user
 from tests.external_dependency_unit.craft.db_helpers import make_external_app
 from tests.external_dependency_unit.craft.db_helpers import make_user
 from tests.external_dependency_unit.craft.db_helpers import make_user_credential

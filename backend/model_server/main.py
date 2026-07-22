@@ -18,11 +18,11 @@ from model_server.encoders import router as encoders_router
 from model_server.management_endpoints import router as management_router
 from model_server.utils import get_cgroup_cpu_limit
 from model_server.utils import get_gpu_type
-from onyx import __version__
-from onyx.utils.logger import setup_logger
-from onyx.utils.logger import setup_uvicorn_logger
-from onyx.utils.middleware import add_onyx_request_id_middleware
-from onyx.utils.middleware import add_onyx_tenant_id_middleware
+from orbyte import __version__
+from orbyte.utils.logger import setup_logger
+from orbyte.utils.logger import setup_uvicorn_logger
+from orbyte.utils.middleware import add_orbyte_request_id_middleware
+from orbyte.utils.middleware import add_orbyte_tenant_id_middleware
 from shared_configs.configs import INDEXING_ONLY
 from shared_configs.configs import MIN_THREADS_ML_MODELS
 from shared_configs.configs import MODEL_SERVER_PORT
@@ -115,10 +115,10 @@ def get_model_app() -> FastAPI:
     configure_trusted_ca_bundle()
 
     application = FastAPI(
-        title="Onyx Model Server", version=__version__, lifespan=lifespan
+        title="Orbyte Model Server", version=__version__, lifespan=lifespan
     )
     if SENTRY_DSN:
-        from onyx.configs.sentry import init_sentry
+        from orbyte.configs.sentry import init_sentry
 
         init_sentry(
             traces_sample_rate=SENTRY_TRACES_SAMPLE_RATE,
@@ -134,8 +134,8 @@ def get_model_app() -> FastAPI:
     if INDEXING_ONLY:
         request_id_prefix = "IDX"
 
-    add_onyx_tenant_id_middleware(application, logger)
-    add_onyx_request_id_middleware(application, request_id_prefix, logger)
+    add_orbyte_tenant_id_middleware(application, logger)
+    add_orbyte_request_id_middleware(application, request_id_prefix, logger)
 
     # Initialize and instrument the app
     Instrumentator().instrument(application).expose(application)
@@ -153,7 +153,7 @@ def run_server() -> None:
     # drive the bind host.
     host = "0.0.0.0"  # noqa: S104
     logger.notice(
-        "Starting Onyx Model Server on http://%s:%s/",
+        "Starting Orbyte Model Server on http://%s:%s/",
         host,
         str(MODEL_SERVER_PORT),
     )

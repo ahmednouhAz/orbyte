@@ -5,12 +5,12 @@ import pytest
 from fastapi_users.password import PasswordHelper
 from sqlalchemy.orm import Session
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.enums import AccountType
-from onyx.db.models import User
-from onyx.db.models import UserRole
-from onyx.file_store.file_store import get_default_file_store
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.enums import AccountType
+from orbyte.db.models import User
+from orbyte.db.models import UserRole
+from orbyte.file_store.file_store import get_default_file_store
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from tests.external_dependency_unit.full_setup import ensure_full_deployment_setup

@@ -5,11 +5,11 @@ tested without a DB. Covers the residual math, the in-span component set, the
 clamp, and the absent-BATCH_TOTAL case.
 """
 
-from onyx.db.index_attempt_metrics_models import IndexAttemptStage
-from onyx.db.index_attempt_metrics_models import STAGE_SCOPE
-from onyx.server.documents.models import _BATCH_TOTAL_COMPONENT_STAGES
-from onyx.server.documents.models import IndexAttemptStageMetricSnapshot
-from onyx.server.documents.models import synthesize_unaccounted
+from orbyte.db.index_attempt_metrics_models import IndexAttemptStage
+from orbyte.db.index_attempt_metrics_models import STAGE_SCOPE
+from orbyte.server.documents.models import _BATCH_TOTAL_COMPONENT_STAGES
+from orbyte.server.documents.models import IndexAttemptStageMetricSnapshot
+from orbyte.server.documents.models import synthesize_unaccounted
 
 
 def _snap(
@@ -118,7 +118,7 @@ def test_residual_uses_component_totals_not_averages() -> None:
 
 
 def test_warn_log_fires_when_components_exceed_total(monkeypatch) -> None:  # type: ignore[no-untyped-def]
-    import onyx.server.documents.models as models_module
+    import orbyte.server.documents.models as models_module
 
     calls: list[tuple] = []
     monkeypatch.setattr(

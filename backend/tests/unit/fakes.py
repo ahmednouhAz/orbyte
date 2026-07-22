@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from onyx.cache.interface import CacheBackend
-from onyx.cache.interface import CacheLock
+from orbyte.cache.interface import CacheBackend
+from orbyte.cache.interface import CacheLock
 
 
 class FakeLock(CacheLock):

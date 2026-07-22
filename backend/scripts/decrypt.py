@@ -18,8 +18,8 @@ import sys
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
-from onyx.utils.encryption import decrypt_bytes_to_string  # noqa: E402
-from onyx.utils.variable_functionality import global_version  # noqa: E402
+from orbyte.utils.encryption import decrypt_bytes_to_string  # noqa: E402
+from orbyte.utils.variable_functionality import global_version  # noqa: E402
 
 
 def decrypt_raw_credential(encrypted_value: str, key: str | None = None) -> None:

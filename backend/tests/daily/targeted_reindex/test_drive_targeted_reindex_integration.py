@@ -27,15 +27,15 @@ import os
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.docprocessing.targeted_reindex_task import (
+from orbyte.background.celery.tasks.docprocessing.targeted_reindex_task import (
     run_targeted_reindex,
 )
-from onyx.db.enums import IndexingStatus
-from onyx.db.models import Document as DBDocument
-from onyx.db.models import IndexAttemptError
-from onyx.db.targeted_reindex import create_targeted_reindex_job
-from onyx.db.targeted_reindex import get_targeted_reindex_job
-from onyx.db.targeted_reindex import resolve_error_ids_to_targets
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.models import Document as DBDocument
+from orbyte.db.models import IndexAttemptError
+from orbyte.db.targeted_reindex import create_targeted_reindex_job
+from orbyte.db.targeted_reindex import get_targeted_reindex_job
+from orbyte.db.targeted_reindex import resolve_error_ids_to_targets
 from tests.daily.targeted_reindex.helpers import cleanup_targeted_reindex_state
 from tests.daily.targeted_reindex.helpers import make_drive_cc_pair
 from tests.daily.targeted_reindex.helpers import make_failed_index_attempt

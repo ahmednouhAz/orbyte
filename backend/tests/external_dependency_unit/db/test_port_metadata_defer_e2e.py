@@ -25,35 +25,35 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.access.models import DocumentAccess
-from onyx.configs.constants import DocumentSource
-from onyx.db.document import count_secondary_only_sync_pending_documents
-from onyx.db.document import document_has_indexable_cc_pair
-from onyx.db.document import mark_document_as_synced
-from onyx.db.document import mark_document_synced_secondary_pending
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import EmbeddingPrecision
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Document as DbDocument
-from onyx.db.models import DocumentByConnectorCredentialPair
-from onyx.db.models import SearchSettings
-from onyx.db.port_attempt import any_future_port_in_progress
-from onyx.db.port_attempt import create_port_attempt
-from onyx.db.port_attempt import mark_port_in_progress
-from onyx.document_index.interfaces_new import MetadataUpdateRequest
-from onyx.document_index.interfaces_new import SecondaryIndexDocumentMissingError
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.client import OpenSearchIndexClient
-from onyx.document_index.opensearch.opensearch_document_index import (
+from orbyte.access.models import DocumentAccess
+from orbyte.configs.constants import DocumentSource
+from orbyte.db.document import count_secondary_only_sync_pending_documents
+from orbyte.db.document import document_has_indexable_cc_pair
+from orbyte.db.document import mark_document_as_synced
+from orbyte.db.document import mark_document_synced_secondary_pending
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import EmbeddingPrecision
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Document as DbDocument
+from orbyte.db.models import DocumentByConnectorCredentialPair
+from orbyte.db.models import SearchSettings
+from orbyte.db.port_attempt import any_future_port_in_progress
+from orbyte.db.port_attempt import create_port_attempt
+from orbyte.db.port_attempt import mark_port_in_progress
+from orbyte.document_index.interfaces_new import MetadataUpdateRequest
+from orbyte.document_index.interfaces_new import SecondaryIndexDocumentMissingError
+from orbyte.document_index.interfaces_new import TenantState
+from orbyte.document_index.opensearch.client import OpenSearchIndexClient
+from orbyte.document_index.opensearch.opensearch_document_index import (
     generate_opensearch_filtered_access_control_list,
 )
-from onyx.document_index.opensearch.opensearch_document_index import (
+from orbyte.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
-from onyx.document_index.opensearch.opensearch_document_index import OpenSearchIndexPair
-from onyx.document_index.opensearch.schema import DocumentChunk
-from onyx.document_index.opensearch.schema import DocumentSchema
-from onyx.document_index.opensearch.schema import get_opensearch_doc_chunk_id
+from orbyte.document_index.opensearch.opensearch_document_index import OpenSearchIndexPair
+from orbyte.document_index.opensearch.schema import DocumentChunk
+from orbyte.document_index.opensearch.schema import DocumentSchema
+from orbyte.document_index.opensearch.schema import get_opensearch_doc_chunk_id
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair

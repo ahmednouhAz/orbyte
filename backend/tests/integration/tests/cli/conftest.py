@@ -30,7 +30,7 @@ MOCK_LLM_RESPONSE = f"The {MOCK_LLM_TOKEN} jumps over the lazy dog. " * 20
 def _mock_llm_responses() -> Generator[None, None, None]:
     # The CLI suite exercises the binary, not the model. Pin every chat
     # completion to a fixed response so no test calls a real provider.
-    import onyx.llm.multi_llm as multi_llm
+    import orbyte.llm.multi_llm as multi_llm
 
     original = multi_llm.MOCK_LLM_RESPONSE
     multi_llm.MOCK_LLM_RESPONSE = MOCK_LLM_RESPONSE
@@ -44,7 +44,7 @@ def _mock_llm_responses() -> Generator[None, None, None]:
 def _cli_uvicorn_server(_test_client: TestClient) -> Generator[None, None, None]:
     # Reuse the FastAPI app the parent conftest already built (lifespan has
     # already run via the TestClient context manager). Disable uvicorn's
-    # lifespan so we don't double-invoke setup_onyx / Prometheus init.
+    # lifespan so we don't double-invoke setup_orbyte / Prometheus init.
     app = _test_client.app
 
     config = uvicorn.Config(

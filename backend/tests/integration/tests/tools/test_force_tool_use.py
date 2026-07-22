@@ -6,8 +6,8 @@ This test verifies that forcing a tool use works through the complete API flow.
 import pytest
 from sqlalchemy import select
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import Tool
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.models import Tool
 from tests.integration.common_utils.managers.chat import ChatSessionManager
 from tests.integration.common_utils.test_models import DATestImageGenerationConfig
 from tests.integration.common_utils.test_models import DATestUser

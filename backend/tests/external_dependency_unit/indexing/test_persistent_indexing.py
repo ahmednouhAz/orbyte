@@ -23,27 +23,27 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.run_docfetching import run_docfetching_entrypoint
-from onyx.configs.constants import DocumentSource
-from onyx.connectors import factory as connector_factory
-from onyx.connectors.interfaces import CheckpointedConnector
-from onyx.connectors.interfaces import CheckpointOutput
-from onyx.connectors.interfaces import GenerateSlimDocumentOutput
-from onyx.connectors.interfaces import SecondsSinceUnixEpoch
-from onyx.connectors.models import ConnectorCheckpoint
-from onyx.connectors.models import ConnectorFailure
-from onyx.connectors.models import Document
-from onyx.connectors.models import DocumentFailure
-from onyx.connectors.models import InputType
-from onyx.connectors.models import TextSection
-from onyx.db.enums import EmbeddingPrecision
-from onyx.db.enums import IndexingStatus
-from onyx.db.enums import IndexModelStatus
-from onyx.db.index_attempt import get_index_attempt
-from onyx.db.index_attempt import get_index_attempt_errors
-from onyx.db.models import IndexAttempt
-from onyx.db.models import IndexAttemptError
-from onyx.db.models import SearchSettings
+from orbyte.background.indexing.run_docfetching import run_docfetching_entrypoint
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors import factory as connector_factory
+from orbyte.connectors.interfaces import CheckpointedConnector
+from orbyte.connectors.interfaces import CheckpointOutput
+from orbyte.connectors.interfaces import GenerateSlimDocumentOutput
+from orbyte.connectors.interfaces import SecondsSinceUnixEpoch
+from orbyte.connectors.models import ConnectorCheckpoint
+from orbyte.connectors.models import ConnectorFailure
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import DocumentFailure
+from orbyte.connectors.models import InputType
+from orbyte.connectors.models import TextSection
+from orbyte.db.enums import EmbeddingPrecision
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.enums import IndexModelStatus
+from orbyte.db.index_attempt import get_index_attempt
+from orbyte.db.index_attempt import get_index_attempt_errors
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import IndexAttemptError
+from orbyte.db.models import SearchSettings
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
@@ -192,7 +192,7 @@ def _teardown_attempt(
         SearchSettings.id == search_settings_id
     ).delete(synchronize_session="fetch")
     db_session.commit()
-    from onyx.db.models import ConnectorCredentialPair
+    from orbyte.db.models import ConnectorCredentialPair
 
     cc_pair = (
         db_session.query(ConnectorCredentialPair)
@@ -276,7 +276,7 @@ def test_unhandled_exception_persistent_mode_still_marks_failed(
     context to isolate the failing item, so silently advancing would risk
     skipping source data. Operators must triage by fixing the connector."""
     monkeypatch.setattr(
-        "onyx.background.indexing.run_docfetching.PERSISTENT_INDEXING", True
+        "orbyte.background.indexing.run_docfetching.PERSISTENT_INDEXING", True
     )
 
     cc_pair_id, search_settings_id, attempt_id = _seed_attempt(db_session)
@@ -319,7 +319,7 @@ def test_threshold_disabled_in_persistent_mode(
     never aborts the attempt. Without the flag, the same flood would
     raise from `_check_failure_threshold` and mark the attempt FAILED."""
     monkeypatch.setattr(
-        "onyx.background.indexing.run_docfetching.PERSISTENT_INDEXING", True
+        "orbyte.background.indexing.run_docfetching.PERSISTENT_INDEXING", True
     )
 
     cc_pair_id, search_settings_id, attempt_id = _seed_attempt(db_session)

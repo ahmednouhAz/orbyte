@@ -5,20 +5,20 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from onyx.chat.chat_utils import create_chat_session_from_request
-from onyx.chat.models import AnswerStreamPart
-from onyx.chat.process_message import handle_stream_message_objects
-from onyx.configs.constants import DocumentSource
-from onyx.context.search.models import SearchDoc
-from onyx.db.models import ChatSession
-from onyx.db.models import User
-from onyx.llm.override_models import LLMOverride
-from onyx.server.query_and_chat.models import ChatSessionCreationRequest
-from onyx.server.query_and_chat.models import SendMessageRequest
-from onyx.server.query_and_chat.placement import Placement
-from onyx.server.query_and_chat.streaming_models import AgentResponseDelta
-from onyx.server.query_and_chat.streaming_models import Packet
-from onyx.server.query_and_chat.streaming_models import ReasoningDelta
+from orbyte.chat.chat_utils import create_chat_session_from_request
+from orbyte.chat.models import AnswerStreamPart
+from orbyte.chat.process_message import handle_stream_message_objects
+from orbyte.configs.constants import DocumentSource
+from orbyte.context.search.models import SearchDoc
+from orbyte.db.models import ChatSession
+from orbyte.db.models import User
+from orbyte.llm.override_models import LLMOverride
+from orbyte.server.query_and_chat.models import ChatSessionCreationRequest
+from orbyte.server.query_and_chat.models import SendMessageRequest
+from orbyte.server.query_and_chat.placement import Placement
+from orbyte.server.query_and_chat.streaming_models import AgentResponseDelta
+from orbyte.server.query_and_chat.streaming_models import Packet
+from orbyte.server.query_and_chat.streaming_models import ReasoningDelta
 from tests.external_dependency_unit.mock_content_provider import MockWebContent
 from tests.external_dependency_unit.mock_search_provider import MockWebSearchResult
 

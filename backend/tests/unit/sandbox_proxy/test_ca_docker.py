@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from onyx.sandbox_proxy.ca import CAStoreConflictError
-from onyx.sandbox_proxy.ca_docker import FileCAStore
+from orbyte.sandbox_proxy.ca import CAStoreConflictError
+from orbyte.sandbox_proxy.ca_docker import FileCAStore
 
 _CERT = b"-----BEGIN CERTIFICATE-----\nfake-cert\n-----END CERTIFICATE-----\n"
 _KEY = b"-----BEGIN PRIVATE KEY-----\nfake-key\n-----END PRIVATE KEY-----\n"

@@ -11,32 +11,32 @@ from collections.abc import Generator
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.connector_credential_pair import get_last_successful_attempt_poll_range_end
-from onyx.db.enums import IndexingStatus
-from onyx.db.index_attempt import cancel_indexing_attempts_for_ccpair
-from onyx.db.index_attempt import count_index_attempts_for_cc_pair
-from onyx.db.index_attempt import (
+from orbyte.db.connector_credential_pair import get_last_successful_attempt_poll_range_end
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.index_attempt import cancel_indexing_attempts_for_ccpair
+from orbyte.db.index_attempt import count_index_attempts_for_cc_pair
+from orbyte.db.index_attempt import (
     count_unique_active_cc_pairs_with_successful_index_attempts,
 )
-from onyx.db.index_attempt import count_unique_cc_pairs_with_successful_index_attempts
-from onyx.db.index_attempt import get_in_progress_index_attempts
-from onyx.db.index_attempt import get_index_attempts_for_cc_pair
-from onyx.db.index_attempt import get_last_attempt
-from onyx.db.index_attempt import get_last_attempt_for_cc_pair
-from onyx.db.index_attempt import get_latest_index_attempt_for_cc_pair_id
-from onyx.db.index_attempt import get_latest_index_attempts
-from onyx.db.index_attempt import get_latest_index_attempts_by_status
-from onyx.db.index_attempt import get_latest_successful_index_attempt_for_cc_pair_id
-from onyx.db.index_attempt import get_latest_successful_index_attempts_parallel
-from onyx.db.index_attempt import get_paginated_index_attempts_for_cc_pair_id
-from onyx.db.index_attempt import get_recent_attempts_for_cc_pair
-from onyx.db.index_attempt import get_recent_completed_attempts_for_cc_pair
-from onyx.db.indexing_coordination import IndexingCoordination
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import IndexAttempt
-from onyx.db.models import TargetedReindexJob
-from onyx.db.search_settings import get_current_search_settings
-from onyx.server.documents.models import ConnectorCredentialPairIdentifier
+from orbyte.db.index_attempt import count_unique_cc_pairs_with_successful_index_attempts
+from orbyte.db.index_attempt import get_in_progress_index_attempts
+from orbyte.db.index_attempt import get_index_attempts_for_cc_pair
+from orbyte.db.index_attempt import get_last_attempt
+from orbyte.db.index_attempt import get_last_attempt_for_cc_pair
+from orbyte.db.index_attempt import get_latest_index_attempt_for_cc_pair_id
+from orbyte.db.index_attempt import get_latest_index_attempts
+from orbyte.db.index_attempt import get_latest_index_attempts_by_status
+from orbyte.db.index_attempt import get_latest_successful_index_attempt_for_cc_pair_id
+from orbyte.db.index_attempt import get_latest_successful_index_attempts_parallel
+from orbyte.db.index_attempt import get_paginated_index_attempts_for_cc_pair_id
+from orbyte.db.index_attempt import get_recent_attempts_for_cc_pair
+from orbyte.db.index_attempt import get_recent_completed_attempts_for_cc_pair
+from orbyte.db.indexing_coordination import IndexingCoordination
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import TargetedReindexJob
+from orbyte.db.search_settings import get_current_search_settings
+from orbyte.server.documents.models import ConnectorCredentialPairIdentifier
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
 

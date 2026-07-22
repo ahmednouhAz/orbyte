@@ -15,39 +15,39 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.configs.constants import RETURN_SEPARATOR
-from onyx.configs.model_configs import ASYM_PASSAGE_PREFIX
-from onyx.configs.model_configs import ASYM_QUERY_PREFIX
-from onyx.configs.model_configs import DEFAULT_DOCUMENT_ENCODER_MODEL
-from onyx.configs.model_configs import DOC_EMBEDDING_DIM
-from onyx.configs.model_configs import NORMALIZE_EMBEDDINGS
-from onyx.connectors.models import convert_metadata_dict_to_list_of_strings
-from onyx.connectors.models import convert_metadata_list_of_strings_to_dict
-from onyx.db.models import SearchSettings
-from onyx.document_index.chunk_content_enrichment import (
+from orbyte.configs.constants import DocumentSource
+from orbyte.configs.constants import RETURN_SEPARATOR
+from orbyte.configs.model_configs import ASYM_PASSAGE_PREFIX
+from orbyte.configs.model_configs import ASYM_QUERY_PREFIX
+from orbyte.configs.model_configs import DEFAULT_DOCUMENT_ENCODER_MODEL
+from orbyte.configs.model_configs import DOC_EMBEDDING_DIM
+from orbyte.configs.model_configs import NORMALIZE_EMBEDDINGS
+from orbyte.connectors.models import convert_metadata_dict_to_list_of_strings
+from orbyte.connectors.models import convert_metadata_list_of_strings_to_dict
+from orbyte.db.models import SearchSettings
+from orbyte.document_index.chunk_content_enrichment import (
     generate_enriched_content_for_chunk_embedding,
 )
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
-from onyx.document_index.opensearch.schema import DocumentChunkWithoutVectors
-from onyx.indexing.chunker import get_metadata_suffix_for_document_index
-from onyx.indexing.embedder import DefaultIndexingEmbedder
-from onyx.indexing.embedder import IndexingEmbedder
-from onyx.indexing.models import ChunkEmbedding
-from onyx.indexing.models import DocAwareChunk
-from onyx.indexing.models import IndexChunk
-from onyx.indexing.port_reembed import _bare_contents
-from onyx.indexing.port_reembed import _reconstruct_source_document
-from onyx.indexing.port_reembed import _stored_chunk_to_doc_aware
-from onyx.indexing.port_reembed import AugmentationReembedContext
-from onyx.indexing.port_reembed import re_embed_chunks
-from onyx.indexing.port_reembed import rebuild_semantic_tail
-from onyx.indexing.port_reembed import recover_embedding_input
-from onyx.indexing.port_reembed import ReembedStrategy
-from onyx.indexing.port_reembed import select_reembed_strategy
-from onyx.natural_language_processing.utils import BaseTokenizer
-from onyx.utils.pydantic_util import shallow_model_dump
+from orbyte.document_index.interfaces_new import TenantState
+from orbyte.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
+from orbyte.document_index.opensearch.schema import DocumentChunkWithoutVectors
+from orbyte.indexing.chunker import get_metadata_suffix_for_document_index
+from orbyte.indexing.embedder import DefaultIndexingEmbedder
+from orbyte.indexing.embedder import IndexingEmbedder
+from orbyte.indexing.models import ChunkEmbedding
+from orbyte.indexing.models import DocAwareChunk
+from orbyte.indexing.models import IndexChunk
+from orbyte.indexing.port_reembed import _bare_contents
+from orbyte.indexing.port_reembed import _reconstruct_source_document
+from orbyte.indexing.port_reembed import _stored_chunk_to_doc_aware
+from orbyte.indexing.port_reembed import AugmentationReembedContext
+from orbyte.indexing.port_reembed import re_embed_chunks
+from orbyte.indexing.port_reembed import rebuild_semantic_tail
+from orbyte.indexing.port_reembed import recover_embedding_input
+from orbyte.indexing.port_reembed import ReembedStrategy
+from orbyte.indexing.port_reembed import select_reembed_strategy
+from orbyte.natural_language_processing.utils import BaseTokenizer
+from orbyte.utils.pydantic_util import shallow_model_dump
 from shared_configs.configs import DOC_EMBEDDING_CONTEXT_SIZE
 from shared_configs.configs import MODEL_SERVER_HOST
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA
@@ -425,7 +425,7 @@ def test_augmentation_enrich_on_generates_and_reembeds(
         return chunks
 
     monkeypatch.setattr(
-        "onyx.indexing.indexing_pipeline.add_contextual_summaries", _fake_enrich
+        "orbyte.indexing.indexing_pipeline.add_contextual_summaries", _fake_enrich
     )
 
     bare = "the body text"
@@ -487,7 +487,7 @@ def test_augmentation_mixed_docs_enrich_per_document(
         return chunks
 
     monkeypatch.setattr(
-        "onyx.indexing.indexing_pipeline.add_contextual_summaries", _fake_enrich
+        "orbyte.indexing.indexing_pipeline.add_contextual_summaries", _fake_enrich
     )
 
     a0 = _stored_chunk("a-first", document_id="doc-a", chunk_index=0, title=None)

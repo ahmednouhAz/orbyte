@@ -5,21 +5,21 @@ import sys
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from onyx.document_index.document_index_utils import get_multipass_config
+from orbyte.document_index.document_index_utils import get_multipass_config
 
 # makes it so `PYTHONPATH=.` is not required when running this script
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
-from onyx.context.search.models import IndexFilters  # noqa: E402
-from onyx.db.document import delete_documents_complete__no_commit  # noqa: E402
-from onyx.db.document import get_document  # noqa: E402
-from onyx.db.engine.sql_engine import get_session_with_current_tenant  # noqa: E402
-from onyx.db.search_settings import get_current_search_settings  # noqa: E402
-from onyx.db.tag import delete_orphan_tags_batched  # noqa: E402
-from onyx.document_index.interfaces_new import DocumentSectionRequest  # noqa: E402
-from onyx.document_index.interfaces_new import TenantState  # noqa: E402
-from onyx.document_index.vespa.vespa_document_index import (  # noqa: E402
+from orbyte.context.search.models import IndexFilters  # noqa: E402
+from orbyte.db.document import delete_documents_complete__no_commit  # noqa: E402
+from orbyte.db.document import get_document  # noqa: E402
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant  # noqa: E402
+from orbyte.db.search_settings import get_current_search_settings  # noqa: E402
+from orbyte.db.tag import delete_orphan_tags_batched  # noqa: E402
+from orbyte.document_index.interfaces_new import DocumentSectionRequest  # noqa: E402
+from orbyte.document_index.interfaces_new import TenantState  # noqa: E402
+from orbyte.document_index.vespa.vespa_document_index import (  # noqa: E402
     VespaDocumentIndex,
 )
 from shared_configs.configs import MULTI_TENANT  # noqa: E402

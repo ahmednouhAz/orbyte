@@ -18,14 +18,14 @@ from uuid import uuid4
 import pytest
 from kubernetes.client.rest import ApiException
 
-from onyx.cache import factory
-from onyx.cache.interface import CacheBackendType
-from onyx.db.enums import SandboxStatus
-from onyx.server.features.build.sandbox.kubernetes import kubernetes_sandbox_manager
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from orbyte.cache import factory
+from orbyte.cache.interface import CacheBackendType
+from orbyte.db.enums import SandboxStatus
+from orbyte.server.features.build.sandbox.kubernetes import kubernetes_sandbox_manager
+from orbyte.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from onyx.server.features.build.sandbox.models import SandboxInfo
+from orbyte.server.features.build.sandbox.models import SandboxInfo
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.common.craft.payloads import default_llm_config
 
@@ -150,7 +150,7 @@ def _provision(
         user_id=uuid4(),
         tenant_id=POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE,
         llm_config=default_llm_config(),
-        onyx_pat="test-pat",
+        orbyte_pat="test-pat",
     )
 
 

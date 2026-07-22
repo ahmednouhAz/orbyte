@@ -8,7 +8,7 @@ from collections.abc import Iterable
 
 import httpx
 
-from onyx.server.features.build.user_library.api import LibraryEntryResponse
+from orbyte.server.features.build.user_library.api import LibraryEntryResponse
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser

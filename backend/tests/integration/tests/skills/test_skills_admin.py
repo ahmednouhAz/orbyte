@@ -9,14 +9,14 @@ import httpx
 import pytest
 from sqlalchemy import select
 
-from onyx.auth.schemas import UserRole
-from onyx.configs.constants import FileOrigin
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import SkillSharePermission
-from onyx.db.models import FileRecord
-from onyx.db.models import Skill
-from onyx.file_store.file_store import get_default_file_store
-from onyx.server.features.skill.models import SkillPatchRequest
+from orbyte.auth.schemas import UserRole
+from orbyte.configs.constants import FileOrigin
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.enums import SkillSharePermission
+from orbyte.db.models import FileRecord
+from orbyte.db.models import Skill
+from orbyte.file_store.file_store import get_default_file_store
+from orbyte.server.features.skill.models import SkillPatchRequest
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.skill import build_minimal_bundle

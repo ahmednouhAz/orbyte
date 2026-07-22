@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.utils.logger import setup_logger
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.utils.logger import setup_logger
 from tests.integration.common_utils.document_acl import get_all_connector_documents
 from tests.integration.common_utils.document_acl import get_documents_by_permission_type
 from tests.integration.common_utils.document_acl import get_user_document_access_via_acl

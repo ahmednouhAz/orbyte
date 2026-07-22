@@ -26,13 +26,13 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import Sandbox
-from onyx.db.models import User
-from onyx.server.features.build.db.sandbox import get_sandbox_by_user_id
-from onyx.server.features.build.sandbox.models import SandboxInfo
-from onyx.server.features.build.session.errors import SandboxProvisioningError
-from onyx.server.features.build.session.manager import SessionManager
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import Sandbox
+from orbyte.db.models import User
+from orbyte.server.features.build.db.sandbox import get_sandbox_by_user_id
+from orbyte.server.features.build.sandbox.models import SandboxInfo
+from orbyte.server.features.build.session.errors import SandboxProvisioningError
+from orbyte.server.features.build.session.manager import SessionManager
 from tests.common.craft.stubs import StubSandboxManager
 
 
@@ -169,7 +169,7 @@ def test_provisioning_transitions_to_running_during_wait(
         db_session.commit()
 
     monkeypatch.setattr(
-        "onyx.server.features.build.session.sandbox_lifecycle.time.sleep",
+        "orbyte.server.features.build.session.sandbox_lifecycle.time.sleep",
         _flipping_sleep,
     )
 

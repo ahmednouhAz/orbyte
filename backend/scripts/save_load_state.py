@@ -9,14 +9,14 @@ import requests
 from alembic import command
 from alembic.config import Config
 
-from onyx.configs.app_configs import DOCUMENT_INDEX_NAME
-from onyx.configs.app_configs import POSTGRES_DB
-from onyx.configs.app_configs import POSTGRES_HOST
-from onyx.configs.app_configs import POSTGRES_PASSWORD
-from onyx.configs.app_configs import POSTGRES_PORT
-from onyx.configs.app_configs import POSTGRES_USER
-from onyx.document_index.vespa_constants import DOCUMENT_ID_ENDPOINT
-from onyx.utils.logger import setup_logger
+from orbyte.configs.app_configs import DOCUMENT_INDEX_NAME
+from orbyte.configs.app_configs import POSTGRES_DB
+from orbyte.configs.app_configs import POSTGRES_HOST
+from orbyte.configs.app_configs import POSTGRES_PASSWORD
+from orbyte.configs.app_configs import POSTGRES_PORT
+from orbyte.configs.app_configs import POSTGRES_USER
+from orbyte.document_index.vespa_constants import DOCUMENT_ID_ENDPOINT
+from orbyte.utils.logger import setup_logger
 
 logger = setup_logger()
 
@@ -97,23 +97,23 @@ def load_vespa(filename: str) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Onyx checkpoint saving and loading.")
+    parser = argparse.ArgumentParser(description="Orbyte checkpoint saving and loading.")
     parser.add_argument(
-        "--save", action="store_true", help="Save Onyx state to directory."
+        "--save", action="store_true", help="Save Orbyte state to directory."
     )
     parser.add_argument(
-        "--load", action="store_true", help="Load Onyx state from save directory."
+        "--load", action="store_true", help="Load Orbyte state from save directory."
     )
     parser.add_argument(
         "--postgres_container_name",
         type=str,
-        default="onyx-relational_db-1",
+        default="orbyte-relational_db-1",
         help="Name of the postgres container to dump",
     )
     parser.add_argument(
         "--checkpoint_dir",
         type=str,
-        default=os.path.join("..", "onyx_checkpoint"),
+        default=os.path.join("..", "orbyte_checkpoint"),
         help="A directory to store temporary files to.",
     )
 

@@ -14,24 +14,24 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.vespa.document_sync import (
+from orbyte.background.celery.tasks.vespa.document_sync import (
     generate_document_sync_tasks,
 )
-from onyx.configs.constants import OnyxCeleryPriority
-from onyx.db.document import (
+from orbyte.configs.constants import OrbyteCeleryPriority
+from orbyte.db.document import (
     construct_document_id_select_by_needs_sync_or_secondary_pending,
 )
-from onyx.db.document import count_documents_by_needs_sync
-from onyx.db.document import count_documents_by_needs_sync_or_secondary_pending
-from onyx.db.document import mark_document_as_modified
-from onyx.db.document import mark_document_synced_secondary_pending
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Document as DbDocument
-from onyx.db.port_attempt import any_future_port_in_progress
-from onyx.db.port_attempt import create_port_attempt
-from onyx.db.port_attempt import mark_port_in_progress
-from onyx.db.port_attempt import mark_port_succeeded
-from onyx.kg.models import KGStage
+from orbyte.db.document import count_documents_by_needs_sync
+from orbyte.db.document import count_documents_by_needs_sync_or_secondary_pending
+from orbyte.db.document import mark_document_as_modified
+from orbyte.db.document import mark_document_synced_secondary_pending
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Document as DbDocument
+from orbyte.db.port_attempt import any_future_port_in_progress
+from orbyte.db.port_attempt import create_port_attempt
+from orbyte.db.port_attempt import mark_port_in_progress
+from orbyte.db.port_attempt import mark_port_succeeded
+from orbyte.kg.models import KGStage
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair_and_future
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
 from tests.external_dependency_unit.indexing_helpers import make_future_search_settings
@@ -161,8 +161,8 @@ def test_sync_priority_across_three_states(
     attempt = create_port_attempt(db_session, cc_pair.id, future_id)
     mark_port_in_progress(db_session, attempt.id)
     captured = _run_generate(db_session)
-    assert captured[f"{_DOC_PREFIX}A"]["priority"] == OnyxCeleryPriority.MEDIUM
-    assert captured[f"{_DOC_PREFIX}B"]["priority"] == OnyxCeleryPriority.LOW
+    assert captured[f"{_DOC_PREFIX}A"]["priority"] == OrbyteCeleryPriority.MEDIUM
+    assert captured[f"{_DOC_PREFIX}B"]["priority"] == OrbyteCeleryPriority.LOW
     assert captured[f"{_DOC_PREFIX}A"]["expires"] > 0
     assert captured[f"{_DOC_PREFIX}B"]["expires"] > 0
 
@@ -170,5 +170,5 @@ def test_sync_priority_across_three_states(
     # gate, so the deferred doc goes HIGH and needs_sync yields to LOW
     mark_port_succeeded(db_session, attempt.id)
     captured = _run_generate(db_session)
-    assert captured[f"{_DOC_PREFIX}B"]["priority"] == OnyxCeleryPriority.HIGH
-    assert captured[f"{_DOC_PREFIX}A"]["priority"] == OnyxCeleryPriority.LOW
+    assert captured[f"{_DOC_PREFIX}B"]["priority"] == OrbyteCeleryPriority.HIGH
+    assert captured[f"{_DOC_PREFIX}A"]["priority"] == OrbyteCeleryPriority.LOW

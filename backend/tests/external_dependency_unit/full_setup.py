@@ -4,15 +4,15 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.search_settings import get_active_search_settings
-from onyx.document_index.factory import get_all_document_indices
-from onyx.document_index.factory import get_default_document_index
-from onyx.file_store.file_store import get_default_file_store
-from onyx.indexing.models import IndexingSetting
-from onyx.setup import setup_document_indices
-from onyx.setup import setup_postgres
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.search_settings import get_active_search_settings
+from orbyte.document_index.factory import get_all_document_indices
+from orbyte.document_index.factory import get_default_document_index
+from orbyte.file_store.file_store import get_default_file_store
+from orbyte.indexing.models import IndexingSetting
+from orbyte.setup import setup_document_indices
+from orbyte.setup import setup_postgres
 from shared_configs import configs as shared_configs_module
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
@@ -28,7 +28,7 @@ def ensure_full_deployment_setup(
 
     - Initializes DB engine and sets tenant context
     - Skips model warm-ups during setup
-    - Runs setup_onyx (Postgres defaults, Vespa indices)
+    - Runs setup_orbyte (Postgres defaults, Vespa indices)
     - Initializes file store (best-effort)
     - Ensures Vespa indices exist
     """
@@ -67,7 +67,7 @@ def ensure_full_deployment_setup(
             active = get_active_search_settings(db_session)
             if opensearch_available:
                 # We use this special bool here instead of just relying on
-                # ENABLE_OPENSEARCH_INDEXING_FOR_ONYX because not all testing
+                # ENABLE_OPENSEARCH_INDEXING_FOR_ORBYTE because not all testing
                 # infra is configured for OpenSearch.
                 document_indices = get_all_document_indices(
                     active.primary, active.secondary

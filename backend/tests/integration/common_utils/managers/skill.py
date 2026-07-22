@@ -8,17 +8,17 @@ from uuid import uuid4
 import httpx
 from pydantic import BaseModel
 
-from onyx.db.enums import SkillSharePermission
-from onyx.server.features.skill.models import SkillCreateRequest
-from onyx.server.features.skill.models import SkillEditableDetailResponse
-from onyx.server.features.skill.models import SkillGroupShareRequest
-from onyx.server.features.skill.models import SkillPatchRequest
-from onyx.server.features.skill.models import SkillPreviewResponse
-from onyx.server.features.skill.models import SkillResponse
-from onyx.server.features.skill.models import SkillShareRequest
-from onyx.server.features.skill.models import SkillsList
-from onyx.server.features.skill.models import SkillUserShareRequest
-from onyx.server.features.skill.models import TransferSkillOwnershipRequest
+from orbyte.db.enums import SkillSharePermission
+from orbyte.server.features.skill.models import SkillCreateRequest
+from orbyte.server.features.skill.models import SkillEditableDetailResponse
+from orbyte.server.features.skill.models import SkillGroupShareRequest
+from orbyte.server.features.skill.models import SkillPatchRequest
+from orbyte.server.features.skill.models import SkillPreviewResponse
+from orbyte.server.features.skill.models import SkillResponse
+from orbyte.server.features.skill.models import SkillShareRequest
+from orbyte.server.features.skill.models import SkillsList
+from orbyte.server.features.skill.models import SkillUserShareRequest
+from orbyte.server.features.skill.models import TransferSkillOwnershipRequest
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser

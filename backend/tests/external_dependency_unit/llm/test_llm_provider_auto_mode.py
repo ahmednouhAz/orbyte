@@ -14,27 +14,27 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import LLMModelFlowType
-from onyx.db.llm import fetch_auto_mode_providers
-from onyx.db.llm import fetch_default_llm_model
-from onyx.db.llm import fetch_existing_llm_provider
-from onyx.db.llm import fetch_existing_llm_providers
-from onyx.db.llm import fetch_llm_provider_view
-from onyx.db.llm import remove_llm_provider
-from onyx.db.llm import sync_auto_mode_models
-from onyx.db.llm import update_default_provider
-from onyx.db.models import UserRole
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.interfaces import LLM
-from onyx.llm.well_known_providers.auto_update_models import LLMProviderRecommendation
-from onyx.llm.well_known_providers.auto_update_models import LLMRecommendations
-from onyx.llm.well_known_providers.models import SimpleKnownModel
-from onyx.server.manage.llm.api import put_llm_provider
-from onyx.server.manage.llm.api import (
+from orbyte.db.enums import LLMModelFlowType
+from orbyte.db.llm import fetch_auto_mode_providers
+from orbyte.db.llm import fetch_default_llm_model
+from orbyte.db.llm import fetch_existing_llm_provider
+from orbyte.db.llm import fetch_existing_llm_providers
+from orbyte.db.llm import fetch_llm_provider_view
+from orbyte.db.llm import remove_llm_provider
+from orbyte.db.llm import sync_auto_mode_models
+from orbyte.db.llm import update_default_provider
+from orbyte.db.models import UserRole
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.llm.interfaces import LLM
+from orbyte.llm.well_known_providers.auto_update_models import LLMProviderRecommendation
+from orbyte.llm.well_known_providers.auto_update_models import LLMRecommendations
+from orbyte.llm.well_known_providers.models import SimpleKnownModel
+from orbyte.server.manage.llm.api import put_llm_provider
+from orbyte.server.manage.llm.api import (
     test_default_provider as run_test_default_provider,
 )
-from onyx.server.manage.llm.models import LLMProviderUpsertRequest
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
+from orbyte.server.manage.llm.models import LLMProviderUpsertRequest
+from orbyte.server.manage.llm.models import ModelConfigurationUpsertRequest
 
 
 def _create_mock_admin() -> MagicMock:
@@ -124,7 +124,7 @@ class TestAutoModeSyncFeature:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Step 1-2: Upload provider with auto mode on and no model configs
@@ -223,7 +223,7 @@ class TestAutoModeSyncFeature:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Upload an OpenAI provider with auto mode
@@ -333,7 +333,7 @@ class TestAutoModeSyncFeature:
 
             # Step 2: Update provider to enable auto mode
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 put_llm_provider(
@@ -412,7 +412,7 @@ class TestAutoModeSyncFeature:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Upload an OpenAI provider (not in config)
@@ -519,7 +519,7 @@ class TestAutoModeSyncFeature:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Step 1: Create provider 1 (OpenAI) with auto mode
@@ -546,7 +546,7 @@ class TestAutoModeSyncFeature:
             update_default_provider(provider_1.id, provider_1_default_model, db_session)
 
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Step 2: Create provider 2 (Anthropic) with auto mode
@@ -589,7 +589,7 @@ class TestAutoModeSyncFeature:
 
             # Step 6: Run test_default_provider and verify it uses provider 2's model
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "orbyte.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 run_test_default_provider(_=_create_mock_admin())
 
@@ -753,7 +753,7 @@ class TestAutoModeTransitionsAndResync:
 
             # Step 2: Transition to auto mode
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=auto_config,
             ):
                 put_llm_provider(
@@ -814,7 +814,7 @@ class TestAutoModeTransitionsAndResync:
         try:
             # Step 1: Create in auto mode
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=initial_config,
             ):
                 put_llm_provider(
@@ -912,7 +912,7 @@ class TestAutoModeTransitionsAndResync:
         try:
             # Step 1: Create with config v1
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config_v1,
             ):
                 put_llm_provider(
@@ -981,7 +981,7 @@ class TestAutoModeTransitionsAndResync:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config,
             ):
                 put_llm_provider(
@@ -1077,7 +1077,7 @@ class TestAutoModeTransitionsAndResync:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config_v1,
             ):
                 put_llm_provider(
@@ -1178,7 +1178,7 @@ class TestAutoModeTransitionsAndResync:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config_v1,
             ):
                 put_llm_provider(
@@ -1263,7 +1263,7 @@ class TestAutoModeTransitionsAndResync:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "orbyte.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config,
             ):
                 put_llm_provider(

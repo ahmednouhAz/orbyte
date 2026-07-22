@@ -16,7 +16,7 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.server.features.skill.models import SkillPatchRequest
+from orbyte.server.features.skill.models import SkillPatchRequest
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.skill import SkillManager

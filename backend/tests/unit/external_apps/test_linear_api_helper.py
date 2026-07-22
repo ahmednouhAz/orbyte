@@ -1,7 +1,7 @@
 """The bundled ``linear_api.py`` sandbox helper: the pure ``IssueCreateInput``
 builder used by ``create-issue``. The helper is a standalone script under the
 skills dir (not an importable package), so load it by path. These tests require
-no network and no onyx imports."""
+no network and no orbyte imports."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from pathlib import Path
 from types import ModuleType
 
 _HELPER = (
-    Path(__file__).resolve().parents[3] / "onyx/skills/builtin" / "linear/linear_api.py"
+    Path(__file__).resolve().parents[3] / "orbyte/skills/builtin" / "linear/linear_api.py"
 )
 
 

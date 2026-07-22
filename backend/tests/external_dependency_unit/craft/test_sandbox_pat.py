@@ -11,17 +11,17 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.auth.pat import hash_pat
-from onyx.db.enums import PatType
-from onyx.db.enums import Permission
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import PersonalAccessToken
-from onyx.db.models import Sandbox
-from onyx.db.models import User
-from onyx.db.pat import create_pat
-from onyx.db.pat import list_user_pats
-from onyx.server.features.build.db.sandbox import ensure_sandbox_pat
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from orbyte.auth.pat import hash_pat
+from orbyte.db.enums import PatType
+from orbyte.db.enums import Permission
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import PersonalAccessToken
+from orbyte.db.models import Sandbox
+from orbyte.db.models import User
+from orbyte.db.pat import create_pat
+from orbyte.db.pat import list_user_pats
+from orbyte.server.features.build.db.sandbox import ensure_sandbox_pat
+from orbyte.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
@@ -51,7 +51,7 @@ class TestEnsureSandboxPat:
     ) -> None:
         raw_token = ensure_sandbox_pat(db_session, sandbox, test_user)
 
-        assert raw_token.startswith("onyx_pat_")
+        assert raw_token.startswith("orbyte_pat_")
         assert sandbox.encrypted_pat is not None
         decrypted = sandbox.encrypted_pat.get_value(apply_mask=False)
         assert decrypted == raw_token
@@ -100,7 +100,7 @@ class TestEnsureSandboxPat:
         token_2 = ensure_sandbox_pat(db_session, sandbox, test_user)
 
         assert token_2 != token_1
-        assert token_2.startswith("onyx_pat_")
+        assert token_2.startswith("orbyte_pat_")
 
         new_hashed = hash_pat(token_2)
         new_pat = (
@@ -160,7 +160,7 @@ class TestEnsureSandboxPat:
         # match what's in the DB). This is the "mismatched hash" scenario:
         # the encrypted_pat references some prior token that the DB no longer
         # has, or vice versa.
-        bogus_raw = "onyx_pat_bogus_does_not_correspond_to_db_row"
+        bogus_raw = "orbyte_pat_bogus_does_not_correspond_to_db_row"
         sandbox.encrypted_pat = bogus_raw  # ty: ignore[invalid-assignment]
         db_session.commit()
 
@@ -171,7 +171,7 @@ class TestEnsureSandboxPat:
         # pre-existing DB-only PAT.
         assert new_raw != bogus_raw
         assert new_raw != db_only_raw
-        assert new_raw.startswith("onyx_pat_")
+        assert new_raw.startswith("orbyte_pat_")
 
         # The previously-existing DB PAT was revoked.
         db_session.refresh(db_only_pat)
@@ -267,7 +267,7 @@ class TestEnsureSandboxPat:
         self,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        """``KubernetesSandboxManager.provision(onyx_pat="")`` must raise
+        """``KubernetesSandboxManager.provision(orbyte_pat="")`` must raise
         ValueError before issuing any K8s mutation — the empty-PAT guard is
         the last line of defence against pods coming up unauthenticated.
 
@@ -289,13 +289,13 @@ class TestEnsureSandboxPat:
 
         llm_config = default_llm_config()
 
-        with pytest.raises(ValueError, match="onyx_pat"):
+        with pytest.raises(ValueError, match="orbyte_pat"):
             manager.provision(
                 sandbox_id=uuid4(),
                 user_id=uuid4(),
                 tenant_id=POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE,
                 llm_config=llm_config,
-                onyx_pat="",
+                orbyte_pat="",
             )
 
     @pytest.mark.xfail(

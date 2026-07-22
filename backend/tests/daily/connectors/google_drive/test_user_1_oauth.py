@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
-from onyx.connectors.models import Document
+from orbyte.connectors.google_drive.connector import GoogleDriveConnector
+from orbyte.connectors.models import Document
 from tests.daily.connectors.google_drive.consts_and_utils import _clear_parents
 from tests.daily.connectors.google_drive.consts_and_utils import _pick
 from tests.daily.connectors.google_drive.consts_and_utils import ADMIN_FOLDER_3_FILE_IDS
@@ -67,7 +67,7 @@ def _check_for_error(
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_OAUTH_CREDENTIALS_JSON_STR_TEST_USER_1)
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_all(
@@ -111,7 +111,7 @@ def test_all(
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_OAUTH_CREDENTIALS_JSON_STR_TEST_USER_1)
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_shared_drives_only(
@@ -151,7 +151,7 @@ def test_shared_drives_only(
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_OAUTH_CREDENTIALS_JSON_STR_TEST_USER_1)
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_shared_with_me_only(
@@ -184,7 +184,7 @@ def test_shared_with_me_only(
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_OAUTH_CREDENTIALS_JSON_STR_TEST_USER_1)
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_my_drive_only(
@@ -217,7 +217,7 @@ def test_my_drive_only(
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_OAUTH_CREDENTIALS_JSON_STR_TEST_USER_1)
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_shared_my_drive_folder(
@@ -250,7 +250,7 @@ def test_shared_my_drive_folder(
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_OAUTH_CREDENTIALS_JSON_STR_TEST_USER_1)
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_shared_drive_folder(

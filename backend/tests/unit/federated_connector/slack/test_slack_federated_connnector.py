@@ -7,9 +7,9 @@ from unittest.mock import patch
 import pytest
 from pydantic import ValidationError
 
-from onyx.federated_connectors.models import OAuthResult
-from onyx.federated_connectors.slack.federated_connector import SlackFederatedConnector
-from onyx.federated_connectors.slack.models import SlackEntities
+from orbyte.federated_connectors.models import OAuthResult
+from orbyte.federated_connectors.slack.federated_connector import SlackFederatedConnector
+from orbyte.federated_connectors.slack.models import SlackEntities
 
 # Constants for mock Slack OAuth response
 MOCK_APP_ID = "A093M5L7Q92"
@@ -24,7 +24,7 @@ MOCK_REFRESH_TOKEN = (
 MOCK_TOKEN_TYPE = "user"
 MOCK_EXPIRES_IN = 31659
 MOCK_TEAM_ID = "T05SS40AFAM"
-MOCK_TEAM_NAME = "Onyx Team"
+MOCK_TEAM_NAME = "Orbyte Team"
 
 
 class TestSlackFederatedConnector:

@@ -12,9 +12,9 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.configs.constants import FileOrigin
-from onyx.file_store.postgres_file_store import POSTGRES_BUCKET_SENTINEL
-from onyx.file_store.postgres_file_store import PostgresBackedFileStore
+from orbyte.configs.constants import FileOrigin
+from orbyte.file_store.postgres_file_store import POSTGRES_BUCKET_SENTINEL
+from orbyte.file_store.postgres_file_store import PostgresBackedFileStore
 
 
 @pytest.fixture
@@ -54,7 +54,7 @@ class TestInitialize:
 
 class TestSaveFile:
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_save_bytes_content(
         self,
@@ -71,10 +71,10 @@ class TestSaveFile:
 
         with (
             patch(
-                "onyx.file_store.postgres_file_store.upsert_filerecord"
+                "orbyte.file_store.postgres_file_store.upsert_filerecord"
             ) as mock_upsert_fr,
             patch(
-                "onyx.file_store.postgres_file_store.upsert_file_content"
+                "orbyte.file_store.postgres_file_store.upsert_file_content"
             ) as mock_upsert_fc,
         ):
             content = BytesIO(b"test data")
@@ -102,7 +102,7 @@ class TestSaveFile:
         assert fc_kwargs["file_size"] == len(b"test data")
 
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_save_string_io_content(
         self,
@@ -119,8 +119,8 @@ class TestSaveFile:
         mock_session.connection.return_value.connection.dbapi_connection = raw_conn
 
         with (
-            patch("onyx.file_store.postgres_file_store.upsert_filerecord"),
-            patch("onyx.file_store.postgres_file_store.upsert_file_content"),
+            patch("orbyte.file_store.postgres_file_store.upsert_filerecord"),
+            patch("orbyte.file_store.postgres_file_store.upsert_file_content"),
         ):
             content = StringIO("text content")
             file_id = store.save_file(
@@ -136,7 +136,7 @@ class TestSaveFile:
         lobj.write.assert_called_once_with(b"text content")
 
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_save_rolls_back_on_error(
         self,
@@ -163,7 +163,7 @@ class TestSaveFile:
 
 class TestReadFile:
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_read_file_in_memory(
         self,
@@ -182,7 +182,7 @@ class TestReadFile:
         mock_session.connection.return_value.connection.dbapi_connection = raw_conn
 
         with patch(
-            "onyx.file_store.postgres_file_store.get_file_content_by_file_id",
+            "orbyte.file_store.postgres_file_store.get_file_content_by_file_id",
             return_value=mock_record,
         ):
             result = store.read_file("my-file", db_session=mock_session)
@@ -192,7 +192,7 @@ class TestReadFile:
 
 class TestDeleteFile:
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_delete_removes_lobject_and_records(
         self,
@@ -212,14 +212,14 @@ class TestDeleteFile:
 
         with (
             patch(
-                "onyx.file_store.postgres_file_store.get_file_content_by_file_id",
+                "orbyte.file_store.postgres_file_store.get_file_content_by_file_id",
                 return_value=mock_record,
             ),
             patch(
-                "onyx.file_store.postgres_file_store.delete_file_content_by_file_id"
+                "orbyte.file_store.postgres_file_store.delete_file_content_by_file_id"
             ) as mock_del_fc,
             patch(
-                "onyx.file_store.postgres_file_store.delete_filerecord_by_file_id"
+                "orbyte.file_store.postgres_file_store.delete_filerecord_by_file_id"
             ) as mock_del_fr,
         ):
             store.delete_file("file-77", db_session=mock_session)
@@ -232,7 +232,7 @@ class TestDeleteFile:
 
 class TestGetFileSize:
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_returns_stored_size(
         self,
@@ -246,7 +246,7 @@ class TestGetFileSize:
         mock_record.file_size = 1024
 
         with patch(
-            "onyx.file_store.postgres_file_store.get_file_content_by_file_id",
+            "orbyte.file_store.postgres_file_store.get_file_content_by_file_id",
             return_value=mock_record,
         ):
             size = store.get_file_size("file-1", db_session=mock_session)
@@ -254,7 +254,7 @@ class TestGetFileSize:
         assert size == 1024
 
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_returns_none_on_error(
         self,
@@ -265,7 +265,7 @@ class TestGetFileSize:
         mock_get_session.return_value = _make_session_ctx(mock_session)(None)
 
         with patch(
-            "onyx.file_store.postgres_file_store.get_file_content_by_file_id",
+            "orbyte.file_store.postgres_file_store.get_file_content_by_file_id",
             side_effect=RuntimeError("not found"),
         ):
             size = store.get_file_size("missing", db_session=mock_session)
@@ -275,7 +275,7 @@ class TestGetFileSize:
 
 class TestChangeFileId:
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_reuses_same_lobject(
         self,
@@ -295,16 +295,16 @@ class TestChangeFileId:
 
         with (
             patch(
-                "onyx.file_store.postgres_file_store.get_filerecord_by_file_id",
+                "orbyte.file_store.postgres_file_store.get_filerecord_by_file_id",
                 return_value=old_fr,
             ),
             patch(
-                "onyx.file_store.postgres_file_store.upsert_filerecord"
+                "orbyte.file_store.postgres_file_store.upsert_filerecord"
             ) as mock_upsert_fr,
             patch(
-                "onyx.file_store.postgres_file_store.transfer_file_content_file_id"
+                "orbyte.file_store.postgres_file_store.transfer_file_content_file_id"
             ) as mock_transfer,
-            patch("onyx.file_store.postgres_file_store.delete_filerecord_by_file_id"),
+            patch("orbyte.file_store.postgres_file_store.delete_filerecord_by_file_id"),
         ):
             store.change_file_id("old-id", "new-id", db_session=mock_session)
 
@@ -321,7 +321,7 @@ class TestChangeFileId:
 
 class TestHasFile:
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_returns_true_when_present(
         self,
@@ -336,7 +336,7 @@ class TestHasFile:
         record.file_type = "text/plain"
 
         with patch(
-            "onyx.file_store.postgres_file_store.get_filerecord_by_file_id_optional",
+            "orbyte.file_store.postgres_file_store.get_filerecord_by_file_id_optional",
             return_value=record,
         ):
             assert store.has_file(
@@ -344,7 +344,7 @@ class TestHasFile:
             )
 
     @patch(
-        "onyx.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
+        "orbyte.file_store.postgres_file_store.get_session_with_current_tenant_if_none"
     )
     def test_returns_false_when_absent(
         self,
@@ -355,7 +355,7 @@ class TestHasFile:
         mock_get_session.return_value = _make_session_ctx(mock_session)(None)
 
         with patch(
-            "onyx.file_store.postgres_file_store.get_filerecord_by_file_id_optional",
+            "orbyte.file_store.postgres_file_store.get_filerecord_by_file_id_optional",
             return_value=None,
         ):
             assert not store.has_file(

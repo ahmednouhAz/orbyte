@@ -3,7 +3,7 @@ import argparse
 import requests
 
 API_SERVER_URL = "http://localhost:3000"
-API_KEY = "onyx-api-key"  # API key here, if auth is enabled
+API_KEY = "orbyte-api-key"  # API key here, if auth is enabled
 
 
 def resume_paused_connectors(

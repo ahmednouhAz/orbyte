@@ -32,7 +32,7 @@ INDEXING_MODEL_SERVER_PORT = int(
     os.environ.get("INDEXING_MODEL_SERVER_PORT") or MODEL_SERVER_PORT
 )
 
-# Onyx custom Deep Learning Models
+# Orbyte custom Deep Learning Models
 CONNECTOR_CLASSIFIER_MODEL_REPO = "Danswer/filter-extraction-model"
 CONNECTOR_CLASSIFIER_MODEL_TAG = "1.0.0"
 INTENT_MODEL_VERSION = "onyx-dot-app/hybrid-intent-token-classifier"
@@ -68,13 +68,13 @@ INDEXING_ONLY = os.environ.get("INDEXING_ONLY", "").lower() == "true"
 # The process needs to have this for the log file to write to
 # otherwise, it will not create additional log files
 # This should just be the filename base without extension or path.
-LOG_FILE_NAME = os.environ.get("LOG_FILE_NAME") or "onyx"
+LOG_FILE_NAME = os.environ.get("LOG_FILE_NAME") or "orbyte"
 
 # Enable generating persistent log files for local dev environments
 DEV_LOGGING_ENABLED = os.environ.get("DEV_LOGGING_ENABLED", "").lower() == "true"
 # File logging is on by default. Set LOG_TO_FILE=false to disable it for a given
 # pod/process — it then logs to stdout only (e.g. read-only-root containers where
-# /var/log/onyx isn't writable).
+# /var/log/orbyte isn't writable).
 LOG_TO_FILE = os.environ.get("LOG_TO_FILE", "true").lower() != "false"
 # notset, debug, info, notice, warning, error, or critical
 LOG_LEVEL = os.environ.get("LOG_LEVEL") or "info"

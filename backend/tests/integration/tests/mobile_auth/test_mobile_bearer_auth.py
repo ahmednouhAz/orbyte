@@ -5,7 +5,7 @@ session token as a Bearer (Authorization header) instead of the web cookie,
 and that the web cookie flow is unaffected.
 """
 
-from onyx.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
+from orbyte.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser

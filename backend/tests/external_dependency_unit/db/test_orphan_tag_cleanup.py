@@ -11,14 +11,14 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import Document
-from onyx.db.models import Document__Tag
-from onyx.db.models import Tag
-from onyx.db.tag import _delete_orphan_tags_batch
-from onyx.db.tag import delete_orphan_tags__no_commit
-from onyx.db.tag import delete_orphan_tags_batched
+from orbyte.configs.constants import DocumentSource
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.models import Document
+from orbyte.db.models import Document__Tag
+from orbyte.db.models import Tag
+from orbyte.db.tag import _delete_orphan_tags_batch
+from orbyte.db.tag import delete_orphan_tags__no_commit
+from orbyte.db.tag import delete_orphan_tags_batched
 
 
 def _seed_orphan_tags(db_session: Session, count: int) -> list[int]:
@@ -89,7 +89,7 @@ class TestOrphanTagCleanup:
         linked_ids = _seed_linked_tags(db_session, 3)
 
         with patch(
-            "onyx.db.tag._delete_orphan_tags_batch",
+            "orbyte.db.tag._delete_orphan_tags_batch",
             wraps=_delete_orphan_tags_batch,
         ) as batch_spy:
             total_deleted = delete_orphan_tags_batched(db_session, batch_size=10)
@@ -111,7 +111,7 @@ class TestOrphanTagCleanup:
         linked_ids = _seed_linked_tags(db_session, 2)
 
         with patch(
-            "onyx.db.tag._delete_orphan_tags_batch",
+            "orbyte.db.tag._delete_orphan_tags_batch",
             wraps=_delete_orphan_tags_batch,
         ) as batch_spy:
             total_deleted = delete_orphan_tags_batched(db_session, batch_size=10)

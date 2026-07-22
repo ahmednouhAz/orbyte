@@ -23,11 +23,11 @@ from docker.errors import APIError
 from docker.errors import NotFound
 from docker.models.containers import Container
 
-from onyx.sandbox_proxy.identity_docker import _identity_from_container
-from onyx.sandbox_proxy.identity_docker import DockerEventsLookup
+from orbyte.sandbox_proxy.identity_docker import _identity_from_container
+from orbyte.sandbox_proxy.identity_docker import DockerEventsLookup
 
 _DOCKER_SOCKET = os.environ.get("SANDBOX_DOCKER_SOCKET", "/var/run/docker.sock")
-_TEST_NETWORK = "onyx-craft-sandbox-test"
+_TEST_NETWORK = "orbyte-craft-sandbox-test"
 _BUSYBOX_IMAGE = "busybox:1.36"
 
 

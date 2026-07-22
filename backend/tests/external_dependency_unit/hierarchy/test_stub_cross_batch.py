@@ -13,13 +13,13 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import HierarchyNode as PydanticHierarchyNode
-from onyx.db.enums import HierarchyNodeType
-from onyx.db.hierarchy import ensure_source_node_exists
-from onyx.db.hierarchy import get_hierarchy_node_by_raw_id
-from onyx.db.hierarchy import get_source_hierarchy_node
-from onyx.db.hierarchy import upsert_hierarchy_nodes_batch
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.models import HierarchyNode as PydanticHierarchyNode
+from orbyte.db.enums import HierarchyNodeType
+from orbyte.db.hierarchy import ensure_source_node_exists
+from orbyte.db.hierarchy import get_hierarchy_node_by_raw_id
+from orbyte.db.hierarchy import get_source_hierarchy_node
+from orbyte.db.hierarchy import upsert_hierarchy_nodes_batch
 
 
 @pytest.fixture()

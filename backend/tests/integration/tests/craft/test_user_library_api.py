@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from uuid import uuid4
 
-from onyx.server.features.build.user_library.api import DeleteFileResponse
-from onyx.server.features.build.user_library.api import LibraryEntryResponse
-from onyx.server.features.build.user_library.api import UploadResponse
+from orbyte.server.features.build.user_library.api import DeleteFileResponse
+from orbyte.server.features.build.user_library.api import LibraryEntryResponse
+from orbyte.server.features.build.user_library.api import UploadResponse
 from tests.integration.common_utils.test_models import DATestUser
 from tests.integration.tests.craft.user_library_http import delete_user_library_file
 from tests.integration.tests.craft.user_library_http import list_user_library_tree

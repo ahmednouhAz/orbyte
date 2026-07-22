@@ -23,36 +23,36 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.access.models import DocumentAccess
-from onyx.background.celery.tasks.port import tasks as port_task
-from onyx.background.celery.tasks.port.tasks import run_check_for_port
-from onyx.background.celery.tasks.port.tasks import run_port_attempt
-from onyx.configs.constants import DocumentSource
-from onyx.configs.model_configs import ASYM_PASSAGE_PREFIX
-from onyx.configs.model_configs import ASYM_QUERY_PREFIX
-from onyx.context.search.models import SavedSearchSettings
-from onyx.db import swap_index
-from onyx.db.enums import EmbeddingPrecision
-from onyx.db.enums import IndexingStatus
-from onyx.db.enums import IndexModelStatus
-from onyx.db.enums import PortAttemptStatus
-from onyx.db.enums import SwitchoverType
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import IndexAttempt
-from onyx.db.models import PortAttempt
-from onyx.db.models import SearchSettings
-from onyx.db.port_attempt import get_port_attempt
-from onyx.db.search_settings import create_search_settings
-from onyx.db.search_settings import get_current_search_settings
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.client import OpenSearchIndexClient
-from onyx.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
-from onyx.document_index.opensearch.opensearch_document_index import (
+from orbyte.access.models import DocumentAccess
+from orbyte.background.celery.tasks.port import tasks as port_task
+from orbyte.background.celery.tasks.port.tasks import run_check_for_port
+from orbyte.background.celery.tasks.port.tasks import run_port_attempt
+from orbyte.configs.constants import DocumentSource
+from orbyte.configs.model_configs import ASYM_PASSAGE_PREFIX
+from orbyte.configs.model_configs import ASYM_QUERY_PREFIX
+from orbyte.context.search.models import SavedSearchSettings
+from orbyte.db import swap_index
+from orbyte.db.enums import EmbeddingPrecision
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.enums import IndexModelStatus
+from orbyte.db.enums import PortAttemptStatus
+from orbyte.db.enums import SwitchoverType
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import PortAttempt
+from orbyte.db.models import SearchSettings
+from orbyte.db.port_attempt import get_port_attempt
+from orbyte.db.search_settings import create_search_settings
+from orbyte.db.search_settings import get_current_search_settings
+from orbyte.document_index.interfaces_new import TenantState
+from orbyte.document_index.opensearch.client import OpenSearchIndexClient
+from orbyte.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
+from orbyte.document_index.opensearch.opensearch_document_index import (
     generate_opensearch_filtered_access_control_list,
 )
-from onyx.document_index.opensearch.schema import DocumentChunk
-from onyx.document_index.opensearch.schema import DocumentSchema
-from onyx.document_index.opensearch.schema import get_opensearch_doc_chunk_id
+from orbyte.document_index.opensearch.schema import DocumentChunk
+from orbyte.document_index.opensearch.schema import DocumentSchema
+from orbyte.document_index.opensearch.schema import get_opensearch_doc_chunk_id
 from shared_configs.configs import MODEL_SERVER_HOST
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA
 from shared_configs.contextvars import get_current_tenant_id

@@ -3,9 +3,9 @@ import os
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.gitlab.connector import GitlabConnector
-from onyx.connectors.models import HierarchyNode
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.gitlab.connector import GitlabConnector
+from orbyte.connectors.models import HierarchyNode
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(TestSecret.GITLAB_ACCESS_TOKEN)
@@ -16,8 +16,8 @@ def gitlab_connector(
     test_secrets: dict[TestSecret, str],
 ) -> GitlabConnector:
     connector = GitlabConnector(
-        project_owner="onyx2895818",
-        project_name="onyx",
+        project_owner="orbyte2895818",
+        project_name="orbyte",
         include_mrs=True,
         include_issues=True,
         include_code_files=True,  # Include code files in the test
@@ -107,7 +107,7 @@ def test_gitlab_connector_basic(gitlab_connector: GitlabConnector) -> None:
             # ID is a git hash (e.g., 'd177...'), Link is the blob URL
             assert doc.id != section.link
             assert section.link.endswith("/README.md")
-            assert "# onyx" in section.text  # Check for a known part of the content
+            assert "# orbyte" in section.text  # Check for a known part of the content
             # Code files might not have primary owners assigned this way
             # assert len(doc.primary_owners) == 0
             validated_code_file = True

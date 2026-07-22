@@ -57,15 +57,15 @@ from typing import Any
 from typing import cast
 from uuid import UUID
 
-from onyx.server.features.build.sandbox.base import SandboxEvent
-from onyx.server.features.build.sandbox.base import SandboxManager
-from onyx.server.features.build.sandbox.models import FileSet
-from onyx.server.features.build.sandbox.models import FilesystemEntry
-from onyx.server.features.build.sandbox.models import LLMProviderConfig
-from onyx.server.features.build.sandbox.models import SandboxInfo
-from onyx.server.features.build.sandbox.models import SnapshotResult
-from onyx.server.features.build.sandbox.serve_transport import PromptSlot
-from onyx.server.features.build.sandbox.serve_transport import ServeConnectionInfo
+from orbyte.server.features.build.sandbox.base import SandboxEvent
+from orbyte.server.features.build.sandbox.base import SandboxManager
+from orbyte.server.features.build.sandbox.models import FileSet
+from orbyte.server.features.build.sandbox.models import FilesystemEntry
+from orbyte.server.features.build.sandbox.models import LLMProviderConfig
+from orbyte.server.features.build.sandbox.models import SandboxInfo
+from orbyte.server.features.build.sandbox.models import SnapshotResult
+from orbyte.server.features.build.sandbox.serve_transport import PromptSlot
+from orbyte.server.features.build.sandbox.serve_transport import ServeConnectionInfo
 
 _UNSET = object()
 
@@ -272,7 +272,7 @@ class StubSandboxManager(SandboxManager):
         user_id: UUID,
         tenant_id: str,
         llm_config: LLMProviderConfig,
-        onyx_pat: str | None = None,
+        orbyte_pat: str | None = None,
         *,
         all_llm_configs: list[LLMProviderConfig] | None = None,
     ) -> SandboxInfo:
@@ -282,7 +282,7 @@ class StubSandboxManager(SandboxManager):
             "user_id": user_id,
             "tenant_id": tenant_id,
             "llm_config": llm_config,
-            "onyx_pat": onyx_pat,
+            "orbyte_pat": orbyte_pat,
             "all_llm_configs": all_llm_configs,
         }
         if self.provision_returns is None:

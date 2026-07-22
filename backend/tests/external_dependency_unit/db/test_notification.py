@@ -7,16 +7,16 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import NotificationType
-from onyx.db.models import Notification
-from onyx.db.models import User
-from onyx.db.notification import batch_create_notifications
-from onyx.db.notification import count_notifications
-from onyx.db.notification import create_notification
-from onyx.db.notification import delete_notifications_by_additional_data
-from onyx.db.notification import dismiss_user_notifications
-from onyx.db.notification import get_notifications
-from onyx.server.features.notifications import api as notifications_api
+from orbyte.configs.constants import NotificationType
+from orbyte.db.models import Notification
+from orbyte.db.models import User
+from orbyte.db.notification import batch_create_notifications
+from orbyte.db.notification import count_notifications
+from orbyte.db.notification import create_notification
+from orbyte.db.notification import delete_notifications_by_additional_data
+from orbyte.db.notification import dismiss_user_notifications
+from orbyte.db.notification import get_notifications
+from orbyte.server.features.notifications import api as notifications_api
 from tests.external_dependency_unit.conftest import create_test_user
 
 

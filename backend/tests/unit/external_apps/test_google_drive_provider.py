@@ -1,17 +1,17 @@
-"""The Google Drive built-in provider: full read/write, Onyx-managed, and its
+"""The Google Drive built-in provider: full read/write, Orbyte-managed, and its
 action catalog matches the request paths the bundled ``gdrive_api.py`` helper
 calls. Reads are auto-approved (ALWAYS); mutations default to ASK."""
 
 from __future__ import annotations
 
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.providers.actions import path_matches
-from onyx.external_apps.providers.actions import RestRoute
-from onyx.external_apps.providers.base import OnyxManagedExtApp
-from onyx.external_apps.providers.google_drive import GoogleDriveAction
-from onyx.external_apps.providers.google_drive import GoogleDriveProvider
-from onyx.external_apps.providers.registry import PROVIDERS
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.external_apps.providers.actions import path_matches
+from orbyte.external_apps.providers.actions import RestRoute
+from orbyte.external_apps.providers.base import OrbyteManagedExtApp
+from orbyte.external_apps.providers.google_drive import GoogleDriveAction
+from orbyte.external_apps.providers.google_drive import GoogleDriveProvider
+from orbyte.external_apps.providers.registry import PROVIDERS
 
 _READ_ACTIONS = {
     GoogleDriveAction.FILES_READ,
@@ -29,7 +29,7 @@ def _provider() -> GoogleDriveProvider:
 
 def test_registered_as_managed_drive_provider() -> None:
     provider = _provider()
-    assert isinstance(provider, OnyxManagedExtApp)
+    assert isinstance(provider, OrbyteManagedExtApp)
     assert provider.spec.app_type == ExternalAppType.GOOGLE_DRIVE
 
 

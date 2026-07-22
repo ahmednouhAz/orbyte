@@ -4,9 +4,9 @@ from uuid import UUID
 
 import httpx
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import Permission
-from onyx.db.pat import create_pat
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.enums import Permission
+from orbyte.db.pat import create_pat
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestPAT

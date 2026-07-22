@@ -12,33 +12,33 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_AUTHENTICATION_METHOD,
 )
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_DICT_SERVICE_ACCOUNT_KEY,
 )
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_PRIMARY_ADMIN_KEY,
 )
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_utils.shared_constants import (
     GoogleOAuthAuthenticationMethod,
 )
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import IndexingStatus
-from onyx.db.models import Connector
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Credential
-from onyx.db.models import IndexAttempt
-from onyx.db.models import IndexAttemptError
-from onyx.db.models import TargetedReindexJob
-from onyx.db.models import TargetedReindexJobTarget
-from onyx.db.search_settings import get_current_search_settings
+from orbyte.connectors.models import InputType
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.models import Connector
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Credential
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import IndexAttemptError
+from orbyte.db.models import TargetedReindexJob
+from orbyte.db.models import TargetedReindexJobTarget
+from orbyte.db.search_settings import get_current_search_settings
 
-_ADMIN_EMAIL = "admin@onyx-test.com"
+_ADMIN_EMAIL = "admin@orbyte-test.com"
 
 
 def _parse_credentials(env_str: str) -> dict[str, Any]:

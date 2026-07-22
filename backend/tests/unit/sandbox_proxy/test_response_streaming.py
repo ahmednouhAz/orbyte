@@ -7,7 +7,7 @@ not buffered whole. This is the only assertion that catches the real failure
 mode (hooking `response` instead of `responseheaders`); pinning
 `flow.response.stream` on a mock would not, since the relay never runs.
 
-Uses real local TCP sockets only; no Onyx services are touched (the db/cache
+Uses real local TCP sockets only; no Orbyte services are touched (the db/cache
 factories are wired to raise if consulted), so this lives in the unit suite.
 """
 
@@ -32,12 +32,12 @@ from mitmproxy import http as mitm_http
 from mitmproxy.options import Options
 from mitmproxy.tools.dump import DumpMaster
 
-from onyx.sandbox_proxy.addons import gate
-from onyx.sandbox_proxy.addons.gate import _IdentityResolver
-from onyx.sandbox_proxy.addons.gate import GateAddon
-from onyx.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from onyx.sandbox_proxy.identity import ResolvedSandbox
-from onyx.sandbox_proxy.request_evaluator import RequestEvaluator
+from orbyte.sandbox_proxy.addons import gate
+from orbyte.sandbox_proxy.addons.gate import _IdentityResolver
+from orbyte.sandbox_proxy.addons.gate import GateAddon
+from orbyte.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from orbyte.sandbox_proxy.identity import ResolvedSandbox
+from orbyte.sandbox_proxy.request_evaluator import RequestEvaluator
 
 # Inter-chunk delay on the upstream. The whole stream takes
 # `(_CHUNK_COUNT - 1) * _CHUNK_DELAY_S`, during which a streamed client must

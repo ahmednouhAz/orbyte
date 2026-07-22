@@ -8,11 +8,11 @@ from unittest.mock import patch
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.llm import update_default_provider
-from onyx.db.llm import upsert_llm_provider
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.models import LLMProviderUpsertRequest
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
+from orbyte.db.llm import update_default_provider
+from orbyte.db.llm import upsert_llm_provider
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.server.manage.llm.models import LLMProviderUpsertRequest
+from orbyte.server.manage.llm.models import ModelConfigurationUpsertRequest
 
 # Counter for generating unique file IDs in mock file store
 _mock_file_id_counter = 0
@@ -69,7 +69,7 @@ def mock_nlp_embeddings_post() -> Iterator[None]:
         return resp
 
     with patch(
-        "onyx.natural_language_processing.search_nlp_models.requests.post",
+        "orbyte.natural_language_processing.search_nlp_models.requests.post",
         side_effect=_mock_post,
     ):
         yield
@@ -79,7 +79,7 @@ def mock_nlp_embeddings_post() -> Iterator[None]:
 def mock_gpu_status() -> Iterator[None]:
     """Avoid hitting model server for GPU status checks."""
     with patch(
-        "onyx.utils.gpu_utils._get_gpu_status_from_model_server", return_value=False
+        "orbyte.utils.gpu_utils._get_gpu_status_from_model_server", return_value=False
     ):
         yield
 
@@ -88,7 +88,7 @@ def mock_gpu_status() -> Iterator[None]:
 def mock_vespa_query() -> Iterator[None]:
     """Stub Vespa query to a safe empty response to avoid CI flakiness."""
     with patch(
-        "onyx.document_index.vespa.vespa_document_index.query_vespa", return_value=[]
+        "orbyte.document_index.vespa.vespa_document_index.query_vespa", return_value=[]
     ):
         yield
 
@@ -109,7 +109,7 @@ def mock_file_store() -> Iterator[None]:
     mock_store.initialize.return_value = None
 
     with patch(
-        "onyx.file_store.utils.get_default_file_store",
+        "orbyte.file_store.utils.get_default_file_store",
         return_value=mock_store,
     ):
         yield

@@ -10,7 +10,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from onyx.configs.constants import DocumentSource
+from orbyte.configs.constants import DocumentSource
 
 # revision identifiers, used by Alembic.
 revision = "81c22b1e2e78"

@@ -20,7 +20,7 @@ import os
 
 import pytest
 
-from onyx.db.models import UserRole
+from orbyte.db.models import UserRole
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.user import DATestUser

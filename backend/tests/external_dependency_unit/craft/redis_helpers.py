@@ -6,7 +6,7 @@ import threading
 
 from redis import Redis
 
-from onyx.redis.tenant_redis_client import TenantRedisClient
+from orbyte.redis.tenant_redis_client import TenantRedisClient
 
 
 def assert_lock_serializes_two_threads(

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Benchmarks OpenSearchDocumentIndex latency.
 
-Requires Onyx to be running as it reads search settings from the database.
+Requires Orbyte to be running as it reads search settings from the database.
 
 Usage:
     source .venv/bin/activate
@@ -15,17 +15,17 @@ import time
 from scripts.debugging.opensearch.constants import DEV_TENANT_ID
 from scripts.debugging.opensearch.embedding_io import load_query_embedding_from_file
 
-from onyx.configs.chat_configs import NUM_RETURNED_HITS
-from onyx.context.search.enums import QueryType
-from onyx.context.search.models import IndexFilters
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.search_settings import get_current_search_settings
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.opensearch_document_index import (
+from orbyte.configs.chat_configs import NUM_RETURNED_HITS
+from orbyte.context.search.enums import QueryType
+from orbyte.context.search.models import IndexFilters
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.search_settings import get_current_search_settings
+from orbyte.document_index.interfaces_new import TenantState
+from orbyte.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
-from onyx.indexing.models import IndexingSetting
+from orbyte.indexing.models import IndexingSetting
 from shared_configs.configs import MULTI_TENANT
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from shared_configs.contextvars import get_current_tenant_id

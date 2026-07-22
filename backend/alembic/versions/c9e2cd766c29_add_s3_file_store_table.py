@@ -14,8 +14,8 @@ from typing import cast
 
 from botocore.exceptions import ClientError
 
-from onyx.db._deprecated.pg_file_store import delete_lobj_by_id, read_lobj
-from onyx.file_store.file_store import get_s3_file_store
+from orbyte.db._deprecated.pg_file_store import delete_lobj_by_id, read_lobj
+from orbyte.file_store.file_store import get_s3_file_store
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 
 # revision identifiers, used by Alembic.
@@ -171,7 +171,7 @@ def _migrate_files_to_postgres() -> None:
             file_io.seek(0)
 
             # Import lazily to avoid circular deps at Alembic runtime
-            from onyx.db._deprecated.pg_file_store import (
+            from orbyte.db._deprecated.pg_file_store import (
                 create_populate_lobj,
             )  # noqa: E402
 

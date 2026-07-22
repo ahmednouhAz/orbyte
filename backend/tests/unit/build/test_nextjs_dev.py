@@ -7,9 +7,9 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 from uuid import UUID
 
-from onyx.server.features.build.sandbox import nextjs_dev
-from onyx.server.features.build.sandbox.nextjs_dev import build_nextjs_start_script
-from onyx.server.features.build.session.manager import SessionManager
+from orbyte.server.features.build.sandbox import nextjs_dev
+from orbyte.server.features.build.sandbox.nextjs_dev import build_nextjs_start_script
+from orbyte.server.features.build.session.manager import SessionManager
 
 _SESSION_PATH = "/workspace/sessions/0d9ed7f2-8757-4d09-9812-bd7e4a45e232"
 
@@ -24,12 +24,12 @@ _TEMPLATE_NEXT_CONFIG = (
 
 
 def test_start_script_exports_allowed_dev_origins() -> None:
-    with patch.object(nextjs_dev, "WEB_DOMAIN", "https://cloud.onyx.app"):
+    with patch.object(nextjs_dev, "WEB_DOMAIN", "https://cloud.orbyte.app"):
         script = build_nextjs_start_script(_SESSION_PATH, 3010)
 
-    assert 'export ONYX_WEBAPP_ALLOWED_DEV_ORIGINS="cloud.onyx.app"' in script
+    assert 'export ORBYTE_WEBAPP_ALLOWED_DEV_ORIGINS="cloud.orbyte.app"' in script
     assert (
-        'export ONYX_WEBAPP_BASE_PATH="/api/build/sessions/'
+        'export ORBYTE_WEBAPP_BASE_PATH="/api/build/sessions/'
         f'$(basename {_SESSION_PATH})/webapp"' in script
     )
     assert "-p 3010" in script
@@ -40,7 +40,7 @@ def test_start_script_allowed_dev_origins_is_hostname_only() -> None:
     with patch.object(nextjs_dev, "WEB_DOMAIN", "http://localhost:3000"):
         script = build_nextjs_start_script(_SESSION_PATH, 3010)
 
-    assert 'export ONYX_WEBAPP_ALLOWED_DEV_ORIGINS="localhost"' in script
+    assert 'export ORBYTE_WEBAPP_ALLOWED_DEV_ORIGINS="localhost"' in script
 
 
 def test_start_script_config_rewrite_matches_scaffold_template() -> None:
@@ -67,11 +67,11 @@ def test_nextjs_ready_probe_targets_base_path_dev_asset() -> None:
 
     with (
         patch(
-            "onyx.server.features.build.session.manager.get_sandbox_manager",
+            "orbyte.server.features.build.session.manager.get_sandbox_manager",
             return_value=sandbox_manager,
         ),
         patch(
-            "onyx.server.features.build.session.manager.httpx.Client",
+            "orbyte.server.features.build.session.manager.httpx.Client",
             return_value=http_client,
         ),
     ):
@@ -81,5 +81,5 @@ def test_nextjs_ready_probe_targets_base_path_dev_asset() -> None:
     assert ready is True
     http_client.get.assert_called_once_with(
         f"http://sandbox-x:3010/api/build/sessions/{session_id}/webapp"
-        "/_next/static/onyx-ready-probe.js"
+        "/_next/static/orbyte-ready-probe.js"
     )

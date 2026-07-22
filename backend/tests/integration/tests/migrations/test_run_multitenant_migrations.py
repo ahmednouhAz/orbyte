@@ -22,7 +22,7 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
-from onyx.db.engine.sql_engine import SqlEngine
+from orbyte.db.engine.sql_engine import SqlEngine
 
 pytestmark = pytest.mark.alembic
 

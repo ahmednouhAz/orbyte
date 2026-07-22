@@ -16,10 +16,10 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.features.build.configs import OPENCODE_SERVER_PASSWORD
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SandboxBackend
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.server.features.build.configs import OPENCODE_SERVER_PASSWORD
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SandboxBackend
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.build_session import BuildSessionManager

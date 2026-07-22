@@ -4,19 +4,19 @@ from datetime import timezone
 
 import pytest
 
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.models import SlimDocument
-from onyx.connectors.slack.connector import SlackConnector
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.models import SlimDocument
+from orbyte.connectors.slack.connector import SlackConnector
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.utils.secret_names import TestSecret
 
 PUBLIC_CHANNEL_NAME = "#daily-connector-test-channel"
 PRIVATE_CHANNEL_NAME = "#private-channel"
 PRIVATE_CHANNEL_USERS = [
-    "admin@onyx-test.com",
-    "test_user_1@onyx-test.com",
+    "admin@orbyte-test.com",
+    "test_user_1@orbyte-test.com",
     # user 2 added via a group
-    "test_user_2@onyx-test.com",
+    "test_user_2@orbyte-test.com",
 ]
 
 # Predates any test workspace messages, so the result set should match

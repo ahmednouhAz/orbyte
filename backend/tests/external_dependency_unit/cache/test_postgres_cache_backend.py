@@ -10,11 +10,11 @@ from uuid import uuid4
 
 from sqlalchemy import select
 
-from onyx.cache.interface import TTL_KEY_NOT_FOUND
-from onyx.cache.interface import TTL_NO_EXPIRY
-from onyx.cache.postgres_backend import cleanup_expired_cache_entries
-from onyx.cache.postgres_backend import PostgresCacheBackend
-from onyx.db.models import CacheStore
+from orbyte.cache.interface import TTL_KEY_NOT_FOUND
+from orbyte.cache.interface import TTL_NO_EXPIRY
+from orbyte.cache.postgres_backend import cleanup_expired_cache_entries
+from orbyte.cache.postgres_backend import PostgresCacheBackend
+from orbyte.db.models import CacheStore
 
 
 def _key() -> str:
@@ -204,7 +204,7 @@ class TestList:
 
 class TestCleanup:
     def test_removes_expired_rows(self, pg_cache: PostgresCacheBackend) -> None:
-        from onyx.db.engine.sql_engine import get_session_with_current_tenant
+        from orbyte.db.engine.sql_engine import get_session_with_current_tenant
 
         k = _key()
         pg_cache.set(k, b"stale", ex=1)

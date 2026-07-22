@@ -10,12 +10,12 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from ee.onyx.db.hierarchy import _search_accessible_hierarchy_nodes as ee_search
-from onyx.configs.constants import DocumentSource
-from onyx.db.enums import HierarchyNodeType
-from onyx.db.hierarchy import _search_accessible_hierarchy_nodes as mit_search
-from onyx.db.hierarchy import get_source_hierarchy_node
-from onyx.db.models import HierarchyNode
+from ee.orbyte.db.hierarchy import _search_accessible_hierarchy_nodes as ee_search
+from orbyte.configs.constants import DocumentSource
+from orbyte.db.enums import HierarchyNodeType
+from orbyte.db.hierarchy import _search_accessible_hierarchy_nodes as mit_search
+from orbyte.db.hierarchy import get_source_hierarchy_node
+from orbyte.db.models import HierarchyNode
 
 
 def _node(

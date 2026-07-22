@@ -6,7 +6,7 @@ from uuid import UUID
 
 import httpx
 
-from onyx.db.enums import SharingScope
+from orbyte.db.enums import SharingScope
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.build_session import BuildSessionManager

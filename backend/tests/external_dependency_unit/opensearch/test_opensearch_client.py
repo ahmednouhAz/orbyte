@@ -18,40 +18,40 @@ from opensearchpy import ConflictError
 from opensearchpy import NotFoundError
 from opensearchpy.helpers import BulkIndexError
 
-import onyx.document_index.opensearch.client as client_module
-from onyx.access.models import DocumentAccess
-from onyx.access.utils import prefix_user_email
-from onyx.configs.constants import DocumentSource
-from onyx.context.search.models import IndexFilters
-from onyx.context.search.models import TimeRange
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.client import OpenSearchDocumentMissingError
-from onyx.document_index.opensearch.client import OpenSearchIndexClient
-from onyx.document_index.opensearch.client import OpenSearchIndexError
-from onyx.document_index.opensearch.client import OpenSearchServerSideTimeout
-from onyx.document_index.opensearch.client import OpenSearchUpdateError
-from onyx.document_index.opensearch.client import wait_for_opensearch_with_timeout
-from onyx.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
-from onyx.document_index.opensearch.constants import HybridSearchNormalizationPipeline
-from onyx.document_index.opensearch.constants import HybridSearchSubqueryConfiguration
-from onyx.document_index.opensearch.constants import OpenSearchSearchType
-from onyx.document_index.opensearch.opensearch_document_index import (
+import orbyte.document_index.opensearch.client as client_module
+from orbyte.access.models import DocumentAccess
+from orbyte.access.utils import prefix_user_email
+from orbyte.configs.constants import DocumentSource
+from orbyte.context.search.models import IndexFilters
+from orbyte.context.search.models import TimeRange
+from orbyte.document_index.interfaces_new import TenantState
+from orbyte.document_index.opensearch.client import OpenSearchDocumentMissingError
+from orbyte.document_index.opensearch.client import OpenSearchIndexClient
+from orbyte.document_index.opensearch.client import OpenSearchIndexError
+from orbyte.document_index.opensearch.client import OpenSearchServerSideTimeout
+from orbyte.document_index.opensearch.client import OpenSearchUpdateError
+from orbyte.document_index.opensearch.client import wait_for_opensearch_with_timeout
+from orbyte.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
+from orbyte.document_index.opensearch.constants import HybridSearchNormalizationPipeline
+from orbyte.document_index.opensearch.constants import HybridSearchSubqueryConfiguration
+from orbyte.document_index.opensearch.constants import OpenSearchSearchType
+from orbyte.document_index.opensearch.opensearch_document_index import (
     generate_opensearch_filtered_access_control_list,
 )
-from onyx.document_index.opensearch.schema import ACCESS_CONTROL_LIST_FIELD_NAME
-from onyx.document_index.opensearch.schema import CONTENT_FIELD_NAME
-from onyx.document_index.opensearch.schema import DocumentChunk
-from onyx.document_index.opensearch.schema import DocumentChunkWithoutVectors
-from onyx.document_index.opensearch.schema import DocumentSchema
-from onyx.document_index.opensearch.schema import get_opensearch_doc_chunk_id
-from onyx.document_index.opensearch.search import DocumentQuery
-from onyx.document_index.opensearch.search import (
+from orbyte.document_index.opensearch.schema import ACCESS_CONTROL_LIST_FIELD_NAME
+from orbyte.document_index.opensearch.schema import CONTENT_FIELD_NAME
+from orbyte.document_index.opensearch.schema import DocumentChunk
+from orbyte.document_index.opensearch.schema import DocumentChunkWithoutVectors
+from orbyte.document_index.opensearch.schema import DocumentSchema
+from orbyte.document_index.opensearch.schema import get_opensearch_doc_chunk_id
+from orbyte.document_index.opensearch.search import DocumentQuery
+from orbyte.document_index.opensearch.search import (
     get_min_max_normalization_pipeline_name_and_config,
 )
-from onyx.document_index.opensearch.search import (
+from orbyte.document_index.opensearch.search import (
     get_normalization_pipeline_name_and_config,
 )
-from onyx.document_index.opensearch.search import (
+from orbyte.document_index.opensearch.search import (
     get_zscore_normalization_pipeline_name_and_config,
 )
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA
@@ -66,7 +66,7 @@ def _patch_global_tenant_state(monkeypatch: pytest.MonkeyPatch, state: bool) -> 
         state: The intended state of MULTI_TENANT.
     """
     monkeypatch.setattr("shared_configs.configs.MULTI_TENANT", state)
-    monkeypatch.setattr("onyx.document_index.opensearch.schema.MULTI_TENANT", state)
+    monkeypatch.setattr("orbyte.document_index.opensearch.schema.MULTI_TENANT", state)
 
 
 def _patch_hybrid_search_subquery_configuration(
@@ -83,11 +83,11 @@ def _patch_hybrid_search_subquery_configuration(
             HYBRID_SEARCH_SUBQUERY_CONFIGURATION.
     """
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.constants.HYBRID_SEARCH_SUBQUERY_CONFIGURATION",
+        "orbyte.document_index.opensearch.constants.HYBRID_SEARCH_SUBQUERY_CONFIGURATION",
         configuration,
     )
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.search.HYBRID_SEARCH_SUBQUERY_CONFIGURATION",
+        "orbyte.document_index.opensearch.search.HYBRID_SEARCH_SUBQUERY_CONFIGURATION",
         configuration,
     )
 
@@ -100,11 +100,11 @@ def _patch_hybrid_search_normalization_pipeline(
     test file.
     """
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.constants.HYBRID_SEARCH_NORMALIZATION_PIPELINE",
+        "orbyte.document_index.opensearch.constants.HYBRID_SEARCH_NORMALIZATION_PIPELINE",
         pipeline,
     )
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.search.HYBRID_SEARCH_NORMALIZATION_PIPELINE",
+        "orbyte.document_index.opensearch.search.HYBRID_SEARCH_NORMALIZATION_PIPELINE",
         pipeline,
     )
 
@@ -117,11 +117,11 @@ def _patch_opensearch_match_highlights_disabled(
     test file.
     """
     monkeypatch.setattr(
-        "onyx.configs.app_configs.OPENSEARCH_MATCH_HIGHLIGHTS_DISABLED",
+        "orbyte.configs.app_configs.OPENSEARCH_MATCH_HIGHLIGHTS_DISABLED",
         disabled,
     )
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.search.OPENSEARCH_MATCH_HIGHLIGHTS_DISABLED",
+        "orbyte.document_index.opensearch.search.OPENSEARCH_MATCH_HIGHLIGHTS_DISABLED",
         disabled,
     )
 

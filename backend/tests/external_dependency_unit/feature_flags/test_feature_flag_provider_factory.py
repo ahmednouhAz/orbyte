@@ -7,10 +7,10 @@ PostHog integration when available, and fallback behavior otherwise.
 
 from uuid import UUID
 
-from ee.onyx.feature_flags.posthog_provider import PostHogFeatureFlagProvider
-from onyx.feature_flags.factory import get_default_feature_flag_provider
-from onyx.feature_flags.interface import FeatureFlagProvider
-from onyx.feature_flags.interface import NoOpFeatureFlagProvider
+from ee.orbyte.feature_flags.posthog_provider import PostHogFeatureFlagProvider
+from orbyte.feature_flags.factory import get_default_feature_flag_provider
+from orbyte.feature_flags.interface import FeatureFlagProvider
+from orbyte.feature_flags.interface import NoOpFeatureFlagProvider
 
 
 class TestNoOpFeatureFlagProvider:

@@ -22,12 +22,12 @@ from pytest_alembic.tests import test_upgrade
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
-from onyx.configs.app_configs import POSTGRES_HOST
-from onyx.configs.app_configs import POSTGRES_PASSWORD
-from onyx.configs.app_configs import POSTGRES_PORT
-from onyx.configs.app_configs import POSTGRES_USER
-from onyx.db.engine.sql_engine import build_connection_string
-from onyx.db.engine.sql_engine import SYNC_DB_API
+from orbyte.configs.app_configs import POSTGRES_HOST
+from orbyte.configs.app_configs import POSTGRES_PASSWORD
+from orbyte.configs.app_configs import POSTGRES_PORT
+from orbyte.configs.app_configs import POSTGRES_USER
+from orbyte.db.engine.sql_engine import build_connection_string
+from orbyte.db.engine.sql_engine import SYNC_DB_API
 
 
 @pytest.fixture

@@ -15,12 +15,12 @@ from typing import Any
 import pytest
 import requests
 
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.providers import hubspot as hubspot_module
-from onyx.external_apps.providers.base import OAuthExternalAppProvider
-from onyx.external_apps.providers.base import parse_granted_scopes
-from onyx.external_apps.providers.hubspot import HubspotProvider
-from onyx.external_apps.providers.registry import PROVIDERS
+from orbyte.db.enums import ExternalAppType
+from orbyte.external_apps.providers import hubspot as hubspot_module
+from orbyte.external_apps.providers.base import OAuthExternalAppProvider
+from orbyte.external_apps.providers.base import parse_granted_scopes
+from orbyte.external_apps.providers.hubspot import HubspotProvider
+from orbyte.external_apps.providers.registry import PROVIDERS
 
 
 def _oauth_provider(app_type: ExternalAppType) -> OAuthExternalAppProvider:

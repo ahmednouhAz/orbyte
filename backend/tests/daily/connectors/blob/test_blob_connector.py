@@ -7,15 +7,15 @@ from urllib.parse import urlparse
 
 import pytest
 
-from onyx.configs.constants import BlobType
-from onyx.connectors.blob.connector import BlobStorageConnector
-from onyx.connectors.cross_connector_utils.tabular_section_utils import is_tabular_file
-from onyx.connectors.models import Document
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.models import TabularSection
-from onyx.connectors.models import TextSection
-from onyx.file_processing.extract_file_text import get_file_ext
-from onyx.file_processing.file_types import OnyxFileExtensions
+from orbyte.configs.constants import BlobType
+from orbyte.connectors.blob.connector import BlobStorageConnector
+from orbyte.connectors.cross_connector_utils.tabular_section_utils import is_tabular_file
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.models import TabularSection
+from orbyte.connectors.models import TextSection
+from orbyte.file_processing.extract_file_text import get_file_ext
+from orbyte.file_processing.file_types import OrbyteFileExtensions
 from tests.daily.connectors.utils import set_test_staging_callback
 from tests.utils.secret_names import TestSecret
 
@@ -102,11 +102,11 @@ def blob_connector(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
-    "blob_connector", [(BlobType.S3, "onyx-connector-tests")], indirect=True
+    "blob_connector", [(BlobType.S3, "orbyte-connector-tests")], indirect=True
 )
 def test_blob_s3_connector(
     mock_get_api_key: MagicMock,  # noqa: ARG001
@@ -143,14 +143,14 @@ def test_blob_s3_connector(
 
         assert isinstance(section, TextSection)
         file_extension = get_file_ext(doc.semantic_identifier)
-        if file_extension in OnyxFileExtensions.TEXT_AND_DOCUMENT_EXTENSIONS:
+        if file_extension in OrbyteFileExtensions.TEXT_AND_DOCUMENT_EXTENSIONS:
             assert len(section.text) > 0
         else:
             assert len(section.text) == 0
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
@@ -204,7 +204,7 @@ def test_blob_s3_cross_region_and_citation_link(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
@@ -228,12 +228,12 @@ def test_blob_r2_connector(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
     "blob_connector",
-    [(BlobType.R2, "onyx-daily-connector-tests", {"european_residency": True})],
+    [(BlobType.R2, "orbyte-daily-connector-tests", {"european_residency": True})],
     indirect=True,
 )
 def test_blob_r2_eu_residency_connector(
@@ -254,11 +254,11 @@ def test_blob_r2_eu_residency_connector(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
-    "blob_connector", [(BlobType.GOOGLE_CLOUD_STORAGE, "onyx-test-1")], indirect=True
+    "blob_connector", [(BlobType.GOOGLE_CLOUD_STORAGE, "orbyte-test-1")], indirect=True
 )
 def test_blob_gcs_connector(
     mock_get_api_key: MagicMock,  # noqa: ARG001

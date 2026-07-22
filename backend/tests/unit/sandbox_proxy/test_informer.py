@@ -4,8 +4,8 @@ from unittest.mock import patch
 import pytest
 from kubernetes import client
 
-from onyx.sandbox_proxy.identity_k8s import _identity_from_pod
-from onyx.sandbox_proxy.identity_k8s import K8sInformerLookup
+from orbyte.sandbox_proxy.identity_k8s import _identity_from_pod
+from orbyte.sandbox_proxy.identity_k8s import K8sInformerLookup
 
 
 def _make_pod(
@@ -14,7 +14,7 @@ def _make_pod(
     pod_ip: str | None = "10.0.0.1",
     sandbox_id: str | None = "11111111-1111-1111-1111-111111111111",
     tenant_id: str | None = "public",
-    managed_by: str | None = "onyx",
+    managed_by: str | None = "orbyte",
 ) -> client.V1Pod:
     labels: dict[str, str] = {"app.kubernetes.io/component": "sandbox"}
     if managed_by is not None:
@@ -150,7 +150,7 @@ def test_synced_clears_after_watch_loop_returns_cleanly() -> None:
         def stop(self) -> None:
             pass
 
-    with patch("onyx.sandbox_proxy.identity_k8s.watch.Watch", _StubWatch):
+    with patch("orbyte.sandbox_proxy.identity_k8s.watch.Watch", _StubWatch):
         lookup._run()
 
     assert lookup._initial_sync_done.is_set()

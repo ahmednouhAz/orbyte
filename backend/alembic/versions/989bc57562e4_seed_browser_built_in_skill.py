@@ -7,7 +7,7 @@ guidance — guards against a tenant's custom skill already owning the ``browser
 slug: a built-in must never silently clobber or shadow a custom row.
 
 Availability is gated per-deployment by the skill's registry ``is_available``
-(keyed on ENABLE_BROWSER, in onyx.skills.built_in); this migration only creates
+(keyed on ENABLE_BROWSER, in orbyte.skills.built_in); this migration only creates
 the row.
 
 Revision ID: 989bc57562e4

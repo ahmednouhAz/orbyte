@@ -14,10 +14,10 @@ The auth-error path lives at the API surface in
 
 import pytest
 
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.models import ChatCompletionMessage
-from onyx.llm.models import UserMessage
-from onyx.llm.multi_llm import LitellmLLM
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.llm.models import ChatCompletionMessage
+from orbyte.llm.models import UserMessage
+from orbyte.llm.multi_llm import LitellmLLM
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.nightly

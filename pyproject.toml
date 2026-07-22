@@ -1,5 +1,5 @@
 [project]
-name = "onyx"
+name = "orbyte"
 version = "0.0.0"
 requires-python = ">=3.13"
 # Shared dependencies between backend and model_server
@@ -59,7 +59,7 @@ backend = [
     "lxml==6.1.0",
     # NOTE: Do not update without understanding the patching behavior in
     # get_markitdown_converter in
-    # backend/onyx/file_processing/extract_file_text.py and what impacts
+    # backend/orbyte/file_processing/extract_file_text.py and what impacts
     # updating might have on this behavior.
     "markitdown[pdf, docx, pptx, xlsx, xls]==0.1.2",
     "msal==1.34.0",
@@ -198,7 +198,7 @@ model_server = [
 ]
 
 [tool.uv]
-# uv is used for dependency management only. The onyx "project" is never built
+# uv is used for dependency management only. The orbyte "project" is never built
 # or installed as a package: Docker images copy the source tree and install
 # deps from the requirements exports, and local imports resolve via cwd /
 # PYTHONPATH conventions (see backend/pytest.ini).
@@ -223,7 +223,7 @@ override-dependencies = [
 [tool.ty.environment]
 python-version = "3.13"
 root = ["./backend"]
-# Ensure ty resolves onyx.* from this project's backend directory first, even
+# Ensure ty resolves orbyte.* from this project's backend directory first, even
 # when PYTHONPATH contains another checkout (e.g. when working in a git worktree
 # alongside the main repo).
 extra-paths = ["backend"]
@@ -233,9 +233,9 @@ include = ["backend"]
 exclude = [
     "**/generated/**",
     "**/.venv/**",
-    "**/onyx/server/features/build/sandbox/image/sandbox_daemon/**",
-    "**/onyx/skills/builtin/**",
-    "**/onyx/server/features/build/sandbox/image/templates/**",
+    "**/orbyte/server/features/build/sandbox/image/sandbox_daemon/**",
+    "**/orbyte/skills/builtin/**",
+    "**/orbyte/server/features/build/sandbox/image/templates/**",
 ]
 
 [tool.ty.rules]
@@ -251,8 +251,8 @@ members = ["tools/ods"]
 include = ["backend"]
 exclude = [
     "backend/generated",
-    "backend/onyx/server/features/build/sandbox/image/sandbox_daemon",
-    "backend/onyx/skills/builtin/pptx",
+    "backend/orbyte/server/features/build/sandbox/image/sandbox_daemon",
+    "backend/orbyte/skills/builtin/pptx",
 ]
 typeCheckingMode = "off"
 
@@ -283,7 +283,7 @@ select = ["ARG", "E", "F", "G004", "I", "S", "W"]
 [tool.ruff.lint.isort]
 force-single-line = true
 order-by-type = false
-known-first-party = ["onyx", "ee", "tests", "shared_configs", "model_server"]
+known-first-party = ["orbyte", "ee", "tests", "shared_configs", "model_server"]
 
 [tool.ruff.lint.per-file-ignores]
 # alembic has a folder named `alembic` in backend/ which confuses import sorters.

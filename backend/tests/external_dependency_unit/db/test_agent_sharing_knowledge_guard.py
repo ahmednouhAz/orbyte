@@ -8,12 +8,12 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.auth.schemas import UserRole
-from onyx.db.enums import PersonaSharePermission
-from onyx.db.models import DocumentSet
-from onyx.db.models import Persona
-from onyx.db.models import User
-from onyx.db.persona import upsert_persona
+from orbyte.auth.schemas import UserRole
+from orbyte.db.enums import PersonaSharePermission
+from orbyte.db.models import DocumentSet
+from orbyte.db.models import Persona
+from orbyte.db.models import User
+from orbyte.db.persona import upsert_persona
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.db.agent_sharing_helpers import create_test_persona
 from tests.external_dependency_unit.db.agent_sharing_helpers import (

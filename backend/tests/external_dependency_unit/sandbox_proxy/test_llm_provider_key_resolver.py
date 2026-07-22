@@ -13,12 +13,12 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.llm import remove_llm_provider
-from onyx.db.llm import upsert_llm_provider
-from onyx.sandbox_proxy.credential_injection import InjectionContext
-from onyx.sandbox_proxy.identity import ResolvedSandbox
-from onyx.sandbox_proxy.resolvers.llm_provider_key import LLMProviderKeyResolver
-from onyx.server.manage.llm.models import LLMProviderUpsertRequest
+from orbyte.db.llm import remove_llm_provider
+from orbyte.db.llm import upsert_llm_provider
+from orbyte.sandbox_proxy.credential_injection import InjectionContext
+from orbyte.sandbox_proxy.identity import ResolvedSandbox
+from orbyte.sandbox_proxy.resolvers.llm_provider_key import LLMProviderKeyResolver
+from orbyte.server.manage.llm.models import LLMProviderUpsertRequest
 from shared_configs.contextvars import POSTGRES_DEFAULT_SCHEMA
 from tests.external_dependency_unit.conftest import create_test_user
 

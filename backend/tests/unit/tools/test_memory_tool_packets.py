@@ -6,15 +6,15 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.chat.emitter import Emitter
-from onyx.server.query_and_chat.placement import Placement
-from onyx.server.query_and_chat.session_loading import create_memory_packets
-from onyx.server.query_and_chat.streaming_models import MemoryToolDelta
-from onyx.server.query_and_chat.streaming_models import MemoryToolStart
-from onyx.server.query_and_chat.streaming_models import SectionEnd
-from onyx.tools.tool_implementations.memory.memory_tool import MemoryTool
-from onyx.tools.tool_implementations.memory.memory_tool import MemoryToolOverrideKwargs
-from onyx.tools.tool_implementations.memory.models import MemoryToolResponse
+from orbyte.chat.emitter import Emitter
+from orbyte.server.query_and_chat.placement import Placement
+from orbyte.server.query_and_chat.session_loading import create_memory_packets
+from orbyte.server.query_and_chat.streaming_models import MemoryToolDelta
+from orbyte.server.query_and_chat.streaming_models import MemoryToolStart
+from orbyte.server.query_and_chat.streaming_models import SectionEnd
+from orbyte.tools.tool_implementations.memory.memory_tool import MemoryTool
+from orbyte.tools.tool_implementations.memory.memory_tool import MemoryToolOverrideKwargs
+from orbyte.tools.tool_implementations.memory.models import MemoryToolResponse
 
 
 @pytest.fixture
@@ -83,7 +83,7 @@ class TestMemoryToolEmitStart:
 
 
 class TestMemoryToolRun:
-    @patch("onyx.tools.tool_implementations.memory.memory_tool.process_memory_update")
+    @patch("orbyte.tools.tool_implementations.memory.memory_tool.process_memory_update")
     def test_run_emits_delta_for_add_operation(
         self,
         mock_process: MagicMock,
@@ -107,7 +107,7 @@ class TestMemoryToolRun:
         assert packet.obj.memory_id is None
         assert packet.obj.index is None
 
-    @patch("onyx.tools.tool_implementations.memory.memory_tool.process_memory_update")
+    @patch("orbyte.tools.tool_implementations.memory.memory_tool.process_memory_update")
     def test_run_emits_delta_for_update_operation(
         self,
         mock_process: MagicMock,
@@ -131,7 +131,7 @@ class TestMemoryToolRun:
         assert packet.obj.memory_id is None
         assert packet.obj.index == 0
 
-    @patch("onyx.tools.tool_implementations.memory.memory_tool.process_memory_update")
+    @patch("orbyte.tools.tool_implementations.memory.memory_tool.process_memory_update")
     def test_run_returns_tool_response_with_rich_response(
         self,
         mock_process: MagicMock,

@@ -1,5 +1,5 @@
 """
-Integration tests for onyx.db.engine.tenant_utils.get_schemas_needing_migration.
+Integration tests for orbyte.db.engine.tenant_utils.get_schemas_needing_migration.
 
 These tests require a live database and exercise the function directly,
 independent of the alembic migration runner script.
@@ -18,8 +18,8 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.engine.tenant_utils import get_schemas_needing_migration
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.engine.tenant_utils import get_schemas_needing_migration
 
 _BACKEND_DIR = __file__[: __file__.index("/tests/")]
 

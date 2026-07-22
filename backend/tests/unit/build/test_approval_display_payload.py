@@ -4,10 +4,10 @@ from email.message import EmailMessage
 from typing import Any
 from uuid import uuid4
 
-from onyx.db.enums import EndpointPolicy
-from onyx.external_apps.matching.engine import MatchedAction
-from onyx.external_apps.providers.gmail import GmailAction
-from onyx.server.features.build.approvals.api import ApprovalView
+from orbyte.db.enums import EndpointPolicy
+from orbyte.external_apps.matching.engine import MatchedAction
+from orbyte.external_apps.providers.gmail import GmailAction
+from orbyte.server.features.build.approvals.api import ApprovalView
 
 
 def _send_payload() -> dict[str, Any]:

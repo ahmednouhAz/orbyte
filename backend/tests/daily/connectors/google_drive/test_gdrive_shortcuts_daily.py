@@ -4,9 +4,9 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
-from onyx.connectors.models import Document
-from onyx.connectors.models import TextSection
+from orbyte.connectors.google_drive.connector import GoogleDriveConnector
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import TextSection
 from tests.daily.connectors.google_drive.consts_and_utils import ADMIN_EMAIL
 from tests.daily.connectors.google_drive.consts_and_utils import (
     assert_resource_key_shortcut_target_in_retrieved_docs,
@@ -56,7 +56,7 @@ def _doc_id_suffix(doc: Document) -> str:
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_shared_folder_shortcuts_resolve_files_and_folders(

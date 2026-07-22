@@ -7,9 +7,9 @@ import json
 import pytest
 from sqlalchemy import text
 
-from onyx.configs.constants import ANONYMOUS_USER_UUID
-from onyx.configs.constants import DEFAULT_BOOST
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.configs.constants import ANONYMOUS_USER_UUID
+from orbyte.configs.constants import DEFAULT_BOOST
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
 from tests.integration.common_utils.reset import downgrade_postgres
 from tests.integration.common_utils.reset import upgrade_postgres
 
@@ -342,7 +342,7 @@ def test_anonymous_user_migration_dedupes_null_notifications() -> None:
                         FALSE,
                         NOW(),
                         NOW(),
-                        'Onyx v2.10.0 is available!',
+                        'Orbyte v2.10.0 is available!',
                         'Check out what''s new in v2.10.0',
                         '{"version":"v2.10.0","link":"https://docs.onyx.app/changelog#v2-10-0"}'::jsonb
                     ),
@@ -353,7 +353,7 @@ def test_anonymous_user_migration_dedupes_null_notifications() -> None:
                         FALSE,
                         NOW(),
                         NOW(),
-                        'Onyx v2.10.0 is available!',
+                        'Orbyte v2.10.0 is available!',
                         'Check out what''s new in v2.10.0',
                         '{"version":"v2.10.0","link":"https://docs.onyx.app/changelog#v2-10-0"}'::jsonb
                     )
@@ -425,13 +425,13 @@ def test_anonymous_user_migration_collision_with_existing_anonymous_notification
                 VALUES
                     (
                         1, 'RELEASE_NOTES', :user_id, FALSE, NOW(), NOW(),
-                        'Onyx v2.10.0 is available!',
+                        'Orbyte v2.10.0 is available!',
                         'Check out what''s new in v2.10.0',
                         '{"version":"v2.10.0","link":"https://docs.onyx.app/changelog#v2-10-0"}'::jsonb
                     ),
                     (
                         2, 'RELEASE_NOTES', NULL, FALSE, NOW(), NOW(),
-                        'Onyx v2.10.0 is available!',
+                        'Orbyte v2.10.0 is available!',
                         'Check out what''s new in v2.10.0',
                         '{"version":"v2.10.0","link":"https://docs.onyx.app/changelog#v2-10-0"}'::jsonb
                     )

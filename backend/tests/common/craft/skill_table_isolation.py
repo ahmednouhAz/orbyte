@@ -8,12 +8,12 @@ from sqlalchemy import select
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import Session
 
-from onyx.db.models import ExternalApp
-from onyx.db.models import ExternalAppPolicy
-from onyx.db.models import ExternalAppUserCredential
-from onyx.db.models import Skill
-from onyx.db.models import Skill__User
-from onyx.db.models import Skill__UserGroup
+from orbyte.db.models import ExternalApp
+from orbyte.db.models import ExternalAppPolicy
+from orbyte.db.models import ExternalAppUserCredential
+from orbyte.db.models import Skill
+from orbyte.db.models import Skill__User
+from orbyte.db.models import Skill__UserGroup
 
 # Parent -> child order (FKs all point child -> parent). Restore/insert in this
 # order; delete in reverse so FK constraints stay satisfied.

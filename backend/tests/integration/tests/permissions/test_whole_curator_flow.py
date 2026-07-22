@@ -6,9 +6,9 @@ import os
 
 import pytest
 
-from onyx.db.enums import AccessType
-from onyx.db.models import UserRole
-from onyx.server.documents.models import DocumentSource
+from orbyte.db.enums import AccessType
+from orbyte.db.models import UserRole
+from orbyte.server.documents.models import DocumentSource
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
 from tests.integration.common_utils.managers.credential import CredentialManager

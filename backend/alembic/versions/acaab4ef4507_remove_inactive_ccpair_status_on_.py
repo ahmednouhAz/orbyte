@@ -7,8 +7,8 @@ Create Date: 2025-02-16 18:21:41.330212
 """
 
 from alembic import op
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.enums import ConnectorCredentialPairStatus
 from sqlalchemy import update
 
 # revision identifiers, used by Alembic.

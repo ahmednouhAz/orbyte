@@ -9,10 +9,10 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import Skill
-from onyx.server.features.build.sandbox.models import FatalWriteError
-from onyx.skills.push import push_skills_for_users
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import Skill
+from orbyte.server.features.build.sandbox.models import FatalWriteError
+from orbyte.skills.push import push_skills_for_users
 from tests.common.craft.stubs import StubSandboxManager
 from tests.external_dependency_unit.craft.db_helpers import make_sandbox
 from tests.external_dependency_unit.craft.db_helpers import make_user
@@ -39,7 +39,7 @@ def test_one_failing_sandbox_does_not_abort_push_to_others(
     )
 
     monkeypatch.setattr(
-        "onyx.skills.push.get_sandbox_manager",
+        "orbyte.skills.push.get_sandbox_manager",
         lambda: stub,
     )
 

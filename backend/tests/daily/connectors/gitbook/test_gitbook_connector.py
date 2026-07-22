@@ -2,9 +2,9 @@ import time
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.gitbook.connector import GitbookConnector
-from onyx.connectors.models import HierarchyNode
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.gitbook.connector import GitbookConnector
+from orbyte.connectors.models import HierarchyNode
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(

@@ -4,10 +4,10 @@ from sqlalchemy import and_
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.enums import AccessType
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import DocumentByConnectorCredentialPair
+from orbyte.configs.constants import DocumentSource
+from orbyte.db.enums import AccessType
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import DocumentByConnectorCredentialPair
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.constants import NUM_DOCS
 from tests.integration.common_utils.http_client import client
@@ -112,7 +112,7 @@ class DocumentManager:
             document = _generate_dummy_document(document_id, cc_pair.id)
             documents.append(document)
             response = client.post(
-                f"{API_SERVER_URL}/onyx-api/ingestion",
+                f"{API_SERVER_URL}/orbyte-api/ingestion",
                 json=document,
                 headers=api_key.headers,
             )
@@ -148,7 +148,7 @@ class DocumentManager:
             extra_metadata=metadata,
         )
         response = client.post(
-            f"{API_SERVER_URL}/onyx-api/ingestion",
+            f"{API_SERVER_URL}/orbyte-api/ingestion",
             json=document,
             headers=api_key.headers,
         )
@@ -269,7 +269,7 @@ class IngestionManager(DocumentManager):
         api_key: DATestAPIKey,
     ) -> list[dict]:
         response = client.get(
-            f"{API_SERVER_URL}/onyx-api/ingestion",
+            f"{API_SERVER_URL}/orbyte-api/ingestion",
             headers=api_key.headers,
         )
         response.raise_for_status()
@@ -281,7 +281,7 @@ class IngestionManager(DocumentManager):
         api_key: DATestAPIKey,
     ) -> None:
         response = client.delete(
-            f"{API_SERVER_URL}/onyx-api/ingestion/{document_id}",
+            f"{API_SERVER_URL}/orbyte-api/ingestion/{document_id}",
             headers=api_key.headers,
         )
         response.raise_for_status()

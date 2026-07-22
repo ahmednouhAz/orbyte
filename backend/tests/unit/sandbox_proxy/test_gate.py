@@ -30,22 +30,22 @@ from mitmproxy import http
 from mitmproxy.proxy import server_hooks
 from redis.exceptions import RedisError
 
-from onyx.db.enums import ApprovalDecidedVia
-from onyx.db.enums import ApprovalDecision
-from onyx.db.enums import EndpointPolicy
-from onyx.external_apps.matching.engine import AllMatchedActions
-from onyx.external_apps.matching.engine import MatchedAction
-from onyx.sandbox_proxy.addons import gate
-from onyx.sandbox_proxy.addons.gate import GateAddon
-from onyx.sandbox_proxy.addons.gate import ParkedApprovals
-from onyx.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from onyx.sandbox_proxy.credential_injection import CredentialResolver
-from onyx.sandbox_proxy.credential_injection import CredentialUnavailableError
-from onyx.sandbox_proxy.credential_injection import InjectionOutcome
-from onyx.sandbox_proxy.errors import SandboxProxyError
-from onyx.sandbox_proxy.identity import ResolvedSandbox
-from onyx.sandbox_proxy.identity import SessionContext
-from onyx.sandbox_proxy.request_evaluator import RequestEvaluator
+from orbyte.db.enums import ApprovalDecidedVia
+from orbyte.db.enums import ApprovalDecision
+from orbyte.db.enums import EndpointPolicy
+from orbyte.external_apps.matching.engine import AllMatchedActions
+from orbyte.external_apps.matching.engine import MatchedAction
+from orbyte.sandbox_proxy.addons import gate
+from orbyte.sandbox_proxy.addons.gate import GateAddon
+from orbyte.sandbox_proxy.addons.gate import ParkedApprovals
+from orbyte.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from orbyte.sandbox_proxy.credential_injection import CredentialResolver
+from orbyte.sandbox_proxy.credential_injection import CredentialUnavailableError
+from orbyte.sandbox_proxy.credential_injection import InjectionOutcome
+from orbyte.sandbox_proxy.errors import SandboxProxyError
+from orbyte.sandbox_proxy.identity import ResolvedSandbox
+from orbyte.sandbox_proxy.identity import SessionContext
+from orbyte.sandbox_proxy.request_evaluator import RequestEvaluator
 from tests.unit.sandbox_proxy.conftest import make_flow
 from tests.unit.sandbox_proxy.conftest import make_matched_actions
 from tests.unit.sandbox_proxy.conftest import make_resolved_sandbox
@@ -309,7 +309,7 @@ async def test_resolve_and_match_off_catalog_pass_through_is_not_logged(
     )
     flow = make_flow(host="registry.npmjs.org", proxy_auth=_basic_auth(_TAG_UUID))
 
-    with caplog.at_level(logging.DEBUG, logger="onyx.utils.logger"):
+    with caplog.at_level(logging.DEBUG, logger="orbyte.utils.logger"):
         result = await addon._resolve_and_match(flow)
 
     assert result is None

@@ -5,11 +5,11 @@ from dataclasses import field
 from dataclasses import replace
 from urllib.parse import urlparse
 
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
-from onyx.connectors.models import Document
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.models import TextSection
-from onyx.db.enums import HierarchyNodeType
+from orbyte.connectors.google_drive.connector import GoogleDriveConnector
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.models import TextSection
+from orbyte.db.enums import HierarchyNodeType
 from tests.daily.connectors.utils import ConnectorOutput
 from tests.daily.connectors.utils import load_all_from_connector
 
@@ -319,10 +319,10 @@ PADDING_DRIVE_URLS = [
     "0ABu8fYjvA21dUk9PVA",
 ]
 
-ADMIN_EMAIL = "admin@onyx-test.com"
-TEST_USER_1_EMAIL = "test_user_1@onyx-test.com"
-TEST_USER_2_EMAIL = "test_user_2@onyx-test.com"
-TEST_USER_3_EMAIL = "test_user_3@onyx-test.com"
+ADMIN_EMAIL = "admin@orbyte-test.com"
+TEST_USER_1_EMAIL = "test_user_1@orbyte-test.com"
+TEST_USER_2_EMAIL = "test_user_2@orbyte-test.com"
+TEST_USER_3_EMAIL = "test_user_3@orbyte-test.com"
 
 # Expected permissions for perm sync drives
 # Maps drive ID -> set of user emails with access
@@ -424,7 +424,7 @@ EXPECTED_SHORTCUTTED_2_FOLDER = _node(
     SHORTCUTS_GALORE_FOLDER_ID,
 )
 EXPECTED_EXTERNAL_SHARED_FOLDER = _node(
-    EXTERNAL_SHARED_FOLDER_ID, "Onyx-test", HierarchyNodeType.FOLDER
+    EXTERNAL_SHARED_FOLDER_ID, "Orbyte-test", HierarchyNodeType.FOLDER
 )
 
 # Comprehensive mapping of ALL known hierarchy nodes.

@@ -20,14 +20,14 @@ This Python script automates the process of running search quality tests for a b
 4. Set up the PYTHONPATH permanently:
    Add the following line to your shell configuration file (e.g., `~/.bashrc`, `~/.zshrc`, or `~/.bash_profile`):
    ```
-   export PYTHONPATH=$PYTHONPATH:/path/to/onyx/backend
+   export PYTHONPATH=$PYTHONPATH:/path/to/orbyte/backend
    ```
-   Replace `/path/to/onyx` with the actual path to your Onyx repository.
+   Replace `/path/to/orbyte` with the actual path to your Orbyte repository.
    After adding this line, restart your terminal or run `source ~/.bashrc` (or the appropriate config file) to apply the changes.
-5. Navigate to Onyx repo:
+5. Navigate to Orbyte repo:
 
 ```
-cd path/to/onyx
+cd path/to/orbyte
 ```
 
 6. Navigate to the answer_quality folder:

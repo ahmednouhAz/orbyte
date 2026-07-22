@@ -6,8 +6,8 @@ Verifies that:
 - account_type is set to STANDARD for email/password registrations
 """
 
-from onyx.auth.schemas import UserRole
-from onyx.db.enums import AccountType
+from orbyte.auth.schemas import UserRole
+from orbyte.db.enums import AccountType
 from tests.integration.common_utils.managers.user import UserManager
 from tests.integration.common_utils.managers.user_group import UserGroupManager
 from tests.integration.common_utils.test_models import DATestUser

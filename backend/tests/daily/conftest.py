@@ -16,12 +16,12 @@ from dotenv import load_dotenv  # noqa: E402
 from fastapi import FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 
-from onyx.auth.users import current_user  # noqa: E402
-from onyx.db.engine.sql_engine import get_session  # noqa: E402
-from onyx.db.enums import Permission  # noqa: E402
-from onyx.db.models import UserRole  # noqa: E402
-from onyx.main import get_application  # noqa: E402
-from onyx.utils.logger import setup_logger  # noqa: E402
+from orbyte.auth.users import current_user  # noqa: E402
+from orbyte.db.engine.sql_engine import get_session  # noqa: E402
+from orbyte.db.enums import Permission  # noqa: E402
+from orbyte.db.models import UserRole  # noqa: E402
+from orbyte.main import get_application  # noqa: E402
+from orbyte.utils.logger import setup_logger  # noqa: E402
 
 # Opt into the shared @pytest.mark.secrets / test_secrets infrastructure.
 from tests.utils.pytest_secrets import (  # noqa: E402
@@ -64,7 +64,7 @@ def client() -> Generator[TestClient, None, None]:
     # Patch out prometheus metrics setup to avoid "Duplicated timeseries in
     # CollectorRegistry" errors when multiple tests each create a new app
     # (prometheus registers metrics globally and rejects duplicate names).
-    with patch("onyx.main.setup_prometheus_metrics"):
+    with patch("orbyte.main.setup_prometheus_metrics"):
         app: FastAPI = get_application(lifespan_override=test_lifespan)
 
     # Override the database session dependency with a mock

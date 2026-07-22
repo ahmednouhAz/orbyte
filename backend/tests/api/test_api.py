@@ -6,10 +6,10 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from onyx.configs.constants import DEV_VERSION_PATTERN
-from onyx.configs.constants import STABLE_VERSION_PATTERN
-from onyx.main import fetch_versioned_implementation
-from onyx.utils.logger import setup_logger
+from orbyte.configs.constants import DEV_VERSION_PATTERN
+from orbyte.configs.constants import STABLE_VERSION_PATTERN
+from orbyte.main import fetch_versioned_implementation
+from orbyte.utils.logger import setup_logger
 
 logger = setup_logger()
 
@@ -21,7 +21,7 @@ def client() -> Generator[TestClient, Any, None]:
 
     # Initialize TestClient with the FastAPI app
     app: FastAPI = fetch_versioned_implementation(
-        module="onyx.main", attribute="get_application"
+        module="orbyte.main", attribute="get_application"
     )()
     client = TestClient(app)
     yield client
@@ -120,44 +120,44 @@ def test_versions_endpoint(client: TestClient) -> None:
 
     # Verify stable configuration
     stable = data["stable"]
-    assert "onyx" in stable
+    assert "orbyte" in stable
     assert "relational_db" in stable
     assert "index" in stable
     assert "nginx" in stable
 
     # Verify stable version follows correct pattern (v1.2.3)
     # If this fails, revise latest Github release for typo or incorrect version name
-    assert STABLE_VERSION_PATTERN.match(stable["onyx"]), (
-        f"Stable version {stable['onyx']} doesn't match pattern v(number).(number).(number)"
+    assert STABLE_VERSION_PATTERN.match(stable["orbyte"]), (
+        f"Stable version {stable['orbyte']} doesn't match pattern v(number).(number).(number)"
     )
 
     # Verify dev configuration
     dev = data["dev"]
-    assert "onyx" in dev
+    assert "orbyte" in dev
     assert "relational_db" in dev
     assert "index" in dev
     assert "nginx" in dev
 
     # Verify dev version follows correct pattern (v1.2.3-beta.4)
-    assert DEV_VERSION_PATTERN.match(dev["onyx"]), (
-        f"Dev version {dev['onyx']} doesn't match pattern v(number).(number).(number)-beta.(number)"
+    assert DEV_VERSION_PATTERN.match(dev["orbyte"]), (
+        f"Dev version {dev['orbyte']} doesn't match pattern v(number).(number).(number)-beta.(number)"
     )
 
     # Verify migration configuration
     migration = data["migration"]
-    assert "onyx" in migration
+    assert "orbyte" in migration
     assert "relational_db" in migration
     assert "index" in migration
     assert "nginx" in migration
 
     # Verify migration has expected values
-    assert migration["onyx"] == "airgapped-intfloat-nomic-migration"
+    assert migration["orbyte"] == "airgapped-intfloat-nomic-migration"
     assert migration["relational_db"] == "postgres:15.2-alpine"
     assert migration["index"] == "vespaengine/vespa:8.277.17"
     assert migration["nginx"] == "nginx:1.25.5-alpine"
 
     # Verify versions are different between stable and dev
-    assert stable["onyx"] != dev["onyx"], "Stable and dev versions should be different"
+    assert stable["orbyte"] != dev["orbyte"], "Stable and dev versions should be different"
 
     # Additional validation: ensure all required fields are strings
     for config_name, config in [

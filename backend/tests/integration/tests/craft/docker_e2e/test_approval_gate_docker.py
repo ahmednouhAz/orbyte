@@ -11,12 +11,12 @@ from uuid import uuid4
 import pytest
 from httpx import Response
 
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.enums import ApprovalDecision
-from onyx.db.enums import ExternalAppType
-from onyx.db.external_app import get_built_in_external_app
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SandboxBackend
+from orbyte.db.engine.sql_engine import get_session_with_tenant
+from orbyte.db.enums import ApprovalDecision
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.external_app import get_built_in_external_app
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SandboxBackend
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.build_approvals import (

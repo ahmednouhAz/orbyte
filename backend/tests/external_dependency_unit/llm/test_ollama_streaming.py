@@ -4,7 +4,7 @@
 tokens are routed to `Delta.reasoning_content` and visible answer tokens
 land on `Delta.content`, for both native `thinking` field chunks and
 legacy `<think>...</think>`-tagged content chunks. Unit tests in
-`backend/tests/unit/onyx/llm/test_litellm_monkey_patches.py` cover the
+`backend/tests/unit/orbyte/llm/test_litellm_monkey_patches.py` cover the
 state machine against crafted chunk dicts; this test exercises the same
 path against Ollama Cloud's live wire format so we catch upstream
 protocol drift.
@@ -12,10 +12,10 @@ protocol drift.
 
 import pytest
 
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.models import ChatCompletionMessage
-from onyx.llm.models import UserMessage
-from onyx.llm.multi_llm import LitellmLLM
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.llm.models import ChatCompletionMessage
+from orbyte.llm.models import UserMessage
+from orbyte.llm.multi_llm import LitellmLLM
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.nightly

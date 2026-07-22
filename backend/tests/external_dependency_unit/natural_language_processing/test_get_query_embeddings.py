@@ -6,9 +6,9 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.context.search.utils import get_query_embeddings
-from onyx.db.search_settings import get_current_search_settings
-from onyx.natural_language_processing.search_nlp_models import EmbeddingModel
+from orbyte.context.search.utils import get_query_embeddings
+from orbyte.db.search_settings import get_current_search_settings
+from orbyte.natural_language_processing.search_nlp_models import EmbeddingModel
 from shared_configs.enums import EmbedTextType
 
 
@@ -111,7 +111,7 @@ class TestWiring:
         query = "testing disabled cache"
 
         model, encode = _make_fake_embedding_model([[7.0]])
-        with patch("onyx.context.search.utils.QUERY_EMBEDDING_CACHE_ENABLED", False):
+        with patch("orbyte.context.search.utils.QUERY_EMBEDDING_CACHE_ENABLED", False):
             # Under test.
             get_query_embeddings(
                 queries=[query], db_session=db_session, embedding_model=model
@@ -148,7 +148,7 @@ class TestWiring:
         fake = MagicMock()
         fake.id = real_settings.id + 999_999
         with patch(
-            "onyx.context.search.utils.get_current_search_settings",
+            "orbyte.context.search.utils.get_current_search_settings",
             return_value=fake,
         ):
             # Under test.

@@ -20,9 +20,9 @@ import pytest
 import sqlalchemy as sa
 from sqlalchemy.orm import Session
 
-from onyx.background.periodic_poller import recover_stuck_user_files
-from onyx.db.enums import UserFileStatus
-from onyx.db.models import UserFile
+from orbyte.background.periodic_poller import recover_stuck_user_files
+from orbyte.db.enums import UserFileStatus
+from orbyte.db.models import UserFile
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.conftest import create_test_user
 
@@ -30,7 +30,7 @@ from tests.external_dependency_unit.conftest import create_test_user
 # Helpers
 # ---------------------------------------------------------------------------
 
-_IMPL_MODULE = "onyx.background.celery.tasks.user_file_processing.tasks"
+_IMPL_MODULE = "orbyte.background.celery.tasks.user_file_processing.tasks"
 
 
 def _create_user_file(
@@ -63,7 +63,7 @@ def _fake_delete_impl(
     redis_locking: bool,  # noqa: ARG001
 ) -> None:
     """Mock side-effect: delete the row so the drain loop terminates."""
-    from onyx.db.engine.sql_engine import get_session_with_current_tenant
+    from orbyte.db.engine.sql_engine import get_session_with_current_tenant
 
     with get_session_with_current_tenant() as session:
         session.execute(sa.delete(UserFile).where(UserFile.id == UUID(user_file_id)))
@@ -76,7 +76,7 @@ def _fake_sync_impl(
     redis_locking: bool,  # noqa: ARG001
 ) -> None:
     """Mock side-effect: clear sync flags so the drain loop terminates."""
-    from onyx.db.engine.sql_engine import get_session_with_current_tenant
+    from orbyte.db.engine.sql_engine import get_session_with_current_tenant
 
     with get_session_with_current_tenant() as session:
         session.execute(

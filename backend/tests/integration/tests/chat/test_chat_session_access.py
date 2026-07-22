@@ -3,7 +3,7 @@ from uuid import uuid4
 import httpx
 import pytest
 
-from onyx.auth.schemas import UserRole
+from orbyte.auth.schemas import UserRole
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.constants import GENERAL_HEADERS
 from tests.integration.common_utils.http_client import client

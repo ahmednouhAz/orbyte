@@ -7,14 +7,14 @@ from uuid import UUID
 
 import httpx
 
-from onyx.context.search.models import SavedSearchDoc
-from onyx.context.search.models import SearchDoc
-from onyx.file_store.models import FileDescriptor
-from onyx.llm.override_models import LLMOverride
-from onyx.server.query_and_chat.models import AUTO_PLACE_AFTER_LATEST_MESSAGE
-from onyx.server.query_and_chat.models import ChatSessionCreationRequest
-from onyx.server.query_and_chat.models import SendMessageRequest
-from onyx.server.query_and_chat.streaming_models import StreamingType
+from orbyte.context.search.models import SavedSearchDoc
+from orbyte.context.search.models import SearchDoc
+from orbyte.file_store.models import FileDescriptor
+from orbyte.llm.override_models import LLMOverride
+from orbyte.server.query_and_chat.models import AUTO_PLACE_AFTER_LATEST_MESSAGE
+from orbyte.server.query_and_chat.models import ChatSessionCreationRequest
+from orbyte.server.query_and_chat.models import SendMessageRequest
+from orbyte.server.query_and_chat.streaming_models import StreamingType
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestChatMessage

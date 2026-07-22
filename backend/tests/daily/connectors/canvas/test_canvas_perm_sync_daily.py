@@ -4,26 +4,26 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from ee.onyx.connectors.perm_sync_valid import validate_canvas_perm_sync
-from ee.onyx.external_permissions.canvas.access import build_course_permission_context
-from ee.onyx.external_permissions.canvas.access import CanvasCoursePermissionContext
-from ee.onyx.external_permissions.canvas.doc_sync import canvas_doc_sync
-from ee.onyx.external_permissions.canvas.group_sync import canvas_group_sync
-from onyx.access.models import DocExternalAccess
-from onyx.access.models import ExternalAccess
-from onyx.connectors.canvas.connector import canvas_all_users_group_id
-from onyx.connectors.canvas.connector import canvas_course_group_id
-from onyx.connectors.canvas.connector import canvas_group_group_id
-from onyx.connectors.canvas.connector import canvas_section_group_id
-from onyx.connectors.canvas.connector import CanvasAnnouncement
-from onyx.connectors.canvas.connector import CanvasAssignment
-from onyx.connectors.canvas.connector import CanvasConnector
-from onyx.connectors.exceptions import InsufficientPermissionsError
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.models import SlimDocument
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.utils import DocumentRow
-from onyx.db.utils import SortOrder
+from ee.orbyte.connectors.perm_sync_valid import validate_canvas_perm_sync
+from ee.orbyte.external_permissions.canvas.access import build_course_permission_context
+from ee.orbyte.external_permissions.canvas.access import CanvasCoursePermissionContext
+from ee.orbyte.external_permissions.canvas.doc_sync import canvas_doc_sync
+from ee.orbyte.external_permissions.canvas.group_sync import canvas_group_sync
+from orbyte.access.models import DocExternalAccess
+from orbyte.access.models import ExternalAccess
+from orbyte.connectors.canvas.connector import canvas_all_users_group_id
+from orbyte.connectors.canvas.connector import canvas_course_group_id
+from orbyte.connectors.canvas.connector import canvas_group_group_id
+from orbyte.connectors.canvas.connector import canvas_section_group_id
+from orbyte.connectors.canvas.connector import CanvasAnnouncement
+from orbyte.connectors.canvas.connector import CanvasAssignment
+from orbyte.connectors.canvas.connector import CanvasConnector
+from orbyte.connectors.exceptions import InsufficientPermissionsError
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.models import SlimDocument
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.utils import DocumentRow
+from orbyte.db.utils import SortOrder
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.utils.secret_names import TestSecret
 
@@ -31,9 +31,9 @@ CANVAS_BASE_URL = "https://canvas.onyx.app"
 COURSE_A_NAME = "intro to python"
 COURSE_B_NAME = "introductory data structures"
 
-TEACHER_EMAILS = {"justin@onyx.app", "admin-test@onyx.app", "test_user_3@onyx-test.com"}
-STUDENT_1_EMAIL = "test_user_1@onyx-test.com"
-STUDENT_2_EMAIL = "test_user_2@onyx-test.com"
+TEACHER_EMAILS = {"justin@onyx.app", "admin-test@onyx.app", "test_user_3@orbyte-test.com"}
+STUDENT_1_EMAIL = "test_user_1@orbyte-test.com"
+STUDENT_2_EMAIL = "test_user_2@orbyte-test.com"
 COURSE_A_EMAILS = TEACHER_EMAILS | {STUDENT_1_EMAIL, STUDENT_2_EMAIL}
 
 PAGE_A_TITLE = "home page"

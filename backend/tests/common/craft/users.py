@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import httpx
 
-from onyx.auth.schemas import UserRole
+from orbyte.auth.schemas import UserRole
 from tests.integration.common_utils.constants import GENERAL_HEADERS
 from tests.integration.common_utils.managers.user import build_email
 from tests.integration.common_utils.managers.user import DEFAULT_PASSWORD

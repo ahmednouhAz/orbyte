@@ -8,9 +8,9 @@ in conftest.py.
 import time
 from uuid import uuid4
 
-from onyx.cache.interface import CacheBackend
-from onyx.cache.interface import TTL_KEY_NOT_FOUND
-from onyx.cache.interface import TTL_NO_EXPIRY
+from orbyte.cache.interface import CacheBackend
+from orbyte.cache.interface import TTL_KEY_NOT_FOUND
+from orbyte.cache.interface import TTL_NO_EXPIRY
 
 
 def _key() -> str:

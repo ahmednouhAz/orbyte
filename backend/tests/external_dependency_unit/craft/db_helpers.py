@@ -26,30 +26,30 @@ from sqlalchemy import delete
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.enums import AccessType
-from onyx.db.enums import AccountType
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.db.enums import SandboxStatus
-from onyx.db.enums import SkillSharePermission
-from onyx.db.models import ActionApproval
-from onyx.db.models import Connector
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Credential
-from onyx.db.models import ExternalApp
-from onyx.db.models import ExternalAppPolicy
-from onyx.db.models import ExternalAppUserCredential
-from onyx.db.models import Sandbox
-from onyx.db.models import Skill
-from onyx.db.models import Skill__User
-from onyx.db.models import Skill__UserGroup
-from onyx.db.models import User
-from onyx.db.models import User__UserGroup
-from onyx.db.models import UserGroup
-from onyx.db.models import UserGroup__ConnectorCredentialPair
-from onyx.db.models import UserRole
+from orbyte.configs.constants import DocumentSource
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import AccountType
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.enums import SkillSharePermission
+from orbyte.db.models import ActionApproval
+from orbyte.db.models import Connector
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Credential
+from orbyte.db.models import ExternalApp
+from orbyte.db.models import ExternalAppPolicy
+from orbyte.db.models import ExternalAppUserCredential
+from orbyte.db.models import Sandbox
+from orbyte.db.models import Skill
+from orbyte.db.models import Skill__User
+from orbyte.db.models import Skill__UserGroup
+from orbyte.db.models import User
+from orbyte.db.models import User__UserGroup
+from orbyte.db.models import UserGroup
+from orbyte.db.models import UserGroup__ConnectorCredentialPair
+from orbyte.db.models import UserRole
 
 
 def force_approval_created_at(

@@ -2,7 +2,7 @@
 
 Seeds Notion (disabled) per tenant schema with credentials from the
 ``EXT_APP_NOTION_*`` env vars, following ``f3a9c1d4b7e2``: frozen snapshot
-of ``onyx/external_apps/providers/notion.py``, no-op when not multi-tenant.
+of ``orbyte/external_apps/providers/notion.py``, no-op when not multi-tenant.
 
 Revision ID: 2e0b2b146de1
 Revises: d49e41659191
@@ -18,7 +18,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-from onyx.utils.encryption import encrypt_string_to_bytes
+from orbyte.utils.encryption import encrypt_string_to_bytes
 
 # revision identifiers, used by Alembic.
 revision = "2e0b2b146de1"

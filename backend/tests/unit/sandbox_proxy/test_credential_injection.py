@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from onyx.external_apps.matching.engine import AllMatchedActions
-from onyx.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from onyx.sandbox_proxy.credential_injection import CredentialResolver
-from onyx.sandbox_proxy.credential_injection import CredentialUnavailableError
-from onyx.sandbox_proxy.credential_injection import InjectionContext
-from onyx.sandbox_proxy.credential_injection import InjectionOutcome
+from orbyte.external_apps.matching.engine import AllMatchedActions
+from orbyte.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from orbyte.sandbox_proxy.credential_injection import CredentialResolver
+from orbyte.sandbox_proxy.credential_injection import CredentialUnavailableError
+from orbyte.sandbox_proxy.credential_injection import InjectionContext
+from orbyte.sandbox_proxy.credential_injection import InjectionOutcome
 from tests.unit.sandbox_proxy.conftest import make_flow
 from tests.unit.sandbox_proxy.conftest import make_matched_actions
 from tests.unit.sandbox_proxy.conftest import make_resolved_sandbox

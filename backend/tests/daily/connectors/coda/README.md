@@ -5,7 +5,7 @@
 The `test_coda_connector.py` file contains comprehensive integration tests for the Coda connector. These tests validate that the connector properly:
 - Authenticates with the Coda API
 - Retrieves documents, pages, and tables
-- Generates properly structured Onyx `Document` objects
+- Generates properly structured Orbyte `Document` objects
 - Handles batch processing correctly
 - Supports workspace scoping
 - Polls for recent updates
@@ -217,5 +217,5 @@ Store credentials as encrypted secrets in your CI/CD platform.
 ## Additional Resources
 
 - [Coda API Documentation](https://coda.io/developers/apis/v1)
-- [Onyx Connector Documentation](../../../../onyx/connectors/README.md)
+- [Orbyte Connector Documentation](../../../../orbyte/connectors/README.md)
 - [pytest Documentation](https://docs.pytest.org/)

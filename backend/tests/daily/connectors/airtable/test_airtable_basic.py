@@ -5,12 +5,12 @@ from unittest.mock import MagicMock
 import pytest
 from pydantic import BaseModel
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.airtable.airtable_connector import AirtableConnector
-from onyx.connectors.models import Document
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.models import ImageSection
-from onyx.connectors.models import TextSection
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.airtable.airtable_connector import AirtableConnector
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.models import ImageSection
+from orbyte.connectors.models import TextSection
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(TestSecret.AIRTABLE_ACCESS_TOKEN)
@@ -337,7 +337,7 @@ def test_airtable_connector_index_all(
 ) -> None:
     """Test index_all mode discovers all bases/tables and returns documents.
 
-    The test token has access to one base ("Onyx") with three tables:
+    The test token has access to one base ("Orbyte") with three tables:
       - Tickets: 3 records, 2 with content (1 empty record is skipped)
       - Support Categories: 4 records, all with Category Name field
       - Table 3: 3 records, 1 with content (2 empty records are skipped)
@@ -375,31 +375,31 @@ def test_airtable_connector_index_all(
     # In index_all mode, semantic identifiers include "Base Name > Table Name: Primary Field"
     assert (
         docs_by_id["airtable__rec8BnxDLyWeegOuO"].semantic_identifier
-        == "Onyx > Tickets: Slow Internet"
+        == "Orbyte > Tickets: Slow Internet"
     )
     assert (
         docs_by_id["airtable__rec5SgUDcHXcBc8kS"].semantic_identifier
-        == "Onyx > Support Categories: Software Development"
+        == "Orbyte > Support Categories: Software Development"
     )
     assert (
         docs_by_id["airtable__recNalBz02QU1LhbM"].semantic_identifier
-        == "Onyx > Table 3: A"
+        == "Orbyte > Table 3: A"
     )
 
     # Verify hierarchy metadata on a Tickets doc
     tickets_doc = docs_by_id["airtable__rec8BnxDLyWeegOuO"]
     assert tickets_doc.doc_metadata is not None
     hierarchy = tickets_doc.doc_metadata["hierarchy"]
-    assert hierarchy["source_path"] == ["Onyx", "Tickets"]
+    assert hierarchy["source_path"] == ["Orbyte", "Tickets"]
     assert hierarchy["base_id"] == airtable_config.base_id
-    assert hierarchy["base_name"] == "Onyx"
+    assert hierarchy["base_name"] == "Orbyte"
     assert hierarchy["table_name"] == "Tickets"
 
     # Verify hierarchy on a Support Categories doc
     cat_doc = docs_by_id["airtable__rec5SgUDcHXcBc8kS"]
     assert cat_doc.doc_metadata is not None
     assert cat_doc.doc_metadata["hierarchy"]["source_path"] == [
-        "Onyx",
+        "Orbyte",
         "Support Categories",
     ]
 

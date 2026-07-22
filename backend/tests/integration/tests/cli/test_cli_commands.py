@@ -1,18 +1,18 @@
 """
-Integration tests for the onyx-cli binary against a real Onyx backend.
+Integration tests for the orbyte-cli binary against a real Orbyte backend.
 
-These tests require a pre-built CLI binary passed via the ONYX_CLI_BINARY
+These tests require a pre-built CLI binary passed via the ORBYTE_CLI_BINARY
 env var. In CI, the workflow builds the binary and mounts it into the test
-container. The tests are skipped when ONYX_CLI_BINARY is not set.
+container. The tests are skipped when ORBYTE_CLI_BINARY is not set.
 
 LLM responses are mocked for the whole suite (see conftest), so the ``ask``
 tests assert on MOCK_LLM_TOKEN rather than calling a real provider.
 
-To run locally (requires Go toolchain + all Onyx services running):
+To run locally (requires Go toolchain + all Orbyte services running):
 
-    cd cli && go build -o /tmp/onyx-cli-test .
+    cd cli && go build -o /tmp/orbyte-cli-test .
     cd ..
-    ONYX_CLI_BINARY=/tmp/onyx-cli-test \
+    ORBYTE_CLI_BINARY=/tmp/orbyte-cli-test \
       python -m dotenv -f .vscode/.env run -- \
       pytest backend/tests/integration/tests/cli/
 
@@ -51,7 +51,7 @@ from pathlib import Path
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
+from orbyte.configs.constants import DocumentSource
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.document import DocumentManager
@@ -64,17 +64,17 @@ from tests.integration.common_utils.test_models import DATestPersona
 from tests.integration.common_utils.test_models import DATestUser
 from tests.integration.tests.cli.conftest import MOCK_LLM_TOKEN
 
-_CLI_BINARY = os.environ.get("ONYX_CLI_BINARY")
+_CLI_BINARY = os.environ.get("ORBYTE_CLI_BINARY")
 
 pytestmark = pytest.mark.skipif(
     _CLI_BINARY is None,
-    reason="CLI integration tests require ONYX_CLI_BINARY env var pointing to the built binary",
+    reason="CLI integration tests require ORBYTE_CLI_BINARY env var pointing to the built binary",
 )
 
 
 @pytest.fixture(scope="module")
 def cli_binary() -> Path:
-    """Return the pre-built CLI binary path from ONYX_CLI_BINARY."""
+    """Return the pre-built CLI binary path from ORBYTE_CLI_BINARY."""
     assert _CLI_BINARY is not None
     binary = Path(_CLI_BINARY)
     assert binary.exists(), f"CLI binary not found at {binary}"
@@ -121,12 +121,12 @@ def run_cli(
     env = {
         "PATH": os.environ.get("PATH", ""),
         "HOME": os.environ.get("HOME", ""),
-        "ONYX_SERVER_URL": server_url,
-        "ONYX_API_PREFIX": "",
+        "ORBYTE_SERVER_URL": server_url,
+        "ORBYTE_API_PREFIX": "",
         "XDG_CONFIG_HOME": tempfile.mkdtemp(),
     }
     if pat is not None:
-        env["ONYX_PAT"] = pat
+        env["ORBYTE_PAT"] = pat
 
     return subprocess.run(
         [str(binary)] + args,
@@ -485,7 +485,7 @@ def test_search_source_filter(
     phrase = "cli-search-source-filter-unique"
     DocumentManager.seed_doc_with_content(cc_pair, phrase, api_key)
 
-    # TODO(@wenxi-onyx): Make the integration test manager allow source types during seeding
+    # TODO(@wenxi-orbyte): Make the integration test manager allow source types during seeding
     result = run_cli(
         cli_binary,
         ["search", "--raw", "--source", DocumentSource.NOT_APPLICABLE.value, phrase],

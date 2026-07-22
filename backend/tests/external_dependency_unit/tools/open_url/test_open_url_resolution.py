@@ -13,9 +13,9 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.models import Document as DBDocument
-from onyx.kg.models import KGStage
-from onyx.tools.tool_implementations.open_url.open_url_tool import (
+from orbyte.db.models import Document as DBDocument
+from orbyte.kg.models import KGStage
+from orbyte.tools.tool_implementations.open_url.open_url_tool import (
     _resolve_urls_to_document_ids,
 )
 

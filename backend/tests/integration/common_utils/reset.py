@@ -7,17 +7,17 @@ from alembic import command
 from alembic.config import Config
 from sqlalchemy.orm import Session
 
-from onyx.configs.app_configs import POSTGRES_HOST
-from onyx.configs.app_configs import POSTGRES_PASSWORD
-from onyx.configs.app_configs import POSTGRES_PORT
-from onyx.configs.app_configs import POSTGRES_USER
-from onyx.db.engine.sql_engine import build_connection_string
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.engine.sql_engine import SYNC_DB_API
-from onyx.db.swap_index import check_and_perform_index_swap
-from onyx.file_store.file_store import get_default_file_store
-from onyx.setup import setup_postgres
-from onyx.utils.logger import setup_logger
+from orbyte.configs.app_configs import POSTGRES_HOST
+from orbyte.configs.app_configs import POSTGRES_PASSWORD
+from orbyte.configs.app_configs import POSTGRES_PORT
+from orbyte.configs.app_configs import POSTGRES_USER
+from orbyte.db.engine.sql_engine import build_connection_string
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import SYNC_DB_API
+from orbyte.db.swap_index import check_and_perform_index_swap
+from orbyte.file_store.file_store import get_default_file_store
+from orbyte.setup import setup_postgres
+from orbyte.utils.logger import setup_logger
 from tests.integration.common_utils.timeout import run_with_timeout_multiproc
 
 logger = setup_logger()
@@ -237,7 +237,7 @@ def drop_multitenant_postgres_task(dbname: str) -> None:
 
 def reset_postgres(
     config_name: str = "alembic",
-    setup_onyx: bool = True,
+    setup_orbyte: bool = True,
 ) -> None:
     """Reset the Postgres database.
 
@@ -285,7 +285,7 @@ def reset_postgres(
 
     logger.info("Upgrading Postgres...")
     upgrade_postgres(database=database, config_name=config_name, revision="head")
-    if setup_onyx:
+    if setup_orbyte:
         logger.info("Setting up Postgres...")
         with get_session_with_current_tenant() as db_session:
             setup_postgres(db_session)
@@ -298,26 +298,26 @@ def reset_postgres(
             check_and_perform_index_swap(db_session)
 
 
-_PEM_BEGIN = "-----BEGIN ONYX LICENSE-----"
-_PEM_END = "-----END ONYX LICENSE-----"
+_PEM_BEGIN = "-----BEGIN ORBYTE LICENSE-----"
+_PEM_END = "-----END ORBYTE LICENSE-----"
 
 
 def _seed_dev_license_if_set(db_session: Session) -> None:
-    """Seed the ONYX_DEV_LICENSE blob into the License table.
+    """Seed the ORBYTE_DEV_LICENSE blob into the License table.
 
     Called after every Postgres reset so EE-gated routes don't return 402
     after the License row is wiped by alembic downgrade. No-ops when the
     env var is unset.
     """
-    blob = os.environ.get("ONYX_DEV_LICENSE", "").strip()
+    blob = os.environ.get("ORBYTE_DEV_LICENSE", "").strip()
     if not blob:
         return
 
     if blob.startswith(_PEM_BEGIN) and blob.endswith(_PEM_END):
         blob = "\n".join(blob.split("\n")[1:-1]).strip()
 
-    from ee.onyx.db.license import upsert_license
-    from ee.onyx.utils.license import verify_license_signature
+    from ee.orbyte.db.license import upsert_license
+    from ee.orbyte.utils.license import verify_license_signature
 
     verify_license_signature(blob)
     upsert_license(db_session, blob)
@@ -328,7 +328,7 @@ def reset_postgres_multitenant() -> None:
     """Reset the Postgres database for all tenants in a multitenant setup."""
 
     drop_multitenant_postgres()
-    reset_postgres(config_name="schema_private", setup_onyx=False)
+    reset_postgres(config_name="schema_private", setup_orbyte=False)
 
 
 def reset_file_store() -> None:

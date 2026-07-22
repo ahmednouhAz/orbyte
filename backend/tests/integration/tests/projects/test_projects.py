@@ -2,9 +2,9 @@ from typing import List
 
 import pytest
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import UserFile
-from onyx.server.features.projects.models import UserProjectSnapshot
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.models import UserFile
+from orbyte.server.features.projects.models import UserProjectSnapshot
 from tests.integration.common_utils.managers.project import ProjectManager
 from tests.integration.common_utils.reset import reset_all
 from tests.integration.common_utils.test_models import DATestLLMProvider

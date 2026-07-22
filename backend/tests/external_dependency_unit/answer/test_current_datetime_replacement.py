@@ -3,15 +3,15 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from onyx.chat.models import AnswerStreamPart
-from onyx.chat.models import StreamingError
-from onyx.chat.process_message import handle_stream_message_objects
-from onyx.db.chat import create_chat_session
-from onyx.db.models import User
-from onyx.db.persona import get_persona_by_id
-from onyx.server.query_and_chat.models import MessageResponseIDInfo
-from onyx.server.query_and_chat.models import SendMessageRequest
-from onyx.server.query_and_chat.streaming_models import AgentResponseDelta
+from orbyte.chat.models import AnswerStreamPart
+from orbyte.chat.models import StreamingError
+from orbyte.chat.process_message import handle_stream_message_objects
+from orbyte.db.chat import create_chat_session
+from orbyte.db.models import User
+from orbyte.db.persona import get_persona_by_id
+from orbyte.server.query_and_chat.models import MessageResponseIDInfo
+from orbyte.server.query_and_chat.models import SendMessageRequest
+from orbyte.server.query_and_chat.streaming_models import AgentResponseDelta
 from tests.external_dependency_unit.answer.conftest import ensure_default_llm_provider
 from tests.external_dependency_unit.conftest import create_test_user
 

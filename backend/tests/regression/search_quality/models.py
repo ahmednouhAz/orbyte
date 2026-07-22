@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-from onyx.configs.constants import DocumentSource
-from onyx.context.search.models import SavedSearchDoc
+from orbyte.configs.constants import DocumentSource
+from orbyte.context.search.models import SavedSearchDoc
 
 
 class GroundTruth(BaseModel):

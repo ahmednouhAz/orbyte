@@ -4,10 +4,10 @@ from datetime import timezone
 
 import pytest
 
-from onyx.connectors.models import InputType
-from onyx.connectors.slack.models import ChannelType
-from onyx.db.enums import AccessType
-from onyx.server.documents.models import DocumentSource
+from orbyte.connectors.models import InputType
+from orbyte.connectors.slack.models import ChannelType
+from orbyte.db.enums import AccessType
+from orbyte.server.documents.models import DocumentSource
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
 from tests.integration.common_utils.managers.credential import CredentialManager
@@ -134,34 +134,34 @@ def test_slack_prune(
 
     # ----------------------TEST THE SETUP--------------------------
     # Search as admin with access to both channels
-    onyx_doc_message_strings = DocumentSearchManager.search_documents(
+    orbyte_doc_message_strings = DocumentSearchManager.search_documents(
         query="favorite number",
         user_performing_action=admin_user,
     )
     print(
         "\ntop_documents content before deleting for admin: ",
-        onyx_doc_message_strings,
+        orbyte_doc_message_strings,
     )
 
     # Ensure admin user can see all messages
-    assert public_message in onyx_doc_message_strings
-    assert private_message in onyx_doc_message_strings
-    assert message_to_delete in onyx_doc_message_strings
+    assert public_message in orbyte_doc_message_strings
+    assert private_message in orbyte_doc_message_strings
+    assert message_to_delete in orbyte_doc_message_strings
 
     # Search as test_user_1 with access to both channels
-    onyx_doc_message_strings = DocumentSearchManager.search_documents(
+    orbyte_doc_message_strings = DocumentSearchManager.search_documents(
         query="favorite number",
         user_performing_action=test_user_1,
     )
     print(
         "\ntop_documents content before deleting for test_user_1: ",
-        onyx_doc_message_strings,
+        orbyte_doc_message_strings,
     )
 
     # Ensure test_user_1 can see all messages
-    assert public_message in onyx_doc_message_strings
-    assert private_message in onyx_doc_message_strings
-    assert message_to_delete in onyx_doc_message_strings
+    assert public_message in orbyte_doc_message_strings
+    assert private_message in orbyte_doc_message_strings
+    assert message_to_delete in orbyte_doc_message_strings
 
     # ----------------------MAKE THE CHANGES--------------------------
     # Delete messages
@@ -180,32 +180,32 @@ def test_slack_prune(
     # ----------------------------VERIFY THE CHANGES---------------------------
     # Ensure admin user can't see deleted messages
     # Search as admin user with access to only the public channel
-    onyx_doc_message_strings = DocumentSearchManager.search_documents(
+    orbyte_doc_message_strings = DocumentSearchManager.search_documents(
         query="favorite number",
         user_performing_action=admin_user,
     )
     print(
         "\ntop_documents content after deleting for admin: ",
-        onyx_doc_message_strings,
+        orbyte_doc_message_strings,
     )
 
     # Ensure admin can't see deleted messages
-    assert public_message in onyx_doc_message_strings
-    assert private_message in onyx_doc_message_strings
-    assert message_to_delete not in onyx_doc_message_strings
+    assert public_message in orbyte_doc_message_strings
+    assert private_message in orbyte_doc_message_strings
+    assert message_to_delete not in orbyte_doc_message_strings
 
     # Ensure test_user_1 can't see deleted messages
     # Search as test_user_1 with access to only the public channel
-    onyx_doc_message_strings = DocumentSearchManager.search_documents(
+    orbyte_doc_message_strings = DocumentSearchManager.search_documents(
         query="favorite number",
         user_performing_action=test_user_1,
     )
     print(
         "\ntop_documents content after prune for test_user_1: ",
-        onyx_doc_message_strings,
+        orbyte_doc_message_strings,
     )
 
     # Ensure test_user_1 can't see deleted messages
-    assert public_message in onyx_doc_message_strings
-    assert private_message in onyx_doc_message_strings
-    assert message_to_delete not in onyx_doc_message_strings
+    assert public_message in orbyte_doc_message_strings
+    assert private_message in orbyte_doc_message_strings
+    assert message_to_delete not in orbyte_doc_message_strings

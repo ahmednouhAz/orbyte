@@ -29,62 +29,62 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.beat_schedule import BEAT_EXPIRES_DEFAULT
-from onyx.background.celery.tasks.docprocessing.utils import should_index
-from onyx.background.celery.tasks.port import tasks as port_task
-from onyx.background.celery.tasks.port.tasks import run_check_for_port
-from onyx.background.celery.tasks.port.tasks import run_port_attempt
-from onyx.configs.app_configs import INDEX_BATCH_SIZE
-from onyx.configs.app_configs import MAX_CONCURRENT_PORT_ATTEMPTS
-from onyx.configs.constants import OnyxCeleryQueues
-from onyx.configs.constants import OnyxCeleryTask
-from onyx.context.search.models import SavedSearchSettings
-from onyx.db import port_attempt as port_attempt_db
-from onyx.db.connector_credential_pair import get_last_successful_attempt_poll_range_end
-from onyx.db.document import document_has_indexable_cc_pair
-from onyx.db.document import filter_existing_cc_pair_document_ids
-from onyx.db.document import get_document_ids_for_cc_pair_batch
-from onyx.db.document import get_max_document_id_for_cc_pair
-from onyx.db.document import mark_document_as_modified
-from onyx.db.document import mark_document_as_synced
-from onyx.db.document import mark_document_synced_secondary_pending
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import EmbeddingPrecision
-from onyx.db.enums import IndexingStatus
-from onyx.db.enums import IndexModelStatus
-from onyx.db.enums import PortAttemptStatus
-from onyx.db.index_attempt import (
+from orbyte.background.celery.tasks.beat_schedule import BEAT_EXPIRES_DEFAULT
+from orbyte.background.celery.tasks.docprocessing.utils import should_index
+from orbyte.background.celery.tasks.port import tasks as port_task
+from orbyte.background.celery.tasks.port.tasks import run_check_for_port
+from orbyte.background.celery.tasks.port.tasks import run_port_attempt
+from orbyte.configs.app_configs import INDEX_BATCH_SIZE
+from orbyte.configs.app_configs import MAX_CONCURRENT_PORT_ATTEMPTS
+from orbyte.configs.constants import OrbyteCeleryQueues
+from orbyte.configs.constants import OrbyteCeleryTask
+from orbyte.context.search.models import SavedSearchSettings
+from orbyte.db import port_attempt as port_attempt_db
+from orbyte.db.connector_credential_pair import get_last_successful_attempt_poll_range_end
+from orbyte.db.document import document_has_indexable_cc_pair
+from orbyte.db.document import filter_existing_cc_pair_document_ids
+from orbyte.db.document import get_document_ids_for_cc_pair_batch
+from orbyte.db.document import get_max_document_id_for_cc_pair
+from orbyte.db.document import mark_document_as_modified
+from orbyte.db.document import mark_document_as_synced
+from orbyte.db.document import mark_document_synced_secondary_pending
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import EmbeddingPrecision
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.enums import IndexModelStatus
+from orbyte.db.enums import PortAttemptStatus
+from orbyte.db.index_attempt import (
     count_unique_active_cc_pairs_with_successful_index_attempts,
 )
-from onyx.db.index_attempt import count_unique_cc_pairs_with_successful_index_attempts
-from onyx.db.index_attempt import create_synthetic_seed_attempt
-from onyx.db.index_attempt import get_latest_successful_index_attempt_for_cc_pair_id
-from onyx.db.index_attempt import mock_successful_index_attempt
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Document as DbDocument
-from onyx.db.models import DocumentByConnectorCredentialPair
-from onyx.db.models import IndexAttempt
-from onyx.db.models import PortAttempt
-from onyx.db.models import SearchSettings
-from onyx.db.port_attempt import cancel_active_port_attempts
-from onyx.db.port_attempt import commit_port_cursor
-from onyx.db.port_attempt import count_consecutive_failed_port_attempts_no_progress
-from onyx.db.port_attempt import create_port_attempt
-from onyx.db.port_attempt import get_active_port_attempt
-from onyx.db.port_attempt import get_latest_port_attempt
-from onyx.db.port_attempt import mark_port_canceled
-from onyx.db.port_attempt import mark_port_failed
-from onyx.db.port_attempt import mark_port_in_progress
-from onyx.db.port_attempt import mark_port_succeeded
-from onyx.db.port_attempt import port_backfill_has_pending_work
-from onyx.db.port_attempt import request_port_cancel
-from onyx.db.search_settings import create_search_settings
-from onyx.db.search_settings import get_current_search_settings
-from onyx.db.swap_index import _port_swap_ready
-from onyx.document_index.opensearch import port_copy
-from onyx.document_index.opensearch.port_copy import copy_present_chunks_to_future
-from onyx.indexing.port_reembed import ReembedStrategy
-from onyx.kg.models import KGStage
+from orbyte.db.index_attempt import count_unique_cc_pairs_with_successful_index_attempts
+from orbyte.db.index_attempt import create_synthetic_seed_attempt
+from orbyte.db.index_attempt import get_latest_successful_index_attempt_for_cc_pair_id
+from orbyte.db.index_attempt import mock_successful_index_attempt
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Document as DbDocument
+from orbyte.db.models import DocumentByConnectorCredentialPair
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import PortAttempt
+from orbyte.db.models import SearchSettings
+from orbyte.db.port_attempt import cancel_active_port_attempts
+from orbyte.db.port_attempt import commit_port_cursor
+from orbyte.db.port_attempt import count_consecutive_failed_port_attempts_no_progress
+from orbyte.db.port_attempt import create_port_attempt
+from orbyte.db.port_attempt import get_active_port_attempt
+from orbyte.db.port_attempt import get_latest_port_attempt
+from orbyte.db.port_attempt import mark_port_canceled
+from orbyte.db.port_attempt import mark_port_failed
+from orbyte.db.port_attempt import mark_port_in_progress
+from orbyte.db.port_attempt import mark_port_succeeded
+from orbyte.db.port_attempt import port_backfill_has_pending_work
+from orbyte.db.port_attempt import request_port_cancel
+from orbyte.db.search_settings import create_search_settings
+from orbyte.db.search_settings import get_current_search_settings
+from orbyte.db.swap_index import _port_swap_ready
+from orbyte.document_index.opensearch import port_copy
+from orbyte.document_index.opensearch.port_copy import copy_present_chunks_to_future
+from orbyte.indexing.port_reembed import ReembedStrategy
+from orbyte.kg.models import KGStage
 from shared_configs.contextvars import get_current_tenant_id
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair_and_future
@@ -932,12 +932,12 @@ def test_check_for_port_creates_and_enqueues(
     assert attempts[0].status == PortAttemptStatus.NOT_STARTED
     celery_app.send_task.assert_called_once()
     call = celery_app.send_task.call_args
-    assert call.args[0] == OnyxCeleryTask.RUN_PORT_ATTEMPT
+    assert call.args[0] == OrbyteCeleryTask.RUN_PORT_ATTEMPT
     assert call.kwargs["kwargs"] == {
         "port_attempt_id": attempts[0].id,
         "tenant_id": get_current_tenant_id(),
     }
-    assert call.kwargs["queue"] == OnyxCeleryQueues.PORT
+    assert call.kwargs["queue"] == OrbyteCeleryQueues.PORT
     assert call.kwargs["expires"] == BEAT_EXPIRES_DEFAULT
 
 

@@ -11,22 +11,22 @@ from sqlalchemy import delete
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ExternalAppType
-from onyx.db.models import ExternalApp
-from onyx.db.models import Skill
-from onyx.db.models import User
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.build.external_apps.api import create_built_in_external_app
-from onyx.server.features.build.external_apps.api import create_custom_external_app
-from onyx.server.features.build.external_apps.api import replace_custom_app_bundle
-from onyx.server.features.build.external_apps.api import update_external_app_admin
-from onyx.server.features.build.external_apps.models import (
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.models import ExternalApp
+from orbyte.db.models import Skill
+from orbyte.db.models import User
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.server.features.build.external_apps.api import create_built_in_external_app
+from orbyte.server.features.build.external_apps.api import create_custom_external_app
+from orbyte.server.features.build.external_apps.api import replace_custom_app_bundle
+from orbyte.server.features.build.external_apps.api import update_external_app_admin
+from orbyte.server.features.build.external_apps.models import (
     CreateBuiltInExternalAppRequest,
 )
-from onyx.server.features.build.external_apps.models import ExternalAppAdminResponse
-from onyx.server.features.build.external_apps.models import UpdateExternalAppRequest
-from onyx.utils.encryption import is_masked_credential
+from orbyte.server.features.build.external_apps.models import ExternalAppAdminResponse
+from orbyte.server.features.build.external_apps.models import UpdateExternalAppRequest
+from orbyte.utils.encryption import is_masked_credential
 
 _AUTH_TEMPLATE = {"Authorization": "Bearer {api_key}"}
 _UPSTREAM = ["https://api.example.com/*"]
@@ -91,7 +91,7 @@ def test_create_persists_skill_and_app(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
     slug = f"custom-test-{uuid4().hex[:8]}"
@@ -131,10 +131,10 @@ def test_custom_app_glob_matches_deep_path(
     """Custom apps store their URL patterns as authored globs; the matcher
     translates them to regexes that cover deep paths (the Discord 401
     regression — ``/api/*`` must match ``/api/v10/...``)."""
-    from onyx.sandbox_proxy.request_evaluator import resolve_app_for_url
+    from orbyte.sandbox_proxy.request_evaluator import resolve_app_for_url
 
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
     slug = f"custom-test-{uuid4().hex[:8]}"
@@ -160,12 +160,12 @@ def test_create_rejects_wildcard_host_glob(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
     slug = f"custom-test-{uuid4().hex[:8]}"
 
-    with pytest.raises(OnyxError):
+    with pytest.raises(OrbyteError):
         create_custom_external_app(
             name="Wildcard Host",
             description="",
@@ -187,7 +187,7 @@ def test_create_with_no_credentials(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
     slug = f"custom-test-{uuid4().hex[:8]}"
@@ -214,7 +214,7 @@ def test_edit_updates_config_and_replaces_bundle(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
     slug = f"custom-test-{uuid4().hex[:8]}"
@@ -273,7 +273,7 @@ def test_admin_response_masks_secret_and_edit_preserves_it(
     masked placeholder (an edit that doesn't touch the secret) preserves the real
     stored value rather than overwriting it with the mask."""
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
     slug = f"custom-test-{uuid4().hex[:8]}"
@@ -324,12 +324,12 @@ def test_create_rejects_bundle_without_skill_md(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
     slug = f"custom-test-{uuid4().hex[:8]}"
 
-    with pytest.raises(OnyxError):
+    with pytest.raises(OrbyteError):
         create_custom_external_app(
             name="No Skill",
             description="",
@@ -351,10 +351,10 @@ def test_create_requires_bundle(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
-    with pytest.raises(OnyxError):
+    with pytest.raises(OrbyteError):
         create_custom_external_app(
             name="No Bundle",
             description="",
@@ -374,13 +374,13 @@ def test_create_rejects_bundle_over_skill_upload_size_limit(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
-    monkeypatch.setattr("onyx.skills.bundle.DEFAULT_TOTAL_MAX_BYTES", 1)
+    monkeypatch.setattr("orbyte.skills.bundle.DEFAULT_TOTAL_MAX_BYTES", 1)
     slug = f"custom-test-{uuid4().hex[:8]}"
 
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(OrbyteError) as exc:
         create_custom_external_app(
             name="Too Large",
             description="",
@@ -393,7 +393,7 @@ def test_create_rejects_bundle_over_skill_upload_size_limit(
             db_session=db_session,
         )
 
-    assert exc.value.error_code == OnyxErrorCode.PAYLOAD_TOO_LARGE
+    assert exc.value.error_code == OrbyteErrorCode.PAYLOAD_TOO_LARGE
     assert db_session.scalar(select(Skill).where(Skill.slug == slug)) is None
 
 
@@ -403,15 +403,15 @@ def test_replace_rejects_bundle_over_skill_upload_size_limit(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
     slug = f"custom-test-{uuid4().hex[:8]}"
     created = _create(db_session, test_user, slug)
 
-    monkeypatch.setattr("onyx.skills.bundle.DEFAULT_TOTAL_MAX_BYTES", 1)
+    monkeypatch.setattr("orbyte.skills.bundle.DEFAULT_TOTAL_MAX_BYTES", 1)
 
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(OrbyteError) as exc:
         replace_custom_app_bundle(
             external_app_id=created.id,
             bundle=_upload(f"{slug}.zip", marker="v2"),
@@ -419,7 +419,7 @@ def test_replace_rejects_bundle_over_skill_upload_size_limit(
             db_session=db_session,
         )
 
-    assert exc.value.error_code == OnyxErrorCode.PAYLOAD_TOO_LARGE
+    assert exc.value.error_code == OrbyteErrorCode.PAYLOAD_TOO_LARGE
 
     db_session.execute(delete(Skill).where(Skill.slug == slug))
     db_session.commit()
@@ -431,26 +431,26 @@ def test_create_cleans_up_blob_on_failure(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
+        "orbyte.server.features.build.external_apps.api.push_skill_to_affected_sandboxes",
         _noop,
     )
 
     def _boom(*_args: object, **_kwargs: object) -> ExternalApp:
-        raise OnyxError(OnyxErrorCode.INVALID_INPUT, "forced failure")
+        raise OrbyteError(OrbyteErrorCode.INVALID_INPUT, "forced failure")
 
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.create_external_app",
+        "orbyte.server.features.build.external_apps.api.create_external_app",
         _boom,
     )
 
     deleted: list[str] = []
     monkeypatch.setattr(
-        "onyx.skills.ingest.delete_bundle_blob",
+        "orbyte.skills.ingest.delete_bundle_blob",
         lambda _fs, file_id: deleted.append(file_id),
     )
 
     slug = f"custom-test-{uuid4().hex[:8]}"
-    with pytest.raises(OnyxError):
+    with pytest.raises(OrbyteError):
         _create(db_session, test_user, slug)
 
     # The bundle was stored during ingest, so the post-failure cleanup must run.
@@ -461,7 +461,7 @@ def test_json_admin_apps_rejects_custom(
     db_session: Session,
     test_user: User,
 ) -> None:
-    with pytest.raises(OnyxError):
+    with pytest.raises(OrbyteError):
         create_built_in_external_app(
             request=CreateBuiltInExternalAppRequest(
                 name="Nope",

@@ -8,7 +8,7 @@ Create Date: 2025-10-24 08:58:50.246949
 
 from alembic import op
 import sqlalchemy as sa
-from onyx.db.enums import ThemePreference
+from orbyte.db.enums import ThemePreference
 
 # revision identifiers, used by Alembic.
 revision = "09995b8811eb"

@@ -7,7 +7,7 @@ ARG BASE_IMAGE_REGISTRY=docker.io
 # everything needed to install the wheels).
 FROM ${BASE_IMAGE_REGISTRY}/library/python:3.13-slim@sha256:b04b5d7233d2ad9c379e22ea8927cd1378cd15c60d4ef876c065b25ea8fb3bf3 AS builder
 
-ENV ONYX_RUNNING_IN_DOCKER="true" \
+ENV ORBYTE_RUNNING_IN_DOCKER="true" \
     HF_HOME=/app/.cache/huggingface \
     VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH" \
@@ -23,15 +23,15 @@ RUN uv venv /app/.venv --python 3.13
 
 # Pre-create the runtime writable dirs here (the distroless runtime has no shell
 # to mkdir). Left empty in this stage; the model download happens downstream.
-RUN mkdir -p /app/.cache/huggingface /var/log/onyx
+RUN mkdir -p /app/.cache/huggingface /var/log/orbyte
 
-# Recreate the `onyx` user (UID 1001) from the previous image so deployments that
-# pin `-u onyx` / `user: onyx` keep resolving and their 1001-owned volumes stay
+# Recreate the `orbyte` user (UID 1001) from the previous image so deployments that
+# pin `-u orbyte` / `user: orbyte` keep resolving and their 1001-owned volumes stay
 # writable. The DHI "-dev" image ships a shell but not the `shadow` tools
 # (groupadd/useradd), so write the passwd/group entries directly; they're copied
 # into the distroless runtime below.
-RUN printf 'onyx:x:1001:\n' >> /etc/group && \
-    printf 'onyx:x:1001:1001::/home/onyx:/usr/sbin/nologin\n' >> /etc/passwd
+RUN printf 'orbyte:x:1001:\n' >> /etc/group && \
+    printf 'orbyte:x:1001:1001::/home/orbyte:/usr/sbin/nologin\n' >> /etc/passwd
 
 COPY ./requirements/model_server.txt /tmp/requirements.txt
 
@@ -54,7 +54,7 @@ FROM builder AS embedding-models
 RUN python -c "from sentence_transformers import SentenceTransformer; \
 SentenceTransformer(model_name_or_path='nomic-ai/nomic-embed-text-v1', trust_remote_code=True);"
 
-# Runtime stage: public Debian-slim Python image. We run as the `onyx` user
+# Runtime stage: public Debian-slim Python image. We run as the `orbyte` user
 # (UID 1001, carried over from the builder stage; see USER below) and chown
 # everything the runtime writes to it.
 FROM ${BASE_IMAGE_REGISTRY}/library/python:3.13-slim@sha256:b04b5d7233d2ad9c379e22ea8927cd1378cd15c60d4ef876c065b25ea8fb3bf3 AS final
@@ -67,55 +67,55 @@ visit https://github.com/onyx-dot-app/onyx."
 
 WORKDIR /app
 
-ENV ONYX_RUNNING_IN_DOCKER="true" \
+ENV ORBYTE_RUNNING_IN_DOCKER="true" \
     HF_HOME=/app/.cache/huggingface \
     HOME=/app/.cache/huggingface \
     PYTHONPATH=/app \
     VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
 
-# Bring the `onyx` user (1001) into the distroless runtime. The -dev builder's
+# Bring the `orbyte` user (1001) into the distroless runtime. The -dev builder's
 # passwd/group are a superset of the runtime's, so copying them preserves the
-# base's own entries while adding `onyx`, letting `USER onyx` and any runtime
-# `-u onyx` override resolve the name.
+# base's own entries while adding `orbyte`, letting `USER orbyte` and any runtime
+# `-u orbyte` override resolve the name.
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 
 # Installed dependencies (the venv) plus the writable runtime dirs, owned by the
-# onyx UID (1001) so the process can write the HF cache and logs. When users mount
+# orbyte UID (1001) so the process can write the HF cache and logs. When users mount
 # named volumes over these paths, the volume seeds with the same ownership.
 COPY --from=builder --chown=1001:1001 /app/.venv /app/.venv
 COPY --from=builder --chown=1001:1001 /app/.cache/huggingface /app/.cache/huggingface
-COPY --from=builder --chown=1001:1001 /var/log/onyx /var/log/onyx
+COPY --from=builder --chown=1001:1001 /var/log/orbyte /var/log/orbyte
 
 # In case the user has volumes mounted to /app/.cache/huggingface that they've downloaded while
-# running Onyx, move the current contents of the cache folder to a temporary location to ensure
+# running Orbyte, move the current contents of the cache folder to a temporary location to ensure
 # it's preserved in order to combine with the user's cache contents
 COPY --chown=1001:1001 --from=embedding-models /app/.cache/huggingface /app/.cache/temp_huggingface
 
 # Utils used by model server
-COPY --chown=1001:1001 ./onyx/utils/logger.py /app/onyx/utils/logger.py
-COPY --chown=1001:1001 ./onyx/utils/platform_utils.py /app/onyx/utils/platform_utils.py
-COPY --chown=1001:1001 ./onyx/utils/middleware.py /app/onyx/utils/middleware.py
-COPY --chown=1001:1001 ./onyx/utils/tenant.py /app/onyx/utils/tenant.py
+COPY --chown=1001:1001 ./orbyte/utils/logger.py /app/orbyte/utils/logger.py
+COPY --chown=1001:1001 ./orbyte/utils/platform_utils.py /app/orbyte/utils/platform_utils.py
+COPY --chown=1001:1001 ./orbyte/utils/middleware.py /app/orbyte/utils/middleware.py
+COPY --chown=1001:1001 ./orbyte/utils/tenant.py /app/orbyte/utils/tenant.py
 
 # Sentry configuration (used when SENTRY_DSN is set)
-COPY --chown=1001:1001 ./onyx/configs/__init__.py /app/onyx/configs/__init__.py
-COPY --chown=1001:1001 ./onyx/configs/sentry.py /app/onyx/configs/sentry.py
+COPY --chown=1001:1001 ./orbyte/configs/__init__.py /app/orbyte/configs/__init__.py
+COPY --chown=1001:1001 ./orbyte/configs/sentry.py /app/orbyte/configs/sentry.py
 
 # Place to fetch version information
-COPY --chown=1001:1001 ./onyx/__init__.py /app/onyx/__init__.py
+COPY --chown=1001:1001 ./orbyte/__init__.py /app/orbyte/__init__.py
 
-# Shared between Onyx Backend and Model Server
+# Shared between Orbyte Backend and Model Server
 COPY --chown=1001:1001 ./shared_configs /app/shared_configs
 
 # Model Server main code
 COPY --chown=1001:1001 ./model_server /app/model_server
 
-# Default ONYX_VERSION, typically overriden during builds by GitHub Actions.
-ARG ONYX_VERSION=0.0.0-dev
-ENV ONYX_VERSION=${ONYX_VERSION}
+# Default ORBYTE_VERSION, typically overriden during builds by GitHub Actions.
+ARG ORBYTE_VERSION=0.0.0-dev
+ENV ORBYTE_VERSION=${ORBYTE_VERSION}
 
-USER onyx
+USER orbyte
 
 CMD ["python", "-m", "model_server"]

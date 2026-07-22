@@ -8,10 +8,10 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.highspot.connector import HighspotConnector
-from onyx.connectors.models import Document
-from onyx.connectors.models import HierarchyNode
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.highspot.connector import HighspotConnector
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(
@@ -49,7 +49,7 @@ def highspot_connector(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_highspot_connector_basic(
@@ -91,7 +91,7 @@ def test_highspot_connector_basic(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_highspot_connector_slim(
@@ -125,7 +125,7 @@ def test_highspot_connector_slim(
 
 @pytest.mark.xfail(reason="Highspot is not returning updated documents as expected.")
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_highspot_connector_poll_source(

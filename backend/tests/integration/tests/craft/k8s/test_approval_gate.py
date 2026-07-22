@@ -14,25 +14,25 @@ import pytest
 from kubernetes import client
 from sqlalchemy.orm import Session
 
-from onyx.cache.factory import get_cache_backend
-from onyx.configs.constants import NotificationType
-from onyx.db.enums import ApprovalDecision
-from onyx.db.enums import BuildSessionStatus
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.db.models import ActionApproval
-from onyx.db.models import BuildSession
-from onyx.db.models import Notification
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.sandbox_proxy.approval_cache import pop_announcement
-from onyx.server.features.build.configs import SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SANDBOX_NAMESPACE
-from onyx.server.features.build.configs import SANDBOX_PROXY_NAMESPACE
-from onyx.server.features.build.configs import SANDBOX_PROXY_PORT
-from onyx.server.features.build.configs import SandboxBackend
-from onyx.server.features.build.external_apps.models import ExternalAppAdminResponse
-from onyx.utils.logger import setup_logger
+from orbyte.cache.factory import get_cache_backend
+from orbyte.configs.constants import NotificationType
+from orbyte.db.enums import ApprovalDecision
+from orbyte.db.enums import BuildSessionStatus
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.models import ActionApproval
+from orbyte.db.models import BuildSession
+from orbyte.db.models import Notification
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.sandbox_proxy.approval_cache import pop_announcement
+from orbyte.server.features.build.configs import SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SANDBOX_NAMESPACE
+from orbyte.server.features.build.configs import SANDBOX_PROXY_NAMESPACE
+from orbyte.server.features.build.configs import SANDBOX_PROXY_PORT
+from orbyte.server.features.build.configs import SandboxBackend
+from orbyte.server.features.build.external_apps.models import ExternalAppAdminResponse
+from orbyte.utils.logger import setup_logger
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client as http_client
@@ -748,7 +748,7 @@ def test_post_decision_after_proxy_claimed_expired_returns_conflict(
         ApprovalDecision.REJECTED,
     )
     assert response.status_code == 409
-    assert response.json()["error_code"] == OnyxErrorCode.CONFLICT.code, (
+    assert response.json()["error_code"] == OrbyteErrorCode.CONFLICT.code, (
         f"expected CONFLICT, got {response.text}"
     )
 

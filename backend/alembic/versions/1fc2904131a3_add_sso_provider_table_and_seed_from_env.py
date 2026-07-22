@@ -14,7 +14,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from onyx.utils.encryption import encrypt_string_to_bytes
+from orbyte.utils.encryption import encrypt_string_to_bytes
 
 # revision identifiers, used by Alembic.
 revision = "1fc2904131a3"
@@ -65,12 +65,12 @@ def _seed_from_env(table: sa.Table) -> None:
     stay in one place. Skipped in multi-tenant (cloud auth does not use
     per-instance provider rows) and when the table already has any row.
     """
-    from onyx.configs.app_configs import AUTH_TYPE
-    from onyx.configs.app_configs import OAUTH_CLIENT_ID
-    from onyx.configs.app_configs import OAUTH_CLIENT_SECRET
-    from onyx.configs.app_configs import OPENID_CONFIG_URL
-    from onyx.configs.app_configs import VALID_EMAIL_DOMAINS
-    from onyx.configs.constants import AuthType
+    from orbyte.configs.app_configs import AUTH_TYPE
+    from orbyte.configs.app_configs import OAUTH_CLIENT_ID
+    from orbyte.configs.app_configs import OAUTH_CLIENT_SECRET
+    from orbyte.configs.app_configs import OPENID_CONFIG_URL
+    from orbyte.configs.app_configs import VALID_EMAIL_DOMAINS
+    from orbyte.configs.constants import AuthType
     from shared_configs.configs import MULTI_TENANT
 
     if MULTI_TENANT:

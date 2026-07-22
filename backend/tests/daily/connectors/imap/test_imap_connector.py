@@ -3,9 +3,9 @@ import time
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.credentials_provider import OnyxStaticCredentialsProvider
-from onyx.connectors.imap.connector import ImapConnector
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.credentials_provider import OrbyteStaticCredentialsProvider
+from orbyte.connectors.imap.connector import ImapConnector
 from tests.daily.connectors.imap.models import EmailDoc
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.utils.secret_names import TestSecret
@@ -34,7 +34,7 @@ def imap_connector(
         mailboxes=mailboxes,
     )
     imap_connector.set_credentials_provider(
-        OnyxStaticCredentialsProvider(
+        OrbyteStaticCredentialsProvider(
             tenant_id=None,
             connector_name=DocumentSource.IMAP,
             credential_json={
@@ -53,12 +53,12 @@ def imap_connector(
         [
             EmailDoc(
                 subject="Testing",
-                recipients=set(["admin@onyx-test.com", "raunak@onyx.app"]),
+                recipients=set(["admin@orbyte-test.com", "raunak@onyx.app"]),
                 body="Hello, testing.",
             ),
             EmailDoc(
                 subject="Hello world",
-                recipients=set(["admin@onyx-test.com", "r@rabh.io", "raunak@onyx.app"]),
+                recipients=set(["admin@orbyte-test.com", "r@rabh.io", "raunak@onyx.app"]),
                 body='Hello world, this is an email that contains multiple "To" recipients.',
             ),
         ]

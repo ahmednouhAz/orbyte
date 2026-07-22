@@ -14,7 +14,7 @@ import threading
 import time
 from uuid import UUID
 
-from onyx.configs.constants import MessageType
+from orbyte.configs.constants import MessageType
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.chat import ChatSessionManager

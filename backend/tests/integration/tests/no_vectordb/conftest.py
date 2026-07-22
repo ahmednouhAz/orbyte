@@ -1,6 +1,6 @@
 """Fixtures for no-vector-DB integration tests.
 
-These tests are intended to run against an Onyx deployment started with
+These tests are intended to run against an Orbyte deployment started with
 DISABLE_VECTOR_DB=true. They are automatically **skipped** when the
 env var is unset.
 """

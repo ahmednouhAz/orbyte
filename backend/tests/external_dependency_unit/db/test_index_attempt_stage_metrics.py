@@ -30,20 +30,20 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.document import prepare_to_modify_documents
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import IndexingStatus
-from onyx.db.index_attempt_metrics import get_stage_metrics_for_attempt
-from onyx.db.index_attempt_metrics import record_single_event
-from onyx.db.index_attempt_metrics import record_stage_aggregate
-from onyx.db.index_attempt_metrics import StageEventBuffer
-from onyx.db.index_attempt_metrics_models import IndexAttemptStage
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Document as DbDocument
-from onyx.db.models import IndexAttempt
-from onyx.db.models import IndexAttemptStageMetric
-from onyx.server.documents.models import IndexAttemptStageMetricSnapshot
-from onyx.server.documents.models import synthesize_unaccounted
+from orbyte.db.document import prepare_to_modify_documents
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.index_attempt_metrics import get_stage_metrics_for_attempt
+from orbyte.db.index_attempt_metrics import record_single_event
+from orbyte.db.index_attempt_metrics import record_stage_aggregate
+from orbyte.db.index_attempt_metrics import StageEventBuffer
+from orbyte.db.index_attempt_metrics_models import IndexAttemptStage
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Document as DbDocument
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import IndexAttemptStageMetric
+from orbyte.server.documents.models import IndexAttemptStageMetricSnapshot
+from orbyte.server.documents.models import synthesize_unaccounted
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
 

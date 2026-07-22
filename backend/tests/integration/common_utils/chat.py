@@ -1,5 +1,5 @@
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import User
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.models import User
 from tests.integration.common_utils.http_client import client
 
 

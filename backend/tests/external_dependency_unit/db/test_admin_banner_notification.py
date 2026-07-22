@@ -9,16 +9,16 @@ from collections.abc import Generator
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import NotificationType
-from onyx.db.admin_banner import clear_admin_banner
-from onyx.db.admin_banner import get_admin_banner
-from onyx.db.admin_banner import set_admin_banner
-from onyx.db.models import UserRole
-from onyx.db.notification import get_notifications
-from onyx.server.features.admin_banner import api as admin_banner_api
-from onyx.server.features.admin_banner.api import AdminBannerUpdateRequest
-from onyx.server.features.notifications import api as notifications_api
-from onyx.server.features.notifications.utils import (
+from orbyte.configs.constants import NotificationType
+from orbyte.db.admin_banner import clear_admin_banner
+from orbyte.db.admin_banner import get_admin_banner
+from orbyte.db.admin_banner import set_admin_banner
+from orbyte.db.models import UserRole
+from orbyte.db.notification import get_notifications
+from orbyte.server.features.admin_banner import api as admin_banner_api
+from orbyte.server.features.admin_banner.api import AdminBannerUpdateRequest
+from orbyte.server.features.notifications import api as notifications_api
+from orbyte.server.features.notifications.utils import (
     ensure_system_announcement_notification,
 )
 from tests.external_dependency_unit.conftest import create_test_user

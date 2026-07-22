@@ -9,7 +9,7 @@ Create Date: 2024-03-14 18:06:08.523106
 from alembic import op
 import sqlalchemy as sa
 
-from onyx.configs.constants import DocumentSource
+from orbyte.configs.constants import DocumentSource
 
 # revision identifiers, used by Alembic.
 revision = "e50154680a5c"

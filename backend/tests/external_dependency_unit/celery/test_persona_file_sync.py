@@ -27,23 +27,23 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.user_file_processing.tasks import (
+from orbyte.background.celery.tasks.user_file_processing.tasks import (
     check_for_user_file_project_sync,
 )
-from onyx.background.celery.tasks.user_file_processing.tasks import (
+from orbyte.background.celery.tasks.user_file_processing.tasks import (
     process_single_user_file_project_sync,
 )
-from onyx.background.celery.tasks.user_file_processing.tasks import (
+from orbyte.background.celery.tasks.user_file_processing.tasks import (
     user_file_project_sync_lock_key,
 )
-from onyx.db.enums import UserFileStatus
-from onyx.db.models import Persona
-from onyx.db.models import Persona__UserFile
-from onyx.db.models import User
-from onyx.db.models import UserFile
-from onyx.db.persona import upsert_persona
-from onyx.document_index.interfaces_new import MetadataUpdateRequest
-from onyx.redis.redis_pool import get_redis_client
+from orbyte.db.enums import UserFileStatus
+from orbyte.db.models import Persona
+from orbyte.db.models import Persona__UserFile
+from orbyte.db.models import User
+from orbyte.db.models import UserFile
+from orbyte.db.persona import upsert_persona
+from orbyte.document_index.interfaces_new import MetadataUpdateRequest
+from orbyte.redis.redis_pool import get_redis_client
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.conftest import create_test_user
 
@@ -114,7 +114,7 @@ def _link_file_to_persona(
     db_session.commit()
 
 
-_PATCH_QUEUE_DEPTH = "onyx.background.celery.tasks.user_file_processing.tasks.get_user_file_project_sync_queue_depth"
+_PATCH_QUEUE_DEPTH = "orbyte.background.celery.tasks.user_file_processing.tasks.get_user_file_project_sync_queue_depth"
 
 
 @contextmanager
@@ -130,7 +130,7 @@ def _patch_task_app(task: Any, mock_app: MagicMock) -> Generator[None, None, Non
         ),
         patch(_PATCH_QUEUE_DEPTH, return_value=0),
         patch(
-            "onyx.background.celery.tasks.user_file_processing.tasks.celery_get_broker_client",
+            "orbyte.background.celery.tasks.user_file_processing.tasks.celery_get_broker_client",
             return_value=MagicMock(),
         ),
     ):
@@ -220,16 +220,16 @@ class TestCheckSweepIncludesPersonaSync:
 # ---------------------------------------------------------------------------
 
 _PATCH_GET_SETTINGS = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.get_active_search_settings"
+    "orbyte.background.celery.tasks.user_file_processing.tasks.get_active_search_settings"
 )
 _PATCH_GET_INDICES = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.get_all_document_indices"
+    "orbyte.background.celery.tasks.user_file_processing.tasks.get_all_document_indices"
 )
 _PATCH_HTTPX_INIT = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.httpx_init_vespa_pool"
+    "orbyte.background.celery.tasks.user_file_processing.tasks.httpx_init_vespa_pool"
 )
 _PATCH_DISABLE_VDB = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.DISABLE_VECTOR_DB"
+    "orbyte.background.celery.tasks.user_file_processing.tasks.DISABLE_VECTOR_DB"
 )
 
 
@@ -308,8 +308,8 @@ class TestSyncTaskWritesPersonaIds:
         tenant_context: None,  # noqa: ARG002
     ) -> None:
         """A file linked to both a project and a persona gets both IDs."""
-        from onyx.db.models import Project__UserFile
-        from onyx.db.models import UserProject
+        from orbyte.db.models import Project__UserFile
+        from orbyte.db.models import UserProject
 
         user = create_test_user(db_session, "sync_both")
         uf = _create_completed_user_file(

@@ -10,15 +10,15 @@ from pydantic import ValidationError
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import SecuritySettings as SecuritySettingsRow
-from onyx.server.security import store as security_store
-from onyx.server.security.models import SecuritySettingsOverrides
-from onyx.server.security.store import _build_env_defaults
-from onyx.server.security.store import _install_cache_for_test
-from onyx.server.security.store import apply_patch
-from onyx.server.security.store import get_security_settings
-from onyx.server.security.store import invalidate_security_cache
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.models import SecuritySettings as SecuritySettingsRow
+from orbyte.server.security import store as security_store
+from orbyte.server.security.models import SecuritySettingsOverrides
+from orbyte.server.security.store import _build_env_defaults
+from orbyte.server.security.store import _install_cache_for_test
+from orbyte.server.security.store import apply_patch
+from orbyte.server.security.store import get_security_settings
+from orbyte.server.security.store import invalidate_security_cache
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 

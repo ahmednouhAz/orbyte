@@ -8,14 +8,14 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.confluence.connector import ConfluenceConnector
-from onyx.connectors.credentials_provider import OnyxStaticCredentialsProvider
-from onyx.connectors.models import ConnectorFailure
-from onyx.connectors.models import Document
-from onyx.connectors.models import DocumentFailure
-from onyx.connectors.models import EntityFailure
-from onyx.connectors.models import HierarchyNode
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.confluence.connector import ConfluenceConnector
+from orbyte.connectors.credentials_provider import OrbyteStaticCredentialsProvider
+from orbyte.connectors.models import ConnectorFailure
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import DocumentFailure
+from orbyte.connectors.models import EntityFailure
+from orbyte.connectors.models import HierarchyNode
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.utils.secret_names import TestSecret
 
@@ -37,7 +37,7 @@ def _make_connector(space: str, access_token: str) -> ConfluenceConnector:
         page_id=os.environ.get("CONFLUENCE_TEST_PAGE_ID", ""),
     )
     connector.set_credentials_provider(
-        OnyxStaticCredentialsProvider(
+        OrbyteStaticCredentialsProvider(
             None,
             DocumentSource.CONFLUENCE,
             {
@@ -85,7 +85,7 @@ def _build_failures(doc_ids: list[str]) -> list[ConnectorFailure]:
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_single_page(
@@ -112,7 +112,7 @@ def test_reindex_single_page(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_multiple_pages(
@@ -138,7 +138,7 @@ def test_reindex_multiple_pages(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_unknown_page_yields_failure(
@@ -161,7 +161,7 @@ def test_reindex_unknown_page_yields_failure(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_unparseable_url_yields_failure(
@@ -182,7 +182,7 @@ def test_reindex_unparseable_url_yields_failure(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_empty_errors(
@@ -193,7 +193,7 @@ def test_reindex_empty_errors(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_entity_failures_are_skipped(

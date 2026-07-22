@@ -1,0 +1,269 @@
+from sqlalchemy import and_
+from sqlalchemy import delete
+from sqlalchemy import inspect as sa_inspect
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from orbyte.configs.model_configs import DEFAULT_DOCUMENT_ENCODER_MODEL
+from orbyte.configs.model_configs import DOCUMENT_ENCODER_MODEL
+from orbyte.context.search.models import SavedSearchSettings
+from orbyte.db.llm import fetch_embedding_provider
+from orbyte.db.models import CloudEmbeddingProvider
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import IndexModelStatus
+from orbyte.db.models import SearchSettings
+from orbyte.server.manage.embedding.models import (
+    CloudEmbeddingProvider as ServerCloudEmbeddingProvider,
+)
+from orbyte.utils.logger import setup_logger
+from shared_configs.configs import PRESERVED_SEARCH_FIELDS
+from shared_configs.enums import EmbeddingProvider
+
+logger = setup_logger()
+
+# search_settings columns that are NOT NULL but whose Pydantic source fields are
+# typed str | None. Registry-less cloud providers (e.g. Bedrock/LiteLLM/Azure)
+# can arrive without prefixes; coerce None -> "" to avoid a NotNullViolation.
+_NOT_NULL_STR_FIELDS = {"query_prefix", "passage_prefix"}
+
+
+class ActiveSearchSettings:
+    primary: SearchSettings
+    secondary: SearchSettings | None
+
+    def __init__(
+        self, primary: SearchSettings, secondary: SearchSettings | None
+    ) -> None:
+        self.primary = primary
+        self.secondary = secondary
+
+
+def create_search_settings(
+    search_settings: SavedSearchSettings,
+    db_session: Session,
+    status: IndexModelStatus = IndexModelStatus.FUTURE,
+    # Default used only when the saved model omits use_port_flow (None). The reindex
+    # request never carries the flag (not a request field), so the endpoint opts in
+    # via this param; an explicit value on the saved model wins (e.g. a round-trip).
+    use_port_flow: bool = False,
+    # False flushes instead of committing, so the caller can commit this row
+    # atomically with its port seeds (a seedless FUTURE makes workers re-scan).
+    commit: bool = True,
+) -> SearchSettings:
+    embedding_model = SearchSettings(
+        model_name=search_settings.model_name,
+        model_dim=search_settings.model_dim,
+        normalize=search_settings.normalize,
+        # See _NOT_NULL_STR_FIELDS: coerce None -> "" to avoid a NotNullViolation.
+        query_prefix=search_settings.query_prefix or "",
+        passage_prefix=search_settings.passage_prefix or "",
+        status=status,
+        index_name=search_settings.index_name,
+        provider_type=search_settings.provider_type,
+        multipass_indexing=search_settings.multipass_indexing,
+        embedding_precision=search_settings.embedding_precision,
+        reduced_dimension=search_settings.reduced_dimension,
+        enable_contextual_rag=search_settings.enable_contextual_rag,
+        contextual_rag_model_configuration_id=search_settings.contextual_rag_model_configuration_id,
+        switchover_type=search_settings.switchover_type,
+        use_port_flow=(
+            search_settings.use_port_flow
+            if search_settings.use_port_flow is not None
+            else use_port_flow
+        ),
+    )
+
+    db_session.add(embedding_model)
+    if commit:
+        db_session.commit()
+    else:
+        db_session.flush()  # populate id without committing
+
+    return embedding_model
+
+
+def get_embedding_provider_from_provider_type(
+    db_session: Session, provider_type: EmbeddingProvider
+) -> CloudEmbeddingProvider | None:
+    query = select(CloudEmbeddingProvider).where(
+        CloudEmbeddingProvider.provider_type == provider_type
+    )
+    provider = db_session.execute(query).scalars().first()
+    return provider if provider else None
+
+
+def get_current_db_embedding_provider(
+    db_session: Session,
+) -> ServerCloudEmbeddingProvider | None:
+    search_settings = get_current_search_settings(db_session=db_session)
+
+    if search_settings.provider_type is None:
+        return None
+
+    embedding_provider = fetch_embedding_provider(
+        db_session=db_session,
+        provider_type=search_settings.provider_type,
+    )
+    if embedding_provider is None:
+        raise RuntimeError("No embedding provider exists for this model.")
+
+    current_embedding_provider = ServerCloudEmbeddingProvider.from_request(
+        cloud_provider_model=embedding_provider
+    )
+
+    return current_embedding_provider
+
+
+def delete_search_settings(db_session: Session, search_settings_id: int) -> None:
+    from orbyte.db.port_attempt import is_active_port_backfill_source
+
+    current_settings = get_current_search_settings(db_session)
+
+    if current_settings.id == search_settings_id:
+        raise ValueError("Cannot delete currently active search settings")
+
+    # A promoted index may still be backfilling its port from this one; deleting it
+    # would strand that port (SET NULL drops the source out from under it).
+    if is_active_port_backfill_source(db_session, search_settings_id):
+        raise ValueError(
+            "Cannot delete search settings: a reindex port is still backfilling from it"
+        )
+
+    # First, delete associated index attempts
+    index_attempts_query = delete(IndexAttempt).where(
+        IndexAttempt.search_settings_id == search_settings_id
+    )
+    db_session.execute(index_attempts_query)
+
+    # Then, delete the search settings
+    search_settings_query = delete(SearchSettings).where(
+        and_(
+            SearchSettings.id == search_settings_id,
+            SearchSettings.status != IndexModelStatus.PRESENT,
+        )
+    )
+
+    db_session.execute(search_settings_query)
+    db_session.commit()
+
+
+def get_current_search_settings(db_session: Session) -> SearchSettings:
+    query = (
+        select(SearchSettings)
+        .where(SearchSettings.status == IndexModelStatus.PRESENT)
+        .order_by(SearchSettings.id.desc())
+    )
+    result = db_session.execute(query)
+    latest_settings = result.scalars().first()
+
+    if not latest_settings:
+        raise RuntimeError("No search settings specified; DB is not in a valid state.")
+    return latest_settings
+
+
+def get_secondary_search_settings(db_session: Session) -> SearchSettings | None:
+    query = (
+        select(SearchSettings)
+        .where(SearchSettings.status == IndexModelStatus.FUTURE)
+        .order_by(SearchSettings.id.desc())
+    )
+    result = db_session.execute(query)
+    latest_settings = result.scalars().first()
+
+    return latest_settings
+
+
+def get_search_settings_by_id(
+    db_session: Session, search_settings_id: int
+) -> SearchSettings | None:
+    return db_session.get(SearchSettings, search_settings_id)
+
+
+def get_active_search_settings(db_session: Session) -> ActiveSearchSettings:
+    """Returns active search settings. Secondary search settings may be None."""
+
+    # Get the primary and secondary search settings
+    primary_search_settings = get_current_search_settings(db_session)
+    secondary_search_settings = get_secondary_search_settings(db_session)
+    return ActiveSearchSettings(
+        primary=primary_search_settings, secondary=secondary_search_settings
+    )
+
+
+def get_active_search_settings_list(db_session: Session) -> list[SearchSettings]:
+    """Returns active search settings as a list. Primary settings are the first element,
+    and if secondary search settings exist, they will be the second element."""
+
+    search_settings_list: list[SearchSettings] = []
+
+    active_search_settings = get_active_search_settings(db_session)
+    search_settings_list.append(active_search_settings.primary)
+    if active_search_settings.secondary:
+        search_settings_list.append(active_search_settings.secondary)
+
+    return search_settings_list
+
+
+def get_all_search_settings(db_session: Session) -> list[SearchSettings]:
+    query = select(SearchSettings).order_by(SearchSettings.id.desc())
+    result = db_session.execute(query)
+    all_settings = result.scalars().all()
+    return list(all_settings)
+
+
+def update_search_settings(
+    current_settings: SearchSettings,
+    updated_settings: SavedSearchSettings,
+    preserved_fields: list[str],
+) -> None:
+    mapped_columns = {c.key for c in sa_inspect(SearchSettings).mapper.columns}
+    for field, value in updated_settings.model_dump().items():
+        if field not in preserved_fields and field in mapped_columns:
+            # A client that explicitly sends null for a NOT NULL prefix column
+            # must not write NULL (NotNullViolation). See _NOT_NULL_STR_FIELDS.
+            if value is None and field in _NOT_NULL_STR_FIELDS:
+                value = ""
+            setattr(current_settings, field, value)
+
+
+def update_current_search_settings(
+    db_session: Session,
+    search_settings: SavedSearchSettings,
+    preserved_fields: list[str] = PRESERVED_SEARCH_FIELDS,
+) -> None:
+    current_settings = get_current_search_settings(db_session)
+    if not current_settings:
+        logger.warning("No current search settings found to update")
+        return
+
+    update_search_settings(current_settings, search_settings, preserved_fields)
+    db_session.commit()
+    logger.info("Current search settings updated successfully")
+
+
+def update_secondary_search_settings(
+    db_session: Session,
+    search_settings: SavedSearchSettings,
+    preserved_fields: list[str] = PRESERVED_SEARCH_FIELDS,
+) -> None:
+    secondary_settings = get_secondary_search_settings(db_session)
+    if not secondary_settings:
+        logger.warning("No secondary search settings found to update")
+        return
+
+    preserved_fields = PRESERVED_SEARCH_FIELDS
+    update_search_settings(secondary_settings, search_settings, preserved_fields)
+
+    db_session.commit()
+    logger.info("Secondary search settings updated successfully")
+
+
+def update_search_settings_status(
+    search_settings: SearchSettings, new_status: IndexModelStatus, db_session: Session
+) -> None:
+    search_settings.status = new_status
+    db_session.commit()
+
+
+def user_has_overridden_embedding_model() -> bool:
+    return DOCUMENT_ENCODER_MODEL != DEFAULT_DOCUMENT_ENCODER_MODEL

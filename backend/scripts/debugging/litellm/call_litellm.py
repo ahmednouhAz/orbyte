@@ -2,7 +2,7 @@
 """
 Test LiteLLM integration and output raw stream events.
 
-This script uses Onyx's LiteLLM instance (with monkey patches) to make a completion
+This script uses Orbyte's LiteLLM instance (with monkey patches) to make a completion
 request and outputs the raw stream events as JSON, one per line.
 
 Usage:
@@ -16,7 +16,7 @@ Usage:
 import os
 from typing import Any
 
-from onyx.llm.litellm_singleton import litellm
+from orbyte.llm.litellm_singleton import litellm
 
 # Optional: enable LiteLLM debug logs (set `LITELLM_DEBUG=1`)
 if os.getenv("LITELLM_DEBUG") == "1":
@@ -32,7 +32,7 @@ API_VERSION = "2025-03-01-preview"  # For Azure, must be 2025-03-01-preview
 MESSAGES = [
     {"role": "user", "content": "hi"},
     {"role": "assistant", "content": "Hello! How can I help you today?"},
-    {"role": "user", "content": "what is onyx? search internally and the web"},
+    {"role": "user", "content": "what is orbyte? search internally and the web"},
 ]
 
 stream = litellm.completion(

@@ -5,23 +5,23 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.chat.models import AnswerStreamPart
-from onyx.chat.models import StreamingError
-from onyx.chat.process_message import handle_stream_message_objects
-from onyx.db.chat import create_chat_session
-from onyx.db.enums import LLMModelFlowType
-from onyx.db.llm import fetch_existing_llm_providers
-from onyx.db.llm import remove_llm_provider
-from onyx.db.llm import update_default_provider
-from onyx.db.llm import upsert_llm_provider
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.models import LLMProviderUpsertRequest
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
-from onyx.server.query_and_chat.models import MessageResponseIDInfo
-from onyx.server.query_and_chat.models import SendMessageRequest
-from onyx.server.query_and_chat.streaming_models import AgentResponseDelta
-from onyx.server.query_and_chat.streaming_models import AgentResponseStart
-from onyx.server.query_and_chat.streaming_models import Packet
+from orbyte.chat.models import AnswerStreamPart
+from orbyte.chat.models import StreamingError
+from orbyte.chat.process_message import handle_stream_message_objects
+from orbyte.db.chat import create_chat_session
+from orbyte.db.enums import LLMModelFlowType
+from orbyte.db.llm import fetch_existing_llm_providers
+from orbyte.db.llm import remove_llm_provider
+from orbyte.db.llm import update_default_provider
+from orbyte.db.llm import upsert_llm_provider
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.server.manage.llm.models import LLMProviderUpsertRequest
+from orbyte.server.manage.llm.models import ModelConfigurationUpsertRequest
+from orbyte.server.query_and_chat.models import MessageResponseIDInfo
+from orbyte.server.query_and_chat.models import SendMessageRequest
+from orbyte.server.query_and_chat.streaming_models import AgentResponseDelta
+from orbyte.server.query_and_chat.streaming_models import AgentResponseStart
+from orbyte.server.query_and_chat.streaming_models import Packet
 from tests.external_dependency_unit.conftest import create_test_user
 
 

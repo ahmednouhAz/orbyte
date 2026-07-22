@@ -17,7 +17,7 @@
         "content": [
           {
             "type": "output_text",
-            "text": "Hey! 👋\n\nHow can I help today?  \n- Questions about Onyx (setup, search, auth, plugins)?\n- Debugging or architecture advice?\n- Writing docs, emails, or code snippets?\n- Anything else on your mind?"
+            "text": "Hey! 👋\n\nHow can I help today?  \n- Questions about Orbyte (setup, search, auth, plugins)?\n- Debugging or architecture advice?\n- Writing docs, emails, or code snippets?\n- Anything else on your mind?"
           }
         ]
       },

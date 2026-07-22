@@ -8,9 +8,9 @@ from uuid import UUID
 
 import requests
 
-from ee.onyx.server.query_history.api import ChatSessionSnapshot
-from onyx.server.manage.models import AllUsersResponse
-from onyx.server.query_and_chat.models import ChatSessionsResponse
+from ee.orbyte.server.query_history.api import ChatSessionSnapshot
+from orbyte.server.manage.models import AllUsersResponse
+from orbyte.server.query_and_chat.models import ChatSessionsResponse
 
 # Configure the logger
 logging.basicConfig(
@@ -127,9 +127,9 @@ logger = getLogger(__name__)
 #     flow_type: SessionType
 
 
-def create_new_chat_session(onyx_url: str, api_key: str | None) -> int:
+def create_new_chat_session(orbyte_url: str, api_key: str | None) -> int:
     headers = {"Authorization": f"Bearer {api_key}"} if api_key else None
-    session_endpoint = onyx_url + "/api/chat/create-chat-session"
+    session_endpoint = orbyte_url + "/api/chat/create-chat-session"
 
     response = requests.get(session_endpoint, headers=headers)
     response.raise_for_status()
@@ -138,8 +138,8 @@ def create_new_chat_session(onyx_url: str, api_key: str | None) -> int:
     return new_session_id
 
 
-def manage_users(onyx_url: str, headers: dict[str, str] | None) -> AllUsersResponse:
-    endpoint = onyx_url + "/manage/users"
+def manage_users(orbyte_url: str, headers: dict[str, str] | None) -> AllUsersResponse:
+    endpoint = orbyte_url + "/manage/users"
 
     response = requests.get(
         endpoint,
@@ -152,9 +152,9 @@ def manage_users(onyx_url: str, headers: dict[str, str] | None) -> AllUsersRespo
 
 
 def get_chat_sessions(
-    onyx_url: str, headers: dict[str, str] | None, user_id: UUID
+    orbyte_url: str, headers: dict[str, str] | None, user_id: UUID
 ) -> ChatSessionsResponse:
-    endpoint = onyx_url + "/admin/chat-sessions"
+    endpoint = orbyte_url + "/admin/chat-sessions"
 
     params: dict[str, Any] = {"user_id": user_id}
     response = requests.get(
@@ -169,9 +169,9 @@ def get_chat_sessions(
 
 
 def get_session_history(
-    onyx_url: str, headers: dict[str, str] | None, session_id: UUID
+    orbyte_url: str, headers: dict[str, str] | None, session_id: UUID
 ) -> ChatSessionSnapshot:
-    endpoint = onyx_url + f"/admin/chat-session-history/{session_id}"
+    endpoint = orbyte_url + f"/admin/chat-session-history/{session_id}"
 
     response = requests.get(
         endpoint,
@@ -183,10 +183,10 @@ def get_session_history(
     return sessions
 
 
-def process_all_chat_feedback(onyx_url: str, api_key: str | None) -> None:
+def process_all_chat_feedback(orbyte_url: str, api_key: str | None) -> None:
     headers = {"Authorization": f"Bearer {api_key}"} if api_key else None
 
-    all_users = manage_users(onyx_url, headers)
+    all_users = manage_users(orbyte_url, headers)
     if not all_users:
         raise RuntimeError("manage_users returned None")
 
@@ -195,12 +195,12 @@ def process_all_chat_feedback(onyx_url: str, api_key: str | None) -> None:
     user_ids: list[UUID] = [user.id for user in all_users.accepted]
 
     for user_id in user_ids:
-        r_sessions = get_chat_sessions(onyx_url, headers, user_id)
+        r_sessions = get_chat_sessions(orbyte_url, headers, user_id)
         logger.info("user=%s num_sessions=%s", user_id, len(r_sessions.sessions))
         for session in r_sessions.sessions:
             s: ChatSessionSnapshot
             try:
-                s = get_session_history(onyx_url, headers, session.id)
+                s = get_session_history(orbyte_url, headers, session.id)
             except requests.exceptions.HTTPError:
                 logger.exception("get_session_history failed.")
 
@@ -221,16 +221,16 @@ if __name__ == "__main__":
         "--url",
         type=str,
         default="http://localhost:8080",
-        help="Onyx URL, should point to Onyx nginx.",
+        help="Orbyte URL, should point to Orbyte nginx.",
     )
 
     # Not needed if Auth is disabled?
-    # Or for Onyx MIT Edition API key must be replaced with session cookie
+    # Or for Orbyte MIT Edition API key must be replaced with session cookie
     parser.add_argument(
         "--api-key",
         type=str,
-        help="Onyx Admin Level API key",
+        help="Orbyte Admin Level API key",
     )
 
     args = parser.parse_args()
-    process_all_chat_feedback(onyx_url=args.url, api_key=args.api_key)
+    process_all_chat_feedback(orbyte_url=args.url, api_key=args.api_key)

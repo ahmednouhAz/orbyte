@@ -7,16 +7,16 @@ import pytest
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from onyx.auth.schemas import UserRole
-from onyx.db.enums import PersonaAccessLevel
-from onyx.db.enums import PersonaSharePermission
-from onyx.db.enums import PersonaSharingStatus
-from onyx.db.models import Persona__User
-from onyx.db.models import User
-from onyx.db.persona import fetch_persona_by_id_for_user
-from onyx.db.persona import update_persona_access
-from onyx.db.persona_sharing import derive_persona_sharing_status
-from onyx.db.persona_sharing import get_persona_access_level
+from orbyte.auth.schemas import UserRole
+from orbyte.db.enums import PersonaAccessLevel
+from orbyte.db.enums import PersonaSharePermission
+from orbyte.db.enums import PersonaSharingStatus
+from orbyte.db.models import Persona__User
+from orbyte.db.models import User
+from orbyte.db.persona import fetch_persona_by_id_for_user
+from orbyte.db.persona import update_persona_access
+from orbyte.db.persona_sharing import derive_persona_sharing_status
+from orbyte.db.persona_sharing import get_persona_access_level
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.db.agent_sharing_helpers import create_test_persona
 from tests.external_dependency_unit.db.agent_sharing_helpers import (

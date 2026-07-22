@@ -4,7 +4,7 @@ Decrypts all encrypted columns using the old key (or raw decode if the old key
 is empty), then re-encrypts them with the current ENCRYPTION_KEY_SECRET.
 
 Usage (docker):
-    docker exec -it onyx-api_server-1 \
+    docker exec -it orbyte-api_server-1 \
         python -m scripts.reencrypt_secrets --old-key "previous-key"
 
 Usage (kubernetes):
@@ -24,11 +24,11 @@ import sys
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
-from onyx.db.engine.sql_engine import get_session_with_tenant  # noqa: E402
-from onyx.db.engine.sql_engine import SqlEngine  # noqa: E402
-from onyx.db.engine.tenant_utils import get_all_tenant_ids  # noqa: E402
-from onyx.db.rotate_encryption_key import rotate_encryption_key  # noqa: E402
-from onyx.utils.variable_functionality import global_version  # noqa: E402
+from orbyte.db.engine.sql_engine import get_session_with_tenant  # noqa: E402
+from orbyte.db.engine.sql_engine import SqlEngine  # noqa: E402
+from orbyte.db.engine.tenant_utils import get_all_tenant_ids  # noqa: E402
+from orbyte.db.rotate_encryption_key import rotate_encryption_key  # noqa: E402
+from orbyte.utils.variable_functionality import global_version  # noqa: E402
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA  # noqa: E402
 
 

@@ -4,17 +4,17 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import AccountType
-from onyx.db.enums import SkillSharePermission
-from onyx.db.models import Skill
-from onyx.db.models import Skill__User
-from onyx.db.models import User
-from onyx.db.models import UserRole
-from onyx.db.skill import transfer_skill_ownership
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.skill.api import transfer_current_user_skill_ownership
-from onyx.server.features.skill.models import TransferSkillOwnershipRequest
+from orbyte.db.enums import AccountType
+from orbyte.db.enums import SkillSharePermission
+from orbyte.db.models import Skill
+from orbyte.db.models import Skill__User
+from orbyte.db.models import User
+from orbyte.db.models import UserRole
+from orbyte.db.skill import transfer_skill_ownership
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.server.features.skill.api import transfer_current_user_skill_ownership
+from orbyte.server.features.skill.models import TransferSkillOwnershipRequest
 from tests.external_dependency_unit.craft.db_helpers import make_built_in_skill_row
 from tests.external_dependency_unit.craft.db_helpers import make_sandbox
 from tests.external_dependency_unit.craft.db_helpers import make_skill
@@ -46,7 +46,7 @@ def _share_row(
 def push_calls(monkeypatch: pytest.MonkeyPatch) -> list[set[object]]:
     calls: list[set[object]] = []
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.push_skills_for_users",
+        "orbyte.server.features.skill.api.push_skills_for_users",
         lambda user_ids, _db_session: calls.append(set(user_ids)),
     )
     return calls
@@ -136,14 +136,14 @@ def test_transfer_rejects_built_in_skill(
         is_public=True,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         transfer_skill_ownership(
             skill=skill,
             new_owner_user_id=target.id,
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     db_session.refresh(skill)
     assert skill.author_user_id is None
     assert push_calls == []
@@ -156,14 +156,14 @@ def test_transfer_rejects_missing_target_helper(
     owner = make_user(db_session, role=UserRole.BASIC)
     skill = _owned_skill(db_session, owner)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         transfer_skill_ownership(
             skill=skill,
             new_owner_user_id=uuid4(),
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "New owner user does not exist."
     assert push_calls == []
 
@@ -183,7 +183,7 @@ def test_non_owner_sharee_cannot_transfer(
     skill = _owned_skill(db_session, owner)
     share_skill_with_user(db_session, skill, sharee, permission)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         transfer_current_user_skill_ownership(
             skill.id,
             TransferSkillOwnershipRequest(new_owner_user_id=target.id),
@@ -191,7 +191,7 @@ def test_non_owner_sharee_cannot_transfer(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INSUFFICIENT_PERMISSIONS
+    assert exc_info.value.error_code == OrbyteErrorCode.INSUFFICIENT_PERMISSIONS
     db_session.refresh(skill)
     assert skill.author_user_id == owner.id
     assert _share_row(db_session, skill, sharee) is not None
@@ -208,7 +208,7 @@ def test_transfer_rejects_inactive_target(
     skill = _owned_skill(db_session, owner)
     db_session.flush()
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         transfer_current_user_skill_ownership(
             skill.id,
             TransferSkillOwnershipRequest(new_owner_user_id=target.id),
@@ -216,7 +216,7 @@ def test_transfer_rejects_inactive_target(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     db_session.refresh(skill)
     assert skill.author_user_id == owner.id
     assert _share_row(db_session, skill, target) is None
@@ -236,7 +236,7 @@ def test_transfer_rejects_unsupported_target_account_type(
     skill = _owned_skill(db_session, owner)
     db_session.flush()
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         transfer_current_user_skill_ownership(
             skill.id,
             TransferSkillOwnershipRequest(new_owner_user_id=target.id),
@@ -244,7 +244,7 @@ def test_transfer_rejects_unsupported_target_account_type(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     db_session.refresh(skill)
     assert skill.author_user_id == owner.id
     assert _share_row(db_session, skill, target) is None
@@ -282,7 +282,7 @@ def test_admin_cannot_transfer_owned_skill(
     target = make_user(db_session, role=UserRole.BASIC)
     skill = _owned_skill(db_session, owner)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         transfer_current_user_skill_ownership(
             skill.id,
             TransferSkillOwnershipRequest(new_owner_user_id=target.id),
@@ -290,7 +290,7 @@ def test_admin_cannot_transfer_owned_skill(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INSUFFICIENT_PERMISSIONS
+    assert exc_info.value.error_code == OrbyteErrorCode.INSUFFICIENT_PERMISSIONS
     db_session.refresh(skill)
     assert skill.author_user_id == owner.id
     assert _share_row(db_session, skill, target) is None
@@ -304,7 +304,7 @@ def test_transfer_rejects_missing_target(
     owner = make_user(db_session, role=UserRole.BASIC)
     skill = _owned_skill(db_session, owner)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         transfer_current_user_skill_ownership(
             skill.id,
             TransferSkillOwnershipRequest(new_owner_user_id=uuid4()),
@@ -312,7 +312,7 @@ def test_transfer_rejects_missing_target(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
     db_session.refresh(skill)
     assert skill.author_user_id == owner.id
     assert push_calls == []

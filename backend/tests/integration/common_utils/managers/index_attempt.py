@@ -3,14 +3,14 @@ from datetime import datetime
 from datetime import timedelta
 from urllib.parse import urlencode
 
-from onyx.background.indexing.models import IndexAttemptErrorPydantic
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import IndexModelStatus
-from onyx.db.models import IndexAttempt
-from onyx.db.models import IndexingStatus
-from onyx.db.search_settings import get_current_search_settings
-from onyx.server.documents.models import IndexAttemptSnapshot
-from onyx.server.documents.models import PaginatedReturn
+from orbyte.background.indexing.models import IndexAttemptErrorPydantic
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.enums import IndexModelStatus
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import IndexingStatus
+from orbyte.db.search_settings import get_current_search_settings
+from orbyte.server.documents.models import IndexAttemptSnapshot
+from orbyte.server.documents.models import PaginatedReturn
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.constants import MAX_DELAY
 from tests.integration.common_utils.http_client import client

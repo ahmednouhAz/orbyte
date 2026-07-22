@@ -7,20 +7,20 @@ from collections.abc import Callable
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import Sandbox
-from onyx.db.models import User
-from onyx.server.features.build.db.user_library import create_directory_record
-from onyx.server.features.build.db.user_library import fetch_user_file_for_user
-from onyx.server.features.build.db.user_library import get_or_create_craft_connector
-from onyx.server.features.build.db.user_library import set_sync_disabled
-from onyx.server.features.build.db.user_library import store_user_file
-from onyx.server.features.build.sandbox.user_library import build_user_library_fileset
-from onyx.server.features.build.sandbox.user_library import hydrate_user_library
-from onyx.server.features.build.sandbox.user_library import (
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import Sandbox
+from orbyte.db.models import User
+from orbyte.server.features.build.db.user_library import create_directory_record
+from orbyte.server.features.build.db.user_library import fetch_user_file_for_user
+from orbyte.server.features.build.db.user_library import get_or_create_craft_connector
+from orbyte.server.features.build.db.user_library import set_sync_disabled
+from orbyte.server.features.build.db.user_library import store_user_file
+from orbyte.server.features.build.sandbox.user_library import build_user_library_fileset
+from orbyte.server.features.build.sandbox.user_library import hydrate_user_library
+from orbyte.server.features.build.sandbox.user_library import (
     sync_user_library_to_active_sandboxes,
 )
-from onyx.server.features.build.sandbox.user_library import USER_LIBRARY_MOUNT_PATH
+from orbyte.server.features.build.sandbox.user_library import USER_LIBRARY_MOUNT_PATH
 from tests.common.craft.stubs import StubSandboxManager
 
 
@@ -49,7 +49,7 @@ def _patch_user_library_manager(
     stub: StubSandboxManager,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.sandbox.user_library.get_sandbox_manager",
+        "orbyte.server.features.build.sandbox.user_library.get_sandbox_manager",
         lambda: stub,
     )
 

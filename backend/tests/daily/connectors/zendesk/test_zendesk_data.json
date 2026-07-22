@@ -3,7 +3,7 @@
       "id": "32502691728155",
       "sections": [
         {
-          "link": "https://d3v-onyx.zendesk.com/hc/en-us/articles/32502691728155-How-can-agents-leverage-knowledge-to-help-customers"
+          "link": "https://d3v-orbyte.zendesk.com/hc/en-us/articles/32502691728155-How-can-agents-leverage-knowledge-to-help-customers"
         }
       ],
       "source": "zendesk",
@@ -11,7 +11,7 @@
       "primary_owners": [
         {
           "display_name": "Dan Swer",
-          "email": "admin@onyx-test.com"
+          "email": "admin@orbyte-test.com"
         }
       ]
   },
@@ -19,7 +19,7 @@
     "id": "1",
     "sections": [
       {
-        "link": "https://d3v-onyx.zendesk.com/agent/tickets/1"
+        "link": "https://d3v-orbyte.zendesk.com/agent/tickets/1"
       }
     ],
     "source": "zendesk",

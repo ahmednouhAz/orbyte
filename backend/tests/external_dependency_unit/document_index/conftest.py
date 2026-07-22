@@ -8,18 +8,18 @@ from collections.abc import Generator
 
 import pytest
 
-from onyx.access.models import DocumentAccess
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import Document
-from onyx.db.enums import EmbeddingPrecision
-from onyx.document_index.interfaces_new import IndexingMetadata
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.client import wait_for_opensearch_with_timeout
-from onyx.document_index.opensearch.opensearch_document_index import (
+from orbyte.access.models import DocumentAccess
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.models import Document
+from orbyte.db.enums import EmbeddingPrecision
+from orbyte.document_index.interfaces_new import IndexingMetadata
+from orbyte.document_index.interfaces_new import TenantState
+from orbyte.document_index.opensearch.client import wait_for_opensearch_with_timeout
+from orbyte.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
-from onyx.indexing.models import ChunkEmbedding
-from onyx.indexing.models import DocMetadataAwareIndexChunk
+from orbyte.indexing.models import ChunkEmbedding
+from orbyte.indexing.models import DocMetadataAwareIndexChunk
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from shared_configs.contextvars import get_current_tenant_id

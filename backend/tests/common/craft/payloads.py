@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from onyx.db.enums import EndpointPolicy
-from onyx.external_apps.matching.engine import MatchedAction
-from onyx.server.features.build.sandbox.models import LLMProviderConfig
+from orbyte.db.enums import EndpointPolicy
+from orbyte.external_apps.matching.engine import MatchedAction
+from orbyte.server.features.build.sandbox.models import LLMProviderConfig
 
 
 def default_llm_config(

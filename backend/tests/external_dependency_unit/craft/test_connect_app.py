@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from uuid import uuid4
 
-from onyx.cache.factory import get_cache_backend
-from onyx.cache.interface import CacheBackend
-from onyx.server.features.build import connect_app
+from orbyte.cache.factory import get_cache_backend
+from orbyte.cache.interface import CacheBackend
+from orbyte.server.features.build import connect_app
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 
 

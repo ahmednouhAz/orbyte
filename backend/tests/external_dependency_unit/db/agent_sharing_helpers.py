@@ -4,13 +4,13 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import PersonaSharePermission
-from onyx.db.models import Persona
-from onyx.db.models import Persona__User
-from onyx.db.models import Persona__UserGroup
-from onyx.db.models import User
-from onyx.db.models import User__UserGroup
-from onyx.db.models import UserGroup
+from orbyte.db.enums import PersonaSharePermission
+from orbyte.db.models import Persona
+from orbyte.db.models import Persona__User
+from orbyte.db.models import Persona__UserGroup
+from orbyte.db.models import User
+from orbyte.db.models import User__UserGroup
+from orbyte.db.models import UserGroup
 
 
 def create_test_persona(

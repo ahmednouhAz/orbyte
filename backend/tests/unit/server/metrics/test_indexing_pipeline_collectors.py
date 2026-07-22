@@ -6,14 +6,14 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.server.metrics.indexing_pipeline import QueueDepthCollector
+from orbyte.server.metrics.indexing_pipeline import QueueDepthCollector
 
 
 @pytest.fixture(autouse=True)
 def _mock_broker_client() -> Iterator[None]:
     """Patch celery_get_broker_client for all collector tests."""
     with patch(
-        "onyx.server.metrics.indexing_pipeline.celery_get_broker_client",
+        "orbyte.server.metrics.indexing_pipeline.celery_get_broker_client",
         return_value=MagicMock(),
     ):
         yield
@@ -34,11 +34,11 @@ class TestQueueDepthCollector:
 
         with (
             patch(
-                "onyx.server.metrics.indexing_pipeline.celery_get_queue_length",
+                "orbyte.server.metrics.indexing_pipeline.celery_get_queue_length",
                 return_value=5,
             ),
             patch(
-                "onyx.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
+                "orbyte.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
                 return_value={"task-1", "task-2"},
             ),
         ):
@@ -49,17 +49,17 @@ class TestQueueDepthCollector:
         unacked_family = families[1]
         age_family = families[2]
 
-        assert depth_family.name == "onyx_queue_depth"
+        assert depth_family.name == "orbyte_queue_depth"
         assert len(depth_family.samples) > 0
         for sample in depth_family.samples:
             assert sample.value == 5
 
-        assert unacked_family.name == "onyx_queue_unacked"
+        assert unacked_family.name == "orbyte_queue_unacked"
         unacked_labels = {s.labels["queue"] for s in unacked_family.samples}
         assert "docfetching" in unacked_labels
         assert "docprocessing" in unacked_labels
 
-        assert age_family.name == "onyx_queue_oldest_task_age_seconds"
+        assert age_family.name == "orbyte_queue_oldest_task_age_seconds"
         for sample in unacked_family.samples:
             assert sample.value == 2
 
@@ -69,7 +69,7 @@ class TestQueueDepthCollector:
         collector.set_celery_app(MagicMock())
 
         with patch(
-            "onyx.server.metrics.indexing_pipeline.celery_get_queue_length",
+            "orbyte.server.metrics.indexing_pipeline.celery_get_queue_length",
             side_effect=Exception("connection lost"),
         ):
             families = collector.collect()
@@ -84,11 +84,11 @@ class TestQueueDepthCollector:
 
         with (
             patch(
-                "onyx.server.metrics.indexing_pipeline.celery_get_queue_length",
+                "orbyte.server.metrics.indexing_pipeline.celery_get_queue_length",
                 return_value=5,
             ),
             patch(
-                "onyx.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
+                "orbyte.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
                 return_value=set(),
             ),
         ):
@@ -96,7 +96,7 @@ class TestQueueDepthCollector:
 
         # Second call within TTL should return cached result without calling Redis
         with patch(
-            "onyx.server.metrics.indexing_pipeline.celery_get_queue_length",
+            "orbyte.server.metrics.indexing_pipeline.celery_get_queue_length",
             side_effect=Exception("should not be called"),
         ):
             second = collector.collect()
@@ -111,11 +111,11 @@ class TestQueueDepthCollector:
         # First call succeeds
         with (
             patch(
-                "onyx.server.metrics.indexing_pipeline.celery_get_queue_length",
+                "orbyte.server.metrics.indexing_pipeline.celery_get_queue_length",
                 return_value=10,
             ),
             patch(
-                "onyx.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
+                "orbyte.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
                 return_value=set(),
             ),
         ):
@@ -126,7 +126,7 @@ class TestQueueDepthCollector:
 
         # Second call fails — should return stale cache, not empty
         with patch(
-            "onyx.server.metrics.indexing_pipeline.celery_get_queue_length",
+            "orbyte.server.metrics.indexing_pipeline.celery_get_queue_length",
             side_effect=Exception("Redis down"),
         ):
             stale_result = collector.collect()

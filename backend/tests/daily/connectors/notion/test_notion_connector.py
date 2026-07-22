@@ -2,10 +2,10 @@ import time
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import Document
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.notion.connector import NotionConnector
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.notion.connector import NotionConnector
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(TestSecret.NOTION_INTEGRATION_TOKEN)
@@ -60,7 +60,7 @@ def notion_connector(
 def test_notion_connector_basic(notion_connector: NotionConnector) -> None:
     """Test the NotionConnector with a real Notion page.
 
-    Uses a Notion workspace under the onyx-test.com domain.
+    Uses a Notion workspace under the orbyte-test.com domain.
     """
     doc_batch_generator = notion_connector.poll_source(0, time.time())
 

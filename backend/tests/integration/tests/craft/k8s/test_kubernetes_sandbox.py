@@ -8,13 +8,13 @@ import pytest
 from kubernetes import client
 from kubernetes.client.rest import ApiException
 
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SANDBOX_NAMESPACE
-from onyx.server.features.build.configs import SandboxBackend
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SANDBOX_NAMESPACE
+from orbyte.server.features.build.configs import SandboxBackend
+from orbyte.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from onyx.utils.logger import setup_logger
+from orbyte.utils.logger import setup_logger
 from tests.integration.tests.craft.k8s.k8s_fixtures import OwnedLivePod
 from tests.integration.tests.craft.k8s.k8s_fixtures import pod_exec
 from tests.integration.tests.craft.k8s.k8s_fixtures import PoolSession

@@ -9,13 +9,13 @@ from __future__ import annotations
 
 import pytest
 
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.matching.request import MatchContext
-from onyx.external_apps.matching.request import ProxiedRequest
-from onyx.external_apps.matching.rules import rule_matches
-from onyx.external_apps.providers.hubspot import HubspotAction
-from onyx.external_apps.providers.registry import get_endpoint_catalog
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.external_apps.matching.request import MatchContext
+from orbyte.external_apps.matching.request import ProxiedRequest
+from orbyte.external_apps.matching.rules import rule_matches
+from orbyte.external_apps.providers.hubspot import HubspotAction
+from orbyte.external_apps.providers.registry import get_endpoint_catalog
 
 _CATALOG = get_endpoint_catalog(ExternalAppType.HUBSPOT)
 

@@ -50,7 +50,7 @@ echo "=== Updating README ==="
 cat > /tmp/foss_notice.txt << 'EOF'
 
 > [!NOTE]
-> **This is the FOSS (Free and Open Source Software) version of Onyx**
+> **This is the FOSS (Free and Open Source Software) version of Orbyte**
 > 
 > This repository is 100% MIT-licensed and automatically synced with the [main Onyx repository](https://github.com/onyx-dot-app/onyx). The [main repository](https://github.com/onyx-dot-app/onyx) is recommended for most users. This FOSS version is maintained for users with strict open-source licensing requirements.
 > 
@@ -59,7 +59,7 @@ cat > /tmp/foss_notice.txt << 'EOF'
 EOF
 
 sed -i '/<a name="readme-top"><\/a>/r /tmp/foss_notice.txt' README.md
-sed -i 's/utm_source=onyx_repo/utm_source=foss_repo/g' README.md
+sed -i 's/utm_source=orbyte_repo/utm_source=foss_repo/g' README.md
 
 git add README.md
 git commit -m "README"

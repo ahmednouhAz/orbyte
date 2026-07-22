@@ -9,8 +9,8 @@ import json
 
 import pytest
 
-from onyx.sandbox_proxy.errors import http_403
-from onyx.sandbox_proxy.errors import SandboxProxyError
+from orbyte.sandbox_proxy.errors import http_403
+from orbyte.sandbox_proxy.errors import SandboxProxyError
 
 
 @pytest.mark.parametrize("code", list(SandboxProxyError))

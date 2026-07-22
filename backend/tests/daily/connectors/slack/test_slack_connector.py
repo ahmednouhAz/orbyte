@@ -2,8 +2,8 @@ import time
 
 import pytest
 
-from onyx.connectors.slack.connector import SlackConnector
-from onyx.db.enums import HierarchyNodeType
+from orbyte.connectors.slack.connector import SlackConnector
+from orbyte.db.enums import HierarchyNodeType
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.daily.connectors.utils import to_sections
 from tests.daily.connectors.utils import to_text_sections

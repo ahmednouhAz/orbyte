@@ -18,18 +18,18 @@ from uuid import uuid4
 import pytest
 from sqlalchemy import select
 
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import Sandbox
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SandboxBackend
-from onyx.server.features.build.sandbox.docker.docker_sandbox_manager import (
+from orbyte.db.engine.sql_engine import get_session_with_tenant
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import Sandbox
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SandboxBackend
+from orbyte.server.features.build.sandbox.docker.docker_sandbox_manager import (
     OPENCODE_DATA_DIR,
 )
-from onyx.server.features.build.sandbox.docker.docker_sandbox_manager import (
+from orbyte.server.features.build.sandbox.docker.docker_sandbox_manager import (
     SANDBOX_EXEC_USER,
 )
-from onyx.server.features.build.sandbox.docker.docker_sandbox_manager import (
+from orbyte.server.features.build.sandbox.docker.docker_sandbox_manager import (
     SESSIONS_ROOT,
 )
 from tests.integration.common_utils.managers.build_session import BuildSessionManager
@@ -96,8 +96,8 @@ def test_session_and_opencode_history_survive_snapshot_restore(
 
     output_token = uuid4().hex
     history_token = uuid4().hex
-    output_file = f"{session_path}/outputs/onyx-roundtrip-output.txt"
-    history_file = f"{OPENCODE_DATA_DIR}/onyx-roundtrip-history.txt"
+    output_file = f"{session_path}/outputs/orbyte-roundtrip-output.txt"
+    history_file = f"{OPENCODE_DATA_DIR}/orbyte-roundtrip-history.txt"
 
     # Seed one marker in the per-session outputs dir and one in opencode's data
     # home, both as the sandbox user so they round-trip with correct ownership.

@@ -17,21 +17,21 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.docfetching.task_creation_utils import (
+from orbyte.background.celery.tasks.docfetching.task_creation_utils import (
     try_creating_docfetching_task,
 )
-from onyx.configs.constants import DocumentSource
-from onyx.configs.constants import OnyxCeleryPriority
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import EmbeddingPrecision
-from onyx.db.enums import IndexModelStatus
-from onyx.db.models import Connector
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Credential
-from onyx.db.models import SearchSettings
-from onyx.redis.redis_pool import get_redis_client
+from orbyte.configs.constants import DocumentSource
+from orbyte.configs.constants import OrbyteCeleryPriority
+from orbyte.connectors.models import InputType
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import EmbeddingPrecision
+from orbyte.db.enums import IndexModelStatus
+from orbyte.db.models import Connector
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Credential
+from orbyte.db.models import SearchSettings
+from orbyte.redis.redis_pool import get_redis_client
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 
 
@@ -119,20 +119,20 @@ class TestDocfetchingTaskPriorityWithRealObjects:
         "has_successful_index,expected_priority",
         [
             # First-time indexing (no last_successful_index_time) should get HIGH priority
-            (False, OnyxCeleryPriority.HIGH),
+            (False, OrbyteCeleryPriority.HIGH),
             # Re-indexing (has last_successful_index_time) should get MEDIUM priority
-            (True, OnyxCeleryPriority.MEDIUM),
+            (True, OrbyteCeleryPriority.MEDIUM),
         ],
     )
     @patch(
-        "onyx.background.celery.tasks.docfetching.task_creation_utils.IndexingCoordination.try_create_index_attempt"
+        "orbyte.background.celery.tasks.docfetching.task_creation_utils.IndexingCoordination.try_create_index_attempt"
     )
     def test_priority_based_on_last_successful_index_time(
         self,
         mock_try_create_index_attempt: MagicMock,
         db_session: Session,
         has_successful_index: bool,
-        expected_priority: OnyxCeleryPriority,
+        expected_priority: OrbyteCeleryPriority,
     ) -> None:
         """
         Test that first-time indexing connectors get higher priority than re-indexing.
@@ -203,7 +203,7 @@ class TestDocfetchingTaskPriorityWithRealObjects:
         )
 
     @patch(
-        "onyx.background.celery.tasks.docfetching.task_creation_utils.IndexingCoordination.try_create_index_attempt"
+        "orbyte.background.celery.tasks.docfetching.task_creation_utils.IndexingCoordination.try_create_index_attempt"
     )
     def test_no_task_created_when_deleting(
         self,
@@ -249,7 +249,7 @@ class TestDocfetchingTaskPriorityWithRealObjects:
         mock_try_create_index_attempt.assert_not_called()
 
     @patch(
-        "onyx.background.celery.tasks.docfetching.task_creation_utils.IndexingCoordination.try_create_index_attempt"
+        "orbyte.background.celery.tasks.docfetching.task_creation_utils.IndexingCoordination.try_create_index_attempt"
     )
     def test_redis_lock_prevents_concurrent_task_creation(
         self,
@@ -289,7 +289,7 @@ class TestDocfetchingTaskPriorityWithRealObjects:
         )
 
         # Acquire the lock before calling the function
-        from onyx.configs.constants import DANSWER_REDIS_FUNCTION_LOCK_PREFIX
+        from orbyte.configs.constants import DANSWER_REDIS_FUNCTION_LOCK_PREFIX
 
         lock = redis_client.lock(
             DANSWER_REDIS_FUNCTION_LOCK_PREFIX + "try_creating_indexing_task",
@@ -321,7 +321,7 @@ class TestDocfetchingTaskPriorityWithRealObjects:
                 lock.release()
 
     @patch(
-        "onyx.background.celery.tasks.docfetching.task_creation_utils.IndexingCoordination.try_create_index_attempt"
+        "orbyte.background.celery.tasks.docfetching.task_creation_utils.IndexingCoordination.try_create_index_attempt"
     )
     def test_lock_released_after_successful_task_creation(
         self,

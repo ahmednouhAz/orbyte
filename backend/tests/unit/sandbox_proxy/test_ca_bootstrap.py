@@ -9,9 +9,9 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 
-from onyx.sandbox_proxy.ca import CABootstrap
-from onyx.sandbox_proxy.ca import CAStore
-from onyx.sandbox_proxy.ca import CAStoreConflictError
+from orbyte.sandbox_proxy.ca import CABootstrap
+from orbyte.sandbox_proxy.ca import CAStore
+from orbyte.sandbox_proxy.ca import CAStoreConflictError
 
 
 class _InMemoryStore(CAStore):

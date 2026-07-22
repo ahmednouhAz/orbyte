@@ -7,11 +7,11 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
-from onyx.connectors.models import ConnectorFailure
-from onyx.connectors.models import Document
-from onyx.connectors.models import DocumentFailure
-from onyx.connectors.models import HierarchyNode
+from orbyte.connectors.google_drive.connector import GoogleDriveConnector
+from orbyte.connectors.models import ConnectorFailure
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import DocumentFailure
+from orbyte.connectors.models import HierarchyNode
 from tests.daily.connectors.google_drive.consts_and_utils import ADMIN_EMAIL
 from tests.daily.connectors.google_drive.consts_and_utils import (
     ALL_EXPECTED_HIERARCHY_NODES,
@@ -45,7 +45,7 @@ def _build_failures(web_view_links: list[str]) -> list[ConnectorFailure]:
 
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_STR)
-@patch("onyx.file_processing.extract_file_text.get_unstructured_api_key")
+@patch("orbyte.file_processing.extract_file_text.get_unstructured_api_key")
 def test_resolve_single_file(
     mock_api_key: None,  # noqa: ARG001
     google_drive_service_acct_connector_factory: Callable[..., GoogleDriveConnector],
@@ -79,7 +79,7 @@ def test_resolve_single_file(
 
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_STR)
-@patch("onyx.file_processing.extract_file_text.get_unstructured_api_key")
+@patch("orbyte.file_processing.extract_file_text.get_unstructured_api_key")
 def test_resolve_multiple_files(
     mock_api_key: None,  # noqa: ARG001
     google_drive_service_acct_connector_factory: Callable[..., GoogleDriveConnector],
@@ -116,7 +116,7 @@ def test_resolve_multiple_files(
 
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_STR)
-@patch("onyx.file_processing.extract_file_text.get_unstructured_api_key")
+@patch("orbyte.file_processing.extract_file_text.get_unstructured_api_key")
 def test_resolve_hierarchy_nodes_are_valid(
     mock_api_key: None,  # noqa: ARG001
     google_drive_service_acct_connector_factory: Callable[..., GoogleDriveConnector],
@@ -165,7 +165,7 @@ def test_resolve_hierarchy_nodes_are_valid(
 
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_STR)
-@patch("onyx.file_processing.extract_file_text.get_unstructured_api_key")
+@patch("orbyte.file_processing.extract_file_text.get_unstructured_api_key")
 def test_resolve_with_invalid_link(
     mock_api_key: None,  # noqa: ARG001
     google_drive_service_acct_connector_factory: Callable[..., GoogleDriveConnector],
@@ -198,7 +198,7 @@ def test_resolve_with_invalid_link(
 
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_STR)
-@patch("onyx.file_processing.extract_file_text.get_unstructured_api_key")
+@patch("orbyte.file_processing.extract_file_text.get_unstructured_api_key")
 def test_resolve_empty_errors(
     mock_api_key: None,  # noqa: ARG001
     google_drive_service_acct_connector_factory: Callable[..., GoogleDriveConnector],
@@ -220,13 +220,13 @@ def test_resolve_empty_errors(
 
 
 @pytest.mark.secrets(TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_STR)
-@patch("onyx.file_processing.extract_file_text.get_unstructured_api_key")
+@patch("orbyte.file_processing.extract_file_text.get_unstructured_api_key")
 def test_resolve_entity_failures_are_skipped(
     mock_api_key: None,  # noqa: ARG001
     google_drive_service_acct_connector_factory: Callable[..., GoogleDriveConnector],
 ) -> None:
     """Entity failures (not document failures) should be skipped by reindex."""
-    from onyx.connectors.models import EntityFailure
+    from orbyte.connectors.models import EntityFailure
 
     connector = google_drive_service_acct_connector_factory(
         primary_admin_email=ADMIN_EMAIL,

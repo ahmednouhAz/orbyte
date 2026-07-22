@@ -20,13 +20,13 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.background.periodic_poller import _PeriodicTaskDef
-from onyx.background.periodic_poller import _try_claim_task
-from onyx.background.periodic_poller import _try_run_periodic_task
-from onyx.background.periodic_poller import PERIODIC_TASK_KV_PREFIX
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.models import KVStore
+from orbyte.background.periodic_poller import _PeriodicTaskDef
+from orbyte.background.periodic_poller import _try_claim_task
+from orbyte.background.periodic_poller import _try_run_periodic_task
+from orbyte.background.periodic_poller import PERIODIC_TASK_KV_PREFIX
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.models import KVStore
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 

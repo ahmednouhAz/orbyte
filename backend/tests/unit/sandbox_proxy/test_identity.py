@@ -6,10 +6,10 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.sandbox_proxy import identity as identity_mod
-from onyx.sandbox_proxy.identity import IdentityResolver
-from onyx.sandbox_proxy.identity import ResolvedSandbox
-from onyx.sandbox_proxy.identity import SandboxIdentity
+from orbyte.sandbox_proxy import identity as identity_mod
+from orbyte.sandbox_proxy.identity import IdentityResolver
+from orbyte.sandbox_proxy.identity import ResolvedSandbox
+from orbyte.sandbox_proxy.identity import SandboxIdentity
 from tests.unit.sandbox_proxy.conftest import StaticLookup
 
 

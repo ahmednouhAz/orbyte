@@ -15,20 +15,20 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import Document
-from onyx.connectors.models import TextSection
-from onyx.db.enums import UserFileStatus
-from onyx.db.models import Persona
-from onyx.db.models import Persona__UserFile
-from onyx.db.models import Project__UserFile
-from onyx.db.models import User
-from onyx.db.models import UserFile
-from onyx.db.models import UserProject
-from onyx.indexing.adapters.user_file_indexing_adapter import UserFileIndexingAdapter
-from onyx.indexing.indexing_pipeline import DocumentBatchPrepareContext
-from onyx.indexing.models import ChunkEmbedding
-from onyx.indexing.models import IndexChunk
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import TextSection
+from orbyte.db.enums import UserFileStatus
+from orbyte.db.models import Persona
+from orbyte.db.models import Persona__UserFile
+from orbyte.db.models import Project__UserFile
+from orbyte.db.models import User
+from orbyte.db.models import UserFile
+from orbyte.db.models import UserProject
+from orbyte.indexing.adapters.user_file_indexing_adapter import UserFileIndexingAdapter
+from orbyte.indexing.indexing_pipeline import DocumentBatchPrepareContext
+from orbyte.indexing.models import ChunkEmbedding
+from orbyte.indexing.models import IndexChunk
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.conftest import create_test_user
 
@@ -130,7 +130,7 @@ class TestAdapterWritesBothMetadataFields:
     """prepare_enrichment must populate user_project AND personas."""
 
     @patch(
-        "onyx.indexing.adapters.user_file_indexing_adapter.get_default_llm",
+        "orbyte.indexing.adapters.user_file_indexing_adapter.get_default_llm",
         side_effect=Exception("no LLM in test"),
     )
     def test_file_linked_to_persona_gets_persona_id(
@@ -165,7 +165,7 @@ class TestAdapterWritesBothMetadataFields:
         assert aware_chunk.user_project == []
 
     @patch(
-        "onyx.indexing.adapters.user_file_indexing_adapter.get_default_llm",
+        "orbyte.indexing.adapters.user_file_indexing_adapter.get_default_llm",
         side_effect=Exception("no LLM in test"),
     )
     def test_file_linked_to_project_gets_project_id(
@@ -201,7 +201,7 @@ class TestAdapterWritesBothMetadataFields:
         assert aware_chunk.personas == []
 
     @patch(
-        "onyx.indexing.adapters.user_file_indexing_adapter.get_default_llm",
+        "orbyte.indexing.adapters.user_file_indexing_adapter.get_default_llm",
         side_effect=Exception("no LLM in test"),
     )
     def test_file_linked_to_both_gets_both_ids(
@@ -239,7 +239,7 @@ class TestAdapterWritesBothMetadataFields:
         assert project.id in aware_chunk.user_project
 
     @patch(
-        "onyx.indexing.adapters.user_file_indexing_adapter.get_default_llm",
+        "orbyte.indexing.adapters.user_file_indexing_adapter.get_default_llm",
         side_effect=Exception("no LLM in test"),
     )
     def test_file_with_no_associations_gets_empty_lists(
@@ -271,7 +271,7 @@ class TestAdapterWritesBothMetadataFields:
         assert aware_chunk.user_project == []
 
     @patch(
-        "onyx.indexing.adapters.user_file_indexing_adapter.get_default_llm",
+        "orbyte.indexing.adapters.user_file_indexing_adapter.get_default_llm",
         side_effect=Exception("no LLM in test"),
     )
     def test_multiple_personas_all_appear(

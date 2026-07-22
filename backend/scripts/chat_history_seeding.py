@@ -2,7 +2,7 @@ import argparse
 import logging
 from logging import getLogger
 
-from onyx.db.seeding.chat_history_seeding import seed_chat_history
+from orbyte.db.seeding.chat_history_seeding import seed_chat_history
 
 # Configure the logger
 logging.basicConfig(

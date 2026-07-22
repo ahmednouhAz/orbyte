@@ -15,25 +15,25 @@ from sqlalchemy import delete
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ApprovalDecidedVia
-from onyx.db.enums import ApprovalDecision
-from onyx.db.enums import ScheduledTaskRunStatus
-from onyx.db.enums import ScheduledTaskStatus
-from onyx.db.enums import ScheduledTaskTriggerSource
-from onyx.db.models import BuildSession
-from onyx.db.models import ExternalApp
-from onyx.db.models import ScheduledTask
-from onyx.db.models import ScheduledTaskPreApprovedApp
-from onyx.db.models import User
-from onyx.db.scheduled_task import create_scheduled_task
-from onyx.db.scheduled_task import get_live_scheduled_run_grants
-from onyx.db.scheduled_task import insert_run
-from onyx.db.scheduled_task import mark_run_status
-from onyx.db.scheduled_task import update_scheduled_task
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.build.db.action_approval import insert_action_approval
-from onyx.server.features.build.scheduled_tasks import api as scheduled_tasks_api
+from orbyte.db.enums import ApprovalDecidedVia
+from orbyte.db.enums import ApprovalDecision
+from orbyte.db.enums import ScheduledTaskRunStatus
+from orbyte.db.enums import ScheduledTaskStatus
+from orbyte.db.enums import ScheduledTaskTriggerSource
+from orbyte.db.models import BuildSession
+from orbyte.db.models import ExternalApp
+from orbyte.db.models import ScheduledTask
+from orbyte.db.models import ScheduledTaskPreApprovedApp
+from orbyte.db.models import User
+from orbyte.db.scheduled_task import create_scheduled_task
+from orbyte.db.scheduled_task import get_live_scheduled_run_grants
+from orbyte.db.scheduled_task import insert_run
+from orbyte.db.scheduled_task import mark_run_status
+from orbyte.db.scheduled_task import update_scheduled_task
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.server.features.build.db.action_approval import insert_action_approval
+from orbyte.server.features.build.scheduled_tasks import api as scheduled_tasks_api
 from tests.common.craft.payloads import default_action_entries
 from tests.external_dependency_unit.craft.db_helpers import make_external_app
 from tests.external_dependency_unit.craft.db_helpers import make_skill
@@ -382,6 +382,6 @@ def test_validated_app_ids_rejects_unknown_and_dedupes(
     assert scheduled_tasks_api._validated_app_ids(db_session, []) == []
     assert scheduled_tasks_api._validated_app_ids(db_session, [9, 7, 9]) == [9, 7]
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         scheduled_tasks_api._validated_app_ids(db_session, [7, 123])
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT

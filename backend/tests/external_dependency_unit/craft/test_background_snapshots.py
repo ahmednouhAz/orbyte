@@ -24,18 +24,18 @@ import pytest
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.build import tasks as tasks_module
-from onyx.background.celery.tasks.build.tasks import cleanup_idle_sandboxes_task
-from onyx.configs.constants import OnyxRedisLocks
-from onyx.db.enums import BuildSessionStatus
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import BuildSession
-from onyx.db.models import Sandbox
-from onyx.db.models import Snapshot
-from onyx.db.models import User
-from onyx.redis.redis_pool import get_redis_client
-from onyx.server.features.build.sandbox.models import SnapshotResult
-from onyx.server.features.build.session import (
+from orbyte.background.celery.tasks.build import tasks as tasks_module
+from orbyte.background.celery.tasks.build.tasks import cleanup_idle_sandboxes_task
+from orbyte.configs.constants import OrbyteRedisLocks
+from orbyte.db.enums import BuildSessionStatus
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import BuildSession
+from orbyte.db.models import Sandbox
+from orbyte.db.models import Snapshot
+from orbyte.db.models import User
+from orbyte.redis.redis_pool import get_redis_client
+from orbyte.server.features.build.sandbox.models import SnapshotResult
+from orbyte.server.features.build.session import (
     sandbox_lifecycle as sandbox_lifecycle_module,
 )
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
@@ -101,11 +101,11 @@ def _quiesce_leaked_sandboxes(db_session: Session) -> None:
 def _isolated_redis_lock() -> Generator[None, None, None]:
     """Make sure the sweep beat lock is free before + after."""
     redis_client = get_redis_client(tenant_id=POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE)
-    redis_client.delete(OnyxRedisLocks.CLEANUP_IDLE_SANDBOXES_BEAT_LOCK)
+    redis_client.delete(OrbyteRedisLocks.CLEANUP_IDLE_SANDBOXES_BEAT_LOCK)
     try:
         yield
     finally:
-        redis_client.delete(OnyxRedisLocks.CLEANUP_IDLE_SANDBOXES_BEAT_LOCK)
+        redis_client.delete(OrbyteRedisLocks.CLEANUP_IDLE_SANDBOXES_BEAT_LOCK)
 
 
 def _make_session(db_session: Session, user: User) -> BuildSession:

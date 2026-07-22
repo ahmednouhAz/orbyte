@@ -9,12 +9,12 @@ from uuid import UUID
 
 import pytest
 
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.db.enums import SandboxStatus
-from onyx.db.external_app import create_external_app
-from onyx.db.external_app import get_built_in_external_app
+from orbyte.db.engine.sql_engine import get_session_with_tenant
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.external_app import create_external_app
+from orbyte.db.external_app import get_built_in_external_app
 from tests.integration.common_utils.managers.build_session import BuildSessionManager
 from tests.integration.common_utils.test_models import DATestUser
 

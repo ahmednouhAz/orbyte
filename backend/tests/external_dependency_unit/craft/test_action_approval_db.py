@@ -15,17 +15,17 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ApprovalDecision
-from onyx.db.enums import EndpointPolicy
-from onyx.db.models import ActionApproval
-from onyx.db.models import BuildSession
-from onyx.server.features.build.db.action_approval import get_action_approval
-from onyx.server.features.build.db.action_approval import get_action_approval_for_user
-from onyx.server.features.build.db.action_approval import insert_action_approval
-from onyx.server.features.build.db.action_approval import (
+from orbyte.db.enums import ApprovalDecision
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.models import ActionApproval
+from orbyte.db.models import BuildSession
+from orbyte.server.features.build.db.action_approval import get_action_approval
+from orbyte.server.features.build.db.action_approval import get_action_approval_for_user
+from orbyte.server.features.build.db.action_approval import insert_action_approval
+from orbyte.server.features.build.db.action_approval import (
     list_session_pending_action_approvals,
 )
-from onyx.server.features.build.db.action_approval import try_record_decision
+from orbyte.server.features.build.db.action_approval import try_record_decision
 from tests.common.craft.payloads import action_entry
 from tests.common.craft.payloads import default_action_entries
 from tests.external_dependency_unit.craft.db_helpers import force_approval_created_at

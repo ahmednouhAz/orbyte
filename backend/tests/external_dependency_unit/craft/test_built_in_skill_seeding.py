@@ -20,13 +20,13 @@ from sqlalchemy import delete
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.models import Skill
-from onyx.db.models import User
-from onyx.db.skill import fetch_skill
-from onyx.db.skill import list_skills
-from onyx.db.skill import SkillAccessPolicy
-from onyx.skills.built_in import BUILT_IN_SKILLS
-from onyx.skills.built_in import BuiltInSkillDefinition
+from orbyte.db.models import Skill
+from orbyte.db.models import User
+from orbyte.db.skill import fetch_skill
+from orbyte.db.skill import list_skills
+from orbyte.db.skill import SkillAccessPolicy
+from orbyte.skills.built_in import BUILT_IN_SKILLS
+from orbyte.skills.built_in import BuiltInSkillDefinition
 from tests.external_dependency_unit.craft.db_helpers import make_built_in_skill_row
 from tests.external_dependency_unit.craft.db_helpers import make_skill
 
@@ -123,7 +123,7 @@ class TestAvailabilityGate:
     ) -> None:
         _seed_canonical(db_session)
 
-        monkeypatch.setattr("onyx.skills.built_in.ENABLE_BROWSER", False)
+        monkeypatch.setattr("orbyte.skills.built_in.ENABLE_BROWSER", False)
         off = {
             s.built_in_skill_id
             for s in list_skills(
@@ -134,7 +134,7 @@ class TestAvailabilityGate:
         }
         assert "browser" not in off
 
-        monkeypatch.setattr("onyx.skills.built_in.ENABLE_BROWSER", True)
+        monkeypatch.setattr("orbyte.skills.built_in.ENABLE_BROWSER", True)
         on = {
             s.built_in_skill_id
             for s in list_skills(

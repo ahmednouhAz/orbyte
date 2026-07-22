@@ -9,10 +9,10 @@ and are not exposed via API endpoints, so they must be tested directly.
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import AccountType
-from onyx.db.models import UserRole
-from onyx.db.users import add_slack_user_if_not_exists
-from onyx.db.users import batch_add_ext_perm_user_if_not_exists
+from orbyte.db.enums import AccountType
+from orbyte.db.models import UserRole
+from orbyte.db.users import add_slack_user_if_not_exists
+from orbyte.db.users import batch_add_ext_perm_user_if_not_exists
 
 
 def test_slack_user_creation_sets_account_type_bot(db_session: Session) -> None:

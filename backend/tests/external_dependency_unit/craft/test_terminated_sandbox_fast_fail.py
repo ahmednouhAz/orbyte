@@ -12,10 +12,10 @@ from typing import Callable
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import Sandbox
-from onyx.db.models import User
-from onyx.server.features.build.sandbox.opencode.event_bus import PodEventBus
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import Sandbox
+from orbyte.db.models import User
+from orbyte.server.features.build.sandbox.opencode.event_bus import PodEventBus
 from tests.common.craft.stubs import StubSandboxManager
 
 

@@ -8,9 +8,9 @@ the DB. CUSTOM apps author globs; built-in providers author regexes.
 
 from __future__ import annotations
 
-from onyx.db.enums import ExternalAppType
-from onyx.db.models import ExternalApp
-from onyx.sandbox_proxy.request_evaluator import resolve_app_for_url
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.models import ExternalApp
+from orbyte.sandbox_proxy.request_evaluator import resolve_app_for_url
 
 
 def _app(

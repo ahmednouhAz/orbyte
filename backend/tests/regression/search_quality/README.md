@@ -4,14 +4,14 @@ This Python script evaluates the search and answer quality for a list of queries
 
 ## Usage
 
-1. Ensure you have the required dependencies installed and onyx running.
+1. Ensure you have the required dependencies installed and orbyte running.
 
-2. Ensure you have `OPENAI_API_KEY` set if you intend to do answer evaluation (enabled by default, unless you run the script with the `-s` flag). Go to the API Keys page in the admin panel, generate a basic api token, and add it to the env file as `ONYX_API_KEY=on_...`.
+2. Ensure you have `OPENAI_API_KEY` set if you intend to do answer evaluation (enabled by default, unless you run the script with the `-s` flag). Go to the API Keys page in the admin panel, generate a basic api token, and add it to the env file as `ORBYTE_API_KEY=on_...`.
 
-3. Navigate to Onyx repo, **search_quality** folder:
+3. Navigate to Orbyte repo, **search_quality** folder:
 
 ```
-cd path/to/onyx/backend/tests/regression/search_quality
+cd path/to/orbyte/backend/tests/regression/search_quality
 ```
 
 4. Copy `test_queries.json.template` to `test_queries.json` and add/remove test queries in it. The fields for each query are:
@@ -33,7 +33,7 @@ python run_search_eval.py
   -w --max_workers      # Maximum number of concurrent search requests (0 = unlimited, default: 10).
   -r --max_req_rate     # Maximum number of search requests per minute (0 = unlimited, default: 0).
   -q --timeout          # Request timeout in seconds (default: 120)
-  -e --api_endpoint     # Base URL of the Onyx API server (default: http://127.0.0.1:8080)
+  -e --api_endpoint     # Base URL of the Orbyte API server (default: http://127.0.0.1:8080)
   -s --search_only      # Only perform search and not answer evaluation (default: false)
   -t --tenant_id        # Tenant ID to use for the evaluation (default: None)
 ```

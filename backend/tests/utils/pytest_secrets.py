@@ -26,7 +26,7 @@ import pytest
 from tests.utils.aws_secrets import get_secrets
 from tests.utils.secret_names import TestSecret
 
-_NEEDED_SECRETS_KEY = "_onyx_test_secrets_needed"
+_NEEDED_SECRETS_KEY = "_orbyte_test_secrets_needed"
 
 
 def pytest_configure(config: pytest.Config) -> None:

@@ -5,9 +5,9 @@ import os
 import httpx
 import pytest
 
-from onyx.db.enums import AccessType
-from onyx.db.models import UserRole
-from onyx.server.documents.models import DocumentSource
+from orbyte.db.enums import AccessType
+from orbyte.db.models import UserRole
+from orbyte.server.documents.models import DocumentSource
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.cc_pair import CCPairManager

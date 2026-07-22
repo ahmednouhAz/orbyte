@@ -1,6 +1,6 @@
 """Integration coverage for `/admin/llm/test` against AWS Bedrock.
 
-The Onyx admin UI calls this endpoint when a user clicks "Test" on the
+The Orbyte admin UI calls this endpoint when a user clicks "Test" on the
 Bedrock provider page; if the credentials are wrong the UI surfaces the
 response body verbatim. This test pins the contract:
 
@@ -9,7 +9,7 @@ response body verbatim. This test pins the contract:
   match keeps working.
 """
 
-from onyx.llm.constants import LlmProviderNames
+from orbyte.llm.constants import LlmProviderNames
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.user import UserManager

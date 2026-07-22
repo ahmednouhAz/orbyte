@@ -7,10 +7,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.metrics import metrics_auth
-from onyx.server.metrics.metrics_auth import verify_metrics_token
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.server.metrics import metrics_auth
+from orbyte.server.metrics.metrics_auth import verify_metrics_token
 
 
 @pytest.fixture(autouse=True)
@@ -33,14 +33,14 @@ def _request_with_auth(auth_header: str | None) -> MagicMock:
 
 def test_locked_when_unconfigured() -> None:
     """No token and not explicitly disabled => fail secure (lock the endpoint)."""
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         verify_metrics_token(_request_with_auth(None))
-    assert exc_info.value.error_code == OnyxErrorCode.UNAUTHENTICATED
+    assert exc_info.value.error_code == OrbyteErrorCode.UNAUTHENTICATED
     # RFC 6750: advertise the bearer scheme on 401.
     assert exc_info.value.headers == {"WWW-Authenticate": "Bearer"}
 
     # Even a bearer header can't satisfy a locked endpoint with no configured token.
-    with pytest.raises(OnyxError):
+    with pytest.raises(OrbyteError):
         verify_metrics_token(_request_with_auth("Bearer anything"))
 
 
@@ -61,22 +61,22 @@ def test_valid_token_passes(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_missing_header_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(metrics_auth, "METRICS_AUTH_TOKEN", "s3cret")
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         verify_metrics_token(_request_with_auth(None))
-    assert exc_info.value.error_code == OnyxErrorCode.UNAUTHENTICATED
+    assert exc_info.value.error_code == OrbyteErrorCode.UNAUTHENTICATED
 
 
 def test_non_bearer_header_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(metrics_auth, "METRICS_AUTH_TOKEN", "s3cret")
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         verify_metrics_token(_request_with_auth("s3cret"))
-    assert exc_info.value.error_code == OnyxErrorCode.UNAUTHENTICATED
+    assert exc_info.value.error_code == OrbyteErrorCode.UNAUTHENTICATED
 
 
 def test_wrong_token_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(metrics_auth, "METRICS_AUTH_TOKEN", "s3cret")
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         verify_metrics_token(_request_with_auth("Bearer wrong"))
-    assert exc_info.value.error_code == OnyxErrorCode.UNAUTHENTICATED
+    assert exc_info.value.error_code == OrbyteErrorCode.UNAUTHENTICATED

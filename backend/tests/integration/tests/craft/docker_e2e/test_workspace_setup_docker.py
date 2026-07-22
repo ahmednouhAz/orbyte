@@ -13,9 +13,9 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SandboxBackend
-from onyx.server.features.build.sandbox.docker.docker_sandbox_manager import (
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SandboxBackend
+from orbyte.server.features.build.sandbox.docker.docker_sandbox_manager import (
     SANDBOX_EXEC_USER,
 )
 from tests.integration.common_utils.managers.build_session import BuildSessionManager

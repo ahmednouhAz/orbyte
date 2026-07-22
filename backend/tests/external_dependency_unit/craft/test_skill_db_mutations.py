@@ -7,14 +7,14 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SkillSharePermission
-from onyx.db.models import Skill__User
-from onyx.db.models import Skill__UserGroup
-from onyx.db.skill import replace_skill_shares
-from onyx.db.skill import transfer_skill_ownership
-from onyx.db.skill import update_skill_fields
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
+from orbyte.db.enums import SkillSharePermission
+from orbyte.db.models import Skill__User
+from orbyte.db.models import Skill__UserGroup
+from orbyte.db.skill import replace_skill_shares
+from orbyte.db.skill import transfer_skill_ownership
+from orbyte.db.skill import update_skill_fields
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
 from tests.external_dependency_unit.craft.db_helpers import make_built_in_skill_row
 from tests.external_dependency_unit.craft.db_helpers import make_group
 from tests.external_dependency_unit.craft.db_helpers import make_skill
@@ -150,14 +150,14 @@ def test_replace_skill_shares_names_invalid_group_target(
 ) -> None:
     skill = make_skill(db_session)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         replace_skill_shares(
             skill=skill,
             group_shares={-1: SkillSharePermission.VIEWER},
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "One or more group share targets do not exist."
 
 
@@ -166,14 +166,14 @@ def test_replace_skill_shares_names_invalid_user_target(
 ) -> None:
     skill = make_skill(db_session)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         replace_skill_shares(
             skill=skill,
             user_shares={uuid4(): SkillSharePermission.VIEWER},
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "One or more user share targets do not exist."
 
 
@@ -257,14 +257,14 @@ def test_transfer_skill_ownership_rejects_built_in_skill(
         built_in_skill_id=f"built-in-{new_owner.id.hex[:8]}",
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         transfer_skill_ownership(
             skill=skill,
             new_owner_user_id=new_owner.id,
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     assert skill.author_user_id is None
 
 
@@ -274,12 +274,12 @@ def test_transfer_skill_ownership_rejects_missing_new_owner(
     previous_owner = make_user(db_session)
     skill = make_skill(db_session, author_user_id=previous_owner.id)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         transfer_skill_ownership(
             skill=skill,
             new_owner_user_id=uuid4(),
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "New owner user does not exist."

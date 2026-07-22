@@ -9,7 +9,7 @@ Create Date: 2025-07-28 17:35:59.900680
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from onyx.db.enums import MCPAuthenticationType
+from orbyte.db.enums import MCPAuthenticationType
 
 # revision identifiers, used by Alembic.
 revision = "7ed603b64d5a"

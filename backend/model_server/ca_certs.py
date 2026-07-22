@@ -1,6 +1,6 @@
 """Assemble the outbound-TLS trust store for the model server.
 
-Every other Onyx pod merges operator-supplied CA roots into the system trust
+Every other Orbyte pod merges operator-supplied CA roots into the system trust
 store with a shell `update-ca-certificates` wrapper. The model server runs on a
 distroless image with no shell, so when custom roots are mounted this module
 reproduces that merge in pure Python: it concatenates certifi's public roots with
@@ -9,7 +9,7 @@ the mounted roots into a single bundle and points `REQUESTS_CA_BUNDLE` /
 than replacing them) preserves TLS to public endpoints -- e.g. HuggingFace model
 downloads -- for operators who add only a private root.
 
-A no-op unless `ONYX_CUSTOM_CA_CERTS_DIR` is set, so default deployments are
+A no-op unless `ORBYTE_CUSTOM_CA_CERTS_DIR` is set, so default deployments are
 unaffected and keep verifying against certifi directly.
 """
 
@@ -17,15 +17,15 @@ import os
 import tempfile
 from pathlib import Path
 
-from onyx.utils.logger import setup_logger
+from orbyte.utils.logger import setup_logger
 
 logger = setup_logger()
 
 # Directory the custom CA Secret/ConfigMap is mounted at; each key becomes a file.
 # Set by the Helm model-server templates when customCACerts is enabled.
-CUSTOM_CA_CERTS_DIR_ENV = "ONYX_CUSTOM_CA_CERTS_DIR"
+CUSTOM_CA_CERTS_DIR_ENV = "ORBYTE_CUSTOM_CA_CERTS_DIR"
 
-_MERGED_BUNDLE_NAME = "onyx-model-server-ca-bundle.crt"
+_MERGED_BUNDLE_NAME = "orbyte-model-server-ca-bundle.crt"
 _CERT_SUFFIXES = {".crt", ".pem"}
 
 

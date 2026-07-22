@@ -16,29 +16,29 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import FileOrigin
-from onyx.configs.constants import MessageType
-from onyx.db.enums import ArtifactType
-from onyx.db.enums import BuildSessionStatus
-from onyx.db.enums import SandboxStatus
-from onyx.db.enums import SessionOrigin
-from onyx.db.models import Artifact
-from onyx.db.models import BuildMessage
-from onyx.db.models import BuildSession
-from onyx.db.models import Sandbox
-from onyx.db.models import Snapshot
-from onyx.db.models import User
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.file_store.file_store import get_default_file_store
-from onyx.redis.redis_pool import get_redis_client
-from onyx.server.features.build.db.build_session import allocate_nextjs_port
-from onyx.server.features.build.db.build_session import get_user_build_sessions
-from onyx.server.features.build.db.sandbox import get_sandbox_by_user_id
-from onyx.server.features.build.sandbox.models import SandboxInfo
-from onyx.server.features.build.sandbox.user_library import USER_LIBRARY_MOUNT_PATH
-from onyx.server.features.build.session.api import restore_session
-from onyx.server.features.build.session.manager import SessionManager
+from orbyte.configs.constants import FileOrigin
+from orbyte.configs.constants import MessageType
+from orbyte.db.enums import ArtifactType
+from orbyte.db.enums import BuildSessionStatus
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.enums import SessionOrigin
+from orbyte.db.models import Artifact
+from orbyte.db.models import BuildMessage
+from orbyte.db.models import BuildSession
+from orbyte.db.models import Sandbox
+from orbyte.db.models import Snapshot
+from orbyte.db.models import User
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.file_store.file_store import get_default_file_store
+from orbyte.redis.redis_pool import get_redis_client
+from orbyte.server.features.build.db.build_session import allocate_nextjs_port
+from orbyte.server.features.build.db.build_session import get_user_build_sessions
+from orbyte.server.features.build.db.sandbox import get_sandbox_by_user_id
+from orbyte.server.features.build.sandbox.models import SandboxInfo
+from orbyte.server.features.build.sandbox.user_library import USER_LIBRARY_MOUNT_PATH
+from orbyte.server.features.build.session.api import restore_session
+from orbyte.server.features.build.session.manager import SessionManager
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.common.craft.stubs import StubSandboxManager
 from tests.external_dependency_unit.craft.redis_helpers import (
@@ -476,12 +476,12 @@ class TestDeleteSession:
         stub_sandbox_manager.supports_opencode_history_persistence = True
         stub_sandbox_manager.prompt_slot_returns = False
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(OrbyteError) as exc_info:
             session_manager_with_stub.delete_session(
                 session_id=session_row.id, user_id=test_user.id
             )
 
-        assert exc_info.value.error_code == OnyxErrorCode.CONFLICT
+        assert exc_info.value.error_code == OrbyteErrorCode.CONFLICT
         assert stub_sandbox_manager.delete_opencode_session_count == 0
         assert stub_sandbox_manager.create_opencode_history_snapshot_count == 0
         assert stub_sandbox_manager.cleanup_session_workspace_count == 0
@@ -808,11 +808,11 @@ class TestPortAllocator:
         # Narrow the search range to [50000, 50004) so the test stays fast and
         # uses high ports unlikely to clash with anything on the test host.
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
+            "orbyte.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
             50000,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
+            "orbyte.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
             50004,
         )
 
@@ -839,11 +839,11 @@ class TestPortAllocator:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
+            "orbyte.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
             50100,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
+            "orbyte.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
             50103,
         )
 
@@ -859,9 +859,9 @@ class TestPortAllocator:
             )
         db_session.commit()
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(OrbyteError) as exc_info:
             allocate_nextjs_port(db_session)
-        assert exc_info.value.error_code == OnyxErrorCode.SERVICE_UNAVAILABLE
+        assert exc_info.value.error_code == OrbyteErrorCode.SERVICE_UNAVAILABLE
 
 
 # =============================================================================
@@ -935,7 +935,7 @@ class TestRestoreSession:
 
         # Patch the import site used by ``restore_session``.
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "orbyte.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
@@ -986,7 +986,7 @@ class TestRestoreSession:
         stub_sandbox_manager.write_files_to_sandbox_silent = True
 
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "orbyte.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
@@ -1021,7 +1021,7 @@ class TestRestoreSession:
             == USER_LIBRARY_MOUNT_PATH
         )
 
-    def test_restore_preserves_port_exhaustion_onyx_error(
+    def test_restore_preserves_port_exhaustion_orbyte_error(
         self,
         db_session: Session,
         test_user: User,
@@ -1045,29 +1045,29 @@ class TestRestoreSession:
         stub_sandbox_manager.session_workspace_exists_returns = False
 
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "orbyte.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
         def _raise_port_exhausted(_db_session: Session) -> int:
-            raise OnyxError(
-                OnyxErrorCode.SERVICE_UNAVAILABLE,
+            raise OrbyteError(
+                OrbyteErrorCode.SERVICE_UNAVAILABLE,
                 "No available ports in configured range",
             )
 
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.allocate_nextjs_port",
+            "orbyte.server.features.build.session.api.allocate_nextjs_port",
             _raise_port_exhausted,
         )
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(OrbyteError) as exc_info:
             restore_session(
                 session_id=idle_session.id,
                 user=test_user,
                 db_session=db_session,
             )
 
-        assert exc_info.value.error_code == OnyxErrorCode.SERVICE_UNAVAILABLE
+        assert exc_info.value.error_code == OrbyteErrorCode.SERVICE_UNAVAILABLE
 
 
 # =============================================================================

@@ -14,9 +14,9 @@ from acp.schema import TextContentBlock
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from onyx.db.models import Sandbox
-from onyx.db.models import User
-from onyx.server.features.build.session import streaming as streaming_module
+from orbyte.db.models import Sandbox
+from orbyte.db.models import User
+from orbyte.server.features.build.session import streaming as streaming_module
 from tests.common.craft.stubs import StubSandboxManager
 from tests.external_dependency_unit.craft.db_helpers import make_sandbox
 from tests.external_dependency_unit.craft.db_helpers import make_user

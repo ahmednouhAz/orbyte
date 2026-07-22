@@ -4,15 +4,15 @@ from typing import Any
 import httpx
 import pytest
 
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.model_capabilities import get_max_input_tokens
-from onyx.llm.model_capabilities import litellm_thinks_model_supports_image_input
-from onyx.llm.model_capabilities import model_is_reasoning_model
-from onyx.llm.model_name_parser import parse_litellm_model_name
-from onyx.llm.well_known_providers.llm_provider_options import (
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.llm.model_capabilities import get_max_input_tokens
+from orbyte.llm.model_capabilities import litellm_thinks_model_supports_image_input
+from orbyte.llm.model_capabilities import model_is_reasoning_model
+from orbyte.llm.model_name_parser import parse_litellm_model_name
+from orbyte.llm.well_known_providers.llm_provider_options import (
     fetch_default_model_for_provider,
 )
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
+from orbyte.server.manage.llm.models import ModelConfigurationUpsertRequest
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.user import UserManager
@@ -1133,7 +1133,7 @@ def test_default_model_persistence_and_update(
     6. Both admin and basic endpoints reflect the new default model
     7. Non-admin user sees the updated default model
     """
-    from onyx.auth.schemas import UserRole
+    from orbyte.auth.schemas import UserRole
 
     admin_user = UserManager.create(name="admin_user")
 
@@ -1393,7 +1393,7 @@ def test_multiple_providers_default_switching(
     6. Admin switches to a different provider that has a model with the same name
     7. Both users should see the new provider as default with the same model name
     """
-    from onyx.auth.schemas import UserRole
+    from orbyte.auth.schemas import UserRole
 
     admin_user = UserManager.create(name="admin_user")
 
@@ -1752,7 +1752,7 @@ def test_default_provider_and_vision_provider_selection(
     5. Verify both admin and basic users see correct default provider and vision provider
     6. Verify model configurations show correct image support capabilities
     """
-    from onyx.auth.schemas import UserRole
+    from orbyte.auth.schemas import UserRole
 
     admin_user = UserManager.create(name="admin_user")
 
@@ -2135,7 +2135,7 @@ def test_all_three_provider_types_no_mixup(reset: None) -> None:  # noqa: ARG001
     6. Verify image gen config doesn't appear in LLM provider lists
     7. Verify LLM providers don't appear in image gen config list
     """
-    from onyx.auth.schemas import UserRole
+    from orbyte.auth.schemas import UserRole
 
     admin_user = UserManager.create(name="admin_user")
 

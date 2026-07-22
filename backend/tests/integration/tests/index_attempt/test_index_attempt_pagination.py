@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 
-from onyx.db.models import IndexingStatus
+from orbyte.db.models import IndexingStatus
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.index_attempt import IndexAttemptManager
 from tests.integration.common_utils.managers.user import UserManager

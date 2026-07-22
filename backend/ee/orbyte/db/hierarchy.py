@@ -1,0 +1,102 @@
+"""EE version of hierarchy node access control.
+
+This module provides permission-aware hierarchy node access for Enterprise Edition.
+It filters hierarchy nodes based on user email and external group membership.
+"""
+
+from sqlalchemy import any_
+from sqlalchemy import cast
+from sqlalchemy import or_
+from sqlalchemy import select
+from sqlalchemy import String
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.orm import Session
+from sqlalchemy.sql.elements import ColumnElement
+
+from orbyte.configs.constants import DocumentSource
+from orbyte.db.enums import HierarchyNodeType
+from orbyte.db.hierarchy import escape_like_pattern
+from orbyte.db.hierarchy import HIERARCHY_NODE_SEARCH_LIMIT
+from orbyte.db.models import HierarchyNode
+
+
+def _build_hierarchy_access_filter(
+    user_email: str,
+    external_group_ids: list[str],
+) -> ColumnElement[bool]:
+    """Build SQLAlchemy filter for hierarchy node access.
+
+    A user can access a hierarchy node if any of the following are true:
+    - The node is the SOURCE root for its source (always visible as the tree root)
+    - The node is marked as public (is_public=True)
+    - The user's email is in the node's external_user_emails list
+    - Any of the user's external group IDs overlap with the node's external_user_group_ids
+    """
+    access_filters: list[ColumnElement[bool]] = [
+        HierarchyNode.node_type == HierarchyNodeType.SOURCE,
+        HierarchyNode.is_public.is_(True),
+    ]
+    if user_email:
+        access_filters.append(any_(HierarchyNode.external_user_emails) == user_email)
+    if external_group_ids:
+        access_filters.append(
+            HierarchyNode.external_user_group_ids.overlap(
+                cast(postgresql.array(external_group_ids), postgresql.ARRAY(String))
+            )
+        )
+    return or_(*access_filters)
+
+
+def _get_accessible_hierarchy_nodes_for_source(
+    db_session: Session,
+    source: DocumentSource,
+    user_email: str,
+    external_group_ids: list[str],
+) -> list[HierarchyNode]:
+    """EE version: hierarchy nodes the user can access, always including the SOURCE root."""
+    stmt = select(HierarchyNode).where(
+        HierarchyNode.source == source,
+        HierarchyNode.node_type != HierarchyNodeType.STUB,
+    )
+    stmt = stmt.where(_build_hierarchy_access_filter(user_email, external_group_ids))
+    stmt = stmt.order_by(HierarchyNode.display_name)
+    return list(db_session.execute(stmt).scalars().all())
+
+
+def _search_accessible_hierarchy_nodes(
+    db_session: Session,
+    query: str,
+    sources: list[DocumentSource] | None,
+    user_email: str,
+    external_group_ids: list[str],
+    limit: int = HIERARCHY_NODE_SEARCH_LIMIT,
+) -> list[HierarchyNode]:
+    """EE version: ACL-filtered case-insensitive display_name search."""
+    pattern = f"%{escape_like_pattern(query)}%"
+    stmt = (
+        select(HierarchyNode)
+        .where(
+            HierarchyNode.node_type.notin_(
+                [HierarchyNodeType.STUB, HierarchyNodeType.SOURCE]
+            ),
+            HierarchyNode.display_name.ilike(pattern, escape="\\"),
+            _build_hierarchy_access_filter(user_email, external_group_ids),
+        )
+        .order_by(HierarchyNode.display_name)
+        .limit(limit)
+    )
+    if sources:
+        stmt = stmt.where(HierarchyNode.source.in_(sources))
+    return list(db_session.execute(stmt).scalars().all())
+
+
+def _filter_accessible_hierarchy_node_ids(
+    db_session: Session,
+    node_ids: list[int],
+    user_email: str,
+    external_group_ids: list[str],
+) -> set[int]:
+    """EE version: keep only the node ids the user can access."""
+    stmt = select(HierarchyNode.id).where(HierarchyNode.id.in_(node_ids))
+    stmt = stmt.where(_build_hierarchy_access_filter(user_email, external_group_ids))
+    return set(db_session.execute(stmt).scalars().all())

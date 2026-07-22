@@ -16,16 +16,16 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.celery_utils import extract_ids_from_runnable_connector
-from onyx.connectors.interfaces import GenerateSlimDocumentOutput
-from onyx.connectors.interfaces import SecondsSinceUnixEpoch
-from onyx.connectors.interfaces import SlimConnector
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.models import SlimDocument
-from onyx.db.document import backfill_docs_created_at__no_commit
-from onyx.db.models import Document as DbDocument
-from onyx.indexing.indexing_heartbeat import IndexingHeartbeatInterface
-from onyx.kg.models import KGStage
+from orbyte.background.celery.celery_utils import extract_ids_from_runnable_connector
+from orbyte.connectors.interfaces import GenerateSlimDocumentOutput
+from orbyte.connectors.interfaces import SecondsSinceUnixEpoch
+from orbyte.connectors.interfaces import SlimConnector
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.models import SlimDocument
+from orbyte.db.document import backfill_docs_created_at__no_commit
+from orbyte.db.models import Document as DbDocument
+from orbyte.indexing.indexing_heartbeat import IndexingHeartbeatInterface
+from orbyte.kg.models import KGStage
 
 _CREATED_AT = datetime(2021, 6, 1, tzinfo=timezone.utc)
 

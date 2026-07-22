@@ -82,7 +82,7 @@ _BUILT_INS: tuple[_BuiltIn, ...] = (
         built_in_skill_id="company-search",
         name="company-search",
         description=(
-            "Search company knowledge using onyx-cli. Returns permissioned, "
+            "Search company knowledge using orbyte-cli. Returns permissioned, "
             "citation-rich results from connected sources."
         ),
     ),

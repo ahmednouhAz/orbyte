@@ -8,14 +8,14 @@ from __future__ import annotations
 
 import pytest
 
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.matching.request import MatchContext
-from onyx.external_apps.matching.request import ProxiedRequest
-from onyx.external_apps.matching.rules import rule_matches
-from onyx.external_apps.providers.registry import get_endpoint_catalog
-from onyx.external_apps.providers.slack import SlackAction
-from onyx.external_apps.providers.slack import SlackProvider
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.external_apps.matching.request import MatchContext
+from orbyte.external_apps.matching.request import ProxiedRequest
+from orbyte.external_apps.matching.rules import rule_matches
+from orbyte.external_apps.providers.registry import get_endpoint_catalog
+from orbyte.external_apps.providers.slack import SlackAction
+from orbyte.external_apps.providers.slack import SlackProvider
 
 _CATALOG = get_endpoint_catalog(ExternalAppType.SLACK)
 

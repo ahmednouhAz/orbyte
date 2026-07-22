@@ -4,16 +4,16 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.document_index.opensearch.constants import OpenSearchSearchType
-from onyx.server.metrics.opensearch_search import _client_duration
-from onyx.server.metrics.opensearch_search import _client_server_overhead
-from onyx.server.metrics.opensearch_search import _search_errors
-from onyx.server.metrics.opensearch_search import _search_total
-from onyx.server.metrics.opensearch_search import _searches_in_progress
-from onyx.server.metrics.opensearch_search import _server_duration
-from onyx.server.metrics.opensearch_search import observe_opensearch_search
-from onyx.server.metrics.opensearch_search import record_opensearch_search_error
-from onyx.server.metrics.opensearch_search import track_opensearch_search
+from orbyte.document_index.opensearch.constants import OpenSearchSearchType
+from orbyte.server.metrics.opensearch_search import _client_duration
+from orbyte.server.metrics.opensearch_search import _client_server_overhead
+from orbyte.server.metrics.opensearch_search import _search_errors
+from orbyte.server.metrics.opensearch_search import _search_total
+from orbyte.server.metrics.opensearch_search import _searches_in_progress
+from orbyte.server.metrics.opensearch_search import _server_duration
+from orbyte.server.metrics.opensearch_search import observe_opensearch_search
+from orbyte.server.metrics.opensearch_search import record_opensearch_search_error
+from orbyte.server.metrics.opensearch_search import track_opensearch_search
 
 
 class TestRecordOpenSearchSearchError:

@@ -14,24 +14,24 @@ import pytest
 import redis
 from sqlalchemy.orm import Session
 
-from onyx.cache.factory import get_cache_backend
-from onyx.db.enums import ApprovalDecidedVia
-from onyx.db.enums import ApprovalDecision
-from onyx.db.enums import EndpointPolicy
-from onyx.db.models import BuildSession
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.external_apps.matching.engine import MatchedAction
-from onyx.sandbox_proxy import approval_cache
-from onyx.server.features.build.approvals.api import DecisionBody
-from onyx.server.features.build.approvals.api import list_live_approvals
-from onyx.server.features.build.approvals.api import submit_decision
-from onyx.server.features.build.approvals.api import submit_session_grant
-from onyx.server.features.build.configs import SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS
-from onyx.server.features.build.db.action_approval import get_action_approval
-from onyx.server.features.build.db.action_approval import get_action_approval_for_user
-from onyx.server.features.build.db.action_approval import insert_action_approval
-from onyx.server.features.build.db.action_approval import try_record_decision
+from orbyte.cache.factory import get_cache_backend
+from orbyte.db.enums import ApprovalDecidedVia
+from orbyte.db.enums import ApprovalDecision
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.models import BuildSession
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.external_apps.matching.engine import MatchedAction
+from orbyte.sandbox_proxy import approval_cache
+from orbyte.server.features.build.approvals.api import DecisionBody
+from orbyte.server.features.build.approvals.api import list_live_approvals
+from orbyte.server.features.build.approvals.api import submit_decision
+from orbyte.server.features.build.approvals.api import submit_session_grant
+from orbyte.server.features.build.configs import SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS
+from orbyte.server.features.build.db.action_approval import get_action_approval
+from orbyte.server.features.build.db.action_approval import get_action_approval_for_user
+from orbyte.server.features.build.db.action_approval import insert_action_approval
+from orbyte.server.features.build.db.action_approval import try_record_decision
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.common.craft.payloads import action_entry
 from tests.common.craft.payloads import default_action_entries as _default_actions
@@ -122,10 +122,10 @@ def test_list_live_approvals_non_owner_gets_not_found(
     )
     db_session.commit()
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         list_live_approvals(session_id=session.id, user=intruder, db_session=db_session)
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
 
 
 # --------------------------------------------------------------------------- #
@@ -251,7 +251,7 @@ def test_submit_decision_different_decision_raises_conflict(
         db_session=db_session,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         submit_decision(
             approval_id=approval.approval_id,
             body=DecisionBody(decision=ApprovalDecision.APPROVED),
@@ -259,7 +259,7 @@ def test_submit_decision_different_decision_raises_conflict(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.CONFLICT
+    assert exc_info.value.error_code == OrbyteErrorCode.CONFLICT
 
 
 @pytest.mark.parametrize("case", ["missing", "non_owner"])
@@ -287,7 +287,7 @@ def test_submit_decision_not_found(
         db_session.commit()
         target_id = approval.approval_id
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         submit_decision(
             approval_id=target_id,
             body=DecisionBody(decision=ApprovalDecision.APPROVED),
@@ -295,7 +295,7 @@ def test_submit_decision_not_found(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
 
 
 def test_submit_decision_pushes_wake_on_redis(

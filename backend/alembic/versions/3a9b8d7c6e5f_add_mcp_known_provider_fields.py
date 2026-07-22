@@ -10,7 +10,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from onyx.db.enums import MCPOAuthProviderMode
+from orbyte.db.enums import MCPOAuthProviderMode
 
 # revision identifiers, used by Alembic.
 revision = "3a9b8d7c6e5f"

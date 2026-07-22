@@ -9,7 +9,7 @@ Create Date: 2026-06-09 17:11:49.835715
 from alembic import op
 import sqlalchemy as sa
 
-from onyx.server.security.models import SSRFProtectionLevel
+from orbyte.server.security.models import SSRFProtectionLevel
 
 
 # revision identifiers, used by Alembic.

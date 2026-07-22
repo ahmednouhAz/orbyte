@@ -3,7 +3,7 @@ from collections.abc import Generator
 
 import pytest
 
-from onyx.connectors.slack.models import ChannelType
+from orbyte.connectors.slack.models import ChannelType
 from tests.integration.connector_job_tests.slack.slack_api_utils import SlackManager
 
 SLACK_ADMIN_EMAIL = os.environ.get("SLACK_ADMIN_EMAIL", "evan@onyx.app")

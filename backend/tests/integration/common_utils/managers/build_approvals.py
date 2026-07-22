@@ -10,8 +10,8 @@ from __future__ import annotations
 import time
 from uuid import UUID
 
-from onyx.server.features.build.approvals.api import ApprovalListResponse
-from onyx.server.features.build.approvals.api import ApprovalView
+from orbyte.server.features.build.approvals.api import ApprovalListResponse
+from orbyte.server.features.build.approvals.api import ApprovalView
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser

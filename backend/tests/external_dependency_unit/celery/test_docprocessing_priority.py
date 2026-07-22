@@ -16,20 +16,20 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.run_docfetching import connector_document_extraction
-from onyx.configs.constants import DocumentSource
-from onyx.configs.constants import OnyxCeleryPriority
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import EmbeddingPrecision
-from onyx.db.enums import IndexingStatus
-from onyx.db.enums import IndexModelStatus
-from onyx.db.models import Connector
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Credential
-from onyx.db.models import IndexAttempt
-from onyx.db.models import SearchSettings
+from orbyte.background.indexing.run_docfetching import connector_document_extraction
+from orbyte.configs.constants import DocumentSource
+from orbyte.configs.constants import OrbyteCeleryPriority
+from orbyte.connectors.models import InputType
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import EmbeddingPrecision
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.enums import IndexModelStatus
+from orbyte.db.models import Connector
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Credential
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import SearchSettings
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 
 
@@ -137,31 +137,31 @@ class TestDocprocessingPriorityInDocumentExtraction:
         "has_successful_index,expected_priority",
         [
             # First-time indexing (no last_successful_index_time) should get HIGH priority
-            (False, OnyxCeleryPriority.HIGH),
+            (False, OrbyteCeleryPriority.HIGH),
             # Re-indexing (has last_successful_index_time) should get MEDIUM priority
-            (True, OnyxCeleryPriority.MEDIUM),
+            (True, OrbyteCeleryPriority.MEDIUM),
         ],
     )
-    @patch("onyx.background.indexing.run_docfetching.get_document_batch_storage")
-    @patch("onyx.background.indexing.run_docfetching.MemoryTracer")
-    @patch("onyx.background.indexing.run_docfetching._get_connector_runner")
+    @patch("orbyte.background.indexing.run_docfetching.get_document_batch_storage")
+    @patch("orbyte.background.indexing.run_docfetching.MemoryTracer")
+    @patch("orbyte.background.indexing.run_docfetching._get_connector_runner")
     @patch(
-        "onyx.background.indexing.run_docfetching.strip_null_characters",
+        "orbyte.background.indexing.run_docfetching.strip_null_characters",
         side_effect=lambda batch: batch,
     )
     @patch(
-        "onyx.background.indexing.run_docfetching.get_recent_completed_attempts_for_cc_pair"
+        "orbyte.background.indexing.run_docfetching.get_recent_completed_attempts_for_cc_pair"
     )
     @patch(
-        "onyx.background.indexing.run_docfetching.get_last_successful_attempt_poll_range_end"
+        "orbyte.background.indexing.run_docfetching.get_last_successful_attempt_poll_range_end"
     )
-    @patch("onyx.background.indexing.run_docfetching.save_checkpoint")
-    @patch("onyx.background.indexing.run_docfetching.get_latest_valid_checkpoint")
-    @patch("onyx.background.indexing.run_docfetching.get_redis_client")
-    @patch("onyx.background.indexing.run_docfetching.ensure_source_node_exists")
-    @patch("onyx.background.indexing.run_docfetching.get_source_node_id_from_cache")
-    @patch("onyx.background.indexing.run_docfetching.get_node_id_from_raw_id")
-    @patch("onyx.background.indexing.run_docfetching.cache_hierarchy_nodes_batch")
+    @patch("orbyte.background.indexing.run_docfetching.save_checkpoint")
+    @patch("orbyte.background.indexing.run_docfetching.get_latest_valid_checkpoint")
+    @patch("orbyte.background.indexing.run_docfetching.get_redis_client")
+    @patch("orbyte.background.indexing.run_docfetching.ensure_source_node_exists")
+    @patch("orbyte.background.indexing.run_docfetching.get_source_node_id_from_cache")
+    @patch("orbyte.background.indexing.run_docfetching.get_node_id_from_raw_id")
+    @patch("orbyte.background.indexing.run_docfetching.cache_hierarchy_nodes_batch")
     def test_docprocessing_priority_based_on_last_successful_index_time(
         self,
         mock_cache_hierarchy_nodes_batch: MagicMock,  # noqa: ARG002
@@ -179,7 +179,7 @@ class TestDocprocessingPriorityInDocumentExtraction:
         mock_get_batch_storage: MagicMock,
         db_session: Session,
         has_successful_index: bool,
-        expected_priority: OnyxCeleryPriority,
+        expected_priority: OrbyteCeleryPriority,
     ) -> None:
         """
         Test that docprocessing tasks get the correct priority based on

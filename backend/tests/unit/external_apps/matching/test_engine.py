@@ -6,14 +6,14 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.db.models import ExternalApp
-from onyx.external_apps.matching.engine import AllMatchedActions
-from onyx.external_apps.matching.engine import apply_credential_gate
-from onyx.external_apps.matching.engine import MatchedAction
-from onyx.external_apps.matching.engine import WHOLE_DOMAIN_ACTION_TYPE
-from onyx.external_apps.matching.request import ProxiedRequest
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.models import ExternalApp
+from orbyte.external_apps.matching.engine import AllMatchedActions
+from orbyte.external_apps.matching.engine import apply_credential_gate
+from orbyte.external_apps.matching.engine import MatchedAction
+from orbyte.external_apps.matching.engine import WHOLE_DOMAIN_ACTION_TYPE
+from orbyte.external_apps.matching.request import ProxiedRequest
 
 
 def test_rejects_empty_actions() -> None:

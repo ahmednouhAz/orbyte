@@ -1,0 +1,247 @@
+import uuid
+
+from fastapi_users.password import PasswordHelper
+from sqlalchemy import delete
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Session
+
+from orbyte.auth.api_key import ApiKeyDescriptor
+from orbyte.auth.api_key import build_displayable_api_key
+from orbyte.auth.api_key import generate_api_key
+from orbyte.auth.api_key import hash_api_key
+from orbyte.auth.schemas import UserRole
+from orbyte.configs.constants import DANSWER_API_KEY_DUMMY_EMAIL_DOMAIN
+from orbyte.configs.constants import DANSWER_API_KEY_PREFIX
+from orbyte.configs.constants import UNNAMED_KEY_PLACEHOLDER
+from orbyte.db.enums import AccountType
+from orbyte.db.models import ApiKey
+from orbyte.db.models import User
+from orbyte.db.models import User__UserGroup
+from orbyte.db.models import UserGroup
+from orbyte.db.permissions import recompute_user_permissions__no_commit
+from orbyte.db.users import assign_user_to_default_groups__no_commit
+from orbyte.db.users import delete_user_from_db
+from orbyte.server.api_key.models import APIKeyArgs
+from orbyte.utils.logger import setup_logger
+from shared_configs.contextvars import get_current_tenant_id
+
+logger = setup_logger()
+
+
+def get_api_key_email_pattern() -> str:
+    return DANSWER_API_KEY_DUMMY_EMAIL_DOMAIN
+
+
+def is_api_key_email_address(email: str) -> bool:
+    return email.endswith(get_api_key_email_pattern())
+
+
+def fetch_api_keys(db_session: Session) -> list[ApiKeyDescriptor]:
+    api_keys = (
+        db_session.scalars(select(ApiKey).options(joinedload(ApiKey.user)))
+        .unique()
+        .all()
+    )
+    return [
+        ApiKeyDescriptor(
+            api_key_id=api_key.id,
+            api_key_role=api_key.user.role,
+            api_key_display=api_key.api_key_display,
+            api_key_name=api_key.name,
+            user_id=api_key.user_id,
+        )
+        for api_key in api_keys
+    ]
+
+
+async def fetch_user_for_api_key(
+    hashed_api_key: str, async_db_session: AsyncSession
+) -> User | None:
+    """NOTE: this is async, since it's used during auth
+    (which is necessarily async due to FastAPI Users)"""
+    return await async_db_session.scalar(
+        select(User)
+        .join(ApiKey, ApiKey.user_id == User.id)
+        .where(ApiKey.hashed_api_key == hashed_api_key)
+    )
+
+
+def get_api_key_fake_email(
+    name: str,
+    unique_id: str,
+) -> str:
+    return f"{DANSWER_API_KEY_PREFIX}{name}@{unique_id}{DANSWER_API_KEY_DUMMY_EMAIL_DOMAIN}"
+
+
+def insert_api_key(
+    db_session: Session, api_key_args: APIKeyArgs, user_id: uuid.UUID | None
+) -> ApiKeyDescriptor:
+    std_password_helper = PasswordHelper()
+
+    # Get tenant_id from context var (will be default schema for single tenant)
+    tenant_id = get_current_tenant_id()
+
+    api_key = generate_api_key(tenant_id)
+    api_key_user_id = uuid.uuid4()
+
+    display_name = api_key_args.name or UNNAMED_KEY_PLACEHOLDER
+    api_key_user_row = User(
+        id=api_key_user_id,
+        email=get_api_key_fake_email(display_name, str(api_key_user_id)),
+        # a random password for the "user"
+        hashed_password=std_password_helper.hash(std_password_helper.generate()),
+        is_active=True,
+        is_superuser=False,
+        is_verified=True,
+        role=api_key_args.role,
+        account_type=AccountType.SERVICE_ACCOUNT,
+    )
+    db_session.add(api_key_user_row)
+
+    api_key_row = ApiKey(
+        name=api_key_args.name,
+        hashed_api_key=hash_api_key(api_key),
+        api_key_display=build_displayable_api_key(api_key),
+        user_id=api_key_user_id,
+        owner_id=user_id,
+    )
+    db_session.add(api_key_row)
+
+    # Assign the API key virtual user to the appropriate default group
+    # before commit so everything is atomic.
+    # Only ADMIN and BASIC roles get default group membership.
+    if api_key_args.role in (UserRole.ADMIN, UserRole.BASIC):
+        assign_user_to_default_groups__no_commit(
+            db_session,
+            api_key_user_row,
+            is_admin=(api_key_args.role == UserRole.ADMIN),
+        )
+    else:
+        recompute_user_permissions__no_commit(api_key_user_id, db_session)
+
+    db_session.commit()
+
+    return ApiKeyDescriptor(
+        api_key_id=api_key_row.id,
+        api_key_role=api_key_user_row.role,
+        api_key_display=api_key_row.api_key_display,
+        api_key=api_key,
+        api_key_name=api_key_args.name,
+        user_id=api_key_user_id,
+    )
+
+
+def update_api_key(
+    db_session: Session, api_key_id: int, api_key_args: APIKeyArgs
+) -> ApiKeyDescriptor:
+    existing_api_key = db_session.scalar(select(ApiKey).where(ApiKey.id == api_key_id))
+    if existing_api_key is None:
+        raise ValueError(f"API key with id {api_key_id} does not exist")
+
+    existing_api_key.name = api_key_args.name
+    api_key_user = db_session.scalar(
+        select(User).where(
+            User.id == existing_api_key.user_id  # ty: ignore[invalid-argument-type]
+        )
+    )
+    if api_key_user is None:
+        raise RuntimeError("API Key does not have associated user.")
+
+    email_name = api_key_args.name or UNNAMED_KEY_PLACEHOLDER
+    api_key_user.email = get_api_key_fake_email(email_name, str(api_key_user.id))
+
+    old_role = api_key_user.role
+    api_key_user.role = api_key_args.role
+
+    # Reconcile default-group membership when the role changes.
+    if old_role != api_key_args.role:
+        # Remove from all default groups first.
+        delete_stmt = delete(User__UserGroup).where(
+            User__UserGroup.user_id == api_key_user.id,
+            User__UserGroup.user_group_id.in_(
+                select(UserGroup.id).where(UserGroup.is_default.is_(True))
+            ),
+        )
+        db_session.execute(delete_stmt)
+
+        # Re-assign to the correct default group (only for ADMIN/BASIC).
+        if api_key_args.role in (UserRole.ADMIN, UserRole.BASIC):
+            assign_user_to_default_groups__no_commit(
+                db_session,
+                api_key_user,
+                is_admin=(api_key_args.role == UserRole.ADMIN),
+            )
+
+    # Converge on every update, not just role changes, so edits repair
+    # keys with stale permissions.
+    recompute_user_permissions__no_commit(api_key_user.id, db_session)
+
+    db_session.commit()
+
+    return ApiKeyDescriptor(
+        api_key_id=existing_api_key.id,
+        api_key_display=existing_api_key.api_key_display,
+        api_key_name=api_key_args.name,
+        api_key_role=api_key_user.role,
+        user_id=existing_api_key.user_id,
+    )
+
+
+def regenerate_api_key(db_session: Session, api_key_id: int) -> ApiKeyDescriptor:
+    """NOTE: currently, any admin can regenerate any API key."""
+    existing_api_key = db_session.scalar(select(ApiKey).where(ApiKey.id == api_key_id))
+    if existing_api_key is None:
+        raise ValueError(f"API key with id {api_key_id} does not exist")
+
+    api_key_user = db_session.scalar(
+        select(User).where(
+            User.id == existing_api_key.user_id  # ty: ignore[invalid-argument-type]
+        )
+    )
+    if api_key_user is None:
+        raise RuntimeError("API Key does not have associated user.")
+
+    # Get tenant_id from context var (will be default schema for single tenant)
+    tenant_id = get_current_tenant_id()
+
+    new_api_key = generate_api_key(tenant_id)
+    existing_api_key.hashed_api_key = hash_api_key(new_api_key)
+    existing_api_key.api_key_display = build_displayable_api_key(new_api_key)
+
+    # Converge so rotation repairs keys with stale permissions.
+    recompute_user_permissions__no_commit(api_key_user.id, db_session)
+
+    db_session.commit()
+
+    return ApiKeyDescriptor(
+        api_key_id=existing_api_key.id,
+        api_key_display=existing_api_key.api_key_display,
+        api_key=new_api_key,
+        api_key_name=existing_api_key.name,
+        api_key_role=api_key_user.role,
+        user_id=existing_api_key.user_id,
+    )
+
+
+def remove_api_key(db_session: Session, api_key_id: int) -> None:
+    existing_api_key = db_session.scalar(select(ApiKey).where(ApiKey.id == api_key_id))
+    if existing_api_key is None:
+        raise ValueError(f"API key with id {api_key_id} does not exist")
+
+    user_associated_with_key = db_session.scalar(
+        select(User).where(
+            User.id == existing_api_key.user_id  # ty: ignore[invalid-argument-type]
+        )
+    )
+    if user_associated_with_key is None:
+        raise ValueError(
+            f"User associated with API key with id {api_key_id} does not exist. This should not happen."
+        )
+
+    db_session.delete(existing_api_key)
+    # The synthetic API-key user has rows in user__user_group (and may have
+    # other FK-bearing associations); route through the canonical user-delete
+    # helper so all of them are cleaned up before the user row is removed.
+    delete_user_from_db(user_associated_with_key, db_session)

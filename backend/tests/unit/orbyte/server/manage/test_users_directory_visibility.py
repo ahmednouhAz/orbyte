@@ -1,0 +1,154 @@
+from unittest.mock import MagicMock
+from unittest.mock import patch
+from uuid import uuid4
+
+import pytest
+
+from orbyte.db.enums import AccountType
+from orbyte.db.enums import Permission
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.server.manage.users import list_all_users_basic_info
+from orbyte.server.manage.users import verify_user_logged_in
+from orbyte.server.security.models import SecuritySettings
+from orbyte.server.security.store import _build_env_defaults
+
+
+def _settings(*, user_directory_admin_only: bool) -> SecuritySettings:
+    base = _build_env_defaults()
+    return SecuritySettings(
+        user_directory_admin_only=user_directory_admin_only,
+        track_external_idp_expiry=base.track_external_idp_expiry,
+        ssrf_protection_level=base.ssrf_protection_level,
+        mask_credential_prefix=base.mask_credential_prefix,
+        valid_email_domains=base.valid_email_domains,
+        password_min_length=base.password_min_length,
+        password_max_length=base.password_max_length,
+        password_require_uppercase=base.password_require_uppercase,
+        password_require_lowercase=base.password_require_lowercase,
+        password_require_digit=base.password_require_digit,
+        password_require_special_char=base.password_require_special_char,
+    )
+
+
+def _fake_user(
+    email: str, account_type: AccountType = AccountType.STANDARD
+) -> MagicMock:
+    user = MagicMock()
+    user.id = uuid4()
+    user.email = email
+    user.account_type = account_type
+    return user
+
+
+@patch(
+    "orbyte.server.manage.users.get_security_settings",
+    return_value=_settings(user_directory_admin_only=True),
+)
+def test_list_all_users_basic_info_blocks_non_admin_when_directory_restricted(
+    _mock_settings: MagicMock,
+) -> None:
+    """With the flag on, a caller lacking READ_USERS cannot enumerate the directory."""
+    user = MagicMock()
+    user.effective_permissions = [Permission.BASIC_ACCESS.value]
+
+    with pytest.raises(OrbyteError) as exc_info:
+        list_all_users_basic_info(
+            include_api_keys=False,
+            user=user,
+            db_session=MagicMock(),
+        )
+
+    assert exc_info.value.error_code is OrbyteErrorCode.INSUFFICIENT_PERMISSIONS
+
+
+@patch(
+    "orbyte.server.manage.users.get_security_settings",
+    return_value=_settings(user_directory_admin_only=True),
+)
+@patch("orbyte.server.manage.users.get_all_users")
+def test_list_all_users_basic_info_allows_admin_when_directory_restricted(
+    mock_get_all_users: MagicMock,
+    _mock_settings: MagicMock,
+) -> None:
+    """With the flag on, an admin (FULL_ADMIN_PANEL_ACCESS) still gets the directory."""
+    admin = MagicMock()
+    admin.effective_permissions = [Permission.FULL_ADMIN_PANEL_ACCESS.value]
+    mock_get_all_users.return_value = [_fake_user("a@example.com")]
+
+    result = list_all_users_basic_info(
+        include_api_keys=False,
+        user=admin,
+        db_session=MagicMock(),
+    )
+
+    assert [u.email for u in result] == ["a@example.com"]
+
+
+@patch(
+    "orbyte.server.manage.users.get_security_settings",
+    return_value=_settings(user_directory_admin_only=False),
+)
+@patch("orbyte.server.manage.users.get_all_users")
+def test_list_all_users_basic_info_allows_non_admin_when_flag_off(
+    mock_get_all_users: MagicMock,
+    _mock_settings: MagicMock,
+) -> None:
+    """With the flag off (default), non-admin callers continue to get the directory."""
+    basic = MagicMock()
+    basic.effective_permissions = [Permission.BASIC_ACCESS.value]
+    mock_get_all_users.return_value = [
+        _fake_user("human@example.com"),
+        _fake_user("bot@example.com", account_type=AccountType.BOT),
+    ]
+
+    result = list_all_users_basic_info(
+        include_api_keys=False,
+        user=basic,
+        db_session=MagicMock(),
+    )
+
+    # BOT accounts are filtered out; human account is returned.
+    assert [u.email for u in result] == ["human@example.com"]
+
+
+def test_me_service_account_skips_tenant_mapping_lookup() -> None:
+    """/me must not consult the tenant mapping for a multi-tenant service
+    account (its synthetic email has no UserTenantMapping row and the lookup
+    raises). team_name is the key's own tenant."""
+    user = _fake_user(
+        "API_KEY__key@abc123orbyteapikey.ai",
+        account_type=AccountType.SERVICE_ACCOUNT,
+    )
+    user.oidc_expiry = None
+
+    with (
+        patch("orbyte.server.manage.users.MULTI_TENANT", True),
+        patch(
+            "orbyte.server.manage.users.get_current_tenant_id",
+            return_value="tenant_current",
+        ),
+        patch(
+            "orbyte.server.manage.users.fetch_ee_implementation_or_noop",
+            side_effect=AssertionError(
+                "tenant mapping consulted for a service account"
+            ),
+        ),
+        patch(
+            "orbyte.server.manage.users.fetch_versioned_implementation_with_fallback",
+            return_value=[],
+        ),
+        patch("orbyte.server.manage.users.get_memories_for_user", return_value=[]),
+        patch(
+            "orbyte.server.manage.users.get_security_settings",
+            return_value=_settings(user_directory_admin_only=False),
+        ),
+        patch("orbyte.server.manage.users._get_token_created_at", return_value=None),
+        patch("orbyte.server.manage.users.UserInfo") as mock_user_info,
+    ):
+        verify_user_logged_in(request=MagicMock(), user=user, db_session=MagicMock())
+
+    kwargs = mock_user_info.from_model.call_args.kwargs
+    assert kwargs["team_name"] == "tenant_current"
+    assert kwargs["tenant_info"].new_tenant is None
+    assert kwargs["tenant_info"].invitation is None

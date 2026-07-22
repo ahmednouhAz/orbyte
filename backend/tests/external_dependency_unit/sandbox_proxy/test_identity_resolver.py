@@ -13,11 +13,11 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import BuildSessionStatus
-from onyx.db.models import BuildSession
-from onyx.db.models import Sandbox
-from onyx.sandbox_proxy.identity import IdentityResolver
-from onyx.sandbox_proxy.identity import SandboxIdentity
+from orbyte.db.enums import BuildSessionStatus
+from orbyte.db.models import BuildSession
+from orbyte.db.models import Sandbox
+from orbyte.sandbox_proxy.identity import IdentityResolver
+from orbyte.sandbox_proxy.identity import SandboxIdentity
 from shared_configs.contextvars import POSTGRES_DEFAULT_SCHEMA
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.unit.sandbox_proxy.conftest import StaticLookup

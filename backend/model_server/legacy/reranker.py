@@ -6,7 +6,7 @@
 # from fastapi import HTTPException
 
 # from model_server.utils import simple_log_function_time
-# from onyx.utils.logger import setup_logger
+# from orbyte.utils.logger import setup_logger
 # from shared_configs.configs import INDEXING_ONLY
 # from shared_configs.model_server_models import RerankRequest
 # from shared_configs.model_server_models import RerankResponse

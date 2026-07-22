@@ -1,13 +1,13 @@
-<!-- ONYX_METADATA={"link": "https://github.com/onyx-dot-app/onyx/blob/main/backend/alembic/README.md"} -->
+<!-- ORBYTE_METADATA={"link": "https://github.com/onyx-dot-app/onyx/blob/main/backend/alembic/README.md"} -->
 
 # Alembic DB Migrations
 
 These files are for creating/updating the tables in the Relational DB (Postgres).
-Onyx migrations use a generic single-database configuration with an async dbapi.
+Orbyte migrations use a generic single-database configuration with an async dbapi.
 
 ## To generate new migrations:
 
-From onyx/backend, run:
+From orbyte/backend, run:
 `alembic revision -m <DESCRIPTION_OF_MIGRATION>`
 
 Note: you cannot use the `--autogenerate` flag as the automatic schema parsing does not work.

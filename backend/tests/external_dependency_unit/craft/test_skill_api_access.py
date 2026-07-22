@@ -11,20 +11,20 @@ import pytest
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SkillAccessLevel
-from onyx.db.enums import SkillSharePermission
-from onyx.db.models import User
-from onyx.db.models import UserRole
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.skill.api import create_custom_skill
-from onyx.server.features.skill.api import create_custom_skill_from_editor
-from onyx.server.features.skill.api import fetch_skill_for_current_user
-from onyx.server.features.skill.api import patch_current_user_skill
-from onyx.server.features.skill.api import remove_current_user_skill_file
-from onyx.server.features.skill.api import replace_current_user_skill_bundle
-from onyx.server.features.skill.api import upload_current_user_skill_files
-from onyx.server.features.skill.models import SkillPatchRequest
+from orbyte.db.enums import SkillAccessLevel
+from orbyte.db.enums import SkillSharePermission
+from orbyte.db.models import User
+from orbyte.db.models import UserRole
+from orbyte.error_handling.error_codes import OrbyteErrorCode
+from orbyte.error_handling.exceptions import OrbyteError
+from orbyte.server.features.skill.api import create_custom_skill
+from orbyte.server.features.skill.api import create_custom_skill_from_editor
+from orbyte.server.features.skill.api import fetch_skill_for_current_user
+from orbyte.server.features.skill.api import patch_current_user_skill
+from orbyte.server.features.skill.api import remove_current_user_skill_file
+from orbyte.server.features.skill.api import replace_current_user_skill_bundle
+from orbyte.server.features.skill.api import upload_current_user_skill_files
+from orbyte.server.features.skill.models import SkillPatchRequest
 from tests.external_dependency_unit.craft.db_helpers import add_user_to_group
 from tests.external_dependency_unit.craft.db_helpers import make_group
 from tests.external_dependency_unit.craft.db_helpers import make_skill
@@ -50,7 +50,7 @@ def test_curator_without_group_scope_cannot_patch_shared_skill(
     private_skill = make_skill(db_session, is_public=False, enabled=True)
     share_skill_with_group(db_session, private_skill, group)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         patch_current_user_skill(
             private_skill.id,
             SkillPatchRequest(enabled=False),
@@ -58,7 +58,7 @@ def test_curator_without_group_scope_cannot_patch_shared_skill(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
     db_session.refresh(private_skill)
     assert private_skill.enabled is True
 
@@ -101,7 +101,7 @@ def test_viewer_share_cannot_patch_skill(
         SkillSharePermission.VIEWER,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         patch_current_user_skill(
             private_skill.id,
             SkillPatchRequest(enabled=False),
@@ -109,7 +109,7 @@ def test_viewer_share_cannot_patch_skill(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
     db_session.refresh(private_skill)
     assert private_skill.enabled is True
 
@@ -122,18 +122,18 @@ def test_create_reserved_slug_rejects_before_reading_bundle(
     user = make_user(db_session, role=UserRole.BASIC)
     read_bundle_file = MagicMock()
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.read_bundle_file",
+        "orbyte.server.features.skill.api.read_bundle_file",
         read_bundle_file,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         create_custom_skill(
             bundle=_upload("pptx.zip"),
             user=user,
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     read_bundle_file.assert_not_called()
 
 
@@ -143,7 +143,7 @@ def test_editor_create_rejects_whitespace_only_fields(
 ) -> None:
     user = make_user(db_session, role=UserRole.BASIC)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         create_custom_skill_from_editor(
             name=" ",
             description="\t",
@@ -152,7 +152,7 @@ def test_editor_create_rejects_whitespace_only_fields(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     assert exc_info.value.detail == (
         "Skill name, description, and instructions cannot be empty."
     )
@@ -179,11 +179,11 @@ def test_replace_bundle_authorizes_before_reading_bundle(
     )
     read_bundle_file = MagicMock()
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.read_bundle_file",
+        "orbyte.server.features.skill.api.read_bundle_file",
         read_bundle_file,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         replace_current_user_skill_bundle(
             private_skill.id,
             bundle=_upload("replace-test.zip"),
@@ -191,7 +191,7 @@ def test_replace_bundle_authorizes_before_reading_bundle(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
     read_bundle_file.assert_not_called()
 
 
@@ -216,11 +216,11 @@ def test_upload_files_authorizes_before_reading_upload(
     )
     read_bundle_file = MagicMock()
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.read_bundle_file",
+        "orbyte.server.features.skill.api.read_bundle_file",
         read_bundle_file,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         upload_current_user_skill_files(
             private_skill.id,
             upload=_upload("notes.md"),
@@ -228,7 +228,7 @@ def test_upload_files_authorizes_before_reading_upload(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
     read_bundle_file.assert_not_called()
 
 
@@ -253,11 +253,11 @@ def test_remove_file_authorizes_before_reading_bundle(
     )
     read_bundle = MagicMock()
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.read_custom_skill_bundle_bytes",
+        "orbyte.server.features.skill.api.read_custom_skill_bundle_bytes",
         read_bundle,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         remove_current_user_skill_file(
             private_skill.id,
             path="references/context.md",
@@ -265,7 +265,7 @@ def test_remove_file_authorizes_before_reading_bundle(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == OrbyteErrorCode.NOT_FOUND
     read_bundle.assert_not_called()
 
 
@@ -283,11 +283,11 @@ def test_remove_file_rejects_empty_path_before_reading_bundle(
     )
     read_bundle = MagicMock()
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.read_custom_skill_bundle_bytes",
+        "orbyte.server.features.skill.api.read_custom_skill_bundle_bytes",
         read_bundle,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(OrbyteError) as exc_info:
         remove_current_user_skill_file(
             private_skill.id,
             path="",
@@ -295,6 +295,6 @@ def test_remove_file_rejects_empty_path_before_reading_bundle(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == OrbyteErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "Skill file path cannot be empty"
     read_bundle.assert_not_called()

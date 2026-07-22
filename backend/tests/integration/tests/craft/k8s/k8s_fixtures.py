@@ -26,21 +26,21 @@ if TYPE_CHECKING:
 
     from tests.integration.common_utils.test_models import DATestUser
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Credential
-from onyx.db.models import Sandbox
-from onyx.db.models import User
-from onyx.db.models import User__UserGroup
-from onyx.server.features.build.configs import SANDBOX_NAMESPACE
-from onyx.server.features.build.configs import SANDBOX_PROXY_PORT
-from onyx.server.features.build.db.user_library import delete_user_file
-from onyx.server.features.build.db.user_library import list_user_files
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Credential
+from orbyte.db.models import Sandbox
+from orbyte.db.models import User
+from orbyte.db.models import User__UserGroup
+from orbyte.server.features.build.configs import SANDBOX_NAMESPACE
+from orbyte.server.features.build.configs import SANDBOX_PROXY_PORT
+from orbyte.server.features.build.db.user_library import delete_user_file
+from orbyte.server.features.build.db.user_library import list_user_files
+from orbyte.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from onyx.utils.logger import setup_logger
+from orbyte.utils.logger import setup_logger
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from tests.integration.common_utils.managers.build_session import BuildSessionManager
@@ -94,10 +94,10 @@ def _is_k8s_craft_request(request: pytest.FixtureRequest) -> bool:
 
 
 def _sandbox_push_private_key() -> str:
-    configured = os.environ.get("ONYX_SANDBOX_PUSH_PRIVATE_KEY")
+    configured = os.environ.get("ORBYTE_SANDBOX_PUSH_PRIVATE_KEY")
     if not configured:
         pytest.fail(
-            "ONYX_SANDBOX_PUSH_PRIVATE_KEY must be set for the k8s Craft suite. "
+            "ORBYTE_SANDBOX_PUSH_PRIVATE_KEY must be set for the k8s Craft suite. "
             "API-provisioned pods verify pushes against the deployed server's key, "
             "so a generated fallback would silently mismatch (false-pass negative "
             "skip tests, hard-fail positive push tests). CI provides this from the "
@@ -115,12 +115,12 @@ def _sandbox_push_key(
         yield
         return
 
-    from onyx.server.features.build import configs as build_configs
-    from onyx.server.features.build.sandbox.kubernetes import sidecar_client
+    from orbyte.server.features.build import configs as build_configs
+    from orbyte.server.features.build.sandbox.kubernetes import sidecar_client
 
     push_key = _sandbox_push_private_key()
     mp = pytest.MonkeyPatch()
-    mp.setenv("ONYX_SANDBOX_PUSH_PRIVATE_KEY", push_key)
+    mp.setenv("ORBYTE_SANDBOX_PUSH_PRIVATE_KEY", push_key)
     mp.setattr(build_configs, "SANDBOX_PUSH_PRIVATE_KEY", push_key)
     mp.setattr(sidecar_client, "SANDBOX_PUSH_PRIVATE_KEY", push_key)
     mp.setattr(sidecar_client, "_push_private_key", None)
@@ -489,8 +489,8 @@ def _pool_pod(
     k8s_client: "k8s_client_module.CoreV1Api",
 ) -> Generator[_PoolPod, None, None]:
     """Module-scoped sandbox pod shared by all ``running_sandbox()`` calls."""
-    from onyx.server.features.build.configs import SANDBOX_BACKEND
-    from onyx.server.features.build.configs import SandboxBackend
+    from orbyte.server.features.build.configs import SANDBOX_BACKEND
+    from orbyte.server.features.build.configs import SandboxBackend
 
     if SANDBOX_BACKEND != SandboxBackend.KUBERNETES:
         pytest.skip(
@@ -530,8 +530,8 @@ def running_sandbox(
     clean slate. Extra user-owned pods come from
     ``SandboxHandle.provision_api_user``.
     """
-    from onyx.server.features.build.configs import SANDBOX_BACKEND
-    from onyx.server.features.build.configs import SandboxBackend
+    from orbyte.server.features.build.configs import SANDBOX_BACKEND
+    from orbyte.server.features.build.configs import SandboxBackend
 
     if SANDBOX_BACKEND != SandboxBackend.KUBERNETES:
         pytest.skip(
@@ -606,7 +606,7 @@ def running_sandbox(
 def k8s_client() -> "k8s_client_module.CoreV1Api":
     from kubernetes import client as k8s_client_module
 
-    from onyx.server.features.build.sandbox.kubernetes.k8s_client import (
+    from orbyte.server.features.build.sandbox.kubernetes.k8s_client import (
         load_kube_config,
     )
 
@@ -786,7 +786,7 @@ def wait_for_proxy_redeploy(
     """Wait until the sandbox-proxy Deployment reports a ready replica."""
     from kubernetes import client as k8s_client_module
 
-    from onyx.server.features.build.configs import SANDBOX_PROXY_NAMESPACE
+    from orbyte.server.features.build.configs import SANDBOX_PROXY_NAMESPACE
 
     proxy_component_label = "app.kubernetes.io/component=sandbox-proxy"
     apps_v1 = k8s_client_module.AppsV1Api()

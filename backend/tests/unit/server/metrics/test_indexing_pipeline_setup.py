@@ -2,8 +2,8 @@
 
 from unittest.mock import MagicMock
 
-from onyx.server.metrics.indexing_pipeline import QueueDepthCollector
-from onyx.server.metrics.indexing_pipeline import RedisHealthCollector
+from orbyte.server.metrics.indexing_pipeline import QueueDepthCollector
+from orbyte.server.metrics.indexing_pipeline import RedisHealthCollector
 
 
 class TestCollectorCeleryAppSetup:

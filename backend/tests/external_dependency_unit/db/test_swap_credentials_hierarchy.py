@@ -12,16 +12,16 @@ from sqlalchemy import delete
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import HierarchyNodeType
-from onyx.db.models import Connector
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Credential
-from onyx.db.models import HierarchyNode
-from onyx.db.models import HierarchyNodeByConnectorCredentialPair
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.models import InputType
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import HierarchyNodeType
+from orbyte.db.models import Connector
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Credential
+from orbyte.db.models import HierarchyNode
+from orbyte.db.models import HierarchyNodeByConnectorCredentialPair
 
 
 def test_cc_pair_credential_swap_cascades_to_hierarchy_join(

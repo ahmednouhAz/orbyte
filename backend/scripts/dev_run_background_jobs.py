@@ -22,7 +22,7 @@ def run_jobs() -> None:
     cmd_worker_primary = [
         "celery",
         "-A",
-        "onyx.background.celery.versioned_apps.primary",
+        "orbyte.background.celery.versioned_apps.primary",
         "worker",
         "--pool=threads",
         "--concurrency=6",
@@ -36,7 +36,7 @@ def run_jobs() -> None:
     cmd_worker_light = [
         "celery",
         "-A",
-        "onyx.background.celery.versioned_apps.light",
+        "orbyte.background.celery.versioned_apps.light",
         "worker",
         "--pool=threads",
         "--concurrency=16",
@@ -50,7 +50,7 @@ def run_jobs() -> None:
     cmd_worker_docprocessing = [
         "celery",
         "-A",
-        "onyx.background.celery.versioned_apps.docprocessing",
+        "orbyte.background.celery.versioned_apps.docprocessing",
         "worker",
         "--pool=threads",
         "--concurrency=6",
@@ -63,7 +63,7 @@ def run_jobs() -> None:
     cmd_worker_docfetching = [
         "celery",
         "-A",
-        "onyx.background.celery.versioned_apps.docfetching",
+        "orbyte.background.celery.versioned_apps.docfetching",
         "worker",
         "--pool=threads",
         "--concurrency=1",
@@ -76,7 +76,7 @@ def run_jobs() -> None:
     cmd_worker_heavy = [
         "celery",
         "-A",
-        "onyx.background.celery.versioned_apps.heavy",
+        "orbyte.background.celery.versioned_apps.heavy",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -90,7 +90,7 @@ def run_jobs() -> None:
     cmd_worker_monitoring = [
         "celery",
         "-A",
-        "onyx.background.celery.versioned_apps.monitoring",
+        "orbyte.background.celery.versioned_apps.monitoring",
         "worker",
         "--pool=threads",
         "--concurrency=1",
@@ -104,7 +104,7 @@ def run_jobs() -> None:
     cmd_worker_user_file_processing = [
         "celery",
         "-A",
-        "onyx.background.celery.versioned_apps.user_file_processing",
+        "orbyte.background.celery.versioned_apps.user_file_processing",
         "worker",
         "--pool=threads",
         "--concurrency=2",
@@ -118,7 +118,7 @@ def run_jobs() -> None:
     cmd_worker_scheduled_tasks = [
         "celery",
         "-A",
-        "onyx.background.celery.versioned_apps.scheduled_tasks",
+        "orbyte.background.celery.versioned_apps.scheduled_tasks",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -132,7 +132,7 @@ def run_jobs() -> None:
     cmd_beat = [
         "celery",
         "-A",
-        "onyx.background.celery.versioned_apps.beat",
+        "orbyte.background.celery.versioned_apps.beat",
         "beat",
         "--loglevel=INFO",
     ]
@@ -149,7 +149,7 @@ def run_jobs() -> None:
         ("BEAT", cmd_beat),
     ]
 
-    # onyx isn't installed into the venv, and celery keeps the cwd on
+    # orbyte isn't installed into the venv, and celery keeps the cwd on
     # sys.path only transiently while importing the app. Spawn-context
     # children (SimpleJobClient) inherit the worker's sys.path, so pin the
     # backend dir via PYTHONPATH, mirroring the Dockerfile's PYTHONPATH=/app.

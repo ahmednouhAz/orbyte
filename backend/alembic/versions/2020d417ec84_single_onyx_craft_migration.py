@@ -1,6 +1,6 @@
-"""single onyx craft migration
+"""single orbyte craft migration
 
-Consolidates all buildmode/onyx craft tables into a single migration.
+Consolidates all buildmode/orbyte craft tables into a single migration.
 
 Tables created:
 - build_session: User build sessions with status tracking

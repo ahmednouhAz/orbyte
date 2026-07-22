@@ -5,8 +5,8 @@ import pytest
 from kubernetes import client
 from kubernetes.client.rest import ApiException
 
-from onyx.sandbox_proxy.ca import CAStoreConflictError
-from onyx.sandbox_proxy.ca_k8s import K8sSecretCAStore
+from orbyte.sandbox_proxy.ca import CAStoreConflictError
+from orbyte.sandbox_proxy.ca_k8s import K8sSecretCAStore
 
 
 def _api_exception(status: int) -> ApiException:
@@ -18,7 +18,7 @@ def _api_exception(status: int) -> ApiException:
 def _make_store(core_api: MagicMock) -> K8sSecretCAStore:
     return K8sSecretCAStore(
         core_api=core_api,
-        proxy_namespace="onyx",
+        proxy_namespace="orbyte",
         sandbox_namespace="sandboxes",
         secret_name="sandbox-proxy-ca",
         configmap_name="sandbox-proxy-ca-bundle",
@@ -90,11 +90,11 @@ def test_persist_create_path_succeeds() -> None:
 
     # Secret carries both keys, base64-encoded, in the proxy namespace.
     secret_call = core_api.create_namespaced_secret.call_args
-    assert secret_call.kwargs["namespace"] == "onyx"
+    assert secret_call.kwargs["namespace"] == "orbyte"
     secret_body = secret_call.kwargs["body"]
     assert secret_body.data["ca.crt"] == base64.b64encode(cert_pem).decode()
     assert secret_body.data["ca.key"] == base64.b64encode(key_pem).decode()
-    assert secret_body.metadata.labels["app.kubernetes.io/managed-by"] == "onyx"
+    assert secret_body.metadata.labels["app.kubernetes.io/managed-by"] == "orbyte"
     assert secret_body.metadata.labels["app.kubernetes.io/component"] == "sandbox-proxy"
 
     # ConfigMap carries ONLY the cert (no key), in the sandbox namespace.
@@ -139,7 +139,7 @@ def test_ensure_configmap_replaces_on_409(monkeypatch: pytest.MonkeyPatch) -> No
     core_api = MagicMock(spec=client.CoreV1Api)
     core_api.create_namespaced_config_map.side_effect = _api_exception(409)
     core_api.replace_namespaced_config_map.return_value = None
-    monkeypatch.setattr("onyx.sandbox_proxy.ca_k8s.time.sleep", lambda _: None)
+    monkeypatch.setattr("orbyte.sandbox_proxy.ca_k8s.time.sleep", lambda _: None)
 
     _make_store(core_api)._ensure_configmap(
         b"-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----\n"
@@ -166,7 +166,7 @@ def test_ensure_configmap_retries_on_repeated_409(
         _api_exception(409),
         None,
     ]
-    monkeypatch.setattr("onyx.sandbox_proxy.ca_k8s.time.sleep", lambda _: None)
+    monkeypatch.setattr("orbyte.sandbox_proxy.ca_k8s.time.sleep", lambda _: None)
 
     _make_store(core_api)._ensure_configmap(
         b"-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----\n"

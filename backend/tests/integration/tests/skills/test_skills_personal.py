@@ -15,8 +15,8 @@ from uuid import uuid4
 import httpx
 import pytest
 
-from onyx.db.enums import SkillSharePermission
-from onyx.server.features.skill.models import SkillPatchRequest
+from orbyte.db.enums import SkillSharePermission
+from orbyte.server.features.skill.models import SkillPatchRequest
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.skill import build_minimal_bundle

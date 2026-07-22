@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from onyx.auth.schemas import UserRole
-from onyx.db.enums import AccountType
+from orbyte.auth.schemas import UserRole
+from orbyte.db.enums import AccountType
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.api_key import APIKeyManager

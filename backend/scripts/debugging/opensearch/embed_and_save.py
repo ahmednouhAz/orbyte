@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Embeds a query and saves the embedding to a file.
 
-Requires Onyx to be running as it reads search settings from the database.
+Requires Orbyte to be running as it reads search settings from the database.
 
 Usage:
     source .venv/bin/activate
@@ -14,9 +14,9 @@ import time
 from scripts.debugging.opensearch.constants import DEV_TENANT_ID
 from scripts.debugging.opensearch.embedding_io import save_query_embedding_to_file
 
-from onyx.context.search.utils import get_query_embedding
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.engine.sql_engine import SqlEngine
+from orbyte.context.search.utils import get_query_embedding
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
 from shared_configs.configs import MULTI_TENANT
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 

@@ -3,15 +3,15 @@ from datetime import datetime
 from typing import Any
 from uuid import uuid4
 
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.server.documents.models import CCPairFullInfo
-from onyx.server.documents.models import ConnectorCredentialPairIdentifier
-from onyx.server.documents.models import ConnectorIndexingStatusLite
-from onyx.server.documents.models import ConnectorStatus
-from onyx.server.documents.models import DocumentSource
-from onyx.server.documents.models import DocumentSyncStatus
+from orbyte.connectors.models import InputType
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.server.documents.models import CCPairFullInfo
+from orbyte.server.documents.models import ConnectorCredentialPairIdentifier
+from orbyte.server.documents.models import ConnectorIndexingStatusLite
+from orbyte.server.documents.models import ConnectorStatus
+from orbyte.server.documents.models import DocumentSource
+from orbyte.server.documents.models import DocumentSyncStatus
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.constants import MAX_DELAY
 from tests.integration.common_utils.http_client import client

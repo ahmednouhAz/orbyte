@@ -110,8 +110,8 @@ def transform_openapi(input_spec: dict[str, Any]) -> dict[str, Any]:
     output_spec: dict[str, Any] = {
         "openapi": input_spec.get("openapi", "3.1.0"),
         "info": {
-            "title": "Onyx API",
-            "description": "Onyx API for AI-powered enterprise search and chat",
+            "title": "Orbyte API",
+            "description": "Orbyte API for AI-powered enterprise search and chat",
             "version": input_spec.get("info", {}).get("version", "1.0.0"),
         },
         "servers": [{"url": DOCS_SERVER_URL}],

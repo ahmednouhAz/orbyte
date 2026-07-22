@@ -1,0 +1,473 @@
+import copy
+from datetime import timedelta
+from typing import Any
+
+from celery.schedules import crontab
+
+from orbyte.configs.app_configs import AUTO_LLM_CONFIG_URL
+from orbyte.configs.app_configs import AUTO_LLM_UPDATE_INTERVAL_SECONDS
+from orbyte.configs.app_configs import DISABLE_OPENSEARCH_MIGRATION_TASK
+from orbyte.configs.app_configs import DISABLE_VECTOR_DB
+from orbyte.configs.app_configs import ENABLE_OPENSEARCH_INDEXING_FOR_ORBYTE
+from orbyte.configs.app_configs import ENTERPRISE_EDITION_ENABLED
+from orbyte.configs.app_configs import ORBYTE_DISABLE_VESPA
+from orbyte.configs.app_configs import SCHEDULED_EVAL_DATASET_NAMES
+from orbyte.configs.constants import ORBYTE_CLOUD_CELERY_TASK_PREFIX
+from orbyte.configs.constants import OrbyteCeleryPriority
+from orbyte.configs.constants import OrbyteCeleryQueues
+from orbyte.configs.constants import OrbyteCeleryTask
+from orbyte.server.features.build.configs import SANDBOX_IDLE_CLEANUP_INTERVAL_SECONDS
+from orbyte.utils.variable_functionality import _LICENSE_ENFORCEMENT_ENABLED
+from shared_configs.configs import MULTI_TENANT
+
+# choosing 15 minutes because it roughly gives us enough time to process many tasks
+# we might be able to reduce this greatly if we can run a unified
+# loop across all tenants rather than tasks per tenant
+
+# we set expires because it isn't necessary to queue up these tasks
+# it's only important that they run relatively regularly
+BEAT_EXPIRES_DEFAULT = 15 * 60  # 15 minutes (in seconds)
+
+# hack to slow down task dispatch in the cloud until
+# we have a better implementation (backpressure, etc)
+# Note that DynamicTenantScheduler can adjust the runtime value for this via Redis
+CLOUD_BEAT_MULTIPLIER_DEFAULT = 8.0
+CLOUD_DOC_PERMISSION_SYNC_MULTIPLIER_DEFAULT = 1.0
+
+# tasks that run in either self-hosted on cloud
+beat_task_templates: list[dict] = [
+    {
+        "name": "check-for-user-file-processing",
+        "task": OrbyteCeleryTask.CHECK_FOR_USER_FILE_PROCESSING,
+        "schedule": timedelta(seconds=20),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+        },
+    },
+    {
+        "name": "check-for-user-file-project-sync",
+        "task": OrbyteCeleryTask.CHECK_FOR_USER_FILE_PROJECT_SYNC,
+        "schedule": timedelta(seconds=20),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+        },
+    },
+    {
+        "name": "check-for-user-file-delete",
+        "task": OrbyteCeleryTask.CHECK_FOR_USER_FILE_DELETE,
+        "schedule": timedelta(seconds=20),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+        },
+    },
+    {
+        "name": "check-for-indexing",
+        "task": OrbyteCeleryTask.CHECK_FOR_INDEXING,
+        "schedule": timedelta(seconds=15),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            "work_gated": True,
+        },
+    },
+    {
+        "name": "check-for-port",
+        "task": OrbyteCeleryTask.CHECK_FOR_PORT,
+        "schedule": timedelta(seconds=30),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            # Intentionally gated (skip_gated defaults True): don't run the port's
+            # expensive re-embed for non-paying tenants; it pauses and self-heals on un-gate.
+            "work_gated": True,
+        },
+    },
+    {
+        "name": "check-for-checkpoint-cleanup",
+        "task": OrbyteCeleryTask.CHECK_FOR_CHECKPOINT_CLEANUP,
+        "schedule": timedelta(hours=1),
+        "options": {
+            "priority": OrbyteCeleryPriority.LOW,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            # Run on gated tenants too — they may still have stale checkpoints to clean.
+            "skip_gated": False,
+            "work_gated": True,
+        },
+    },
+    {
+        "name": "check-for-index-attempt-cleanup",
+        "task": OrbyteCeleryTask.CHECK_FOR_INDEX_ATTEMPT_CLEANUP,
+        "schedule": timedelta(minutes=30),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            # Run on gated tenants too — they may still have stale index attempts.
+            "skip_gated": False,
+            "work_gated": True,
+        },
+    },
+    {
+        "name": "check-for-connector-deletion",
+        "task": OrbyteCeleryTask.CHECK_FOR_CONNECTOR_DELETION,
+        "schedule": timedelta(seconds=20),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            # Gated tenants may still have connectors awaiting deletion.
+            "skip_gated": False,
+            "work_gated": True,
+        },
+    },
+    {
+        "name": "check-for-vespa-sync",
+        "task": OrbyteCeleryTask.CHECK_FOR_VESPA_SYNC_TASK,
+        "schedule": timedelta(seconds=20),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            "work_gated": True,
+        },
+    },
+    {
+        "name": "check-for-pruning",
+        "task": OrbyteCeleryTask.CHECK_FOR_PRUNING,
+        "schedule": timedelta(seconds=20),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            "work_gated": True,
+        },
+    },
+    {
+        "name": "check-for-hierarchy-fetching",
+        "task": OrbyteCeleryTask.CHECK_FOR_HIERARCHY_FETCHING,
+        "schedule": timedelta(hours=1),  # Check hourly, but only fetch once per day
+        "options": {
+            "priority": OrbyteCeleryPriority.LOW,
+            "expires": BEAT_EXPIRES_DEFAULT,
+        },
+    },
+    {
+        "name": "monitor-background-processes",
+        "task": OrbyteCeleryTask.MONITOR_BACKGROUND_PROCESSES,
+        "schedule": timedelta(minutes=5),
+        "options": {
+            "priority": OrbyteCeleryPriority.LOW,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            "queue": OrbyteCeleryQueues.MONITORING,
+        },
+    },
+    # Craft scheduled tasks (per-tenant dispatcher + stuck-run sweeper).
+    # Both are lightweight DB-only coordination tasks and run on the
+    # primary queue. The dedicated `scheduled_tasks` worker is reserved
+    # for the long-running executor (`run_scheduled_task`); routing the
+    # dispatcher there would let a saturated executor pool stall dispatch.
+    {
+        "name": "dispatch-due-scheduled-tasks",
+        "task": OrbyteCeleryTask.SCHEDULED_TASKS_DISPATCH_DUE,
+        # 30 s is the spec's contract: 60 s is too coarse for a minute-
+        # cadence cron schedule; 15 s would over-load the FOR UPDATE
+        # SKIP LOCKED path for tenants with no due tasks.
+        "schedule": timedelta(seconds=30),
+        "options": {
+            "priority": OrbyteCeleryPriority.MEDIUM,
+            # Drop redundant ticks aggressively; if a tick is more than
+            # ~2 schedules behind, the next one supersedes it.
+            "expires": 60,
+            "queue": OrbyteCeleryQueues.PRIMARY,
+        },
+    },
+    {
+        "name": "cleanup-stuck-scheduled-runs",
+        "task": OrbyteCeleryTask.SCHEDULED_TASKS_CLEANUP_STUCK,
+        "schedule": timedelta(hours=1),
+        "options": {
+            "priority": OrbyteCeleryPriority.LOW,
+            "expires": 60 * 60,
+            "queue": OrbyteCeleryQueues.PRIMARY,
+        },
+    },
+    # Sandbox sweep: background-snapshot changed sessions, sleep idle sandboxes.
+    {
+        "name": "cleanup-idle-sandboxes",
+        "task": OrbyteCeleryTask.CLEANUP_IDLE_SANDBOXES,
+        # Ticks are cheap (DB-only when nothing is stale); snapshot pacing is
+        # gated inside the task at idle_timeout/4. With the cloud x8 multiplier
+        # the effective interval is SANDBOX_IDLE_CLEANUP_INTERVAL_SECONDS * 8;
+        # keep that product under ~15 min to stay within the data-loss bound.
+        "schedule": timedelta(seconds=SANDBOX_IDLE_CLEANUP_INTERVAL_SECONDS),
+        "options": {
+            "priority": OrbyteCeleryPriority.LOW,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            "queue": OrbyteCeleryQueues.SANDBOX,
+            "work_gated": True,
+        },
+    },
+]
+
+# Mirror set_is_ee_based_on_env_variable(): EE features are active when either
+# ENABLE_PAID_ENTERPRISE_EDITION_FEATURES or LICENSE_ENFORCEMENT_ENABLED is set.
+if ENTERPRISE_EDITION_ENABLED or _LICENSE_ENFORCEMENT_ENABLED:
+    beat_task_templates.extend(
+        [
+            {
+                "name": "check-for-doc-permissions-sync",
+                "task": OrbyteCeleryTask.CHECK_FOR_DOC_PERMISSIONS_SYNC,
+                "schedule": timedelta(seconds=30),
+                "options": {
+                    "priority": OrbyteCeleryPriority.MEDIUM,
+                    "expires": BEAT_EXPIRES_DEFAULT,
+                    "work_gated": True,
+                },
+            },
+            {
+                "name": "check-for-external-group-sync",
+                "task": OrbyteCeleryTask.CHECK_FOR_EXTERNAL_GROUP_SYNC,
+                "schedule": timedelta(seconds=20),
+                "options": {
+                    "priority": OrbyteCeleryPriority.MEDIUM,
+                    "expires": BEAT_EXPIRES_DEFAULT,
+                    "work_gated": True,
+                },
+            },
+        ]
+    )
+
+# Add the Auto LLM update task if the config URL is set (has a default)
+if AUTO_LLM_CONFIG_URL:
+    beat_task_templates.append(
+        {
+            "name": "check-for-auto-llm-update",
+            "task": OrbyteCeleryTask.CHECK_FOR_AUTO_LLM_UPDATE,
+            "schedule": timedelta(seconds=AUTO_LLM_UPDATE_INTERVAL_SECONDS),
+            "options": {
+                "priority": OrbyteCeleryPriority.LOW,
+                "expires": BEAT_EXPIRES_DEFAULT,
+            },
+        }
+    )
+
+# Add scheduled eval task if datasets are configured
+if SCHEDULED_EVAL_DATASET_NAMES:
+    beat_task_templates.append(
+        {
+            "name": "scheduled-eval-pipeline",
+            "task": OrbyteCeleryTask.SCHEDULED_EVAL_TASK,
+            # run every Sunday at midnight UTC
+            "schedule": crontab(
+                hour=0,
+                minute=0,
+                day_of_week=0,
+            ),
+            "options": {
+                "priority": OrbyteCeleryPriority.LOW,
+                "expires": BEAT_EXPIRES_DEFAULT,
+            },
+        }
+    )
+
+# Add OpenSearch migration task if enabled.
+if (
+    ENABLE_OPENSEARCH_INDEXING_FOR_ORBYTE
+    and not DISABLE_OPENSEARCH_MIGRATION_TASK
+    and not ORBYTE_DISABLE_VESPA
+):
+    beat_task_templates.append(
+        {
+            "name": "migrate-chunks-from-vespa-to-opensearch",
+            "task": OrbyteCeleryTask.MIGRATE_CHUNKS_FROM_VESPA_TO_OPENSEARCH_TASK,
+            # Try to enqueue an invocation of this task with this frequency.
+            "schedule": timedelta(seconds=120),  # 2 minutes
+            "options": {
+                "priority": OrbyteCeleryPriority.LOW,
+                # If the task was not dequeued in this time, revoke it.
+                "expires": BEAT_EXPIRES_DEFAULT,
+                "queue": OrbyteCeleryQueues.OPENSEARCH_MIGRATION,
+            },
+        }
+    )
+
+
+# Beat task names that require a vector DB. Filtered out when DISABLE_VECTOR_DB.
+_VECTOR_DB_BEAT_TASK_NAMES: set[str] = {
+    "check-for-indexing",
+    "check-for-port",
+    "check-for-connector-deletion",
+    "check-for-vespa-sync",
+    "check-for-pruning",
+    "check-for-hierarchy-fetching",
+    "check-for-checkpoint-cleanup",
+    "check-for-index-attempt-cleanup",
+    "check-for-doc-permissions-sync",
+    "check-for-external-group-sync",
+    "migrate-chunks-from-vespa-to-opensearch",
+}
+
+if DISABLE_VECTOR_DB:
+    beat_task_templates = [
+        t for t in beat_task_templates if t["name"] not in _VECTOR_DB_BEAT_TASK_NAMES
+    ]
+
+
+def make_cloud_generator_task(task: dict[str, Any]) -> dict[str, Any]:
+    cloud_task: dict[str, Any] = {}
+
+    # constant options for cloud beat task generators
+    task_schedule: timedelta = task["schedule"]
+    cloud_task["schedule"] = task_schedule
+    cloud_task["options"] = {}
+    cloud_task["options"]["priority"] = OrbyteCeleryPriority.HIGHEST
+    cloud_task["options"]["expires"] = BEAT_EXPIRES_DEFAULT
+
+    # settings dependent on the original task
+    cloud_task["name"] = f"{ORBYTE_CLOUD_CELERY_TASK_PREFIX}_{task['name']}"
+    cloud_task["task"] = OrbyteCeleryTask.CLOUD_BEAT_TASK_GENERATOR
+    cloud_task["kwargs"] = {}
+    cloud_task["kwargs"]["task_name"] = task["task"]
+
+    optional_fields = ["queue", "priority", "expires", "skip_gated", "work_gated"]
+    for field in optional_fields:
+        if field in task["options"]:
+            cloud_task["kwargs"][field] = task["options"][field]
+
+    return cloud_task
+
+
+# tasks that only run in the cloud and are system wide
+# the name attribute must start with ORBYTE_CLOUD_CELERY_TASK_PREFIX = "cloud" to be seen
+# by the DynamicTenantScheduler as system wide task and not a per tenant task
+beat_cloud_tasks: list[dict] = [
+    # cloud specific tasks
+    {
+        "name": f"{ORBYTE_CLOUD_CELERY_TASK_PREFIX}_monitor-alembic",
+        "task": OrbyteCeleryTask.CLOUD_MONITOR_ALEMBIC,
+        "schedule": timedelta(hours=1),
+        "options": {
+            "queue": OrbyteCeleryQueues.MONITORING,
+            "priority": OrbyteCeleryPriority.HIGH,
+            "expires": BEAT_EXPIRES_DEFAULT,
+        },
+    },
+    {
+        "name": f"{ORBYTE_CLOUD_CELERY_TASK_PREFIX}_monitor-celery-queues",
+        "task": OrbyteCeleryTask.CLOUD_MONITOR_CELERY_QUEUES,
+        "schedule": timedelta(seconds=30),
+        "options": {
+            "queue": OrbyteCeleryQueues.MONITORING,
+            "priority": OrbyteCeleryPriority.HIGH,
+            "expires": BEAT_EXPIRES_DEFAULT,
+        },
+    },
+    {
+        "name": f"{ORBYTE_CLOUD_CELERY_TASK_PREFIX}_check-available-tenants",
+        "task": OrbyteCeleryTask.CLOUD_CHECK_AVAILABLE_TENANTS,
+        "schedule": timedelta(minutes=2),
+        "options": {
+            "queue": OrbyteCeleryQueues.MONITORING,
+            "priority": OrbyteCeleryPriority.HIGH,
+            "expires": BEAT_EXPIRES_DEFAULT,
+        },
+    },
+    {
+        "name": f"{ORBYTE_CLOUD_CELERY_TASK_PREFIX}_monitor-celery-pidbox",
+        "task": OrbyteCeleryTask.CLOUD_MONITOR_CELERY_PIDBOX,
+        "schedule": timedelta(hours=4),
+        "options": {
+            "queue": OrbyteCeleryQueues.MONITORING,
+            "priority": OrbyteCeleryPriority.HIGH,
+            "expires": BEAT_EXPIRES_DEFAULT,
+        },
+    },
+]
+
+# tasks that only run self hosted
+tasks_to_schedule: list[dict] = []
+if not MULTI_TENANT:
+    tasks_to_schedule.extend(
+        [
+            {
+                "name": "monitor-celery-queues",
+                "task": OrbyteCeleryTask.MONITOR_CELERY_QUEUES,
+                "schedule": timedelta(seconds=10),
+                "options": {
+                    "priority": OrbyteCeleryPriority.MEDIUM,
+                    "expires": BEAT_EXPIRES_DEFAULT,
+                    "queue": OrbyteCeleryQueues.MONITORING,
+                },
+            },
+            {
+                "name": "monitor-process-memory",
+                "task": OrbyteCeleryTask.MONITOR_PROCESS_MEMORY,
+                "schedule": timedelta(minutes=5),
+                "options": {
+                    "priority": OrbyteCeleryPriority.LOW,
+                    "expires": BEAT_EXPIRES_DEFAULT,
+                    "queue": OrbyteCeleryQueues.MONITORING,
+                },
+            },
+            {
+                "name": "celery-beat-heartbeat",
+                "task": OrbyteCeleryTask.CELERY_BEAT_HEARTBEAT,
+                "schedule": timedelta(minutes=1),
+                "options": {
+                    "priority": OrbyteCeleryPriority.HIGHEST,
+                    "expires": BEAT_EXPIRES_DEFAULT,
+                    "queue": OrbyteCeleryQueues.PRIMARY,
+                },
+            },
+        ]
+    )
+
+    # `skip_gated` and `work_gated` are cloud-only hints consumed by
+    # `cloud_beat_task_generator`. Strip them before extending the self-hosted
+    # schedule so they don't leak into apply_async as unrecognised options on
+    # every fired task message.
+    for _template in beat_task_templates:
+        _self_hosted_template = copy.deepcopy(_template)
+        _self_hosted_template["options"].pop("skip_gated", None)
+        _self_hosted_template["options"].pop("work_gated", None)
+        tasks_to_schedule.append(_self_hosted_template)
+
+
+def generate_cloud_tasks(
+    beat_tasks: list[dict], beat_templates: list[dict], beat_multiplier: float
+) -> list[dict[str, Any]]:
+    """
+    beat_tasks: system wide tasks that can be sent as is
+    beat_templates: task templates that will be transformed into per tenant tasks via
+    the cloud_beat_task_generator
+    beat_multiplier: a multiplier that can be applied on top of the task schedule
+    to speed up or slow down the task generation rate. useful in production.
+
+    Returns a list of cloud tasks, which consists of incoming tasks + tasks generated
+    from incoming templates.
+    """
+
+    if beat_multiplier <= 0:
+        raise ValueError("beat_multiplier must be positive!")
+
+    cloud_tasks: list[dict] = []
+
+    # generate our tenant aware cloud tasks from the templates
+    for beat_template in beat_templates:
+        cloud_task = make_cloud_generator_task(beat_template)
+        cloud_tasks.append(cloud_task)
+
+    # factor in the cloud multiplier for the above
+    for cloud_task in cloud_tasks:
+        cloud_task["schedule"] = cloud_task["schedule"] * beat_multiplier
+
+    # add the fixed cloud/system beat tasks. No multiplier for these.
+    cloud_tasks.extend(copy.deepcopy(beat_tasks))
+    return cloud_tasks
+
+
+def get_cloud_tasks_to_schedule(beat_multiplier: float) -> list[dict[str, Any]]:
+    return generate_cloud_tasks(beat_cloud_tasks, beat_task_templates, beat_multiplier)
+
+
+def get_tasks_to_schedule() -> list[dict[str, Any]]:
+    return tasks_to_schedule

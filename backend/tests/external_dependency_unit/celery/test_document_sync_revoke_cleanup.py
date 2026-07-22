@@ -12,16 +12,16 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.background.celery.apps.app_base import on_task_revoked
-from onyx.background.celery.tasks.vespa.document_sync import DOCUMENT_SYNC_PREFIX
-from onyx.background.celery.tasks.vespa.document_sync import DOCUMENT_SYNC_TASKSET_KEY
-from onyx.background.celery.tasks.vespa.document_sync import get_document_sync_remaining
-from onyx.background.celery.tasks.vespa.document_sync import is_document_sync_fenced
-from onyx.background.celery.tasks.vespa.document_sync import reset_document_sync
-from onyx.background.celery.tasks.vespa.document_sync import set_document_sync_fence
-from onyx.background.celery.tasks.vespa.tasks import monitor_document_sync_taskset
-from onyx.redis.redis_pool import get_redis_client
-from onyx.redis.tenant_redis_client import TenantRedisClient
+from orbyte.background.celery.apps.app_base import on_task_revoked
+from orbyte.background.celery.tasks.vespa.document_sync import DOCUMENT_SYNC_PREFIX
+from orbyte.background.celery.tasks.vespa.document_sync import DOCUMENT_SYNC_TASKSET_KEY
+from orbyte.background.celery.tasks.vespa.document_sync import get_document_sync_remaining
+from orbyte.background.celery.tasks.vespa.document_sync import is_document_sync_fenced
+from orbyte.background.celery.tasks.vespa.document_sync import reset_document_sync
+from orbyte.background.celery.tasks.vespa.document_sync import set_document_sync_fence
+from orbyte.background.celery.tasks.vespa.tasks import monitor_document_sync_taskset
+from orbyte.redis.redis_pool import get_redis_client
+from orbyte.redis.tenant_redis_client import TenantRedisClient
 from shared_configs.configs import (
     POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE as TEST_TENANT_ID,
 )

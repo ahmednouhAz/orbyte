@@ -7,12 +7,12 @@ from __future__ import annotations
 
 import pytest
 
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.providers.actions import path_matches
-from onyx.external_apps.providers.actions import RestRoute
-from onyx.external_apps.providers.gmail import GmailAction
-from onyx.external_apps.providers.registry import get_endpoint_catalog
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.external_apps.providers.actions import path_matches
+from orbyte.external_apps.providers.actions import RestRoute
+from orbyte.external_apps.providers.gmail import GmailAction
+from orbyte.external_apps.providers.registry import get_endpoint_catalog
 
 _CATALOG = get_endpoint_catalog(ExternalAppType.GMAIL)
 

@@ -5,8 +5,8 @@ import pytest
 from pytest import FixtureRequest
 from slack_sdk import WebClient
 
-from onyx.connectors.credentials_provider import OnyxStaticCredentialsProvider
-from onyx.connectors.slack.connector import SlackConnector
+from orbyte.connectors.credentials_provider import OrbyteStaticCredentialsProvider
+from orbyte.connectors.slack.connector import SlackConnector
 from shared_configs.contextvars import get_current_tenant_id
 from tests.utils.secret_names import TestSecret
 
@@ -21,7 +21,7 @@ def mock_slack_client() -> MagicMock:
 def slack_connector(
     request: FixtureRequest,
     mock_slack_client: MagicMock,
-    slack_credentials_provider: OnyxStaticCredentialsProvider,
+    slack_credentials_provider: OrbyteStaticCredentialsProvider,
 ) -> Generator[SlackConnector]:
     channel: str | None = request.param if hasattr(request, "param") else None
     connector = SlackConnector(
@@ -37,8 +37,8 @@ def slack_connector(
 @pytest.fixture
 def slack_credentials_provider(
     test_secrets: dict[TestSecret, str],
-) -> OnyxStaticCredentialsProvider:
-    return OnyxStaticCredentialsProvider(
+) -> OrbyteStaticCredentialsProvider:
+    return OrbyteStaticCredentialsProvider(
         tenant_id=get_current_tenant_id(),
         connector_name="slack",
         credential_json={

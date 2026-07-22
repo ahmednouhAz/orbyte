@@ -30,16 +30,16 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.versioned_apps.client import app as client_app
-from onyx.configs.constants import OnyxCeleryPriority
-from onyx.configs.constants import OnyxCeleryTask
-from onyx.db.connector_credential_pair import get_connector_credential_pair_from_id
-from onyx.db.connector_credential_pair import get_connector_credential_pairs
-from onyx.db.connector_credential_pair import update_connector_credential_pair_from_id
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.index_attempt import cancel_indexing_attempts_for_ccpair
+from orbyte.background.celery.versioned_apps.client import app as client_app
+from orbyte.configs.constants import OrbyteCeleryPriority
+from orbyte.configs.constants import OrbyteCeleryTask
+from orbyte.db.connector_credential_pair import get_connector_credential_pair_from_id
+from orbyte.db.connector_credential_pair import get_connector_credential_pairs
+from orbyte.db.connector_credential_pair import update_connector_credential_pair_from_id
+from orbyte.db.engine.sql_engine import get_session_with_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.index_attempt import cancel_indexing_attempts_for_ccpair
 
 
 def mark_connector_for_deletion(
@@ -130,8 +130,8 @@ def mark_connector_for_deletion(
         )
         task_start: float = time.time()
         client_app.send_task(
-            OnyxCeleryTask.CHECK_FOR_CONNECTOR_DELETION,
-            priority=OnyxCeleryPriority.HIGH,
+            OrbyteCeleryTask.CHECK_FOR_CONNECTOR_DELETION,
+            priority=OrbyteCeleryPriority.HIGH,
             kwargs={"tenant_id": tenant_id},
         )
         timing["send_task_seconds"] = time.time() - task_start
@@ -252,8 +252,8 @@ def mark_all_connectors_for_deletion(tenant_id: str) -> dict[str, Any]:
         )
         task_start: float = time.time()
         client_app.send_task(
-            OnyxCeleryTask.CHECK_FOR_CONNECTOR_DELETION,
-            priority=OnyxCeleryPriority.HIGH,
+            OrbyteCeleryTask.CHECK_FOR_CONNECTOR_DELETION,
+            priority=OrbyteCeleryPriority.HIGH,
             kwargs={"tenant_id": tenant_id},
         )
         task_time: float = time.time() - task_start

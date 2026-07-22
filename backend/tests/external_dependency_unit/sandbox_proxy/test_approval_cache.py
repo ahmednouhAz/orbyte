@@ -8,16 +8,16 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.cache.factory import get_cache_backend
-from onyx.db.enums import ApprovalDecision
-from onyx.sandbox_proxy.approval_cache import _wake_key
-from onyx.sandbox_proxy.approval_cache import announce_approval
-from onyx.sandbox_proxy.approval_cache import announce_key
-from onyx.sandbox_proxy.approval_cache import cache_session_grant_actions
-from onyx.sandbox_proxy.approval_cache import cached_session_grants_cover
-from onyx.sandbox_proxy.approval_cache import pop_announcement
-from onyx.sandbox_proxy.approval_cache import send_wake
-from onyx.sandbox_proxy.approval_cache import wait_for_wake
+from orbyte.cache.factory import get_cache_backend
+from orbyte.db.enums import ApprovalDecision
+from orbyte.sandbox_proxy.approval_cache import _wake_key
+from orbyte.sandbox_proxy.approval_cache import announce_approval
+from orbyte.sandbox_proxy.approval_cache import announce_key
+from orbyte.sandbox_proxy.approval_cache import cache_session_grant_actions
+from orbyte.sandbox_proxy.approval_cache import cached_session_grants_cover
+from orbyte.sandbox_proxy.approval_cache import pop_announcement
+from orbyte.sandbox_proxy.approval_cache import send_wake
+from orbyte.sandbox_proxy.approval_cache import wait_for_wake
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 
 # ---------------------------------------------------------------------------

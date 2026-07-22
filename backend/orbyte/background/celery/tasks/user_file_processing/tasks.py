@@ -1,0 +1,961 @@
+import datetime
+import time
+from uuid import UUID
+
+import sqlalchemy as sa
+from celery import Celery
+from celery import shared_task
+from celery import Task
+from redis.lock import Lock as RedisLock
+from sqlalchemy import select
+
+from orbyte.access.access import build_access_for_user_files
+from orbyte.access.models import DocumentAccess
+from orbyte.background.celery.apps.app_base import task_logger
+from orbyte.background.celery.celery_redis import celery_get_broker_client
+from orbyte.background.celery.celery_redis import celery_get_queue_length
+from orbyte.background.celery.celery_utils import httpx_init_vespa_pool
+from orbyte.background.celery.tasks.shared.RetryDocumentIndex import RetryDocumentIndex
+from orbyte.configs.app_configs import DISABLE_VECTOR_DB
+from orbyte.configs.app_configs import MANAGED_VESPA
+from orbyte.configs.app_configs import VESPA_CLOUD_CERT_PATH
+from orbyte.configs.app_configs import VESPA_CLOUD_KEY_PATH
+from orbyte.configs.constants import CELERY_GENERIC_BEAT_LOCK_TIMEOUT
+from orbyte.configs.constants import CELERY_USER_FILE_DELETE_TASK_EXPIRES
+from orbyte.configs.constants import CELERY_USER_FILE_PROCESSING_LOCK_TIMEOUT
+from orbyte.configs.constants import CELERY_USER_FILE_PROCESSING_TASK_EXPIRES
+from orbyte.configs.constants import CELERY_USER_FILE_PROJECT_SYNC_LOCK_TIMEOUT
+from orbyte.configs.constants import CELERY_USER_FILE_PROJECT_SYNC_TASK_EXPIRES
+from orbyte.configs.constants import DocumentSource
+from orbyte.configs.constants import OrbyteCeleryPriority
+from orbyte.configs.constants import OrbyteCeleryQueues
+from orbyte.configs.constants import OrbyteCeleryTask
+from orbyte.configs.constants import OrbyteRedisLocks
+from orbyte.configs.constants import USER_FILE_DELETE_MAX_QUEUE_DEPTH
+from orbyte.configs.constants import USER_FILE_PROCESSING_MAX_QUEUE_DEPTH
+from orbyte.configs.constants import USER_FILE_PROJECT_SYNC_MAX_QUEUE_DEPTH
+from orbyte.connectors.file.connector import LocalFileConnector
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.enums import UserFileStatus
+from orbyte.db.models import UserFile
+from orbyte.db.search_settings import get_active_search_settings
+from orbyte.db.search_settings import get_active_search_settings_list
+from orbyte.db.user_file import fetch_user_files_with_access_relationships
+from orbyte.document_index.factory import get_all_document_indices
+from orbyte.document_index.interfaces_new import MetadataUpdateRequest
+from orbyte.file_store.file_store import get_default_file_store
+from orbyte.file_store.staging import build_tracking_raw_file_callback
+from orbyte.file_store.staging import delete_files_best_effort
+from orbyte.file_store.utils import store_user_file_plaintext
+from orbyte.file_store.utils import user_file_id_to_plaintext_file_name
+from orbyte.httpx.httpx_pool import HttpxPool
+from orbyte.indexing.adapters.user_file_indexing_adapter import UserFileIndexingAdapter
+from orbyte.indexing.embedder import DefaultIndexingEmbedder
+from orbyte.indexing.indexing_pipeline import run_indexing_pipeline
+from orbyte.redis.redis_pool import get_redis_client
+from orbyte.redis.tenant_redis_client import TenantRedisClient
+from orbyte.utils.variable_functionality import global_version
+
+
+def _as_uuid(value: str | UUID) -> UUID:
+    """Return a UUID, accepting either a UUID or a string-like value."""
+    return value if isinstance(value, UUID) else UUID(str(value))
+
+
+def _user_file_lock_key(user_file_id: str | UUID) -> str:
+    return f"{OrbyteRedisLocks.USER_FILE_PROCESSING_LOCK_PREFIX}:{user_file_id}"
+
+
+def _user_file_queued_key(user_file_id: str | UUID) -> str:
+    """Key that exists while a process_single_user_file task is sitting in the queue.
+
+    The beat generator sets this with a TTL equal to CELERY_USER_FILE_PROCESSING_TASK_EXPIRES
+    before enqueuing and the worker deletes it as its first action.  This prevents
+    the beat from adding duplicate tasks for files that already have a live task
+    in flight.
+    """
+    return f"{OrbyteRedisLocks.USER_FILE_QUEUED_PREFIX}:{user_file_id}"
+
+
+def user_file_project_sync_lock_key(user_file_id: str | UUID) -> str:
+    return f"{OrbyteRedisLocks.USER_FILE_PROJECT_SYNC_LOCK_PREFIX}:{user_file_id}"
+
+
+def _user_file_project_sync_queued_key(user_file_id: str | UUID) -> str:
+    return f"{OrbyteRedisLocks.USER_FILE_PROJECT_SYNC_QUEUED_PREFIX}:{user_file_id}"
+
+
+def _user_file_delete_lock_key(user_file_id: str | UUID) -> str:
+    return f"{OrbyteRedisLocks.USER_FILE_DELETE_LOCK_PREFIX}:{user_file_id}"
+
+
+def _user_file_delete_queued_key(user_file_id: str | UUID) -> str:
+    """Key that exists while a delete_single_user_file task is sitting in the queue.
+
+    The beat generator sets this with a TTL equal to CELERY_USER_FILE_DELETE_TASK_EXPIRES
+    before enqueuing and the worker deletes it as its first action.  This prevents
+    the beat from adding duplicate tasks for files that already have a live task
+    in flight.
+    """
+    return f"{OrbyteRedisLocks.USER_FILE_DELETE_QUEUED_PREFIX}:{user_file_id}"
+
+
+def get_user_file_project_sync_queue_depth(celery_app: Celery) -> int:
+    redis_celery = celery_get_broker_client(celery_app)
+    return celery_get_queue_length(
+        OrbyteCeleryQueues.USER_FILE_PROJECT_SYNC, redis_celery
+    )
+
+
+def enqueue_user_file_project_sync_task(
+    *,
+    celery_app: Celery,
+    redis_client: TenantRedisClient,
+    user_file_id: str | UUID,
+    tenant_id: str,
+    priority: OrbyteCeleryPriority = OrbyteCeleryPriority.HIGH,
+) -> bool:
+    """Enqueue a project-sync task if no matching queued task already exists."""
+    queued_key = _user_file_project_sync_queued_key(user_file_id)
+
+    # NX+EX gives us atomic dedupe and a self-healing TTL.
+    queued_guard_set = redis_client.set(
+        queued_key,
+        1,
+        nx=True,
+        ex=CELERY_USER_FILE_PROJECT_SYNC_TASK_EXPIRES,
+    )
+    if not queued_guard_set:
+        return False
+
+    try:
+        celery_app.send_task(
+            OrbyteCeleryTask.PROCESS_SINGLE_USER_FILE_PROJECT_SYNC,
+            kwargs={"user_file_id": str(user_file_id), "tenant_id": tenant_id},
+            queue=OrbyteCeleryQueues.USER_FILE_PROJECT_SYNC,
+            priority=priority,
+            expires=CELERY_USER_FILE_PROJECT_SYNC_TASK_EXPIRES,
+        )
+    except Exception:
+        # Roll back the queued guard if task publish fails.
+        redis_client.delete(queued_key)
+        raise
+
+    return True
+
+
+@shared_task(
+    name=OrbyteCeleryTask.CHECK_FOR_USER_FILE_PROCESSING,
+    soft_time_limit=300,
+    bind=True,
+    ignore_result=True,
+)
+def check_user_file_processing(self: Task, *, tenant_id: str) -> None:
+    """Scan for user files with PROCESSING status and enqueue per-file tasks.
+
+    Three mechanisms prevent queue runaway:
+
+    1. **Queue depth backpressure** – if the broker queue already has more than
+       USER_FILE_PROCESSING_MAX_QUEUE_DEPTH items we skip this beat cycle
+       entirely.  Workers are clearly behind; adding more tasks would only make
+       the backlog worse.
+
+    2. **Per-file queued guard** – before enqueuing a task we set a short-lived
+       Redis key (TTL = CELERY_USER_FILE_PROCESSING_TASK_EXPIRES).  If that key
+       already exists the file already has a live task in the queue, so we skip
+       it.  The worker deletes the key the moment it picks up the task so the
+       next beat cycle can re-enqueue if the file is still PROCESSING.
+
+    3. **Task expiry** – every enqueued task carries an `expires` value equal to
+       CELERY_USER_FILE_PROCESSING_TASK_EXPIRES.  If a task is still sitting in
+       the queue after that deadline, Celery discards it without touching the DB.
+       This is a belt-and-suspenders defence: even if the guard key is lost (e.g.
+       Redis restart), stale tasks evict themselves rather than piling up forever.
+    """
+    task_logger.info("check_user_file_processing - Starting")
+
+    redis_client = get_redis_client(tenant_id=tenant_id)
+    lock: RedisLock = redis_client.lock(
+        OrbyteRedisLocks.USER_FILE_PROCESSING_BEAT_LOCK,
+        timeout=CELERY_GENERIC_BEAT_LOCK_TIMEOUT,
+    )
+
+    # Do not overlap generator runs
+    if not lock.acquire(blocking=False):
+        return None
+
+    enqueued = 0
+    skipped_guard = 0
+    try:
+        # --- Protection 1: queue depth backpressure ---
+        r_celery = celery_get_broker_client(self.app)
+        queue_len = celery_get_queue_length(
+            OrbyteCeleryQueues.USER_FILE_PROCESSING, r_celery
+        )
+        if queue_len > USER_FILE_PROCESSING_MAX_QUEUE_DEPTH:
+            task_logger.warning(
+                f"check_user_file_processing - Queue depth {queue_len} exceeds "
+                f"{USER_FILE_PROCESSING_MAX_QUEUE_DEPTH}, skipping enqueue for "
+                f"tenant={tenant_id}"
+            )
+            return None
+
+        with get_session_with_current_tenant() as db_session:
+            user_file_ids = (
+                db_session.execute(
+                    select(UserFile.id).where(
+                        UserFile.status == UserFileStatus.PROCESSING
+                    )
+                )
+                .scalars()
+                .all()
+            )
+
+            for user_file_id in user_file_ids:
+                # --- Protection 2: per-file queued guard ---
+                queued_key = _user_file_queued_key(user_file_id)
+                guard_set = redis_client.set(
+                    queued_key,
+                    1,
+                    ex=CELERY_USER_FILE_PROCESSING_TASK_EXPIRES,
+                    nx=True,
+                )
+                if not guard_set:
+                    skipped_guard += 1
+                    continue
+
+                # --- Protection 3: task expiry ---
+                # If task submission fails, clear the guard immediately so the
+                # next beat cycle can retry enqueuing this file.
+                try:
+                    self.app.send_task(
+                        OrbyteCeleryTask.PROCESS_SINGLE_USER_FILE,
+                        kwargs={
+                            "user_file_id": str(user_file_id),
+                            "tenant_id": tenant_id,
+                        },
+                        queue=OrbyteCeleryQueues.USER_FILE_PROCESSING,
+                        priority=OrbyteCeleryPriority.HIGH,
+                        expires=CELERY_USER_FILE_PROCESSING_TASK_EXPIRES,
+                    )
+                except Exception:
+                    redis_client.delete(queued_key)
+                    raise
+                enqueued += 1
+
+    finally:
+        if lock.owned():
+            lock.release()
+
+    task_logger.info(
+        f"check_user_file_processing - Enqueued {enqueued} skipped_guard={skipped_guard} tasks for tenant={tenant_id}"
+    )
+    return None
+
+
+def _process_user_file_without_vector_db(
+    user_file_id: str | UUID,
+    documents: list[Document],
+) -> None:
+    """Process a user file when the vector DB is disabled.
+
+    Extracts raw text and computes a token count, stores the plaintext in
+    the file store, and marks the file as COMPLETED.  Skips embedding and
+    the indexing pipeline entirely.
+
+    Opens its own short DB session only for the final status write, so the
+    caller does not need to hold a session open during the text/token work.
+    """
+    from orbyte.llm.factory import get_default_llm
+    from orbyte.llm.factory import get_llm_tokenizer_encode_func
+
+    user_file_uuid = _as_uuid(user_file_id)
+
+    # Combine section text from all document sections. Tabular sections are
+    # file-backed and materialize their staged CSV on demand.
+    text_parts: list[str] = []
+    for doc in documents:
+        for section in doc.sections:
+            text = section.materialize_text()
+            if text:
+                text_parts.append(text)
+    combined_text = " ".join(text_parts)
+
+    # Compute token count using the user's default LLM tokenizer
+    try:
+        llm = get_default_llm()
+        encode = get_llm_tokenizer_encode_func(llm)
+        token_count: int | None = len(encode(combined_text))
+    except Exception:
+        task_logger.warning(
+            f"_process_user_file_without_vector_db - Failed to compute token count for {user_file_uuid}, falling back to None"
+        )
+        token_count = None
+
+    # Persist plaintext for fast FileReaderTool loads (no DB session needed)
+    store_user_file_plaintext(
+        user_file_id=user_file_uuid,
+        plaintext_content=combined_text,
+    )
+
+    # Short session only for the status write
+    with get_session_with_current_tenant() as db_session:
+        uf = db_session.get(UserFile, user_file_uuid)
+        if uf is None:
+            return
+        if uf.status != UserFileStatus.DELETING:
+            uf.status = UserFileStatus.COMPLETED
+        uf.token_count = token_count
+        uf.chunk_count = 0  # no chunks without vector DB
+        uf.last_project_sync_at = datetime.datetime.now(datetime.timezone.utc)
+        db_session.add(uf)
+        db_session.commit()
+
+    task_logger.info(
+        f"_process_user_file_without_vector_db - Completed id={user_file_uuid} tokens={token_count}"
+    )
+
+
+def _process_user_file_with_indexing(
+    user_file_id: str,
+    documents: list[Document],
+    tenant_id: str,
+) -> None:
+    """Process a user file through the full indexing pipeline (vector DB path).
+
+    Opens its own DB session for the indexing pipeline.  The caller should
+    not hold an open session when calling this function.
+    """
+    # 20 is the documented default for httpx max_keepalive_connections
+    if MANAGED_VESPA:
+        httpx_init_vespa_pool(
+            20, ssl_cert=VESPA_CLOUD_CERT_PATH, ssl_key=VESPA_CLOUD_KEY_PATH
+        )
+    else:
+        httpx_init_vespa_pool(20)
+
+    with get_session_with_current_tenant() as db_session:
+        search_settings_list = get_active_search_settings_list(db_session)
+        current_search_settings = next(
+            (ss for ss in search_settings_list if ss.status.is_current()),
+            None,
+        )
+        if current_search_settings is None:
+            raise RuntimeError(
+                f"_process_user_file_with_indexing - No current search settings found for tenant={tenant_id}"
+            )
+        embedding_model = DefaultIndexingEmbedder.from_db_search_settings(
+            search_settings=current_search_settings,
+        )
+        document_indices = get_all_document_indices(
+            current_search_settings,
+            None,
+            httpx_client=HttpxPool.get("vespa"),
+        )
+        adapter = UserFileIndexingAdapter(
+            tenant_id=tenant_id,
+            db_session=db_session,
+        )
+        index_pipeline_result = run_indexing_pipeline(
+            embedder=embedding_model,
+            document_indices=document_indices,
+            ignore_time_skip=True,
+            db_session=db_session,
+            tenant_id=tenant_id,
+            document_batch=documents,
+            request_id=None,
+            adapter=adapter,
+        )
+
+    task_logger.info(
+        f"_process_user_file_with_indexing - Indexing pipeline completed ={index_pipeline_result}"
+    )
+
+    if (
+        index_pipeline_result.failures
+        or index_pipeline_result.total_docs != len(documents)
+        or index_pipeline_result.total_chunks == 0
+    ):
+        task_logger.error(
+            f"_process_user_file_with_indexing - Indexing pipeline failed id={user_file_id}"
+        )
+        with get_session_with_current_tenant() as db_session:
+            uf = db_session.get(UserFile, _as_uuid(user_file_id))
+            if uf is not None and uf.status != UserFileStatus.DELETING:
+                uf.status = UserFileStatus.FAILED
+                db_session.add(uf)
+                db_session.commit()
+        raise RuntimeError(f"Indexing pipeline failed for user file {user_file_id}")
+
+
+def process_user_file_impl(
+    *, user_file_id: str, tenant_id: str, redis_locking: bool
+) -> None:
+    """Core implementation for processing a single user file.
+
+    When redis_locking=True, acquires a per-file Redis lock and clears the
+    queued-key guard (Celery path).  When redis_locking=False, skips all Redis
+    operations (BackgroundTask path).
+    """
+    task_logger.info(f"process_user_file_impl - Starting id={user_file_id}")
+    start = time.monotonic()
+
+    file_lock: RedisLock | None = None
+    if redis_locking:
+        redis_client = get_redis_client(tenant_id=tenant_id)
+        redis_client.delete(_user_file_queued_key(user_file_id))
+        file_lock = redis_client.lock(
+            _user_file_lock_key(user_file_id),
+            timeout=CELERY_USER_FILE_PROCESSING_LOCK_TIMEOUT,
+        )
+        if file_lock is not None and not file_lock.acquire(blocking=False):
+            task_logger.info(
+                f"process_user_file_impl - Lock held, skipping user_file_id={user_file_id}"
+            )
+            return
+
+    documents: list[Document] = []
+    try:
+        # Short read session: fetch what we need from UserFile then release the
+        # connection before the slow file-I/O and indexing pipeline phases.
+        with get_session_with_current_tenant() as db_session:
+            uf = db_session.get(UserFile, _as_uuid(user_file_id))
+            if not uf:
+                task_logger.warning(
+                    f"process_user_file_impl - UserFile not found id={user_file_id}"
+                )
+                return
+
+            if uf.status not in (
+                UserFileStatus.PROCESSING,
+                UserFileStatus.INDEXING,
+            ):
+                task_logger.info(
+                    f"process_user_file_impl - Skipping id={user_file_id} status={uf.status}"
+                )
+                return
+
+            file_id = uf.file_id
+            file_name = uf.name
+        # DB connection returned to pool here; file I/O and indexing run without it.
+
+        connector = LocalFileConnector(
+            file_locations=[file_id],
+            file_names=[file_name] if file_name else None,
+        )
+        connector.load_credentials({})
+
+        # User files aren't attempt-scoped, so the docfetching staging reapers
+        # don't cover them. Track CSVs staged for tabular sections and reap them
+        # ourselves once indexing (which reads them) has run.
+        staging_callback, staged_csv_ids = build_tracking_raw_file_callback(
+            metadata={"user_file_id": str(user_file_id), "tenant_id": tenant_id}
+        )
+        connector.set_raw_file_callback(staging_callback)
+
+        try:
+            for batch in connector.load_from_state():
+                documents.extend(
+                    [doc for doc in batch if not isinstance(doc, HierarchyNode)]
+                )
+
+            for document in documents:
+                document.id = str(user_file_id)
+                document.source = DocumentSource.USER_FILE
+
+            if DISABLE_VECTOR_DB:
+                _process_user_file_without_vector_db(
+                    user_file_id=user_file_id,
+                    documents=documents,
+                )
+            else:
+                _process_user_file_with_indexing(
+                    user_file_id=user_file_id,
+                    documents=documents,
+                    tenant_id=tenant_id,
+                )
+
+        except Exception as e:
+            task_logger.exception(
+                f"process_user_file_impl - Error processing file id={user_file_id} - {e.__class__.__name__}"
+            )
+            with get_session_with_current_tenant() as db_session:
+                current_user_file = db_session.get(UserFile, _as_uuid(user_file_id))
+                if (
+                    current_user_file
+                    and current_user_file.status != UserFileStatus.DELETING
+                ):
+                    current_user_file.status = UserFileStatus.FAILED
+                    db_session.add(current_user_file)
+                    db_session.commit()
+            return
+        finally:
+            delete_files_best_effort(
+                staged_csv_ids,
+                context=f"user-file tabular staging cleanup uf={user_file_id}",
+            )
+
+        elapsed = time.monotonic() - start
+        task_logger.info(
+            f"process_user_file_impl - Finished id={user_file_id} docs={len(documents)} elapsed={elapsed:.2f}s"
+        )
+    except Exception as e:
+        with get_session_with_current_tenant() as db_session:
+            uf = db_session.get(UserFile, _as_uuid(user_file_id))
+            if uf:
+                if uf.status != UserFileStatus.DELETING:
+                    uf.status = UserFileStatus.FAILED
+                db_session.add(uf)
+                db_session.commit()
+
+        task_logger.exception(
+            f"process_user_file_impl - Error processing file id={user_file_id} - {e.__class__.__name__}"
+        )
+        raise
+    finally:
+        if file_lock is not None and file_lock.owned():
+            file_lock.release()
+
+
+@shared_task(
+    name=OrbyteCeleryTask.PROCESS_SINGLE_USER_FILE,
+    bind=True,
+    ignore_result=True,
+)
+def process_single_user_file(
+    self: Task,  # noqa: ARG001
+    *,
+    user_file_id: str,
+    tenant_id: str,
+) -> None:
+    process_user_file_impl(
+        user_file_id=user_file_id, tenant_id=tenant_id, redis_locking=True
+    )
+
+
+@shared_task(
+    name=OrbyteCeleryTask.CHECK_FOR_USER_FILE_DELETE,
+    soft_time_limit=300,
+    bind=True,
+    ignore_result=True,
+)
+def check_for_user_file_delete(self: Task, *, tenant_id: str) -> None:
+    """Scan for user files with DELETING status and enqueue per-file tasks.
+
+    Three mechanisms prevent queue runaway (mirrors check_user_file_processing):
+
+    1. **Queue depth backpressure** – if the broker queue already has more than
+       USER_FILE_DELETE_MAX_QUEUE_DEPTH items we skip this beat cycle entirely.
+
+    2. **Per-file queued guard** – before enqueuing a task we set a short-lived
+       Redis key (TTL = CELERY_USER_FILE_DELETE_TASK_EXPIRES).  If that key
+       already exists the file already has a live task in the queue, so we skip
+       it.  The worker deletes the key the moment it picks up the task so the
+       next beat cycle can re-enqueue if the file is still DELETING.
+
+    3. **Task expiry** – every enqueued task carries an `expires` value equal to
+       CELERY_USER_FILE_DELETE_TASK_EXPIRES.  If a task is still sitting in
+       the queue after that deadline, Celery discards it without touching the DB.
+    """
+    task_logger.info("check_for_user_file_delete - Starting")
+    redis_client = get_redis_client(tenant_id=tenant_id)
+    lock: RedisLock = redis_client.lock(
+        OrbyteRedisLocks.USER_FILE_DELETE_BEAT_LOCK,
+        timeout=CELERY_GENERIC_BEAT_LOCK_TIMEOUT,
+    )
+    if not lock.acquire(blocking=False):
+        return None
+
+    enqueued = 0
+    skipped_guard = 0
+    try:
+        # --- Protection 1: queue depth backpressure ---
+        # NOTE: must use the broker's Redis client (not redis_client) because
+        # Celery queues live on a separate Redis DB with CELERY_SEPARATOR keys.
+        r_celery = celery_get_broker_client(self.app)
+        queue_len = celery_get_queue_length(OrbyteCeleryQueues.USER_FILE_DELETE, r_celery)
+        if queue_len > USER_FILE_DELETE_MAX_QUEUE_DEPTH:
+            task_logger.warning(
+                f"check_for_user_file_delete - Queue depth {queue_len} exceeds "
+                f"{USER_FILE_DELETE_MAX_QUEUE_DEPTH}, skipping enqueue for "
+                f"tenant={tenant_id}"
+            )
+            return None
+
+        with get_session_with_current_tenant() as db_session:
+            user_file_ids = (
+                db_session.execute(
+                    select(UserFile.id).where(
+                        UserFile.status == UserFileStatus.DELETING
+                    )
+                )
+                .scalars()
+                .all()
+            )
+            for user_file_id in user_file_ids:
+                # --- Protection 2: per-file queued guard ---
+                queued_key = _user_file_delete_queued_key(user_file_id)
+                guard_set = redis_client.set(
+                    queued_key,
+                    1,
+                    ex=CELERY_USER_FILE_DELETE_TASK_EXPIRES,
+                    nx=True,
+                )
+                if not guard_set:
+                    skipped_guard += 1
+                    continue
+
+                # --- Protection 3: task expiry ---
+                try:
+                    self.app.send_task(
+                        OrbyteCeleryTask.DELETE_SINGLE_USER_FILE,
+                        kwargs={
+                            "user_file_id": str(user_file_id),
+                            "tenant_id": tenant_id,
+                        },
+                        queue=OrbyteCeleryQueues.USER_FILE_DELETE,
+                        priority=OrbyteCeleryPriority.HIGH,
+                        expires=CELERY_USER_FILE_DELETE_TASK_EXPIRES,
+                    )
+                except Exception:
+                    redis_client.delete(queued_key)
+                    raise
+                enqueued += 1
+    finally:
+        if lock.owned():
+            lock.release()
+
+    task_logger.info(
+        f"check_for_user_file_delete - Enqueued {enqueued} tasks, skipped_guard={skipped_guard} for tenant={tenant_id}"
+    )
+    return None
+
+
+def delete_user_file_impl(
+    *, user_file_id: str, tenant_id: str, redis_locking: bool
+) -> None:
+    """Core implementation for deleting a single user file.
+
+    When redis_locking=True, acquires a per-file Redis lock (Celery path).
+    When redis_locking=False, skips Redis operations (BackgroundTask path).
+    """
+    task_logger.info(f"delete_user_file_impl - Starting id={user_file_id}")
+
+    file_lock: RedisLock | None = None
+    if redis_locking:
+        redis_client = get_redis_client(tenant_id=tenant_id)
+        # Clear the queued guard so the beat can re-enqueue if deletion fails
+        # and the file remains in DELETING status.
+        redis_client.delete(_user_file_delete_queued_key(user_file_id))
+        file_lock = redis_client.lock(
+            _user_file_delete_lock_key(user_file_id),
+            timeout=CELERY_GENERIC_BEAT_LOCK_TIMEOUT,
+        )
+        if file_lock is not None and not file_lock.acquire(blocking=False):
+            task_logger.info(
+                f"delete_user_file_impl - Lock held, skipping user_file_id={user_file_id}"
+            )
+            return
+
+    try:
+        skip_vespa = DISABLE_VECTOR_DB
+        retry_document_indices: list[RetryDocumentIndex] = []
+        chunk_count_from_db: int | None = None
+        file_id: str = ""
+
+        if not skip_vespa:
+            if MANAGED_VESPA:
+                httpx_init_vespa_pool(
+                    20, ssl_cert=VESPA_CLOUD_CERT_PATH, ssl_key=VESPA_CLOUD_KEY_PATH
+                )
+            else:
+                httpx_init_vespa_pool(20)
+
+        # Phase 1: short read session — extract everything needed for slow I/O
+        with get_session_with_current_tenant() as db_session:
+            user_file = db_session.get(UserFile, _as_uuid(user_file_id))
+            if not user_file:
+                task_logger.info(
+                    f"delete_user_file_impl - User file not found id={user_file_id}"
+                )
+                return
+
+            file_id = user_file.file_id
+            chunk_count_from_db = user_file.chunk_count
+
+            if not skip_vespa:
+                active_search_settings = get_active_search_settings(db_session)
+                document_indices = get_all_document_indices(
+                    search_settings=active_search_settings.primary,
+                    secondary_search_settings=active_search_settings.secondary,
+                    httpx_client=HttpxPool.get("vespa"),
+                )
+                retry_document_indices = [
+                    RetryDocumentIndex(document_index)
+                    for document_index in document_indices
+                ]
+
+        # Phase 2: vector DB deletes + file store deletes (no DB session held).
+        # Pass the DB chunk count when known; otherwise None, which each document
+        # index resolves itself (Vespa fans out to find chunks, OpenSearch deletes
+        # by document id). This keeps the path backend-agnostic.
+        if not skip_vespa:
+            chunk_count: int | None = (
+                chunk_count_from_db
+                if chunk_count_from_db is not None and chunk_count_from_db > 0
+                else None
+            )
+            for retry_document_index in retry_document_indices:
+                retry_document_index.delete(
+                    user_file_id,
+                    chunk_count=chunk_count,
+                )
+
+        file_store = get_default_file_store()
+        try:
+            file_store.delete_file(file_id)
+            file_store.delete_file(
+                user_file_id_to_plaintext_file_name(_as_uuid(user_file_id))
+            )
+        except Exception as e:
+            task_logger.exception(
+                f"delete_user_file_impl - Error deleting file id={user_file_id} - {e.__class__.__name__}"
+            )
+
+        # Phase 3: short write session — remove the DB record
+        with get_session_with_current_tenant() as db_session:
+            user_file = db_session.get(UserFile, _as_uuid(user_file_id))
+            if user_file is not None:
+                db_session.delete(user_file)
+                db_session.commit()
+        task_logger.info(f"delete_user_file_impl - Completed id={user_file_id}")
+    except Exception as e:
+        task_logger.exception(
+            f"delete_user_file_impl - Error processing file id={user_file_id} - {e.__class__.__name__}"
+        )
+        raise
+    finally:
+        if file_lock is not None and file_lock.owned():
+            file_lock.release()
+
+
+@shared_task(
+    name=OrbyteCeleryTask.DELETE_SINGLE_USER_FILE,
+    bind=True,
+    ignore_result=True,
+)
+def process_single_user_file_delete(
+    self: Task,  # noqa: ARG001
+    *,
+    user_file_id: str,
+    tenant_id: str,
+) -> None:
+    delete_user_file_impl(
+        user_file_id=user_file_id, tenant_id=tenant_id, redis_locking=True
+    )
+
+
+@shared_task(
+    name=OrbyteCeleryTask.CHECK_FOR_USER_FILE_PROJECT_SYNC,
+    soft_time_limit=300,
+    bind=True,
+    ignore_result=True,
+)
+def check_for_user_file_project_sync(self: Task, *, tenant_id: str) -> None:
+    """Scan for user files needing project sync and enqueue per-file tasks."""
+    task_logger.info("Starting")
+
+    redis_client = get_redis_client(tenant_id=tenant_id)
+    lock: RedisLock = redis_client.lock(
+        OrbyteRedisLocks.USER_FILE_PROJECT_SYNC_BEAT_LOCK,
+        timeout=CELERY_GENERIC_BEAT_LOCK_TIMEOUT,
+    )
+
+    if not lock.acquire(blocking=False):
+        return None
+
+    enqueued = 0
+    skipped_guard = 0
+    try:
+        queue_depth = get_user_file_project_sync_queue_depth(self.app)
+        if queue_depth > USER_FILE_PROJECT_SYNC_MAX_QUEUE_DEPTH:
+            task_logger.warning(
+                f"Queue depth {queue_depth} exceeds "
+                f"{USER_FILE_PROJECT_SYNC_MAX_QUEUE_DEPTH}, skipping enqueue for tenant={tenant_id}"
+            )
+            return None
+
+        with get_session_with_current_tenant() as db_session:
+            user_file_ids = (
+                db_session.execute(
+                    select(UserFile.id).where(
+                        sa.and_(
+                            sa.or_(
+                                UserFile.needs_project_sync.is_(True),
+                                UserFile.needs_persona_sync.is_(True),
+                            ),
+                            UserFile.status == UserFileStatus.COMPLETED,
+                        )
+                    )
+                )
+                .scalars()
+                .all()
+            )
+
+            for user_file_id in user_file_ids:
+                if not enqueue_user_file_project_sync_task(
+                    celery_app=self.app,
+                    redis_client=redis_client,
+                    user_file_id=user_file_id,
+                    tenant_id=tenant_id,
+                    priority=OrbyteCeleryPriority.HIGH,
+                ):
+                    skipped_guard += 1
+                    continue
+                enqueued += 1
+    finally:
+        if lock.owned():
+            lock.release()
+
+    task_logger.info(
+        f"Enqueued {enqueued} Skipped guard {skipped_guard} tasks for tenant={tenant_id}"
+    )
+    return None
+
+
+def project_sync_user_file_impl(
+    *, user_file_id: str, tenant_id: str, redis_locking: bool
+) -> None:
+    """Core implementation for syncing a user file's project/persona metadata.
+
+    When redis_locking=True, acquires a per-file Redis lock and clears the
+    queued-key guard (Celery path).  When redis_locking=False, skips Redis
+    operations (BackgroundTask path).
+    """
+    task_logger.info(f"project_sync_user_file_impl - Starting id={user_file_id}")
+
+    file_lock: RedisLock | None = None
+    if redis_locking:
+        redis_client = get_redis_client(tenant_id=tenant_id)
+        redis_client.delete(_user_file_project_sync_queued_key(user_file_id))
+        file_lock = redis_client.lock(
+            user_file_project_sync_lock_key(user_file_id),
+            timeout=CELERY_USER_FILE_PROJECT_SYNC_LOCK_TIMEOUT,
+        )
+        if file_lock is not None and not file_lock.acquire(blocking=False):
+            task_logger.info(
+                f"project_sync_user_file_impl - Lock held, skipping user_file_id={user_file_id}"
+            )
+            return
+
+    try:
+        # Phase 1: short read session — extract all data needed for Vespa, then
+        # release the connection before the network-bound update calls.
+        retry_document_indices: list[RetryDocumentIndex] = []
+        project_ids: list[int] = []
+        persona_ids: list[int] = []
+        file_id_str: str = ""
+        chunk_count: int | None = None
+        access: DocumentAccess | None = None
+        skip_vespa = DISABLE_VECTOR_DB
+
+        if not skip_vespa:
+            if MANAGED_VESPA:
+                httpx_init_vespa_pool(
+                    20, ssl_cert=VESPA_CLOUD_CERT_PATH, ssl_key=VESPA_CLOUD_KEY_PATH
+                )
+            else:
+                httpx_init_vespa_pool(20)
+
+        with get_session_with_current_tenant() as db_session:
+            user_files = fetch_user_files_with_access_relationships(
+                [user_file_id],
+                db_session,
+                eager_load_groups=global_version.is_ee_version(),
+            )
+            user_file = user_files[0] if user_files else None
+            if not user_file:
+                task_logger.info(
+                    f"project_sync_user_file_impl - User file not found id={user_file_id}"
+                )
+                return
+
+            if not skip_vespa:
+                active_search_settings = get_active_search_settings(db_session)
+                # User files are only ever written to the primary index (initial
+                # indexing passes no secondary, and the port flow never copies them).
+                # Targeting the secondary here would raise
+                # SecondaryIndexDocumentMissingError during a reindex and leave
+                # needs_project_sync stuck, retrying for the whole reindex window.
+                document_indices = get_all_document_indices(
+                    search_settings=active_search_settings.primary,
+                    secondary_search_settings=None,
+                    httpx_client=HttpxPool.get("vespa"),
+                )
+                retry_document_indices = [
+                    RetryDocumentIndex(document_index)
+                    for document_index in document_indices
+                ]
+
+                project_ids = [project.id for project in user_file.projects]
+                persona_ids = [p.id for p in user_file.assistants if not p.deleted]
+                file_id_str = str(user_file.id)
+                chunk_count = user_file.chunk_count
+                access_map = build_access_for_user_files([user_file])
+                access = access_map.get(file_id_str)
+        # DB connection returned to pool here; Vespa HTTP calls run without it.
+
+        # Phase 2: Vespa HTTP calls (no DB session held)
+        if not skip_vespa:
+            update_request = MetadataUpdateRequest(
+                document_ids=[file_id_str],
+                doc_id_to_chunk_cnt={
+                    file_id_str: chunk_count if chunk_count is not None else -1
+                },
+                access=access if access is not None else None,
+                project_ids=set(project_ids),
+                persona_ids=set(persona_ids),
+            )
+            for retry_document_index in retry_document_indices:
+                retry_document_index.update([update_request])
+
+        task_logger.info(f"project_sync_user_file_impl - User file id={user_file_id}")
+
+        # Phase 3: short write session — mark sync as done
+        with get_session_with_current_tenant() as db_session:
+            user_file = db_session.get(UserFile, _as_uuid(user_file_id))
+            if user_file is not None:
+                user_file.needs_project_sync = False
+                user_file.needs_persona_sync = False
+                user_file.last_project_sync_at = datetime.datetime.now(
+                    datetime.timezone.utc
+                )
+                db_session.add(user_file)
+                db_session.commit()
+
+    except Exception as e:
+        task_logger.exception(
+            f"project_sync_user_file_impl - Error syncing project for file id={user_file_id} - {e.__class__.__name__}"
+        )
+        raise
+    finally:
+        if file_lock is not None and file_lock.owned():
+            file_lock.release()
+
+
+@shared_task(
+    name=OrbyteCeleryTask.PROCESS_SINGLE_USER_FILE_PROJECT_SYNC,
+    bind=True,
+    ignore_result=True,
+)
+def process_single_user_file_project_sync(
+    self: Task,  # noqa: ARG001
+    *,
+    user_file_id: str,
+    tenant_id: str,
+) -> None:
+    project_sync_user_file_impl(
+        user_file_id=user_file_id, tenant_id=tenant_id, redis_locking=True
+    )

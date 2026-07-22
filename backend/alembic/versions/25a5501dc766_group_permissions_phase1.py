@@ -10,9 +10,9 @@ from alembic import op
 import fastapi_users_db_sqlalchemy
 import sqlalchemy as sa
 
-from onyx.db.enums import AccountType
-from onyx.db.enums import GrantSource
-from onyx.db.enums import Permission
+from orbyte.db.enums import AccountType
+from orbyte.db.enums import GrantSource
+from orbyte.db.enums import Permission
 
 # revision identifiers, used by Alembic.
 revision = "25a5501dc766"

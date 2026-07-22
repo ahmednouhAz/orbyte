@@ -1,11 +1,11 @@
 import os
 from uuid import uuid4
 
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.models import DefaultModel
-from onyx.server.manage.llm.models import LLMProviderUpsertRequest
-from onyx.server.manage.llm.models import LLMProviderView
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.server.manage.llm.models import DefaultModel
+from orbyte.server.manage.llm.models import LLMProviderUpsertRequest
+from orbyte.server.manage.llm.models import LLMProviderView
+from orbyte.server.manage.llm.models import ModelConfigurationUpsertRequest
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.constants import GENERAL_HEADERS
 from tests.integration.common_utils.http_client import client

@@ -39,32 +39,32 @@ from uuid import uuid4
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.run_docfetching import cache_and_upsert_hierarchy_nodes
-from onyx.configs.app_configs import INDEX_BATCH_SIZE
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.connector_runner import ConnectorRunner
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
-from onyx.connectors.google_drive.models import DriveRetrievalStage
-from onyx.connectors.google_drive.models import GoogleDriveCheckpoint
-from onyx.connectors.google_drive.models import GoogleDriveFileType
-from onyx.connectors.google_drive.models import RetrievedDriveFile
-from onyx.connectors.interfaces import CheckpointedConnector
-from onyx.connectors.interfaces import CheckpointOutput
-from onyx.connectors.interfaces import SecondsSinceUnixEpoch
-from onyx.connectors.models import HierarchyNode as PydanticHierarchyNode
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.enums import HierarchyNodeType
-from onyx.db.hierarchy import ensure_source_node_exists
-from onyx.db.hierarchy import get_hierarchy_node_by_raw_id
-from onyx.db.hierarchy import get_source_hierarchy_node
-from onyx.db.models import Connector
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Credential
-from onyx.db.models import HierarchyNode
-from onyx.utils.threadpool_concurrency import ThreadSafeDict
-from onyx.utils.threadpool_concurrency import ThreadSafeSet
+from orbyte.background.indexing.run_docfetching import cache_and_upsert_hierarchy_nodes
+from orbyte.configs.app_configs import INDEX_BATCH_SIZE
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.connector_runner import ConnectorRunner
+from orbyte.connectors.google_drive.connector import GoogleDriveConnector
+from orbyte.connectors.google_drive.models import DriveRetrievalStage
+from orbyte.connectors.google_drive.models import GoogleDriveCheckpoint
+from orbyte.connectors.google_drive.models import GoogleDriveFileType
+from orbyte.connectors.google_drive.models import RetrievedDriveFile
+from orbyte.connectors.interfaces import CheckpointedConnector
+from orbyte.connectors.interfaces import CheckpointOutput
+from orbyte.connectors.interfaces import SecondsSinceUnixEpoch
+from orbyte.connectors.models import HierarchyNode as PydanticHierarchyNode
+from orbyte.connectors.models import InputType
+from orbyte.db.enums import AccessType
+from orbyte.db.enums import ConnectorCredentialPairStatus
+from orbyte.db.enums import HierarchyNodeType
+from orbyte.db.hierarchy import ensure_source_node_exists
+from orbyte.db.hierarchy import get_hierarchy_node_by_raw_id
+from orbyte.db.hierarchy import get_source_hierarchy_node
+from orbyte.db.models import Connector
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import Credential
+from orbyte.db.models import HierarchyNode
+from orbyte.utils.threadpool_concurrency import ThreadSafeDict
+from orbyte.utils.threadpool_concurrency import ThreadSafeSet
 
 SOURCE = DocumentSource.GOOGLE_DRIVE
 ADMIN_EMAIL = "admin@example.com"
@@ -344,7 +344,7 @@ def test_off_by_one_batch_split_misparents_child(db_session: Session) -> None:
 
         with (
             patch(
-                "onyx.connectors.google_drive.connector.get_drive_service",
+                "orbyte.connectors.google_drive.connector.get_drive_service",
                 return_value=Mock(name="drive_service"),
             ),
             patch.object(
@@ -476,7 +476,7 @@ def test_cross_yield_walk_heals_misparented_child_via_stub(
 
         with (
             patch(
-                "onyx.connectors.google_drive.connector.get_drive_service",
+                "orbyte.connectors.google_drive.connector.get_drive_service",
                 return_value=Mock(name="drive_service"),
             ),
             patch.object(

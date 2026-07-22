@@ -9,11 +9,11 @@ from uuid import uuid4
 import pytest
 from kubernetes import client
 
-from onyx.db.enums import SandboxStatus
-from onyx.server.features.build.configs import SANDBOX_BACKEND
-from onyx.server.features.build.configs import SANDBOX_NAMESPACE
-from onyx.server.features.build.configs import SandboxBackend
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from orbyte.db.enums import SandboxStatus
+from orbyte.server.features.build.configs import SANDBOX_BACKEND
+from orbyte.server.features.build.configs import SANDBOX_NAMESPACE
+from orbyte.server.features.build.configs import SandboxBackend
+from orbyte.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
 from tests.integration.common_utils.managers.build_session import BuildSessionManager

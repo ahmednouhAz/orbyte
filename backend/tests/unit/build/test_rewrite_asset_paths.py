@@ -14,8 +14,8 @@ from fastapi import HTTPException
 from fastapi import Request
 from starlette.responses import StreamingResponse
 
-from onyx.db.enums import SharingScope
-from onyx.server.features.build import webapp_proxy as api
+from orbyte.db.enums import SharingScope
+from orbyte.server.features.build import webapp_proxy as api
 
 SESSION_ID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 BASE = f"/api/build/sessions/{SESSION_ID}/webapp"
@@ -45,7 +45,7 @@ class TestNextjsProxyMountContract:
         """
         config_source = NEXT_TEMPLATE_CONFIG.read_text()
 
-        assert "ONYX_WEBAPP_BASE_PATH" in config_source
+        assert "ORBYTE_WEBAPP_BASE_PATH" in config_source
         assert "assetPrefix" in config_source
         assert re.search(r"\bbasePath\s*[:=]", config_source)
 
@@ -53,7 +53,7 @@ class TestNextjsProxyMountContract:
         source = NEXTJS_DEV_SCRIPT.read_text()
 
         assert (
-            'export ONYX_WEBAPP_BASE_PATH="/api/build/sessions/$(basename '
+            'export ORBYTE_WEBAPP_BASE_PATH="/api/build/sessions/$(basename '
             '{session_path})/webapp"'
         ) in source
         assert "export WEBAPP_ASSET_PREFIX" not in source
@@ -66,7 +66,7 @@ class TestNextjsProxyMountContract:
             source = manager_source.read_text()
 
             assert (
-                "from onyx.server.features.build.sandbox.nextjs_dev import "
+                "from orbyte.server.features.build.sandbox.nextjs_dev import "
                 "build_nextjs_start_script"
             ) in source
 
@@ -292,7 +292,7 @@ class TestProxyRequestWiring:
         # from the deny-list while leaving it here surfaces as a leak below.
         # Mixed-case keys exercise the case-insensitive comparator.
         sensitive_headers = {
-            "host": "app.onyx.local",
+            "host": "app.orbyte.local",
             "content-length": "7",
             "Connection": "keep-alive",
             "Keep-Alive": "timeout=5",
@@ -322,17 +322,17 @@ class TestProxyRequestWiring:
             "X-Forwarded-Email": "victim@example.com",
             "X-Forwarded-Preferred-Username": "victim",
             # Browser context — Next dev blocks /_next/* on unlisted Origins.
-            "Origin": "https://cloud.onyx.app",
+            "Origin": "https://cloud.orbyte.app",
             # sec-fetch-* prefix matcher (not literal deny-list entries).
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-origin",
             "Sec-Fetch-Dest": "empty",
             "Sec-Fetch-User": "?1",
-            # x-onyx-* prefix matcher (not literal deny-list entries).
-            "X-Onyx-Authorization": "Bearer alt-victim-token",
-            "X-Onyx-Tenant-ID": "victim-tenant",
-            "X-Onyx-Request-ID": "abc-123",
-            "X-Onyx-Future-Header": "should-be-stripped-by-prefix",
+            # x-orbyte-* prefix matcher (not literal deny-list entries).
+            "X-Orbyte-Authorization": "Bearer alt-victim-token",
+            "X-Orbyte-Tenant-ID": "victim-tenant",
+            "X-Orbyte-Request-ID": "abc-123",
+            "X-Orbyte-Future-Header": "should-be-stripped-by-prefix",
         }
 
         # Completeness check: every literal deny-list entry is covered above.

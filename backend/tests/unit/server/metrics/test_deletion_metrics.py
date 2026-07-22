@@ -2,16 +2,16 @@
 
 import pytest
 
-from onyx.server.metrics.deletion_metrics import DELETION_BLOCKED
-from onyx.server.metrics.deletion_metrics import DELETION_COMPLETED
-from onyx.server.metrics.deletion_metrics import DELETION_FENCE_RESET
-from onyx.server.metrics.deletion_metrics import DELETION_STARTED
-from onyx.server.metrics.deletion_metrics import DELETION_TASKSET_DURATION
-from onyx.server.metrics.deletion_metrics import inc_deletion_blocked
-from onyx.server.metrics.deletion_metrics import inc_deletion_completed
-from onyx.server.metrics.deletion_metrics import inc_deletion_fence_reset
-from onyx.server.metrics.deletion_metrics import inc_deletion_started
-from onyx.server.metrics.deletion_metrics import observe_deletion_taskset_duration
+from orbyte.server.metrics.deletion_metrics import DELETION_BLOCKED
+from orbyte.server.metrics.deletion_metrics import DELETION_COMPLETED
+from orbyte.server.metrics.deletion_metrics import DELETION_FENCE_RESET
+from orbyte.server.metrics.deletion_metrics import DELETION_STARTED
+from orbyte.server.metrics.deletion_metrics import DELETION_TASKSET_DURATION
+from orbyte.server.metrics.deletion_metrics import inc_deletion_blocked
+from orbyte.server.metrics.deletion_metrics import inc_deletion_completed
+from orbyte.server.metrics.deletion_metrics import inc_deletion_fence_reset
+from orbyte.server.metrics.deletion_metrics import inc_deletion_started
+from orbyte.server.metrics.deletion_metrics import observe_deletion_taskset_duration
 
 
 class TestIncDeletionStarted:

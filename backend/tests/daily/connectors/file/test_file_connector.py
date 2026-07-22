@@ -7,8 +7,8 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.connectors.file.connector import LocalFileConnector
-from onyx.connectors.models import HierarchyNode
+from orbyte.connectors.file.connector import LocalFileConnector
+from orbyte.connectors.models import HierarchyNode
 from tests.daily.connectors.utils import set_test_staging_callback
 
 
@@ -31,9 +31,9 @@ def mock_filestore_record() -> MagicMock:
     return record
 
 
-@patch("onyx.connectors.file.connector.get_default_file_store")
+@patch("orbyte.connectors.file.connector.get_default_file_store")
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
 )
 def test_single_text_file_with_metadata(
     mock_get_unstructured_api_key: MagicMock,  # noqa: ARG001
@@ -43,7 +43,7 @@ def test_single_text_file_with_metadata(
     mock_filestore_record: MagicMock,
 ) -> None:
     file_content = io.BytesIO(
-        b'#ONYX_METADATA={"link": "https://onyx.app", "file_display_name":"my display name", "tag_of_your_choice": "test-tag", \
+        b'#ORBYTE_METADATA={"link": "https://onyx.app", "file_display_name":"my display name", "tag_of_your_choice": "test-tag", \
           "primary_owners": ["wenxi@onyx.app"], "secondary_owners": ["founders@onyx.app"], \
           "doc_updated_at": "2001-01-01T00:00:00Z"}\n'
         b"Test answer is 12345"
@@ -55,7 +55,7 @@ def test_single_text_file_with_metadata(
     mock_file_store.read_file.return_value = file_content
 
     with patch(
-        "onyx.connectors.file.connector.get_default_file_store",
+        "orbyte.connectors.file.connector.get_default_file_store",
         return_value=mock_file_store,
     ):
         connector = LocalFileConnector(
@@ -84,7 +84,7 @@ def test_single_text_file_with_metadata(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
 )
 def test_two_text_files_with_zip_metadata(
     mock_get_unstructured_api_key: MagicMock,  # noqa: ARG001
@@ -120,7 +120,7 @@ def test_two_text_files_with_zip_metadata(
     }
 
     with patch(
-        "onyx.connectors.file.connector.get_default_file_store",
+        "orbyte.connectors.file.connector.get_default_file_store",
         return_value=mock_file_store,
     ):
         connector = LocalFileConnector(
@@ -163,9 +163,9 @@ def test_two_text_files_with_zip_metadata(
     assert doc2.doc_updated_at == datetime(2023, 3, 3, 0, 0, 0, tzinfo=timezone.utc)
 
 
-@patch("onyx.connectors.file.connector.get_default_file_store")
+@patch("orbyte.connectors.file.connector.get_default_file_store")
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
 )
 def test_tabular_file_sets_file_id_on_document(
     mock_get_unstructured_api_key: MagicMock,  # noqa: ARG001
@@ -186,7 +186,7 @@ def test_tabular_file_sets_file_id_on_document(
     mock_file_store.read_file.return_value = csv_content
 
     with patch(
-        "onyx.connectors.file.connector.get_default_file_store",
+        "orbyte.connectors.file.connector.get_default_file_store",
         return_value=mock_file_store,
     ):
         connector = LocalFileConnector(
@@ -203,9 +203,9 @@ def test_tabular_file_sets_file_id_on_document(
     assert doc.file_id == file_id
 
 
-@patch("onyx.connectors.file.connector.get_default_file_store")
+@patch("orbyte.connectors.file.connector.get_default_file_store")
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
 )
 def test_non_tabular_file_leaves_file_id_none(
     mock_get_unstructured_api_key: MagicMock,  # noqa: ARG001
@@ -226,7 +226,7 @@ def test_non_tabular_file_leaves_file_id_none(
     mock_file_store.read_file.return_value = txt_content
 
     with patch(
-        "onyx.connectors.file.connector.get_default_file_store",
+        "orbyte.connectors.file.connector.get_default_file_store",
         return_value=mock_file_store,
     ):
         connector = LocalFileConnector(
@@ -242,9 +242,9 @@ def test_non_tabular_file_leaves_file_id_none(
     assert doc.file_id is None
 
 
-@patch("onyx.connectors.file.connector.get_default_file_store")
+@patch("orbyte.connectors.file.connector.get_default_file_store")
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
+    "orbyte.file_processing.extract_file_text.get_unstructured_api_key", return_value=None
 )
 def test_mixed_batch_only_tabular_gets_file_id(
     mock_get_unstructured_api_key: MagicMock,  # noqa: ARG001
@@ -267,7 +267,7 @@ def test_mixed_batch_only_tabular_gets_file_id(
     mock_file_store.read_file.side_effect = [csv_content, txt_content]
 
     with patch(
-        "onyx.connectors.file.connector.get_default_file_store",
+        "orbyte.connectors.file.connector.get_default_file_store",
         return_value=mock_file_store,
     ):
         connector = LocalFileConnector(

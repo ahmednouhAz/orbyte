@@ -5,9 +5,9 @@ from __future__ import annotations
 from uuid import UUID
 from uuid import uuid4
 
-from onyx.db.enums import SharingScope
-from onyx.redis.redis_pool import get_redis_client
-from onyx.server.features.build.session.api import RESTORE_LOCK_TIMEOUT_SECONDS
+from orbyte.db.enums import SharingScope
+from orbyte.redis.redis_pool import get_redis_client
+from orbyte.server.features.build.session.api import RESTORE_LOCK_TIMEOUT_SECONDS
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client

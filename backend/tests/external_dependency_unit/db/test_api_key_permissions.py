@@ -7,13 +7,13 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.auth.schemas import UserRole
-from onyx.db.api_key import insert_api_key
-from onyx.db.api_key import regenerate_api_key
-from onyx.db.api_key import remove_api_key
-from onyx.db.api_key import update_api_key
-from onyx.db.models import User
-from onyx.server.api_key.models import APIKeyArgs
+from orbyte.auth.schemas import UserRole
+from orbyte.db.api_key import insert_api_key
+from orbyte.db.api_key import regenerate_api_key
+from orbyte.db.api_key import remove_api_key
+from orbyte.db.api_key import update_api_key
+from orbyte.db.models import User
+from orbyte.server.api_key.models import APIKeyArgs
 
 
 def _get_key_user(db_session: Session, user_id: UUID) -> User:

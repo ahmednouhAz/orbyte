@@ -10,13 +10,13 @@ from unittest.mock import patch
 import discord
 import pytest
 
-from onyx.onyxbot.discord.handle_commands import get_text_channels
-from onyx.onyxbot.discord.handle_commands import handle_dm
-from onyx.onyxbot.discord.handle_commands import handle_registration_command
-from onyx.onyxbot.discord.handle_commands import handle_sync_channels_command
-from onyx.onyxbot.discord.handle_message import process_chat_message
-from onyx.onyxbot.discord.handle_message import send_error_response
-from onyx.onyxbot.discord.handle_message import send_response
+from orbyte.orbytebot.discord.handle_commands import get_text_channels
+from orbyte.orbytebot.discord.handle_commands import handle_dm
+from orbyte.orbytebot.discord.handle_commands import handle_registration_command
+from orbyte.orbytebot.discord.handle_commands import handle_sync_channels_command
+from orbyte.orbytebot.discord.handle_message import process_chat_message
+from orbyte.orbytebot.discord.handle_message import send_error_response
+from orbyte.orbytebot.discord.handle_message import send_response
 
 
 class TestGuildRegistrationCommand:
@@ -33,16 +33,16 @@ class TestGuildRegistrationCommand:
 
         with (
             patch(
-                "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+                "orbyte.orbytebot.discord.handle_commands.parse_discord_registration_key",
                 return_value="public",
             ),
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_session_with_tenant"
+                "orbyte.orbytebot.discord.handle_commands.get_session_with_tenant"
             ) as mock_session,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_registration_key"
+                "orbyte.orbytebot.discord.handle_commands.get_guild_config_by_registration_key"
             ) as mock_get_config,
-            patch("onyx.onyxbot.discord.handle_commands.bulk_create_channel_configs"),
+            patch("orbyte.orbytebot.discord.handle_commands.bulk_create_channel_configs"),
         ):
             mock_db = MagicMock()
             mock_session.return_value.__enter__ = MagicMock(return_value=mock_db)
@@ -75,7 +75,7 @@ class TestGuildRegistrationCommand:
         mock_discord_message.content = "!register abc"  # Malformed
 
         with patch(
-            "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+            "orbyte.orbytebot.discord.handle_commands.parse_discord_registration_key",
             return_value=None,  # Invalid format
         ):
             result = await handle_registration_command(
@@ -100,14 +100,14 @@ class TestGuildRegistrationCommand:
 
         with (
             patch(
-                "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+                "orbyte.orbytebot.discord.handle_commands.parse_discord_registration_key",
                 return_value="public",
             ),
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_session_with_tenant"
+                "orbyte.orbytebot.discord.handle_commands.get_session_with_tenant"
             ) as mock_session,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_registration_key",
+                "orbyte.orbytebot.discord.handle_commands.get_guild_config_by_registration_key",
                 return_value=None,  # Not found
             ),
         ):
@@ -139,14 +139,14 @@ class TestGuildRegistrationCommand:
 
         with (
             patch(
-                "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+                "orbyte.orbytebot.discord.handle_commands.parse_discord_registration_key",
                 return_value="public",
             ),
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_session_with_tenant"
+                "orbyte.orbytebot.discord.handle_commands.get_session_with_tenant"
             ) as mock_session,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_registration_key"
+                "orbyte.orbytebot.discord.handle_commands.get_guild_config_by_registration_key"
             ) as mock_get_config,
         ):
             mock_db = MagicMock()
@@ -181,7 +181,7 @@ class TestGuildRegistrationCommand:
         mock_discord_message.content = "!register discord_public.valid_token"
 
         with patch(
-            "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+            "orbyte.orbytebot.discord.handle_commands.parse_discord_registration_key",
             return_value="public",
         ):
             # Guild already in cache
@@ -278,16 +278,16 @@ class TestSyncChannelsCommand:
 
         with (
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_session_with_tenant"
+                "orbyte.orbytebot.discord.handle_commands.get_session_with_tenant"
             ) as mock_session,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_discord_id"
+                "orbyte.orbytebot.discord.handle_commands.get_guild_config_by_discord_id"
             ) as mock_get_guild,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_internal_id"
+                "orbyte.orbytebot.discord.handle_commands.get_guild_config_by_internal_id"
             ) as mock_get_guild_internal,
             patch(
-                "onyx.onyxbot.discord.handle_commands.sync_channel_configs"
+                "orbyte.orbytebot.discord.handle_commands.sync_channel_configs"
             ) as mock_sync,
         ):
             mock_db = MagicMock()
@@ -543,24 +543,24 @@ class TestBotLifecycle:
         mock_api_client: MagicMock,
     ) -> None:
         """setup_hook calls cache.refresh_all()."""
-        from onyx.onyxbot.discord.client import OnyxDiscordClient
+        from orbyte.orbytebot.discord.client import OrbyteDiscordClient
 
         with (
             patch.object(
-                OnyxDiscordClient,
+                OrbyteDiscordClient,
                 "__init__",
                 lambda self: None,  # noqa: ARG005
             ),
             patch(
-                "onyx.onyxbot.discord.client.DiscordCacheManager",
+                "orbyte.orbytebot.discord.client.DiscordCacheManager",
                 return_value=mock_cache_manager,
             ),
             patch(
-                "onyx.onyxbot.discord.client.OnyxAPIClient",
+                "orbyte.orbytebot.discord.client.OrbyteAPIClient",
                 return_value=mock_api_client,
             ),
         ):
-            bot = OnyxDiscordClient()
+            bot = OrbyteDiscordClient()
             bot.cache = mock_cache_manager
             bot.api_client = mock_api_client
             bot.loop = MagicMock()
@@ -577,16 +577,16 @@ class TestBotLifecycle:
         mock_api_client: MagicMock,
     ) -> None:
         """setup_hook calls api_client.initialize()."""
-        from onyx.onyxbot.discord.client import OnyxDiscordClient
+        from orbyte.orbytebot.discord.client import OrbyteDiscordClient
 
         with (
             patch.object(
-                OnyxDiscordClient,
+                OrbyteDiscordClient,
                 "__init__",
                 lambda self: None,  # noqa: ARG005
             ),
         ):
-            bot = OnyxDiscordClient()
+            bot = OrbyteDiscordClient()
             bot.cache = mock_cache_manager
             bot.api_client = mock_api_client
             bot.loop = MagicMock()
@@ -603,17 +603,17 @@ class TestBotLifecycle:
         mock_api_client: MagicMock,
     ) -> None:
         """close() calls api_client.close()."""
-        from onyx.onyxbot.discord.client import OnyxDiscordClient
+        from orbyte.orbytebot.discord.client import OrbyteDiscordClient
 
         with (
             patch.object(
-                OnyxDiscordClient,
+                OrbyteDiscordClient,
                 "__init__",
                 lambda self: None,  # noqa: ARG005
             ),
-            patch.object(OnyxDiscordClient, "is_closed", return_value=True),
+            patch.object(OrbyteDiscordClient, "is_closed", return_value=True),
         ):
-            bot = OnyxDiscordClient()
+            bot = OrbyteDiscordClient()
             bot.cache = mock_cache_manager
             bot.api_client = mock_api_client
             bot._cache_refresh_task = None

@@ -5,18 +5,18 @@ from typing import Any
 
 import pytest
 
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_drive.connector import GoogleDriveConnector
+from orbyte.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_AUTHENTICATION_METHOD,
 )
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_DICT_SERVICE_ACCOUNT_KEY,
 )
-from onyx.connectors.google_utils.shared_constants import DB_CREDENTIALS_DICT_TOKEN_KEY
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_utils.shared_constants import DB_CREDENTIALS_DICT_TOKEN_KEY
+from orbyte.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_PRIMARY_ADMIN_KEY,
 )
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_utils.shared_constants import (
     GoogleOAuthAuthenticationMethod,
 )
 from tests.load_env_vars import load_env_vars
@@ -27,14 +27,14 @@ load_env_vars()
 
 
 _USER_TO_OAUTH_TESTSECRET_MAP: dict[str, TestSecret] = {
-    "admin@onyx-test.com": TestSecret.GOOGLE_DRIVE_OAUTH_CREDENTIALS_JSON_STR,
-    "test_user_1@onyx-test.com": (
+    "admin@orbyte-test.com": TestSecret.GOOGLE_DRIVE_OAUTH_CREDENTIALS_JSON_STR,
+    "test_user_1@orbyte-test.com": (
         TestSecret.GOOGLE_DRIVE_OAUTH_CREDENTIALS_JSON_STR_TEST_USER_1
     ),
 }
 
 _USER_TO_SERVICE_ACCOUNT_TESTSECRET_MAP: dict[str, TestSecret] = {
-    "admin@onyx-test.com": TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_STR,
+    "admin@orbyte-test.com": TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_STR,
 }
 
 

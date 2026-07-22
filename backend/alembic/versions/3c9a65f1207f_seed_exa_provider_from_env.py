@@ -15,7 +15,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 from dotenv import load_dotenv, find_dotenv
 
-from onyx.utils.encryption import encrypt_string_to_bytes
+from orbyte.utils.encryption import encrypt_string_to_bytes
 
 revision = "3c9a65f1207f"
 down_revision = "1f2a3b4c5d6e"

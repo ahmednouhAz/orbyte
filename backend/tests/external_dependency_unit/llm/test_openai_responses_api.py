@@ -22,11 +22,11 @@ import warnings
 
 import pytest
 
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.litellm_singleton import litellm
-from onyx.llm.models import ChatCompletionMessage
-from onyx.llm.models import UserMessage
-from onyx.llm.multi_llm import LitellmLLM
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.llm.litellm_singleton import litellm
+from orbyte.llm.models import ChatCompletionMessage
+from orbyte.llm.models import UserMessage
+from orbyte.llm.multi_llm import LitellmLLM
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.nightly
@@ -53,7 +53,7 @@ def test_streaming_parallel_tool_calls_land_in_distinct_slots(
     tool call, causing argument deltas from the second call to overwrite the
     first; it also set `finish_reason="tool_calls"` on the first
     `output_item.done`, terminating the stream before the second call
-    arrived. Onyx's responses-streaming patch was removed once upstream
+    arrived. Orbyte's responses-streaming patch was removed once upstream
     fixed both. This test is the regression guard against either failure
     re-emerging.
     """
@@ -141,14 +141,14 @@ def test_responses_call_with_invalid_key_raises_authentication_error() -> None:
     Pre-1.83.0 LiteLLM's `@client` wrapper did `kwargs.get("metadata", {})`
     which returned `None` when the key existed with value `None`, masking
     the real auth failure. Upstream now uses `kwargs.get("metadata") or {}`.
-    Onyx's `_patch_responses_metadata_none` was removed once that fix
+    Orbyte's `_patch_responses_metadata_none` was removed once that fix
     landed; this test guards against regression.
     """
     with pytest.raises(Exception) as exc_info:
         litellm.responses(
             model="openai/gpt-5.4-nano",
             input="hi",
-            api_key="sk-onyx-contract-test-deliberately-invalid",
+            api_key="sk-orbyte-contract-test-deliberately-invalid",
             metadata=None,
             max_output_tokens=8,
         )

@@ -1,13 +1,13 @@
 from typing import Any
-from onyx.db.engine.iam_auth import get_iam_auth_token
-from onyx.db.engine.pg_ssl import create_pg_ssl_context
-from onyx.configs.app_configs import USE_IAM_AUTH
-from onyx.configs.app_configs import POSTGRES_HOST
-from onyx.configs.app_configs import POSTGRES_PORT
-from onyx.configs.app_configs import POSTGRES_USER
-from onyx.configs.app_configs import AWS_REGION_NAME
-from onyx.db.engine.sql_engine import build_connection_string
-from onyx.db.engine.tenant_utils import get_all_tenant_ids
+from orbyte.db.engine.iam_auth import get_iam_auth_token
+from orbyte.db.engine.pg_ssl import create_pg_ssl_context
+from orbyte.configs.app_configs import USE_IAM_AUTH
+from orbyte.configs.app_configs import POSTGRES_HOST
+from orbyte.configs.app_configs import POSTGRES_PORT
+from orbyte.configs.app_configs import POSTGRES_USER
+from orbyte.configs.app_configs import AWS_REGION_NAME
+from orbyte.db.engine.sql_engine import build_connection_string
+from orbyte.db.engine.tenant_utils import get_all_tenant_ids
 from sqlalchemy import event
 from sqlalchemy import pool
 from sqlalchemy import text
@@ -20,19 +20,19 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy.ext.asyncio import create_async_engine
-from onyx.configs.constants import SSL_CERT_FILE
+from orbyte.configs.constants import SSL_CERT_FILE
 from shared_configs.configs import (
     MULTI_TENANT,
     POSTGRES_DEFAULT_SCHEMA,
     TENANT_ID_PREFIX,
 )
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
-from onyx.db.models import Base
+from orbyte.db.models import Base
 from celery.backends.database.session import (  # ty: ignore[unresolved-import]
     ResultModelBase,
 )
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.utils.variable_functionality import set_is_ee_based_on_env_variable
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.utils.variable_functionality import set_is_ee_based_on_env_variable
 
 # Match the app processes' edition so migrations that use versioned
 # implementations (e.g. encrypt_string_to_bytes) resolve the EE variants.

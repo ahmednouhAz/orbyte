@@ -16,9 +16,9 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from ee.onyx.db.scim import ScimDAL
-from onyx.db.models import ScimToken
-from onyx.db.models import UserGroup
+from ee.orbyte.db.scim import ScimDAL
+from orbyte.db.models import ScimToken
+from orbyte.db.models import UserGroup
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ def scim_token_factory(
     def _create(
         name: str = "test-token",
         hashed_token: str | None = None,
-        token_display: str = "onyx_scim_****test",
+        token_display: str = "orbyte_scim_****test",
         created_by_id: UUID | None = None,
     ) -> ScimToken:
         token = ScimToken(

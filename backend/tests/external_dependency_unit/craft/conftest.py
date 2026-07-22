@@ -17,32 +17,32 @@ from fastapi_users.password import PasswordHelper
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import FileOrigin
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.enums import AccountType
-from onyx.db.enums import BuildSessionStatus
-from onyx.db.enums import SandboxStatus
-from onyx.db.enums import SkillSharePermission
-from onyx.db.llm import fetch_default_llm_model
-from onyx.db.llm import fetch_existing_llm_provider
-from onyx.db.llm import remove_llm_provider
-from onyx.db.llm import update_default_provider
-from onyx.db.llm import upsert_llm_provider
-from onyx.db.models import BuildSession
-from onyx.db.models import Sandbox
-from onyx.db.models import Skill
-from onyx.db.models import Skill__UserGroup
-from onyx.db.models import User
-from onyx.db.models import UserGroup
-from onyx.db.models import UserRole
-from onyx.file_store.file_store import get_default_file_store
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.features.build.db.sandbox import create_sandbox__no_commit
-from onyx.server.features.build.db.sandbox import update_sandbox_status__no_commit
-from onyx.server.features.build.session.manager import SessionManager
-from onyx.server.manage.llm.models import LLMProviderUpsertRequest
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
+from orbyte.configs.constants import FileOrigin
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import SqlEngine
+from orbyte.db.enums import AccountType
+from orbyte.db.enums import BuildSessionStatus
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.enums import SkillSharePermission
+from orbyte.db.llm import fetch_default_llm_model
+from orbyte.db.llm import fetch_existing_llm_provider
+from orbyte.db.llm import remove_llm_provider
+from orbyte.db.llm import update_default_provider
+from orbyte.db.llm import upsert_llm_provider
+from orbyte.db.models import BuildSession
+from orbyte.db.models import Sandbox
+from orbyte.db.models import Skill
+from orbyte.db.models import Skill__UserGroup
+from orbyte.db.models import User
+from orbyte.db.models import UserGroup
+from orbyte.db.models import UserRole
+from orbyte.file_store.file_store import get_default_file_store
+from orbyte.llm.constants import LlmProviderNames
+from orbyte.server.features.build.db.sandbox import create_sandbox__no_commit
+from orbyte.server.features.build.db.sandbox import update_sandbox_status__no_commit
+from orbyte.server.features.build.session.manager import SessionManager
+from orbyte.server.manage.llm.models import LLMProviderUpsertRequest
+from orbyte.server.manage.llm.models import ModelConfigurationUpsertRequest
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from tests.common.craft.skill_table_isolation import restore_skill_tables
@@ -344,11 +344,11 @@ def session_manager_with_stub(
 ) -> SessionManager:
     """``SessionManager`` bound to the stub sandbox backend (patches both lookup sites)."""
     monkeypatch.setattr(
-        "onyx.server.features.build.session.manager.get_sandbox_manager",
+        "orbyte.server.features.build.session.manager.get_sandbox_manager",
         lambda: stub_sandbox_manager,
     )
     monkeypatch.setattr(
-        "onyx.server.features.build.sandbox.factory._sandbox_manager_instance",
+        "orbyte.server.features.build.sandbox.factory._sandbox_manager_instance",
         stub_sandbox_manager,
     )
     sm = SessionManager(db_session)

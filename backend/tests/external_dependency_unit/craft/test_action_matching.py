@@ -27,20 +27,20 @@ import pytest
 from mitmproxy import http
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import EndpointPolicy
-from onyx.db.enums import ExternalAppType
-from onyx.db.models import ExternalApp
-from onyx.db.models import ExternalAppPolicy
-from onyx.db.models import User
-from onyx.external_apps.credentials import app_is_available
-from onyx.external_apps.matching import engine as matching_engine
-from onyx.external_apps.matching.engine import AllMatchedActions
-from onyx.external_apps.matching.engine import MatchedAction
-from onyx.external_apps.matching.engine import recognize_actions
-from onyx.external_apps.matching.engine import WHOLE_DOMAIN_ACTION_TYPE
-from onyx.external_apps.matching.request import ProxiedRequest
-from onyx.sandbox_proxy import request_evaluator as request_evaluator_mod
-from onyx.sandbox_proxy.request_evaluator import ExternalAppRequestEvaluator
+from orbyte.db.enums import EndpointPolicy
+from orbyte.db.enums import ExternalAppType
+from orbyte.db.models import ExternalApp
+from orbyte.db.models import ExternalAppPolicy
+from orbyte.db.models import User
+from orbyte.external_apps.credentials import app_is_available
+from orbyte.external_apps.matching import engine as matching_engine
+from orbyte.external_apps.matching.engine import AllMatchedActions
+from orbyte.external_apps.matching.engine import MatchedAction
+from orbyte.external_apps.matching.engine import recognize_actions
+from orbyte.external_apps.matching.engine import WHOLE_DOMAIN_ACTION_TYPE
+from orbyte.external_apps.matching.request import ProxiedRequest
+from orbyte.sandbox_proxy import request_evaluator as request_evaluator_mod
+from orbyte.sandbox_proxy.request_evaluator import ExternalAppRequestEvaluator
 from tests.external_dependency_unit.craft.db_helpers import make_external_app
 from tests.external_dependency_unit.craft.db_helpers import make_skill
 

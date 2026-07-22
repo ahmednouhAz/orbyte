@@ -4,11 +4,11 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import OAuthAccount
-from onyx.db.models import User
-from onyx.db.skill import affected_user_ids_for_skill
-from onyx.server.features.build.db.sandbox import get_sandbox_user_map
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import OAuthAccount
+from orbyte.db.models import User
+from orbyte.db.skill import affected_user_ids_for_skill
+from orbyte.server.features.build.db.sandbox import get_sandbox_user_map
 from tests.external_dependency_unit.craft.db_helpers import add_user_to_group
 from tests.external_dependency_unit.craft.db_helpers import make_group
 from tests.external_dependency_unit.craft.db_helpers import make_sandbox
@@ -170,7 +170,7 @@ class TestGetSandboxUserMap:
         #
         # ``get_sandbox_user_map`` runs ``select(Sandbox, User).join(User)``.
         # The User model eager-loads ``oauth_accounts`` with ``lazy="joined"``
-        # (see ``onyx/db/models.py::User``). Under SQLAlchemy 2.x, a SELECT
+        # (see ``orbyte/db/models.py::User``). Under SQLAlchemy 2.x, a SELECT
         # that yields ORM entities with joined-eager collections must be
         # iterated through ``.unique()`` whenever the underlying join
         # actually fans out — otherwise ``Result.__iter__`` raises

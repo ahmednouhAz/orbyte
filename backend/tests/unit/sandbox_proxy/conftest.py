@@ -17,15 +17,15 @@ from uuid import uuid4
 
 from mitmproxy import http
 
-from onyx.db.enums import EndpointPolicy
-from onyx.external_apps.matching.engine import AllMatchedActions
-from onyx.external_apps.matching.engine import MatchedAction
-from onyx.sandbox_proxy.addons.gate import _IdentityResolver
-from onyx.sandbox_proxy.credential_injection import CredentialResolver
-from onyx.sandbox_proxy.credential_injection import InjectionContext
-from onyx.sandbox_proxy.identity import ResolvedSandbox
-from onyx.sandbox_proxy.identity import SandboxIdentity
-from onyx.sandbox_proxy.identity import SandboxIPLookup
+from orbyte.db.enums import EndpointPolicy
+from orbyte.external_apps.matching.engine import AllMatchedActions
+from orbyte.external_apps.matching.engine import MatchedAction
+from orbyte.sandbox_proxy.addons.gate import _IdentityResolver
+from orbyte.sandbox_proxy.credential_injection import CredentialResolver
+from orbyte.sandbox_proxy.credential_injection import InjectionContext
+from orbyte.sandbox_proxy.identity import ResolvedSandbox
+from orbyte.sandbox_proxy.identity import SandboxIdentity
+from orbyte.sandbox_proxy.identity import SandboxIPLookup
 
 _SANDBOX_ID = UUID("11111111-1111-1111-1111-111111111111")
 

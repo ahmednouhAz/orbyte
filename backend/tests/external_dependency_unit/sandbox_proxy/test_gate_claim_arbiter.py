@@ -14,15 +14,15 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ApprovalDecision
-from onyx.db.enums import BuildSessionStatus
-from onyx.db.models import ActionApproval
-from onyx.db.models import BuildSession
-from onyx.sandbox_proxy.addons.gate import _IdentityResolver
-from onyx.sandbox_proxy.addons.gate import GateAddon
-from onyx.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from onyx.sandbox_proxy.identity import ResolvedSandbox
-from onyx.sandbox_proxy.request_evaluator import RequestEvaluator
+from orbyte.db.enums import ApprovalDecision
+from orbyte.db.enums import BuildSessionStatus
+from orbyte.db.models import ActionApproval
+from orbyte.db.models import BuildSession
+from orbyte.sandbox_proxy.addons.gate import _IdentityResolver
+from orbyte.sandbox_proxy.addons.gate import GateAddon
+from orbyte.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from orbyte.sandbox_proxy.identity import ResolvedSandbox
+from orbyte.sandbox_proxy.request_evaluator import RequestEvaluator
 from shared_configs.contextvars import POSTGRES_DEFAULT_SCHEMA
 from tests.common.craft.payloads import action_entry
 from tests.external_dependency_unit.conftest import create_test_user

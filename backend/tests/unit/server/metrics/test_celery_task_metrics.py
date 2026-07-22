@@ -6,15 +6,15 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from onyx.background.celery.apps.app_base import on_before_task_publish
-from onyx.server.metrics.celery_task_metrics import _task_start_times
-from onyx.server.metrics.celery_task_metrics import on_celery_task_postrun
-from onyx.server.metrics.celery_task_metrics import on_celery_task_prerun
-from onyx.server.metrics.celery_task_metrics import TASK_COMPLETED
-from onyx.server.metrics.celery_task_metrics import TASK_DURATION
-from onyx.server.metrics.celery_task_metrics import TASK_QUEUE_WAIT
-from onyx.server.metrics.celery_task_metrics import TASK_STARTED
-from onyx.server.metrics.celery_task_metrics import TASKS_ACTIVE
+from orbyte.background.celery.apps.app_base import on_before_task_publish
+from orbyte.server.metrics.celery_task_metrics import _task_start_times
+from orbyte.server.metrics.celery_task_metrics import on_celery_task_postrun
+from orbyte.server.metrics.celery_task_metrics import on_celery_task_prerun
+from orbyte.server.metrics.celery_task_metrics import TASK_COMPLETED
+from orbyte.server.metrics.celery_task_metrics import TASK_DURATION
+from orbyte.server.metrics.celery_task_metrics import TASK_QUEUE_WAIT
+from orbyte.server.metrics.celery_task_metrics import TASK_STARTED
+from orbyte.server.metrics.celery_task_metrics import TASKS_ACTIVE
 
 
 @pytest.fixture(autouse=True)

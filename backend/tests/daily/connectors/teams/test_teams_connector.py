@@ -2,9 +2,9 @@ import time
 
 import pytest
 
-from onyx.access.models import ExternalAccess
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.teams.connector import TeamsConnector
+from orbyte.access.models import ExternalAccess
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.teams.connector import TeamsConnector
 from tests.daily.connectors.teams.models import TeamsThread
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.utils.secret_names import TestSecret
@@ -18,7 +18,7 @@ pytestmark = pytest.mark.secrets(
 TEAMS_THREAD = [
     # Posted in "Public Channel"
     TeamsThread(
-        thread="This is the first message in Onyx-Testing ...This is a reply!This is a second reply.Third.4th.5",
+        thread="This is the first message in Orbyte-Testing ...This is a reply!This is a second reply.Third.4th.5",
         external_access=ExternalAccess(
             external_user_emails=set(),
             external_user_group_ids=set(),
@@ -96,7 +96,7 @@ def teams_credentials(
 def teams_connector(
     teams_credentials: dict[str, str],
 ) -> TeamsConnector:
-    teams_connector = TeamsConnector(teams=["Onyx-Testing"])
+    teams_connector = TeamsConnector(teams=["Orbyte-Testing"])
     teams_connector.load_credentials(teams_credentials)
     return teams_connector
 

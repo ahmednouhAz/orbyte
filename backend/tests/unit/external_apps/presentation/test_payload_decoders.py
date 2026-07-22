@@ -4,10 +4,10 @@ import base64
 from email.message import EmailMessage
 from typing import Any
 
-from onyx.external_apps.presentation.decode import decode_payload
-from onyx.external_apps.presentation.payload_decoders import GmailRawMimeDecoder
-from onyx.external_apps.providers.gmail import GmailAction
-from onyx.external_apps.providers.gmail import GmailProvider
+from orbyte.external_apps.presentation.decode import decode_payload
+from orbyte.external_apps.presentation.payload_decoders import GmailRawMimeDecoder
+from orbyte.external_apps.providers.gmail import GmailAction
+from orbyte.external_apps.providers.gmail import GmailProvider
 
 # The `messages.send` decoder; draft create/update wrap the MIME under `message`.
 _SEND_DECODER = GmailRawMimeDecoder()

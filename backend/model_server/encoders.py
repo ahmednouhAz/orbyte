@@ -8,7 +8,7 @@ from fastapi import HTTPException
 from fastapi import Request
 
 from model_server.utils import simple_log_function_time
-from onyx.utils.logger import setup_logger
+from orbyte.utils.logger import setup_logger
 from shared_configs.enums import EmbedTextType
 from shared_configs.model_server_models import Embedding
 from shared_configs.model_server_models import EmbedRequest

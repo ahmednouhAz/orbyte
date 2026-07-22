@@ -5,10 +5,10 @@ from datetime import timezone
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.connectors.sharepoint.connector import SharepointAuthMethod
-from onyx.db.enums import AccessType
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.models import InputType
+from orbyte.connectors.sharepoint.connector import SharepointAuthMethod
+from orbyte.db.enums import AccessType
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
 from tests.integration.common_utils.managers.credential import CredentialManager

@@ -14,7 +14,7 @@ Args after the script name are forwarded verbatim to celery's CLI.
 
 Example launch.json entry:
     program: ${workspaceFolder}/backend/scripts/dev_celery_reload.py
-    args: ["-A", "onyx.background.celery.versioned_apps.primary", "worker",
+    args: ["-A", "orbyte.background.celery.versioned_apps.primary", "worker",
            "--pool=threads", "-Q", "celery", ...]
     subProcess: true
 """
@@ -28,12 +28,12 @@ from watchfiles import run_process
 
 # Built-in ext-app + craft skill bundles are content shipped to the sandbox,
 # not imported by the worker, so editing them shouldn't trigger a restart.
-# Mirrors BUILTIN_SKILLS_PATH (onyx/skills/built_in.py); kept inline to avoid
-# importing onyx.db into the reloader supervisor just for a path.
+# Mirrors BUILTIN_SKILLS_PATH (orbyte/skills/built_in.py); kept inline to avoid
+# importing orbyte.db into the reloader supervisor just for a path.
 _BACKEND_DIR = Path(__file__).resolve().parents[1]
-_SKILLS_BUNDLE_DIR = str(_BACKEND_DIR / "onyx" / "skills" / "builtin")
+_SKILLS_BUNDLE_DIR = str(_BACKEND_DIR / "orbyte" / "skills" / "builtin")
 _SANDBOX_IMAGE_DIR = str(
-    _BACKEND_DIR / "onyx" / "server" / "features" / "build" / "sandbox" / "image"
+    _BACKEND_DIR / "orbyte" / "server" / "features" / "build" / "sandbox" / "image"
 )
 
 
@@ -46,7 +46,7 @@ def _run(argv: list[str]) -> None:
 
 if __name__ == "__main__":
     celery_argv = ["celery", *sys.argv[1:]]
-    watch_paths = [p for p in ("./onyx", "./ee") if os.path.isdir(p)]
+    watch_paths = [p for p in ("./orbyte", "./ee") if os.path.isdir(p)]
     run_process(
         *watch_paths,
         target=_run,

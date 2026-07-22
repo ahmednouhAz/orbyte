@@ -15,15 +15,15 @@ on a 401, re-reads the current password from the backend and retries once.
 from unittest import mock
 from uuid import uuid4
 
-from onyx.server.features.build.sandbox import serve_transport
-from onyx.server.features.build.sandbox.kubernetes import (
+from orbyte.server.features.build.sandbox import serve_transport
+from orbyte.server.features.build.sandbox.kubernetes import (
     kubernetes_sandbox_manager as k8s_mod,
 )
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from orbyte.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from onyx.server.features.build.sandbox.models import LLMProviderConfig
-from onyx.server.features.build.sandbox.serve_transport import ServeConnectionInfo
+from orbyte.server.features.build.sandbox.models import LLMProviderConfig
+from orbyte.server.features.build.sandbox.serve_transport import ServeConnectionInfo
 
 _STALE_PW = "stale-password"
 _FRESH_PW = "fresh-password"
@@ -58,7 +58,7 @@ def _make_manager() -> KubernetesSandboxManager:
     # in-process serve-transport plumbing.
     mgr = object.__new__(KubernetesSandboxManager)
     mgr._init_serve_state()
-    mgr._namespace = "onyx-sandboxes"
+    mgr._namespace = "orbyte-sandboxes"
     return mgr
 
 
@@ -118,7 +118,7 @@ def test_reuse_existing_pod_clears_stale_tombstone() -> None:
                 api_key="sk-test",
                 api_base=None,
             ),
-            onyx_pat="pat-test",
+            orbyte_pat="pat-test",
         )
 
     assert info.sandbox_id == sandbox_id

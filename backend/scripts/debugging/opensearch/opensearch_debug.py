@@ -2,7 +2,7 @@
 """A utility to interact with OpenSearch.
 
 Example Usage:
-    Assuming running from ~/onyx/
+    Assuming running from ~/orbyte/
         source .venv/bin/activate
         python backend/scripts/debugging/opensearch/opensearch_debug.py --help
         python backend/scripts/debugging/opensearch/opensearch_debug.py list
@@ -17,7 +17,7 @@ Environment Variables:
 
 Dependencies:
     backend/shared_configs/configs.py
-    backend/onyx/document_index/opensearch/client.py
+    backend/orbyte/document_index/opensearch/client.py
 """
 
 import argparse
@@ -26,9 +26,9 @@ import os
 import sys
 from typing import Any
 
-from onyx.document_index.opensearch.client import OpenSearchClient
-from onyx.document_index.opensearch.client import OpenSearchIndexClient
-from onyx.document_index.opensearch.constants import OpenSearchAuthMethod
+from orbyte.document_index.opensearch.client import OpenSearchClient
+from orbyte.document_index.opensearch.client import OpenSearchIndexClient
+from orbyte.document_index.opensearch.constants import OpenSearchAuthMethod
 from shared_configs.configs import MULTI_TENANT
 
 

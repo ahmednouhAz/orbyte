@@ -7,7 +7,7 @@ to a single default Assistant (ID 0) and the associated tool seeding.
 
 from sqlalchemy import text
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
+from orbyte.db.engine.sql_engine import get_session_with_current_tenant
 from tests.integration.common_utils.reset import downgrade_postgres
 from tests.integration.common_utils.reset import upgrade_postgres
 

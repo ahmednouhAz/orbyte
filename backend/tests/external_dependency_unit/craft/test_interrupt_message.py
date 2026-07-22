@@ -14,11 +14,11 @@ from typing import Callable
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import BuildSession
-from onyx.db.models import Sandbox
-from onyx.db.models import User
-from onyx.server.features.build.session.manager import SessionManager
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.models import BuildSession
+from orbyte.db.models import Sandbox
+from orbyte.db.models import User
+from orbyte.server.features.build.session.manager import SessionManager
 from tests.common.craft.stubs import StubSandboxManager
 
 _POLL_TIMEOUT_SECONDS = 2.0

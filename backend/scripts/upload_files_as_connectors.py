@@ -1,10 +1,10 @@
 """
-Script to upload files from a directory as individual file connectors in Onyx.
+Script to upload files from a directory as individual file connectors in Orbyte.
 Each file gets its own connector named after the file.
 
 Usage:
     python upload_files_as_connectors.py --data-dir /path/to/files --api-key YOUR_KEY
-    python upload_files_as_connectors.py --data-dir /path/to/files --api-key YOUR_KEY --api-base http://onyxserver:3000
+    python upload_files_as_connectors.py --data-dir /path/to/files --api-key YOUR_KEY --api-base http://orbyteserver:3000
     python upload_files_as_connectors.py --data-dir /path/to/files --api-key YOUR_KEY --file-glob '*.zip'
 
 Requires:
@@ -224,7 +224,7 @@ def get_authenticated_session(api_key: str) -> requests.Session:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Upload files as individual Onyx file connectors."
+        description="Upload files as individual Orbyte file connectors."
     )
     parser.add_argument(
         "--data-dir",
@@ -234,7 +234,7 @@ def main() -> None:
     parser.add_argument(
         "--api-base",
         default="http://localhost:3000",
-        help="Base URL for the Onyx API (default: http://localhost:3000).",
+        help="Base URL for the Orbyte API (default: http://localhost:3000).",
     )
     parser.add_argument(
         "--api-key",

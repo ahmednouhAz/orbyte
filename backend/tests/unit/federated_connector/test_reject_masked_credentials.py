@@ -1,7 +1,7 @@
 import pytest
 
-from onyx.configs.constants import MASK_CREDENTIAL_CHAR
-from onyx.utils.encryption import reject_masked_credentials
+from orbyte.configs.constants import MASK_CREDENTIAL_CHAR
+from orbyte.utils.encryption import reject_masked_credentials
 
 
 class TestRejectMaskedCredentials:

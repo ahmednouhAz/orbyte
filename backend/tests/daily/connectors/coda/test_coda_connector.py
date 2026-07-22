@@ -5,11 +5,11 @@ from typing import Any
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.coda.connector import CodaConnector
-from onyx.connectors.exceptions import CredentialInvalidError
-from onyx.connectors.models import Document
-from onyx.connectors.models import HierarchyNode
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.coda.connector import CodaConnector
+from orbyte.connectors.exceptions import CredentialInvalidError
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import HierarchyNode
 
 
 def connector_doc_generator(

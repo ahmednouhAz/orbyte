@@ -1,6 +1,6 @@
 """Preview + compare harness for the build-session Markdown -> DOCX converter.
 
-This is a developer tool for tuning ``onyx.server.features.build.session.md_to_docx``
+This is a developer tool for tuning ``orbyte.server.features.build.session.md_to_docx``
 toward the visual output that pandoc/pypandoc produces. It can:
 
 * ``generate`` a ``.docx`` from a Markdown file using the in-tree mistune
@@ -39,7 +39,7 @@ from docx import Document
 from docx.document import Document as DocxDocument
 from docx.oxml.ns import qn
 
-from onyx.server.features.build.session.md_to_docx import markdown_to_docx_bytes
+from orbyte.server.features.build.session.md_to_docx import markdown_to_docx_bytes
 
 _PYPANDOC_INSTALL_HINT = (
     "pypandoc not available; skipping the pandoc reference output. Re-run under "

@@ -5,9 +5,9 @@ from datetime import timezone
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
+from orbyte.configs.constants import DocumentSource
+from orbyte.connectors.models import InputType
+from orbyte.db.enums import AccessType
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
 from tests.integration.common_utils.managers.credential import CredentialManager
@@ -34,15 +34,15 @@ def _get_github_test_tokens() -> list[str]:
     Returns a list of GitHub tokens to run the GitHub connector suite against.
 
     Minimal setup:
-    - Set ONYX_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN (token1)
+    - Set ORBYTE_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN (token1)
     Optional:
-    - Set ONYX_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC (token2 / classic)
+    - Set ORBYTE_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC (token2 / classic)
 
     If the classic token is provided, the GitHub suite will run twice (once per token).
     """
-    token_1 = os.environ.get("ONYX_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN")
+    token_1 = os.environ.get("ORBYTE_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN")
     # Prefer the new "classic" name, but keep backward compatibility.
-    token_2 = os.environ.get("ONYX_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC")
+    token_2 = os.environ.get("ORBYTE_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC")
 
     tokens: list[str] = []
     if token_1:
@@ -58,8 +58,8 @@ def github_access_token(request: pytest.FixtureRequest) -> str:
     if not tokens:
         pytest.skip(
             "Skipping GitHub tests due to missing env vars "
-            "ONYX_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN and "
-            "ONYX_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC"
+            "ORBYTE_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN and "
+            "ORBYTE_GITHUB_PERMISSION_SYNC_TEST_ACCESS_TOKEN_CLASSIC"
         )
     return request.param
 
@@ -82,12 +82,12 @@ def github_test_env_setup(
     reset_all()
 
     # Get user emails from environment (with fallbacks)
-    admin_email = os.environ.get("ONYX_GITHUB_ADMIN_EMAIL", "admin@example.com")
+    admin_email = os.environ.get("ORBYTE_GITHUB_ADMIN_EMAIL", "admin@example.com")
     test_user_1_email = os.environ.get(
-        "ONYX_GITHUB_TEST_USER_1_EMAIL", "subash@onyx.app"
+        "ORBYTE_GITHUB_TEST_USER_1_EMAIL", "subash@onyx.app"
     )
     test_user_2_email = os.environ.get(
-        "ONYX_GITHUB_TEST_USER_2_EMAIL", "msubash203@gmail.com"
+        "ORBYTE_GITHUB_TEST_USER_2_EMAIL", "msubash203@gmail.com"
     )
 
     if not admin_email or not test_user_1_email or not test_user_2_email:

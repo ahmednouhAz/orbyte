@@ -21,25 +21,25 @@ from unittest.mock import patch
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.run_targeted_reindex import process_targets_for_cc_pair
-from onyx.connectors.interfaces import Resolver
-from onyx.connectors.models import ConnectorFailure
-from onyx.connectors.models import Document
-from onyx.connectors.models import DocumentFailure
-from onyx.connectors.models import DocumentSource
-from onyx.connectors.models import HierarchyNode
-from onyx.connectors.models import TextSection
-from onyx.db.enums import IndexingStatus
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import IndexAttempt
-from onyx.db.models import IndexAttemptError
-from onyx.db.models import TargetedReindexJob
-from onyx.db.models import TargetedReindexJobTarget
-from onyx.db.search_settings import get_current_search_settings
-from onyx.db.targeted_reindex import create_targeted_reindex_job
-from onyx.db.targeted_reindex import resolve_error_ids_to_targets
-from onyx.db.targeted_reindex import targets_to_connector_failures
-from onyx.db.targeted_reindex import TargetSpec
+from orbyte.background.indexing.run_targeted_reindex import process_targets_for_cc_pair
+from orbyte.connectors.interfaces import Resolver
+from orbyte.connectors.models import ConnectorFailure
+from orbyte.connectors.models import Document
+from orbyte.connectors.models import DocumentFailure
+from orbyte.connectors.models import DocumentSource
+from orbyte.connectors.models import HierarchyNode
+from orbyte.connectors.models import TextSection
+from orbyte.db.enums import IndexingStatus
+from orbyte.db.models import ConnectorCredentialPair
+from orbyte.db.models import IndexAttempt
+from orbyte.db.models import IndexAttemptError
+from orbyte.db.models import TargetedReindexJob
+from orbyte.db.models import TargetedReindexJobTarget
+from orbyte.db.search_settings import get_current_search_settings
+from orbyte.db.targeted_reindex import create_targeted_reindex_job
+from orbyte.db.targeted_reindex import resolve_error_ids_to_targets
+from orbyte.db.targeted_reindex import targets_to_connector_failures
+from orbyte.db.targeted_reindex import TargetSpec
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.indexing_helpers import cleanup_cc_pair
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
@@ -143,7 +143,7 @@ def test_unsupported_connector_marks_all_targets_failed(
     )
 
     with patch(
-        "onyx.background.indexing.run_targeted_reindex.instantiate_connector",
+        "orbyte.background.indexing.run_targeted_reindex.instantiate_connector",
         return_value=_StubBaseConnector(),
     ):
         result = process_targets_for_cc_pair(
@@ -178,11 +178,11 @@ def test_resolver_yields_all_docs_lands_them_all(
 
     with (
         patch(
-            "onyx.background.indexing.run_targeted_reindex.instantiate_connector",
+            "orbyte.background.indexing.run_targeted_reindex.instantiate_connector",
             return_value=stub,
         ),
         patch(
-            "onyx.background.indexing.run_targeted_reindex.run_indexing_pipeline",
+            "orbyte.background.indexing.run_targeted_reindex.run_indexing_pipeline",
             return_value=fake_pipeline_result,
         ),
     ):
@@ -225,11 +225,11 @@ def test_connector_failure_yields_route_to_failed_doc_ids(
 
     with (
         patch(
-            "onyx.background.indexing.run_targeted_reindex.instantiate_connector",
+            "orbyte.background.indexing.run_targeted_reindex.instantiate_connector",
             return_value=stub,
         ),
         patch(
-            "onyx.background.indexing.run_targeted_reindex.run_indexing_pipeline",
+            "orbyte.background.indexing.run_targeted_reindex.run_indexing_pipeline",
             return_value=fake_pipeline_result,
         ),
     ):
@@ -267,11 +267,11 @@ def test_doc_never_yielded_is_marked_failed(
 
     with (
         patch(
-            "onyx.background.indexing.run_targeted_reindex.instantiate_connector",
+            "orbyte.background.indexing.run_targeted_reindex.instantiate_connector",
             return_value=stub,
         ),
         patch(
-            "onyx.background.indexing.run_targeted_reindex.run_indexing_pipeline",
+            "orbyte.background.indexing.run_targeted_reindex.run_indexing_pipeline",
             return_value=fake_pipeline_result,
         ),
     ):

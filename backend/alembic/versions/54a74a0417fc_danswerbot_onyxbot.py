@@ -1,4 +1,4 @@
-"""danswerbot -> onyxbot
+"""danswerbot -> orbytebot
 
 Revision ID: 54a74a0417fc
 Revises: 94dc3d0236f8
@@ -16,8 +16,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.alter_column("chat_session", "danswerbot_flow", new_column_name="onyxbot_flow")
+    op.alter_column("chat_session", "danswerbot_flow", new_column_name="orbytebot_flow")
 
 
 def downgrade() -> None:
-    op.alter_column("chat_session", "onyxbot_flow", new_column_name="danswerbot_flow")
+    op.alter_column("chat_session", "orbytebot_flow", new_column_name="danswerbot_flow")

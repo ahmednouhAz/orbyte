@@ -8,7 +8,7 @@ import os
 import httpx
 import pytest
 
-from onyx.server.documents.models import DocumentSource
+from orbyte.server.documents.models import DocumentSource
 from tests.integration.common_utils.managers.credential import CredentialManager
 from tests.integration.common_utils.managers.user import DATestUser
 from tests.integration.common_utils.managers.user import UserManager

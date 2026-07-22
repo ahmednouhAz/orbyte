@@ -4,18 +4,18 @@ from typing import Any
 
 import pytest
 
-from onyx.connectors.gmail.connector import GmailConnector
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.gmail.connector import GmailConnector
+from orbyte.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_AUTHENTICATION_METHOD,
 )
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_DICT_SERVICE_ACCOUNT_KEY,
 )
-from onyx.connectors.google_utils.shared_constants import DB_CREDENTIALS_DICT_TOKEN_KEY
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_utils.shared_constants import DB_CREDENTIALS_DICT_TOKEN_KEY
+from orbyte.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_PRIMARY_ADMIN_KEY,
 )
-from onyx.connectors.google_utils.shared_constants import (
+from orbyte.connectors.google_utils.shared_constants import (
     GoogleOAuthAuthenticationMethod,
 )
 from tests.load_env_vars import load_env_vars
@@ -39,7 +39,7 @@ def google_gmail_oauth_connector_factory(
     test_secrets: dict[TestSecret, str],
 ) -> Callable[..., GmailConnector]:
     def _connector_factory(
-        primary_admin_email: str = "admin@onyx-test.com",
+        primary_admin_email: str = "admin@orbyte-test.com",
     ) -> GmailConnector:
         print("Creating GmailConnector with OAuth credentials")
         connector = GmailConnector()
@@ -63,7 +63,7 @@ def google_gmail_service_acct_connector_factory(
     test_secrets: dict[TestSecret, str],
 ) -> Callable[..., GmailConnector]:
     def _connector_factory(
-        primary_admin_email: str = "admin@onyx-test.com",
+        primary_admin_email: str = "admin@orbyte-test.com",
     ) -> GmailConnector:
         print("Creating GmailConnector with service account credentials")
         connector = GmailConnector()

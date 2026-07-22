@@ -4,10 +4,10 @@ from datetime import timezone
 
 import pytest
 
-from onyx.connectors.models import InputType
-from onyx.connectors.slack.models import ChannelType
-from onyx.db.enums import AccessType
-from onyx.server.documents.models import DocumentSource
+from orbyte.connectors.models import InputType
+from orbyte.connectors.slack.models import ChannelType
+from orbyte.db.enums import AccessType
+from orbyte.server.documents.models import DocumentSource
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
 from tests.integration.common_utils.managers.credential import CredentialManager
@@ -210,7 +210,7 @@ def test_slack_group_permission_sync(
     slack_perm_sync_test_setup: tuple[ChannelType, ChannelType],
 ) -> None:
     """
-    This test ensures that permission sync overrides onyx group access.
+    This test ensures that permission sync overrides orbyte group access.
     """
     public_channel, private_channel = slack_perm_sync_test_setup
 

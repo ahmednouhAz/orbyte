@@ -8,14 +8,14 @@ End-to-end tests that verify:
 4. Precedence: custom persona files take priority over project files when
    the chat session is inside a project.
 
-These tests run against a real Onyx deployment (all services running).
+These tests run against a real Orbyte deployment (all services running).
 File processing is asynchronous, so we poll the file status endpoint
 until files reach COMPLETED before chatting.
 """
 
 import time
 
-from onyx.db.enums import UserFileStatus
+from orbyte.db.enums import UserFileStatus
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.constants import MAX_DELAY
 from tests.integration.common_utils.http_client import client

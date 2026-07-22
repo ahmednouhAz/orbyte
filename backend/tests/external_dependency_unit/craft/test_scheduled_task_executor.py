@@ -28,27 +28,27 @@ from uuid import UUID
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.scheduled_tasks.tasks import (
+from orbyte.background.celery.tasks.scheduled_tasks.tasks import (
     cleanup_stuck_scheduled_runs,
 )
-from onyx.background.celery.tasks.scheduled_tasks.tasks import (
+from orbyte.background.celery.tasks.scheduled_tasks.tasks import (
     dispatch_due_scheduled_tasks,
 )
-from onyx.db.enums import SandboxStatus
-from onyx.db.enums import ScheduledTaskErrorClass
-from onyx.db.enums import ScheduledTaskRunStatus
-from onyx.db.enums import ScheduledTaskStatus
-from onyx.db.enums import ScheduledTaskTriggerSource
-from onyx.db.models import Sandbox
-from onyx.db.models import ScheduledTask
-from onyx.db.models import ScheduledTaskRun
-from onyx.db.models import User
-from onyx.server.features.build.sandbox.event_schema import Error
-from onyx.server.features.build.sandbox.event_schema import PromptResponse
-from onyx.server.features.build.sandbox.event_schema import TURN_ERROR_CODE_TIMEOUT
-from onyx.server.features.build.sandbox.event_schema import TURN_ERROR_CODE_TRANSPORT
-from onyx.server.features.build.scheduled_tasks.executor import run_scheduled_task_logic
-from onyx.server.features.build.session.manager import SessionManager
+from orbyte.db.enums import SandboxStatus
+from orbyte.db.enums import ScheduledTaskErrorClass
+from orbyte.db.enums import ScheduledTaskRunStatus
+from orbyte.db.enums import ScheduledTaskStatus
+from orbyte.db.enums import ScheduledTaskTriggerSource
+from orbyte.db.models import Sandbox
+from orbyte.db.models import ScheduledTask
+from orbyte.db.models import ScheduledTaskRun
+from orbyte.db.models import User
+from orbyte.server.features.build.sandbox.event_schema import Error
+from orbyte.server.features.build.sandbox.event_schema import PromptResponse
+from orbyte.server.features.build.sandbox.event_schema import TURN_ERROR_CODE_TIMEOUT
+from orbyte.server.features.build.sandbox.event_schema import TURN_ERROR_CODE_TRANSPORT
+from orbyte.server.features.build.scheduled_tasks.executor import run_scheduled_task_logic
+from orbyte.server.features.build.session.manager import SessionManager
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from tests.common.craft.stubs import StubSandboxManager
@@ -306,7 +306,7 @@ def test_timeout_error_event_marks_run_failed_with_timeout_class(
     """Regression for ENG-4234: terminal timeout Error → FAILED/timeout."""
     # Bypass skill-payload: encrypted ExternalApp creds break local MIT decryption.
     monkeypatch.setattr(
-        "onyx.server.features.build.session.manager.build_user_skills_payload",
+        "orbyte.server.features.build.session.manager.build_user_skills_payload",
         lambda *_: ("", "", {}),
     )
 
@@ -342,7 +342,7 @@ def test_prompt_response_marks_run_succeeded(
     """Happy-path regression: clean PromptResponse → SUCCEEDED, not FAILED."""
     # Bypass skill-payload: encrypted ExternalApp creds break local MIT decryption.
     monkeypatch.setattr(
-        "onyx.server.features.build.session.manager.build_user_skills_payload",
+        "orbyte.server.features.build.session.manager.build_user_skills_payload",
         lambda *_: ("", "", {}),
     )
 
@@ -379,7 +379,7 @@ def test_scheduled_run_threads_budget_as_turn_timeout(
     timeout so the generic 15-min prompt timeout can't undercut the run budget."""
     # Bypass skill-payload: encrypted ExternalApp creds break local MIT decryption.
     monkeypatch.setattr(
-        "onyx.server.features.build.session.manager.build_user_skills_payload",
+        "orbyte.server.features.build.session.manager.build_user_skills_payload",
         lambda *_: ("", "", {}),
     )
 
@@ -420,7 +420,7 @@ def test_cancelled_prompt_response_marks_run_failed(
     """
     # Bypass skill-payload: encrypted ExternalApp creds break local MIT decryption.
     monkeypatch.setattr(
-        "onyx.server.features.build.session.manager.build_user_skills_payload",
+        "orbyte.server.features.build.session.manager.build_user_skills_payload",
         lambda *_: ("", "", {}),
     )
 
@@ -454,7 +454,7 @@ def test_transport_error_event_marks_run_failed_with_agent_exception_class(
     """Non-timeout terminal Error → FAILED with error_class=agent_exception."""
     # Bypass skill-payload: encrypted ExternalApp creds break local MIT decryption.
     monkeypatch.setattr(
-        "onyx.server.features.build.session.manager.build_user_skills_payload",
+        "orbyte.server.features.build.session.manager.build_user_skills_payload",
         lambda *_: ("", "", {}),
     )
 
@@ -490,7 +490,7 @@ def test_stream_without_prompt_response_marks_run_failed(
     """Stream ending with no PromptResponse (and no Error) → FAILED, not SUCCEEDED."""
     # Bypass skill-payload: encrypted ExternalApp creds break local MIT decryption.
     monkeypatch.setattr(
-        "onyx.server.features.build.session.manager.build_user_skills_payload",
+        "orbyte.server.features.build.session.manager.build_user_skills_payload",
         lambda *_: ("", "", {}),
     )
 
@@ -523,7 +523,7 @@ def test_run_fails_when_wake_fails(
     backend is bound so SessionManager construction can't raise and satisfy the
     assertion via the same broad handler without exercising the timeout path."""
     monkeypatch.setattr(
-        "onyx.server.features.build.scheduled_tasks.executor.PROVISIONING_WAIT_SECONDS",
+        "orbyte.server.features.build.scheduled_tasks.executor.PROVISIONING_WAIT_SECONDS",
         0,
     )
 

@@ -4,7 +4,7 @@ from collections.abc import Iterator
 
 import pytest
 
-from onyx.server.features.build import configs
+from orbyte.server.features.build import configs
 
 
 @pytest.fixture(autouse=True)
@@ -17,7 +17,7 @@ def _restore_configs() -> Iterator[None]:
     os.environ.pop("SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS", None)
     os.environ.pop("SANDBOX_CONTAINER_IMAGE", None)
     os.environ.pop("SANDBOX_IDLE_CLEANUP_INTERVAL_SECONDS", None)
-    os.environ.pop("ONYX_VERSION", None)
+    os.environ.pop("ORBYTE_VERSION", None)
     importlib.reload(configs)
 
 
@@ -66,11 +66,11 @@ def test_sandbox_backend_unknown_fails_fast(
     assert "docker" in str(exc_info.value)
 
 
-def test_sandbox_image_fallback_is_not_derived_from_onyx_version(
+def test_sandbox_image_fallback_is_not_derived_from_orbyte_version(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("SANDBOX_CONTAINER_IMAGE", raising=False)
-    monkeypatch.setenv("ONYX_VERSION", "v4.1.2")
+    monkeypatch.setenv("ORBYTE_VERSION", "v4.1.2")
 
     reloaded = importlib.reload(configs)
 
@@ -80,7 +80,7 @@ def test_sandbox_image_fallback_is_not_derived_from_onyx_version(
 def test_sandbox_image_override_wins(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("ONYX_VERSION", "v4.1.2")
+    monkeypatch.setenv("ORBYTE_VERSION", "v4.1.2")
     monkeypatch.setenv("SANDBOX_CONTAINER_IMAGE", "onyxdotapp/sandbox:ctx-123")
 
     reloaded = importlib.reload(configs)
@@ -91,7 +91,7 @@ def test_sandbox_image_override_wins(
 def test_blank_sandbox_image_override_does_not_emit_blank_image(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("ONYX_VERSION", "v4.1.2")
+    monkeypatch.setenv("ORBYTE_VERSION", "v4.1.2")
     monkeypatch.setenv("SANDBOX_CONTAINER_IMAGE", "  ")
 
     reloaded = importlib.reload(configs)
