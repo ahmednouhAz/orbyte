@@ -223,3 +223,7 @@ class ChatTurnSetup:
     slack_context: SlackContext | None
     custom_tool_additional_headers: dict[str, str] | None
     mcp_headers: dict[str, str] | None
+    # Citations from the nearest prior assistant message, so a follow-up that
+    # doesn't run a fresh search can still resolve a repeated [1]-style
+    # reference instead of producing an answer with no clickable source.
+    carried_over_citations: CitationMapping

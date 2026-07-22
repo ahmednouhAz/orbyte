@@ -649,6 +649,7 @@ def run_llm_loop(
     include_citations: bool = True,
     all_injected_file_metadata: dict[str, FileToolMetadata] | None = None,
     inject_memories_in_prompt: bool = True,
+    carried_over_citations: CitationMapping | None = None,
 ) -> None:
     with trace(
         "run_llm_loop",
@@ -682,6 +683,17 @@ def run_llm_loop(
                 CitationMode.HYPERLINK if include_citations else CitationMode.REMOVE
             )
         )
+
+        # Seed with the previous turn's citations (if any) so a follow-up that
+        # doesn't run a fresh search - e.g. "which document was that from?" -
+        # can still resolve a [1]-style reference the model repeats from
+        # memory instead of producing an answer with no clickable source.
+        # get_next_citation_number() (used below when tools run) already
+        # derives its count from citation_processor.citation_to_doc, so any
+        # new search this turn is allocated fresh numbers after these -
+        # no collision with the carried-over ones.
+        if carried_over_citations:
+            citation_processor.update_citation_mapping(carried_over_citations)
 
         # Add project file citation mappings if project files are present
         project_citation_mapping: CitationMapping = {}

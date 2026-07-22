@@ -34,6 +34,7 @@ from orbyte.chat.chat_utils import create_chat_session_from_request
 from orbyte.chat.chat_utils import get_custom_agent_prompt
 from orbyte.chat.chat_utils import is_last_assistant_message_clarification
 from orbyte.chat.chat_utils import load_all_chat_files
+from orbyte.chat.citation_utils import build_carried_over_citation_mapping
 from orbyte.chat.compression import calculate_total_history_tokens
 from orbyte.chat.compression import compress_chat_history
 from orbyte.chat.compression import find_summary_for_branch
@@ -728,6 +729,14 @@ def build_chat_turn(
             "The new message sent is not on the latest mainline of messages"
         )
 
+    # Resolve the nearest prior assistant message's citations (if any) so a
+    # follow-up that doesn't trigger a fresh search - e.g. "which document
+    # was that from?" - can still resolve a repeated [1]-style reference
+    # instead of producing an answer with no clickable source.
+    carried_over_citations = build_carried_over_citation_mapping(
+        chat_history=chat_history, db_session=db_session
+    )
+
     # ── Query Processing hook + user message ─────────────────────────────────
     # Skipped on regeneration (parent is USER type): message already exists/was accepted.
     if parent_message.message_type == MessageType.USER:
@@ -1027,6 +1036,7 @@ def build_chat_turn(
         slack_context=slack_context,
         custom_tool_additional_headers=custom_tool_additional_headers,
         mcp_headers=mcp_headers,
+        carried_over_citations=carried_over_citations,
     )
 
 
@@ -1285,6 +1295,7 @@ def _run_models(
                     include_citations=setup.new_msg_req.include_citations,
                     all_injected_file_metadata=setup.all_injected_file_metadata,
                     inject_memories_in_prompt=user.use_memories,
+                    carried_over_citations=setup.carried_over_citations,
                 )
 
             model_succeeded[model_idx] = True

@@ -1,10 +1,49 @@
 import re
+from typing import Sequence
+
+from sqlalchemy.orm import Session
 
 from orbyte.chat.citation_processor import CitationMapping
 from orbyte.chat.citation_processor import DynamicCitationProcessor
+from orbyte.configs.constants import MessageType
 from orbyte.context.search.models import SearchDocsResponse
+from orbyte.db.chat import get_db_search_doc_by_id
+from orbyte.db.chat import translate_db_search_doc_to_saved_search_doc
+from orbyte.db.models import ChatMessage
 from orbyte.tools.built_in_tools import CITEABLE_TOOLS_NAMES
 from orbyte.tools.models import ToolResponse
+
+
+def build_carried_over_citation_mapping(
+    chat_history: Sequence[ChatMessage],
+    db_session: Session,
+) -> CitationMapping:
+    """Resolve the nearest prior assistant message's saved citations so a
+    follow-up turn that doesn't run a fresh search (e.g. "which document was
+    that from?") can still resolve a [1]-style reference the model repeats
+    from memory, instead of silently producing an uncited/unclickable answer.
+
+    Walks `chat_history` backwards (it's already the linear chain leading up
+    to the new message) and returns the first assistant message's citation
+    mapping it finds. Returns an empty mapping if none exists yet.
+    """
+    for message in reversed(chat_history):
+        if message.message_type != MessageType.ASSISTANT:
+            continue
+        if not message.citations:
+            continue
+
+        citation_mapping: CitationMapping = {}
+        for citation_num, search_doc_id in message.citations.items():
+            db_search_doc = get_db_search_doc_by_id(search_doc_id, db_session)
+            if db_search_doc is None:
+                continue
+            citation_mapping[int(citation_num)] = (
+                translate_db_search_doc_to_saved_search_doc(db_search_doc)
+            )
+        return citation_mapping
+
+    return {}
 
 
 def update_citation_processor_from_tool_response(
