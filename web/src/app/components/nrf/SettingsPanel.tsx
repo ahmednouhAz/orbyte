@@ -88,13 +88,13 @@ const BackgroundThumbnail = ({
 export const SettingsPanel = ({
   settingsOpen,
   toggleSettings,
-  handleUseOnyxToggle,
+  handleUseOrbyteToggle,
 }: {
   settingsOpen: boolean;
   toggleSettings: () => void;
-  handleUseOnyxToggle: (checked: boolean) => void;
+  handleUseOrbyteToggle: (checked: boolean) => void;
 }) => {
-  const { useOnyxAsNewTab } = useNRFPreferences();
+  const { useOrbyteAsNewTab } = useNRFPreferences();
   const { theme, setTheme } = useTheme();
   const { user, updateUserChatBackground, updateUserThemePreference } =
     useUser();
@@ -182,8 +182,8 @@ export const SettingsPanel = ({
             <div className="flex flex-col gap-1 bg-background-tint-01 rounded-2xl px-4">
               <SettingRow label="Use Orbyte as new tab page">
                 <Switch
-                  checked={useOnyxAsNewTab}
-                  onCheckedChange={handleUseOnyxToggle}
+                  checked={useOrbyteAsNewTab}
+                  onCheckedChange={handleUseOrbyteToggle}
                 />
               </SettingRow>
             </div>

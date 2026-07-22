@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 
 test.describe("Default App Mode", () => {
   test("loads persisted Search mode after refresh", async ({ page }) => {
@@ -8,7 +8,7 @@ test.describe("Default App Mode", () => {
     await loginAs(page, "admin");
 
     // Arrange
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new OrbyteApiClient(page.request);
     const ccPairId = await apiClient.createFileConnector(
       "Default App Mode Test Connector"
     );

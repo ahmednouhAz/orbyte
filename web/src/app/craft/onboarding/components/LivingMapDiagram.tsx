@@ -206,7 +206,7 @@ const EDGES: MapEdge[] = [
 ];
 
 const TERMINAL_LINES: string[] = [
-  '$ onyx search "q2 invoices"',
+  '$ orbyte search "q2 invoices"',
   "$ python analyze_spend.py",
   "$ write outputs/summary.md",
 ];

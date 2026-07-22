@@ -3,7 +3,7 @@
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { SvgArrowExchange, SvgSimpleLoader } from "@opal/icons";
-import { SvgOnyxLogo } from "@opal/logos";
+import { SvgOrbyteLogo } from "@opal/logos";
 import { Button } from "@opal/components";
 import Modal from "@/refresh-components/Modal";
 import { useModalClose } from "@/refresh-components/contexts/ModalContext";
@@ -96,7 +96,7 @@ export function WebSearchSetupModal({ state }: WebSearchSetupModalProps) {
   const requiresApiKey =
     category === "search"
       ? searchProviderRequiresApiKey(providerType)
-      : providerType !== "onyx_web_crawler";
+      : providerType !== "orbyte_web_crawler";
 
   const configField =
     category === "search"
@@ -215,7 +215,7 @@ export function WebSearchSetupModal({ state }: WebSearchSetupModalProps) {
               <Modal.Header
                 icon={icon}
                 moreIcon1={SvgArrowExchange}
-                moreIcon2={SvgOnyxLogo}
+                moreIcon2={SvgOrbyteLogo}
                 title={
                   isEditing
                     ? `Configure ${providerLabel}`

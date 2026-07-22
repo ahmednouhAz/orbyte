@@ -1,7 +1,7 @@
 "use client";
 
 import { JSX } from "react";
-import { MinimalOnyxDocument, OnyxDocument } from "@/lib/search/interfaces";
+import { MinimalOrbyteDocument, OrbyteDocument } from "@/lib/search/interfaces";
 import { SourceIcon } from "../SourceIcon";
 import { WebResultIcon } from "../WebResultIcon";
 import Text from "@/refresh-components/texts/Text";
@@ -123,8 +123,8 @@ export const buildDocumentSummaryDisplay = (
 };
 
 interface CompactDocumentCardProps {
-  document: OnyxDocument;
-  updatePresentingDocument: (document: MinimalOnyxDocument) => void;
+  document: OrbyteDocument;
+  updatePresentingDocument: (document: MinimalOrbyteDocument) => void;
 }
 
 export function CompactDocumentCard({

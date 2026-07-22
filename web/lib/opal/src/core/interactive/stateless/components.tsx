@@ -9,7 +9,7 @@ import type {
   InteractiveContract,
   InteractiveVariant,
   InteractiveProminence,
-} from "@onyx-ai/shared/contracts";
+} from "@orbyte-ai/shared/contracts";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -17,7 +17,7 @@ import type {
 
 // `variant`/`prominence`/`disabled` come from the shared InteractiveContract. Opal
 // re-exports the unions under its `InteractiveStateless*` names so web code imports
-// the Interactive family from `@opal/core`, not `@onyx-ai/shared`. `interaction`
+// the Interactive family from `@opal/core`, not `@orbyte-ai/shared`. `interaction`
 // stays web-local — `hover` has no meaning on touch.
 type InteractiveStatelessVariant = InteractiveVariant;
 type InteractiveStatelessProminence = InteractiveProminence;

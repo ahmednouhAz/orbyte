@@ -15,7 +15,7 @@ import usePromptShortcuts from "@/hooks/usePromptShortcuts";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import useFilter from "@/hooks/useFilter";
 import useCCPairs from "@/hooks/useCCPairs";
-import { MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { MinimalOrbyteDocument } from "@/lib/search/interfaces";
 import { ChatState, MAX_QUEUED_MESSAGES } from "@/app/app/interfaces";
 import { useQueuedMessageNavigation } from "@/hooks/useQueuedMessageNavigation";
 import { useForcedTools } from "@/lib/hooks/useForcedTools";
@@ -80,7 +80,7 @@ export interface AppInputBarProps {
   handleFileUpload: (files: File[]) => void;
   filterManager: FilterManager;
   deepResearchEnabled: boolean;
-  setPresentingDocument?: (document: MinimalOnyxDocument) => void;
+  setPresentingDocument?: (document: MinimalOrbyteDocument) => void;
   toggleDeepResearch: () => void;
   isMultiModelActive?: boolean;
   disabled: boolean;
@@ -282,12 +282,12 @@ const AppInputBar = React.memo(
     // A file isn't queryable until indexing completes, so gate send on it.
     const hasIndexingFiles = currentIndexingFiles.length > 0;
 
-    // Convert ProjectFile to MinimalOnyxDocument format for viewing
+    // Convert ProjectFile to MinimalOrbyteDocument format for viewing
     const handleFileClick = useCallback(
       (file: ProjectFile) => {
         if (!setPresentingDocument) return;
 
-        const documentForViewer: MinimalOnyxDocument = {
+        const documentForViewer: MinimalOrbyteDocument = {
           document_id: `project_file__${file.file_id}`,
           semantic_identifier: file.name,
         };
@@ -672,7 +672,7 @@ const AppInputBar = React.memo(
                 ? "Waiting for attached file(s) to finish processing"
                 : undefined
             }
-            id="onyx-chat-input-send-button"
+            id="orbyte-chat-input-send-button"
             icon={
               isClassifying
                 ? SvgSimpleLoader
@@ -717,7 +717,7 @@ const AppInputBar = React.memo(
         <Disabled disabled={disabled} allowClick>
           <div
             ref={containerRef}
-            id="onyx-chat-input"
+            id="orbyte-chat-input"
             className={cn(
               "relative w-full flex flex-col shadow-box-01 bg-background-neutral-00 rounded-16"
               // # Note (from @raunakab):
@@ -769,7 +769,7 @@ const AppInputBar = React.memo(
                   >
                     <div
                       ref={inputRef}
-                      id="onyx-chat-input-textbox"
+                      id="orbyte-chat-input-textbox"
                       role="textbox"
                       aria-label="Message input"
                       contentEditable={!disabled}
@@ -895,7 +895,7 @@ const AppInputBar = React.memo(
                   />
                   <Button
                     disabled={!message || isClassifying || hasUploadingFiles}
-                    id="onyx-chat-input-send-button"
+                    id="orbyte-chat-input-send-button"
                     icon={isClassifying ? SvgSimpleLoader : SvgSearch}
                     onClick={() => {
                       if (chatState == "streaming") {

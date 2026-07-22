@@ -65,7 +65,7 @@ import {
   SvgEditBig,
   SvgFolderPlus,
   SvgMoreHorizontal,
-  SvgOnyxOctagon,
+  SvgOrbyteOctagon,
   SvgSearchMenu,
   SvgSettings,
 } from "@opal/icons";
@@ -245,17 +245,17 @@ export default function AppSidebar() {
   const [showMoveCustomAgentModal, setShowMoveCustomAgentModal] =
     useState(false);
 
-  // Check if Onyx Craft is enabled via settings (backed by PostHog feature flag)
+  // Check if Orbyte Craft is enabled via settings (backed by PostHog feature flag)
   // Only explicit true enables the feature; false or undefined = disabled
-  const isOnyxCraftEnabled = combinedSettingsData?.onyx_craft_enabled === true;
+  const isOrbyteCraftEnabled = combinedSettingsData?.orbyte_craft_enabled === true;
 
   // Fetch notifications for build mode intro
   const { notifications, refresh: mutateNotifications } = useNotifications({
-    enabled: isOnyxCraftEnabled,
+    enabled: isOrbyteCraftEnabled,
   });
 
-  // Find build_mode feature announcement notification (only if Onyx Craft is enabled)
-  const buildModeNotification = isOnyxCraftEnabled
+  // Find build_mode feature announcement notification (only if Orbyte Craft is enabled)
+  const buildModeNotification = isOrbyteCraftEnabled
     ? notifications?.find(
         (n) =>
           n.notif_type === NotificationType.FEATURE_ANNOUNCEMENT &&
@@ -279,7 +279,7 @@ export default function AppSidebar() {
   const hasTenantModal = !!(newTenantInfo || invitationInfo);
   useEffect(() => {
     if (
-      isOnyxCraftEnabled &&
+      isOrbyteCraftEnabled &&
       buildModeNotification &&
       !hasAutoTriggeredRef.current &&
       !hasTenantModal &&
@@ -290,7 +290,7 @@ export default function AppSidebar() {
     }
   }, [
     buildModeNotification,
-    isOnyxCraftEnabled,
+    isOrbyteCraftEnabled,
     hasTenantModal,
     isCraftAnimationDisabled,
   ]);
@@ -539,7 +539,7 @@ export default function AppSidebar() {
         <SidebarTab
           icon={
             folded || visibleAgents.length === 0
-              ? SvgOnyxOctagon
+              ? SvgOrbyteOctagon
               : SvgMoreHorizontal
           }
           href="/app/agents"
@@ -590,12 +590,12 @@ export default function AppSidebar() {
         <AccountPopover
           folded={folded}
           onShowBuildIntro={
-            isOnyxCraftEnabled ? handleShowBuildIntro : undefined
+            isOrbyteCraftEnabled ? handleShowBuildIntro : undefined
           }
         />
       </div>
     ),
-    [folded, isAdmin, isCurator, handleShowBuildIntro, isOnyxCraftEnabled]
+    [folded, isAdmin, isCurator, handleShowBuildIntro, isOrbyteCraftEnabled]
   );
 
   return (
@@ -667,7 +667,7 @@ export default function AppSidebar() {
         >
           {newSessionButton}
           {searchChatsButton}
-          {isOnyxCraftEnabled && buildButton}
+          {isOrbyteCraftEnabled && buildButton}
           {folded && moreAgentsButton}
           {folded && newProjectButton}
         </SidebarLayouts.Header>

@@ -56,7 +56,7 @@ test.describe("Message feedback thumbs controls", () => {
 
     await sendMessage(page, "Share a short fun fact.");
 
-    const aiMessage = page.getByTestId("onyx-ai-message").last();
+    const aiMessage = page.getByTestId("orbyte-ai-message").last();
     const likeButton = aiMessage.getByTestId("AgentMessage/like-button");
     const dislikeButton = aiMessage.getByTestId("AgentMessage/dislike-button");
 

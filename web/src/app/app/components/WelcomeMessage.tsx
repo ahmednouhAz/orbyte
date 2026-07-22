@@ -40,7 +40,7 @@ export default function WelcomeMessage({
   if (isDefaultAgent) {
     content = (
       <Section
-        data-testid="onyx-logo"
+        data-testid="orbyte-logo"
         flexDirection="column"
         alignItems="start"
         gap={0.5}

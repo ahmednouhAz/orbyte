@@ -12,7 +12,7 @@ export const lightExtensionImages = [
 // Chrome message types
 export const CHROME_MESSAGE = {
   PREFERENCES_UPDATED: "PREFERENCES_UPDATED",
-  ONYX_APP_LOADED: "ONYX_APP_LOADED",
+  ORBYTE_APP_LOADED: "ORBYTE_APP_LOADED",
   SET_DEFAULT_NEW_TAB: "SET_DEFAULT_NEW_TAB",
   LOAD_NEW_CHAT_PAGE: "LOAD_NEW_CHAT_PAGE",
   LOAD_NEW_PAGE: "LOAD_NEW_PAGE",
@@ -27,12 +27,12 @@ export const SUBMIT_MESSAGE_TYPES = {
 };
 
 export const LocalStorageKeys = {
-  THEME: "onyxTheme",
+  THEME: "orbyteTheme",
   LIGHT_BG_URL: "lightBgUrl",
   DARK_BG_URL: "darkBgUrl",
   SHORTCUTS: "shortCuts",
   SHOW_SHORTCUTS: "showShortcuts",
-  USE_ONYX_AS_NEW_TAB: "useOnyxAsDefaultNewTab",
+  USE_ORBYTE_AS_NEW_TAB: "useOrbyteAsDefaultNewTab",
 };
 
 export const SEARCH_PARAMS = {

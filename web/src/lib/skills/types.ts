@@ -1,6 +1,6 @@
 /**
  * Skills API response shapes; mirrors
- * `backend/onyx/server/features/skill/models.py`.
+ * `backend/orbyte/server/features/skill/models.py`.
  */
 
 export type SkillSource = "builtin" | "custom";

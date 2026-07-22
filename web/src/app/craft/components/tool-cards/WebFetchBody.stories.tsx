@@ -38,7 +38,7 @@ export const JsonResponse: Story = {
       description: "https://api.github.com/repos/onyx-dot-app/onyx",
       rawOutput: `{
   "id": 758315521,
-  "name": "onyx",
+  "name": "orbyte",
   "full_name": "onyx-dot-app/onyx",
   "private": false,
   "html_url": "https://github.com/onyx-dot-app/onyx",

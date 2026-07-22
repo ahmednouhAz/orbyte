@@ -14,7 +14,7 @@ describe("stripSessionPrefix", () => {
   it("strips local sandboxes/sessions prefix", () => {
     expect(
       stripSessionPrefix(
-        "/Users/wenxi-onyx/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/outputs/web/AGENTS.md"
+        "/Users/wenxi-orbyte/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/outputs/web/AGENTS.md"
       )
     ).toBe("outputs/web/AGENTS.md");
   });
@@ -22,7 +22,7 @@ describe("stripSessionPrefix", () => {
   it("strips local sandboxes/sessions prefix for user_library/ directory", () => {
     expect(
       stripSessionPrefix(
-        "/Users/wenxi-onyx/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/user_library/docs/report.pdf"
+        "/Users/wenxi-orbyte/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/user_library/docs/report.pdf"
       )
     ).toBe("user_library/docs/report.pdf");
   });
@@ -68,7 +68,7 @@ describe("stripSessionPrefix", () => {
   it("handles title field without leading slash (sandboxes path)", () => {
     expect(
       stripSessionPrefix(
-        "Users/wenxi-onyx/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/outputs/web/page.tsx"
+        "Users/wenxi-orbyte/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/outputs/web/page.tsx"
       )
     ).toBe("outputs/web/page.tsx");
   });
@@ -106,7 +106,7 @@ describe("sanitizePathsInText", () => {
   it("strips local sandboxes path from cd command", () => {
     expect(
       sanitizePathsInText(
-        "cd /Users/wenxi-onyx/data/sandboxes/abc-123/sessions/def-456/outputs/web && python3 prepare.py"
+        "cd /Users/wenxi-orbyte/data/sandboxes/abc-123/sessions/def-456/outputs/web && python3 prepare.py"
       )
     ).toBe("cd outputs/web && python3 prepare.py");
   });
@@ -141,7 +141,7 @@ describe("sanitizePathsInText", () => {
 
   it("returns text without sandbox/session paths unchanged", () => {
     const text =
-      "total 0\ndrwxr-xr-x@ 3 wenxi-onyx  staff  96 Jan 21 15:18 .\n";
+      "total 0\ndrwxr-xr-x@ 3 wenxi-orbyte  staff  96 Jan 21 15:18 .\n";
     expect(sanitizePathsInText(text)).toBe(text);
   });
 

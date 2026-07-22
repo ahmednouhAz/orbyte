@@ -1,19 +1,19 @@
-# @onyx-ai/shared
+# @orbyte-ai/shared
 
-Platform-agnostic code shared between Onyx **web** and the future **mobile** app.
+Platform-agnostic code shared between Orbyte **web** and the future **mobile** app.
 
 It holds four things, none of which depend on any UI framework:
 
 | Subpath | Contents |
 | --- | --- |
-| `@onyx-ai/shared/tokens.css` | Design tokens as **CSS custom properties** (exact Opal names: `--text-05`, `--radius-12`, …), with `:root` (primitives + light) and `.dark` (dark overrides) — for web/Opal. |
-| `@onyx-ai/shared/typography.css` | Typography **presets** as Tailwind `@utility font-*` blocks (`font-heading-h1`, `font-main-ui-body`, …) — for web/Opal. |
-| `@onyx-ai/shared/nativewind-theme` | A NativeWind/Tailwind `theme.extend` fragment (semantic colors as `var(--name)`; radius/spacing as px numbers) — for mobile's `tailwind.config.js`. |
-| `@onyx-ai/shared/nativewind-typography` | A `.font-*` → RN-text-style map registered as NativeWind utilities (via a tailwindcss `plugin` in mobile's `tailwind.config.js`) — the RN counterpart of web's `typography.css` `@utility font-*` blocks, so mobile can use `font-heading-h1` like web. |
-| `@onyx-ai/shared/native` | `{ varsLight, varsDark, textPresets }` — resolved light/dark CSS-variable maps for the mobile NativeWind `vars()` provider (the RN analog of web's `.dark` class), plus the typography presets as RN style objects. **RN-only runtime** — shared cross-platform types live in `/contracts` (e.g. `TextFont`, `TextColor`), not here. |
-| `@onyx-ai/shared/utils` | Pure TypeScript utilities (no DOM / Node / React). |
-| `@onyx-ai/shared/contracts` | Cross-platform component API contracts (React-free, generic over the platform's icon/node type). |
-| `@onyx-ai/shared/types` | Common DTOs and enums. |
+| `@orbyte-ai/shared/tokens.css` | Design tokens as **CSS custom properties** (exact Opal names: `--text-05`, `--radius-12`, …), with `:root` (primitives + light) and `.dark` (dark overrides) — for web/Opal. |
+| `@orbyte-ai/shared/typography.css` | Typography **presets** as Tailwind `@utility font-*` blocks (`font-heading-h1`, `font-main-ui-body`, …) — for web/Opal. |
+| `@orbyte-ai/shared/nativewind-theme` | A NativeWind/Tailwind `theme.extend` fragment (semantic colors as `var(--name)`; radius/spacing as px numbers) — for mobile's `tailwind.config.js`. |
+| `@orbyte-ai/shared/nativewind-typography` | A `.font-*` → RN-text-style map registered as NativeWind utilities (via a tailwindcss `plugin` in mobile's `tailwind.config.js`) — the RN counterpart of web's `typography.css` `@utility font-*` blocks, so mobile can use `font-heading-h1` like web. |
+| `@orbyte-ai/shared/native` | `{ varsLight, varsDark, textPresets }` — resolved light/dark CSS-variable maps for the mobile NativeWind `vars()` provider (the RN analog of web's `.dark` class), plus the typography presets as RN style objects. **RN-only runtime** — shared cross-platform types live in `/contracts` (e.g. `TextFont`, `TextColor`), not here. |
+| `@orbyte-ai/shared/utils` | Pure TypeScript utilities (no DOM / Node / React). |
+| `@orbyte-ai/shared/contracts` | Cross-platform component API contracts (React-free, generic over the platform's icon/node type). |
+| `@orbyte-ai/shared/types` | Common DTOs and enums. |
 
 ## The one rule: zero runtime dependencies
 
@@ -36,9 +36,9 @@ When extending it:
 
 ## Tokens
 
-This package is the **single source of truth for Onyx's design tokens** (colors,
+This package is the **single source of truth for Orbyte's design tokens** (colors,
 spacing, radius, padding, weights, backdrop-blur, and typography metrics + font
-families + presets). Opal consumes them via `@import "@onyx-ai/shared/tokens.css"` and
+families + presets). Opal consumes them via `@import "@orbyte-ai/shared/tokens.css"` and
 defines no design-token values of its own; mobile consumes the NativeWind fragment +
 the `vars()` maps. (Web-app-only concerns — modal/sidebar/page widths, image heights
 in Opal's `sizes.css`, and overlay stacking values in `z-index.css` — remain in Opal;
@@ -90,13 +90,13 @@ auto-rebuild `dist/` and the web dev server refreshes.
 
 This package is staged at `web/lib/shared`, beside Opal (`web/lib/opal`), and is
 a **web workspace** package — so web's Turbopack reads it in-root (it's symlinked
-into `web/node_modules/@onyx-ai/shared`, exactly like Opal) and the **full
+into `web/node_modules/@orbyte-ai/shared`, exactly like Opal) and the **full
 surface** works with no extra tooling:
 
 - web lists it in `workspaces` and depends on it via
-  `"@onyx-ai/shared": "file:./lib/shared"`, and adds it to `transpilePackages`
+  `"@orbyte-ai/shared": "file:./lib/shared"`, and adds it to `transpilePackages`
   in `next.config.js` alongside Opal.
-- **Tokens:** `globals.css` does `@import "@onyx-ai/shared/tokens.css";`.
+- **Tokens:** `globals.css` does `@import "@orbyte-ai/shared/tokens.css";`.
 - **Types, contracts, and runtime utilities:** imported through `@/lib/shared`.
 
 `web/tsconfig*.json` excludes `lib/shared` from web's own compile; web resolves
@@ -104,8 +104,8 @@ the package through its built `dist` types via the `exports` map (so run
 `bun run build` here — `prepare` also does it on a fresh install).
 
 Mobile (Metro/Expo) consumes the same package — tokens via the NativeWind theme
-fragment (`@onyx-ai/shared/nativewind-theme`, wired into `tailwind.config.js`) and
-the light/dark `vars()` maps (`@onyx-ai/shared/native`), plus types, contracts, and
+fragment (`@orbyte-ai/shared/nativewind-theme`, wired into `tailwind.config.js`) and
+the light/dark `vars()` maps (`@orbyte-ai/shared/native`), plus types, contracts, and
 utils — by pointing a `file:` dependency at `web/lib/shared` and adding it to Metro
 `watchFolders` (with `resolver.unstable_enablePackageExports` so the subpath
 `exports` resolve). Metro has no filesystem-root fence, so the package's location

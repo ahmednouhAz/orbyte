@@ -347,7 +347,7 @@ test.describe("Keyboard Edge Cases", () => {
   }) => {
     await mockChatEndpoint(chatPage.page, buildMockStream("Mock response"));
     await chatPage.page.evaluate(() => {
-      const el = document.getElementById("onyx-chat-input-textbox")!;
+      const el = document.getElementById("orbyte-chat-input-textbox")!;
       el.innerHTML = 'hello <span contenteditable="false">tile</span> world';
       el.dispatchEvent(new Event("input", { bubbles: true }));
     });

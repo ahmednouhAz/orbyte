@@ -7,7 +7,7 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   output: "standalone",
-  transpilePackages: ["@onyx-ai/opal", "@onyx-ai/shared"],
+  transpilePackages: ["@orbyte-ai/opal", "@orbyte-ai/shared"],
   typedRoutes: true,
   // NOTE: `reactCompiler` is set per-phase in module.exports below — enabled for
   // builds, disabled for the dev server. See the comment there for the rationale.
@@ -120,7 +120,7 @@ const nextConfig = {
       // Legacy /assistants → /agents redirects (added in PR #8869).
       // Preserves backward compatibility for bookmarks, shared links, and
       // hardcoded URLs that still reference the old /assistants paths.
-      // TODO: Remove these redirects in v4.0 — https://linear.app/onyx-app/issue/ENG-3771
+      // TODO: Remove these redirects in v4.0 — https://linear.app/orbyte-app/issue/ENG-3771
       {
         source: "/admin/assistants",
         destination: "/admin/agents",
@@ -161,8 +161,8 @@ const sentryEnabled = Boolean(
 
 // Sentry webpack plugin options
 const sentryWebpackPluginOptions = {
-  org: process.env.SENTRY_ORG || "onyx-vl",
-  project: process.env.SENTRY_PROJECT || "onyx-web",
+  org: process.env.SENTRY_ORG || "orbyte-vl",
+  project: process.env.SENTRY_PROJECT || "orbyte-web",
   authToken: process.env.SENTRY_AUTH_TOKEN,
   silent: !sentryEnabled, // Silence output when Sentry is disabled
   dryRun: !sentryEnabled, // Don't upload source maps when Sentry is disabled

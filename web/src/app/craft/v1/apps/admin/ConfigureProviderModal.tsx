@@ -90,9 +90,9 @@ export default function ConfigureProviderModal({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Managed built-ins (cloud): Onyx owns creds/config, so the modal only edits
+  // Managed built-ins (cloud): Orbyte owns creds/config, so the modal only edits
   // policies — cred fields are hidden and the backend ignores them anyway.
-  const managed = existingApp?.is_onyx_managed ?? false;
+  const managed = existingApp?.is_orbyte_managed ?? false;
 
   // Re-seed every time the modal opens so admins can tweak one
   // field without re-entering the rest.

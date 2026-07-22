@@ -1,6 +1,6 @@
 "use client";
 
-import { MinimalOnyxDocument, OnyxDocument } from "@/lib/search/interfaces";
+import { MinimalOrbyteDocument, OrbyteDocument } from "@/lib/search/interfaces";
 import ChatDocumentDisplay from "@/sections/document-sidebar/ChatDocumentDisplay";
 import { removeDuplicateDocs } from "@/lib/documentUtils";
 import { Dispatch, SetStateAction, useMemo, memo } from "react";
@@ -13,12 +13,12 @@ import Text from "@/refresh-components/texts/Text";
 import { Button, Divider } from "@opal/components";
 import { SvgSearchMenu, SvgX } from "@opal/icons";
 
-// Build an OnyxDocument from basic file info
-const buildOnyxDocumentFromFile = (
+// Build an OrbyteDocument from basic file info
+const buildOrbyteDocumentFromFile = (
   id: string,
   name?: string | null,
   appendProjectPrefix?: boolean
-): OnyxDocument => {
+): OrbyteDocument => {
   const document_id = appendProjectPrefix ? `project_file__${id}` : id;
   return {
     document_id,
@@ -80,9 +80,9 @@ function ChatDocumentDisplayWrapper({
 
 interface DocumentsSidebarProps {
   closeSidebar: () => void;
-  selectedDocuments: OnyxDocument[] | null;
+  selectedDocuments: OrbyteDocument[] | null;
   modal: boolean;
-  setPresentingDocument: Dispatch<SetStateAction<MinimalOnyxDocument | null>>;
+  setPresentingDocument: Dispatch<SetStateAction<MinimalOrbyteDocument | null>>;
 }
 
 const DocumentsSidebar = memo(
@@ -160,7 +160,7 @@ const DocumentsSidebar = memo(
 
     return (
       <div
-        id="onyx-chat-sidebar"
+        id="orbyte-chat-sidebar"
         className="bg-background-tint-01 overflow-y-scroll h-full w-full border-l"
       >
         <div className="flex flex-col px-3 gap-6">
@@ -213,7 +213,7 @@ const DocumentsSidebar = memo(
                     key={file.id}
                     setPresentingDocument={setPresentingDocument}
                     modal={modal}
-                    document={buildOnyxDocumentFromFile(
+                    document={buildOrbyteDocumentFromFile(
                       file.id,
                       file.name,
                       false

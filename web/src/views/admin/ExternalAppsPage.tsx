@@ -258,8 +258,8 @@ function ConfiguredAppCard({
           >
             {isMutating ? "…" : app.enabled ? "Disable" : "Enable"}
           </Button>
-          {/* Onyx-managed built-ins (cloud) can't be deleted — only disabled. */}
-          {!app.is_onyx_managed && (
+          {/* Orbyte-managed built-ins (cloud) can't be deleted — only disabled. */}
+          {!app.is_orbyte_managed && (
             <Button
               prominence="tertiary"
               variant="danger"

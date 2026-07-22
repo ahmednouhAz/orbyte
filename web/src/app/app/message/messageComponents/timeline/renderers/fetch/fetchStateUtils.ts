@@ -4,7 +4,7 @@ import {
   FetchToolUrls,
   FetchToolDocuments,
 } from "@/app/app/services/streamingModels";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { OrbyteDocument } from "@/lib/search/interfaces";
 
 export const INITIAL_URLS_TO_SHOW = 3;
 export const URLS_PER_EXPANSION = 5;
@@ -13,7 +13,7 @@ export const READ_MIN_DURATION_MS = 1000;
 
 export interface FetchState {
   urls: string[];
-  documents: OnyxDocument[];
+  documents: OrbyteDocument[];
   hasStarted: boolean;
   isLoading: boolean;
   isComplete: boolean;

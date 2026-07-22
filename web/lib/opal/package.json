@@ -1,7 +1,7 @@
 {
-  "name": "@onyx-ai/opal",
+  "name": "@orbyte-ai/opal",
   "version": "0.0.0",
-  "description": "Opal — Onyx's Typescript component library and design system.",
+  "description": "Opal — Orbyte's Typescript component library and design system.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -94,7 +94,7 @@
     "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
-    "@onyx-ai/shared": "file:../shared",
+    "@orbyte-ai/shared": "file:../shared",
     "tsup": "^8.3.0",
     "typescript": "^5.0.0"
   }

@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { useProjectsContext } from "@/providers/ProjectsContext";
 import FilePickerPopover from "@/refresh-components/popovers/FilePickerPopover";
 import { UserFileStatus, type ProjectFile } from "@/lib/projects/types";
-import { MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { MinimalOrbyteDocument } from "@/lib/search/interfaces";
 import { Button, Divider, LineItemButton, Text } from "@opal/components";
 import { Content, ContentAction } from "@opal/layouts";
 import AddInstructionModal from "@/sections/modals/AddInstructionModal";
@@ -25,7 +25,7 @@ import {
 export interface ProjectContextPanelProps {
   projectTokenCount?: number;
   availableContextTokens?: number;
-  setPresentingDocument?: (document: MinimalOnyxDocument) => void;
+  setPresentingDocument?: (document: MinimalOrbyteDocument) => void;
 }
 
 export default function ProjectContextPanel({
@@ -35,12 +35,12 @@ export default function ProjectContextPanel({
 }: ProjectContextPanelProps) {
   const addInstructionModal = useCreateModal();
   const projectFilesModal = useCreateModal();
-  // Convert ProjectFile to MinimalOnyxDocument format for viewing
+  // Convert ProjectFile to MinimalOrbyteDocument format for viewing
   const handleOnView = useCallback(
     (file: ProjectFile) => {
       if (!setPresentingDocument) return;
 
-      const documentForViewer: MinimalOnyxDocument = {
+      const documentForViewer: MinimalOrbyteDocument = {
         document_id: `project_file__${file.file_id}`,
         semantic_identifier: file.name,
       };

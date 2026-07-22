@@ -2,8 +2,8 @@
  * @opal/sizes — web-only LAYOUT dimensions (library-owned).
  *
  * Design-token scales (radius, spacing, padding, weights, backdrop-blur, and the
- * typography height metrics) now live in @onyx-ai/shared and are pulled in via
- * `@import "@onyx-ai/shared/tokens.css"` (see _reference.css / root.css). Only the
+ * typography height metrics) now live in @orbyte-ai/shared and are pulled in via
+ * `@import "@orbyte-ai/shared/tokens.css"` (see _reference.css / root.css). Only the
  * web-app layout dimensions — container/sidebar/modal/panel/page/card widths and
  * heights — remain here, as they are not cross-platform design tokens.
  */

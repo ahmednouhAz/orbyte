@@ -1,8 +1,8 @@
 import { ValidSources } from "../types";
-import { OnyxDocument } from "./interfaces";
+import { OrbyteDocument } from "./interfaces";
 import { openDocument } from "./utils";
 
-function makeDocument(overrides: Partial<OnyxDocument>): OnyxDocument {
+function makeDocument(overrides: Partial<OrbyteDocument>): OrbyteDocument {
   return {
     document_id: "doc-1",
     semantic_identifier: "doc.pdf",

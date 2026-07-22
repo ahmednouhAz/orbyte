@@ -2,7 +2,7 @@
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { router, type Href } from "expo-router";
 import { cssInterop } from "nativewind";
-import type { InteractiveContract } from "@onyx-ai/shared/contracts";
+import type { InteractiveContract } from "@orbyte-ai/shared/contracts";
 
 import { cn } from "@/lib/utils";
 import { Icon } from "@/components/ui/icon";

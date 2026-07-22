@@ -52,12 +52,12 @@ export interface Quote {
 export interface QuotesInfoPacket {
   quotes: Quote[];
 }
-export interface MinimalOnyxDocument {
+export interface MinimalOrbyteDocument {
   document_id: string;
   semantic_identifier: string | null;
 }
 
-export interface OnyxDocument extends MinimalOnyxDocument {
+export interface OrbyteDocument extends MinimalOrbyteDocument {
   link: string;
   source_type: ValidSources;
   blurb: string;
@@ -73,20 +73,20 @@ export interface OnyxDocument extends MinimalOnyxDocument {
   validationState?: null | "good" | "bad";
 }
 
-export interface LoadedOnyxDocument extends OnyxDocument {
+export interface LoadedOrbyteDocument extends OrbyteDocument {
   icon: React.FC<{ size?: number; className?: string }>;
 }
 
-export interface SearchOnyxDocument extends OnyxDocument {
+export interface SearchOrbyteDocument extends OrbyteDocument {
   is_relevant: boolean;
   relevance_explanation: string;
 }
 
-export interface FilteredOnyxDocument extends OnyxDocument {
+export interface FilteredOrbyteDocument extends OrbyteDocument {
   included: boolean;
 }
 export interface DocumentInfoPacket {
-  top_documents: OnyxDocument[];
+  top_documents: OrbyteDocument[];
   predicted_flow: FlowType | null;
   predicted_search: SearchType | null;
   time_cutoff: string | null;
@@ -111,7 +111,7 @@ export interface SearchResponse {
   suggestedFlowType: FlowType | null;
   answer: string | null;
   quotes: Quote[] | null;
-  documents: SearchOnyxDocument[] | null;
+  documents: SearchOrbyteDocument[] | null;
   selectedDocIndices: number[] | null;
   error: string | null;
   messageId: number | null;
@@ -176,7 +176,7 @@ export interface SearchRequestArgs {
   updateDocumentRelevance: (relevance: any) => void;
   updateCurrentAnswer: (val: string) => void;
   updateQuotes: (quotes: Quote[]) => void;
-  updateDocs: (documents: OnyxDocument[]) => void;
+  updateDocs: (documents: OrbyteDocument[]) => void;
   updateSelectedDocIndices: (docIndices: number[]) => void;
   updateSuggestedSearchType: (searchType: SearchType) => void;
   updateSuggestedFlowType: (flowType: FlowType) => void;
@@ -227,7 +227,7 @@ export interface SearchFlowClassificationResponse {
 
 /**
  * Base filters for search queries
- * Matches backend/onyx/context/search/models.py BaseFilters
+ * Matches backend/orbyte/context/search/models.py BaseFilters
  */
 export interface BaseFilters {
   source_type?: ValidSources[] | null;

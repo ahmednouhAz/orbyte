@@ -5,7 +5,7 @@ import {
   StopReason,
 } from "@/app/app/services/streamingModels";
 import { CitationMap } from "@/app/app/interfaces";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { OrbyteDocument } from "@/lib/search/interfaces";
 import {
   ProcessorState,
   GroupedPacket,
@@ -25,7 +25,7 @@ export interface UsePacketProcessorResult {
   toolTurnGroups: TurnGroup[];
   citations: StreamingCitation[];
   citationMap: CitationMap;
-  documentMap: Map<string, OnyxDocument>;
+  documentMap: Map<string, OrbyteDocument>;
 
   // Status (derived from packets)
   stopPacketSeen: boolean;

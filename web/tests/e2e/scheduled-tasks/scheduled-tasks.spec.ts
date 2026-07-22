@@ -13,7 +13,7 @@ test.describe("Scheduled Tasks", () => {
     await scheduledTasks.gotoList();
     test.skip(
       !scheduledTasks.isCraftEnabled(),
-      "Onyx Craft is disabled in this environment (settings.onyx_craft_enabled !== true)"
+      "Orbyte Craft is disabled in this environment (settings.orbyte_craft_enabled !== true)"
     );
 
     await scheduledTasks.openCreateForm();

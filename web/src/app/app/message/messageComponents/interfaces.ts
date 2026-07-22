@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import { MinimalAgent } from "@/lib/agents/types";
 import { Packet, StopReason } from "../../services/streamingModels";
-import { OnyxDocument, MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { OrbyteDocument, MinimalOrbyteDocument } from "@/lib/search/interfaces";
 import { ProjectFile } from "@/lib/projects/types";
 import { LlmDescriptor } from "@/lib/hooks";
 import { IconType } from "react-icons";
@@ -26,10 +26,10 @@ export type TimelineLayout = "timeline" | "content";
 export interface FullChatState {
   agent: MinimalAgent;
   // Document-related context for citations
-  docs?: OnyxDocument[] | null;
+  docs?: OrbyteDocument[] | null;
   userFiles?: ProjectFile[];
   citations?: CitationMap;
-  setPresentingDocument?: (document: MinimalOnyxDocument) => void;
+  setPresentingDocument?: (document: MinimalOrbyteDocument) => void;
   // Regenerate functionality
   regenerate?: (modelOverRide: LlmDescriptor) => Promise<void>;
   overriddenModel?: string;

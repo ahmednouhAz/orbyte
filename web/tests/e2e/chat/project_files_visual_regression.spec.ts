@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { loginAsWorkerUser } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 import { expectElementScreenshot } from "@tests/e2e/utils/visualRegression";
 
 const PROJECT_NAME = "E2E-PROJECT-FILES-VISUAL";
@@ -104,7 +104,7 @@ test.describe("Project Files visual regression", () => {
     const page = await context.newPage();
 
     await loginAsWorkerUser(page, workerInfo.workerIndex);
-    const client = new OnyxApiClient(page.request);
+    const client = new OrbyteApiClient(page.request);
 
     projectId = await client.createProject(PROJECT_NAME);
     await uploadFileToProject(page, projectId, LONG_FILE_NAME, FILE_CONTENT);
@@ -121,7 +121,7 @@ test.describe("Project Files visual regression", () => {
     const page = await context.newPage();
 
     await loginAsWorkerUser(page, workerInfo.workerIndex);
-    const client = new OnyxApiClient(page.request);
+    const client = new OrbyteApiClient(page.request);
     await client.deleteProject(projectId);
 
     await context.close();

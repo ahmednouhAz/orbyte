@@ -7,7 +7,7 @@ import {
   SearchToolDocumentsDelta,
   SectionEnd,
 } from "@/app/app/services/streamingModels";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { OrbyteDocument } from "@/lib/search/interfaces";
 import { getSourceDisplayName, isValidSource } from "@/lib/sources";
 import { ValidSources } from "@/lib/types";
 
@@ -31,7 +31,7 @@ export const RESULTS_PER_EXPANSION = 10;
 
 export interface SearchState {
   queries: string[];
-  results: OnyxDocument[];
+  results: OrbyteDocument[];
   sourceFilters: string[];
   isSearching: boolean;
   hasResults: boolean;

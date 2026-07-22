@@ -32,7 +32,7 @@ function configuredApp(
     organization_credentials: {},
     enabled: false,
     actions: [],
-    is_onyx_managed: false,
+    is_orbyte_managed: false,
     ...overrides,
   };
 }
@@ -73,9 +73,9 @@ describe("availableBuiltInDescriptors", () => {
     ]);
   });
 
-  it("hides Onyx-managed (cloud, pre-provisioned) built-ins, which are always configured", () => {
+  it("hides Orbyte-managed (cloud, pre-provisioned) built-ins, which are always configured", () => {
     const available = availableBuiltInDescriptors(ALL_DESCRIPTORS, [
-      configuredApp("GMAIL", { is_onyx_managed: true }),
+      configuredApp("GMAIL", { is_orbyte_managed: true }),
     ]);
     expect(available.map((d) => d.app_type)).not.toContain("GMAIL");
   });

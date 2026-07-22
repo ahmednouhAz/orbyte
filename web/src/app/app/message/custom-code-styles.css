@@ -3,7 +3,7 @@
    subtree, so the fade fires when a `$$...$$` flips from streamed
    plain-text source to a rendered formula — and never on already-loaded
    chats, search panels, or route navigations. */
-@keyframes onyx-math-appear {
+@keyframes orbyte-math-appear {
   from {
     opacity: 0;
   }
@@ -13,7 +13,7 @@
 }
 
 .streaming-katex .katex {
-  animation: onyx-math-appear 120ms ease-out;
+  animation: orbyte-math-appear 120ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -25,7 +25,7 @@
 /* Map Tailwind Typography prose variables to the project's color tokens.
    These auto-switch for dark mode via colors.css — no dark: modifier needed.
    Note: text-05 = highest contrast, text-01 = lowest. */
-.prose-onyx {
+.prose-orbyte {
   --tw-prose-body: var(--text-05);
   --tw-prose-headings: var(--text-05);
   --tw-prose-lead: var(--text-04);

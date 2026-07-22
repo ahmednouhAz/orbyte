@@ -82,7 +82,7 @@ export interface PaginatedIndexAttempts {
 /**
  * One row of the document-permission-sync attempt history. Mirrors
  * `DocPermissionSyncAttemptSnapshot` in
- * `backend/onyx/server/documents/models.py`.
+ * `backend/orbyte/server/documents/models.py`.
  *
  * Note: timestamps are pre-serialized to ISO strings on the backend
  * (matching `IndexAttemptSnapshot.time_started`/`time_updated`), so the
@@ -103,7 +103,7 @@ export interface DocPermissionSyncAttemptSnapshot {
 /**
  * One row of the external-group-sync attempt history. Mirrors
  * `ExternalGroupSyncAttemptSnapshot` in
- * `backend/onyx/server/documents/models.py`. The progress fields differ
+ * `backend/orbyte/server/documents/models.py`. The progress fields differ
  * from the doc-sync shape because group sync tracks user/group/membership
  * counts rather than document-level counts.
  */
@@ -124,7 +124,7 @@ export interface ExternalGroupSyncAttemptSnapshot {
  * Response wrapper used by both per-cc-pair sync-attempt endpoints
  * (`/permission-sync-attempts` and `/external-group-sync-attempts`).
  * Mirrors `CCPairSyncAttemptsResponse` in
- * `backend/onyx/server/documents/models.py`.
+ * `backend/orbyte/server/documents/models.py`.
  *
  * `applicable === false` means the cc-pair's source does not run this
  * kind of sync job at all (e.g. Salesforce has no doc sync; Slack has

@@ -1,8 +1,8 @@
 /**
  * Thin client wrappers around the skills API.
  *
- * Pairs with `backend/onyx/server/features/skill/api.py`. All mutations bubble
- * server-side `OnyxError` detail strings as Error messages so callers can hand
+ * Pairs with `backend/orbyte/server/features/skill/api.py`. All mutations bubble
+ * server-side `OrbyteError` detail strings as Error messages so callers can hand
  * them to `toast.error` directly.
  */
 

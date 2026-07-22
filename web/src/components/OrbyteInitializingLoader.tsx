@@ -3,7 +3,7 @@
 import { Logo } from "@/lib/app/components";
 import { useSettings } from "@/lib/settings/hooks";
 
-export default function OnyxInitializingLoader() {
+export default function OrbyteInitializingLoader() {
   const { appName } = useSettings();
 
   return (

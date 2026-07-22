@@ -1,7 +1,7 @@
 /**
  * Typography type unions shared by web (Opal `Text`) and mobile (`Text`).
  *
- * They live in this neutral contracts module — not `@onyx-ai/shared/native`, which is
+ * They live in this neutral contracts module — not `@orbyte-ai/shared/native`, which is
  * RN-only runtime (`varsLight`/`varsDark`/`textPresets`). The generated `native.d.ts`
  * imports `TextFont` from here so `textPresets` stays typed by this one union.
  *

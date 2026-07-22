@@ -2,7 +2,7 @@ import { Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 
 export async function verifyDefaultAgentIsChosen(page: Page) {
-  await expect(page.getByTestId("onyx-logo")).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId("orbyte-logo")).toBeVisible({ timeout: 5000 });
 }
 
 export async function verifyAgentIsChosen(
@@ -34,15 +34,15 @@ export async function navigateToAgentInHistorySidebar(
 export async function sendMessage(page: Page, message: string) {
   // Count existing AI messages before sending
   const existingMessageCount = await page
-    .locator('[data-testid="onyx-ai-message"]')
+    .locator('[data-testid="orbyte-ai-message"]')
     .count();
 
-  await page.locator("#onyx-chat-input-textbox").click();
-  await page.locator("#onyx-chat-input-textbox").fill(message);
-  await page.locator("#onyx-chat-input-send-button").click();
+  await page.locator("#orbyte-chat-input-textbox").click();
+  await page.locator("#orbyte-chat-input-textbox").fill(message);
+  await page.locator("#orbyte-chat-input-send-button").click();
 
   // Wait for a NEW AI message to appear (count should increase)
-  await expect(page.locator('[data-testid="onyx-ai-message"]')).toHaveCount(
+  await expect(page.locator('[data-testid="orbyte-ai-message"]')).toHaveCount(
     existingMessageCount + 1,
     { timeout: 30000 }
   );

@@ -9,7 +9,7 @@ module.exports = defineConfig([
   eslintConfigPrettier,
   {
     // eslint-config-expo's TS override sets a node-only import resolver, which
-    // ignores package.json `exports`, so @onyx-ai/shared subpaths (e.g.
+    // ignores package.json `exports`, so @orbyte-ai/shared subpaths (e.g.
     // "/native") fail import/no-unresolved. Re-enable the exports-aware resolver.
     settings: {
       "import/resolver": { typescript: true, node: true },

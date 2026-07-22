@@ -7,7 +7,7 @@ import Attachment from "@/refresh-components/Attachment";
 import { InMessageImage } from "@/app/app/components/files/images/InMessageImage";
 import SpreadsheetContent from "@/components/tools/SpreadsheetContent";
 import PreviewModal from "@/sections/modals/PreviewModal";
-import { MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { MinimalOrbyteDocument } from "@/lib/search/interfaces";
 import ExpandableContentWrapper from "@/components/tools/ExpandableContentWrapper";
 
 interface FileContainerProps {
@@ -46,7 +46,7 @@ export default function FileDisplay({ files }: FileDisplayProps) {
     (file) => file.type === ChatFileType.TABULAR
   );
 
-  const presentingDocument: MinimalOnyxDocument = {
+  const presentingDocument: MinimalOrbyteDocument = {
     document_id: previewingFile?.id ?? "",
     semantic_identifier: previewingFile?.name ?? "",
   };
@@ -61,7 +61,7 @@ export default function FileDisplay({ files }: FileDisplayProps) {
       )}
 
       {textFiles.length > 0 && (
-        <FileContainer id="onyx-file">
+        <FileContainer id="orbyte-file">
           {textFiles.map((file) => (
             <Attachment
               key={file.id}
@@ -73,7 +73,7 @@ export default function FileDisplay({ files }: FileDisplayProps) {
       )}
 
       {imageFiles.length > 0 && (
-        <FileContainer id="onyx-image">
+        <FileContainer id="orbyte-image">
           {imageFiles.map((file) => (
             <InMessageImage key={file.id} fileId={file.id} />
           ))}

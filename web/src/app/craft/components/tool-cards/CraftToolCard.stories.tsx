@@ -233,7 +233,7 @@ export const WebFetch: Story = {
       title: "Fetching",
       description: "https://api.github.com/repos/onyx-dot-app/onyx",
       rawOutput:
-        '{\n  "name": "onyx",\n  "full_name": "onyx-dot-app/onyx",\n  "stargazers_count": 12450\n}',
+        '{\n  "name": "orbyte",\n  "full_name": "onyx-dot-app/onyx",\n  "stargazers_count": 12450\n}',
     }),
   },
 };

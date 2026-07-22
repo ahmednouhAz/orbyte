@@ -13,7 +13,7 @@ export default function SidePanelHeader({
   onNewChat,
   chatSessionId,
 }: SidePanelHeaderProps) {
-  const handleOpenInOnyx = () => {
+  const handleOpenInOrbyte = () => {
     const path = chatSessionId ? `/app?chatId=${chatSessionId}` : "/app";
     window.open(`${window.location.origin}${path}`, "_blank");
   };
@@ -31,7 +31,7 @@ export default function SidePanelHeader({
         <Button
           prominence="tertiary"
           icon={SvgExternalLink}
-          onClick={handleOpenInOnyx}
+          onClick={handleOpenInOrbyte}
           tooltip="Open in Orbyte"
         />
       </div>

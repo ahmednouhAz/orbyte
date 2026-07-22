@@ -19,7 +19,7 @@ export enum ThemePreference {
 }
 
 interface UserPreferences {
-  // TODO: rename to agent — https://linear.app/onyx-app/issue/ENG-3766
+  // TODO: rename to agent — https://linear.app/orbyte-app/issue/ENG-3766
   chosen_assistants: number[] | null;
   visible_assistants: number[];
   hidden_assistants: number[];
@@ -210,7 +210,7 @@ export interface IndexAttemptSnapshot {
   time_updated: string;
 }
 
-// Mirror of `onyx.db.index_attempt_metrics_models.IndexAttemptStage`. The
+// Mirror of `orbyte.db.index_attempt_metrics_models.IndexAttemptStage`. The
 // declaration order is the canonical pipeline order — the API serializes
 // stages in this order and the "Pipeline order" sort renders them as-is.
 // Keep in sync with the Python enum.

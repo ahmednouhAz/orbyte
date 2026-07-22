@@ -22,7 +22,7 @@ export function sendAuthRequiredMessage(): void {
 export function sendMessageToParent(): void {
   if (typeof window !== "undefined" && window.parent !== window) {
     window.parent.postMessage(
-      { type: CHROME_MESSAGE.ONYX_APP_LOADED },
+      { type: CHROME_MESSAGE.ORBYTE_APP_LOADED },
       getPanelOrigin()
     );
   }

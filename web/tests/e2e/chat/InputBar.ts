@@ -39,9 +39,9 @@ export class InputBar {
 
   constructor(page: Page) {
     this.page = page;
-    this.container = page.locator("#onyx-chat-input");
-    this.textbox = page.locator("#onyx-chat-input-textbox");
-    this.sendButton = page.locator("#onyx-chat-input-send-button");
+    this.container = page.locator("#orbyte-chat-input");
+    this.textbox = page.locator("#orbyte-chat-input-textbox");
+    this.sendButton = page.locator("#orbyte-chat-input-send-button");
 
     this.tile = page.locator("[data-rich-tile]");
     this.tileRemoveButton = page.locator("[data-rich-tile-remove]");
@@ -86,7 +86,7 @@ export class InputBar {
 
   async paste(text: string): Promise<void> {
     await this.page.evaluate((t) => {
-      const el = document.getElementById("onyx-chat-input-textbox")!;
+      const el = document.getElementById("orbyte-chat-input-textbox")!;
       el.focus();
       const dt = new DataTransfer();
       dt.setData("text/plain", t);
@@ -102,7 +102,7 @@ export class InputBar {
 
   async pastePlain(text: string): Promise<void> {
     await this.page.evaluate((t) => {
-      const el = document.getElementById("onyx-chat-input-textbox")!;
+      const el = document.getElementById("orbyte-chat-input-textbox")!;
       el.focus();
       el.dispatchEvent(
         new KeyboardEvent("keydown", {
@@ -128,7 +128,7 @@ export class InputBar {
 
   async armPlainPaste(): Promise<void> {
     await this.page.evaluate(() => {
-      const el = document.getElementById("onyx-chat-input-textbox")!;
+      const el = document.getElementById("orbyte-chat-input-textbox")!;
       el.focus();
       el.dispatchEvent(
         new KeyboardEvent("keydown", {
@@ -146,7 +146,7 @@ export class InputBar {
   async pasteHtml(html: string, plainText: string): Promise<void> {
     await this.page.evaluate(
       ({ html, plain }) => {
-        const el = document.getElementById("onyx-chat-input-textbox")!;
+        const el = document.getElementById("orbyte-chat-input-textbox")!;
         el.focus();
         const dt = new DataTransfer();
         dt.setData("text/html", html);
@@ -265,7 +265,7 @@ export class InputBar {
 
   private getWrapperHeight(): Promise<number> {
     return this.page.evaluate(() => {
-      const el = document.getElementById("onyx-chat-input-textbox")!;
+      const el = document.getElementById("orbyte-chat-input-textbox")!;
       return el.parentElement!.getBoundingClientRect().height;
     });
   }
@@ -281,7 +281,7 @@ export class InputBar {
   async expectScrollable(): Promise<void> {
     await poll(() =>
       this.page.evaluate(() => {
-        const el = document.getElementById("onyx-chat-input-textbox")!;
+        const el = document.getElementById("orbyte-chat-input-textbox")!;
         return el.scrollHeight > el.clientHeight;
       })
     ).toBe(true);

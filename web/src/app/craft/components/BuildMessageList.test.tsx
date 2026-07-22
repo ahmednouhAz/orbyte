@@ -6,7 +6,7 @@ import type { BuildMessage } from "@/app/craft/types/streamingTypes";
 import type { StreamItem } from "@/app/craft/types/displayTypes";
 
 jest.mock("@/lib/app/components", () => ({
-  Logo: () => <div data-testid="onyx-logo" />,
+  Logo: () => <div data-testid="orbyte-logo" />,
 }));
 
 jest.mock("@/components/chat/MinimalMarkdown", () => ({

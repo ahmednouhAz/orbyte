@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import type { Locator, Page } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 
 const LLM_SETUP_URL = "/admin/configuration/language-models";
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
@@ -130,7 +130,7 @@ async function exitAdminToChat(page: Page): Promise<void> {
   await page.goto("/app");
   await page.waitForURL("**/app**");
   await page
-    .locator("#onyx-chat-input-textbox")
+    .locator("#orbyte-chat-input-textbox")
     .waitFor({ state: "visible", timeout: 15000 });
 }
 
@@ -259,7 +259,7 @@ test.describe("LLM Provider Setup @exclusive", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new OrbyteApiClient(page.request);
     const uniqueIds = Array.from(new Set(providersToCleanup));
 
     for (const providerId of uniqueIds) {
@@ -347,7 +347,7 @@ test.describe("LLM Provider Setup @exclusive", () => {
   test("admin can switch the default model via the default model dropdown", async ({
     page,
   }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new OrbyteApiClient(page.request);
     const initialDefault = await getDefaultTextModel(page);
 
     const firstProviderName = uniqueName("PW Baseline Provider");
@@ -444,7 +444,7 @@ test.describe("LLM Provider Setup @exclusive", () => {
     await page.goto("/app");
     await page.waitForLoadState("networkidle");
     await page
-      .locator("#onyx-chat-input-textbox")
+      .locator("#orbyte-chat-input-textbox")
       .waitFor({ state: "visible", timeout: 15000 });
 
     await expect
@@ -512,7 +512,7 @@ test.describe("LLM Provider Setup @exclusive", () => {
     await page.goto("/app");
     await page.waitForLoadState("networkidle");
     await page
-      .locator("#onyx-chat-input-textbox")
+      .locator("#orbyte-chat-input-textbox")
       .waitFor({ state: "visible", timeout: 15000 });
 
     await expect

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useColorScheme } from "react-native";
 import { StreamdownText } from "react-native-streamdown";
 import type { MarkdownStyle } from "react-native-enriched-markdown";
-import { textPresets, varsDark, varsLight } from "@onyx-ai/shared/native";
+import { textPresets, varsDark, varsLight } from "@orbyte-ai/shared/native";
 
 interface StreamingMarkdownProps {
   content: string;

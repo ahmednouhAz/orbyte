@@ -11,13 +11,13 @@ import MultiModelResponseView from "@/app/app/message/MultiModelResponseView";
 import { getMultiModelResponses } from "@/app/app/message/multiModel";
 import { useLLMProviders } from "@/lib/languageModels/hooks";
 import { buildModelProviderLookup } from "@/lib/languageModels/options";
-import OnyxInitializingLoader from "@/components/OnyxInitializingLoader";
+import OrbyteInitializingLoader from "@/components/OrbyteInitializingLoader";
 import { Section } from "@/layouts/general-layouts";
 import { IllustrationContent } from "@opal/layouts";
 import SvgNotFound from "@opal/illustrations/not-found";
 import { Button } from "@opal/components";
 import { Agent } from "@/lib/agents/types";
-import { MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { MinimalOrbyteDocument } from "@/lib/search/interfaces";
 import PreviewModal from "@/sections/modals/PreviewModal";
 import { UNNAMED_CHAT } from "@/lib/constants";
 import Text from "@/refresh-components/texts/Text";
@@ -34,7 +34,7 @@ export default function SharedChatDisplay({
   persona,
 }: SharedChatDisplayProps) {
   const [presentingDocument, setPresentingDocument] =
-    useState<MinimalOnyxDocument | null>(null);
+    useState<MinimalOrbyteDocument | null>(null);
 
   const isMounted = useOnMount();
 
@@ -220,7 +220,7 @@ export default function SharedChatDisplay({
             </div>
           ) : (
             <div className="h-full w-full flex items-center justify-center">
-              <OnyxInitializingLoader />
+              <OrbyteInitializingLoader />
             </div>
           )}
         </div>

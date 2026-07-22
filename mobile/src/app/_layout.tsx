@@ -11,7 +11,7 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
 import { vars } from "nativewind";
-import { varsLight, varsDark } from "@onyx-ai/shared/native";
+import { varsLight, varsDark } from "@orbyte-ai/shared/native";
 import { PortalHost } from "@rn-primitives/portal";
 
 import {

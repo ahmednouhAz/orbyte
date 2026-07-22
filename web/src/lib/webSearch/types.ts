@@ -12,7 +12,7 @@ export type WebSearchProviderType =
 
 export type WebContentProviderType =
   | "firecrawl"
-  | "onyx_web_crawler"
+  | "orbyte_web_crawler"
   | "exa"
   | "tavily"
   | (string & {});

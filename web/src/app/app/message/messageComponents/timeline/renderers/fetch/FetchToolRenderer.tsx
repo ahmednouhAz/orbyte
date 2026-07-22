@@ -4,7 +4,7 @@ import {
   RenderType,
 } from "@/app/app/message/messageComponents/interfaces";
 import { BlinkingBar } from "@/app/app/message/BlinkingBar";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { OrbyteDocument } from "@/lib/search/interfaces";
 import { ValidSources } from "@/lib/types";
 import { SearchChipList, SourceInfo } from "../search/SearchChipList";
 import { getMetadataTags } from "../search/searchStateUtils";
@@ -23,7 +23,7 @@ const urlToSourceInfo = (url: string, index: number): SourceInfo => ({
   sourceUrl: url,
 });
 
-const documentToSourceInfo = (doc: OnyxDocument): SourceInfo => ({
+const documentToSourceInfo = (doc: OrbyteDocument): SourceInfo => ({
   id: doc.document_id,
   title: doc.semantic_identifier || doc.link || "",
   sourceType: doc.source_type || ValidSources.Web,
@@ -92,9 +92,9 @@ export const FetchToolRenderer: MessageRenderer<FetchToolPacket, {}> = ({
                 items={documents}
                 initialCount={INITIAL_URLS_TO_SHOW}
                 expansionCount={URLS_PER_EXPANSION}
-                getKey={(doc: OnyxDocument) => doc.document_id}
-                toSourceInfo={(doc: OnyxDocument) => documentToSourceInfo(doc)}
-                onClick={(doc: OnyxDocument) => {
+                getKey={(doc: OrbyteDocument) => doc.document_id}
+                toSourceInfo={(doc: OrbyteDocument) => documentToSourceInfo(doc)}
+                onClick={(doc: OrbyteDocument) => {
                   if (doc.link) window.open(doc.link, "_blank");
                 }}
                 emptyState={!stopPacketSeen ? <BlinkingBar /> : undefined}
@@ -131,9 +131,9 @@ export const FetchToolRenderer: MessageRenderer<FetchToolPacket, {}> = ({
               items={documents}
               initialCount={INITIAL_URLS_TO_SHOW}
               expansionCount={URLS_PER_EXPANSION}
-              getKey={(doc: OnyxDocument) => doc.document_id}
-              toSourceInfo={(doc: OnyxDocument) => documentToSourceInfo(doc)}
-              onClick={(doc: OnyxDocument) => {
+              getKey={(doc: OrbyteDocument) => doc.document_id}
+              toSourceInfo={(doc: OrbyteDocument) => documentToSourceInfo(doc)}
+              onClick={(doc: OrbyteDocument) => {
                 if (doc.link) window.open(doc.link, "_blank");
               }}
               emptyState={!stopPacketSeen ? <BlinkingBar /> : undefined}

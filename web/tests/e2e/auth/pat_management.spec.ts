@@ -31,7 +31,7 @@ test("PAT Complete Workflow", async ({ page }, testInfo) => {
   await pat.submit();
 
   const tokenValue = await pat.waitForCreatedToken();
-  expect(tokenValue).toContain("onyx_pat_");
+  expect(tokenValue).toContain("orbyte_pat_");
 
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   await pat.copyCreatedToken();

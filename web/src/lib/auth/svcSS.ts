@@ -44,7 +44,7 @@ export async function getAuthTypeMetadataSS(): Promise<AuthTypeMetadata> {
   return {
     authType,
     // for SAML / OIDC, we auto-redirect the user to the IdP when the user visits
-    // Onyx in an un-authenticated state
+    // Orbyte in an un-authenticated state
     autoRedirect: authType === AuthType.OIDC || authType === AuthType.SAML,
     requiresVerification: data.requires_verification,
     anonymousUserEnabled: data.anonymous_user_enabled,

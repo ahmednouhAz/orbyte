@@ -13,7 +13,7 @@ import {
   SvgFiles,
   SvgGlobe,
   SvgHistory,
-  SvgOnyxOctagon,
+  SvgOrbyteOctagon,
   SvgPlug,
   SvgProgressBars,
   SvgSearchMenu,
@@ -74,7 +74,7 @@ export const ADMIN_ROUTES = {
   },
   AGENTS: {
     path: "/admin/agents",
-    icon: SvgOnyxOctagon,
+    icon: SvgOrbyteOctagon,
     title: "Agents",
     sidebarLabel: "Agents",
   },

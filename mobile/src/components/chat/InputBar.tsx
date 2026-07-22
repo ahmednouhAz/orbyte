@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { View, type TextStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { textPresets } from "@onyx-ai/shared/native";
+import { textPresets } from "@orbyte-ai/shared/native";
 
 import { useRecentFiles } from "@/hooks/useRecentFiles";
 import { FileCard } from "@/components/chat/FileCard";

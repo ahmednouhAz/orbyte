@@ -1,11 +1,11 @@
 # Opal
 
-Onyx's TypeScript component library and design system.
+Orbyte's TypeScript component library and design system.
 
 ## Install
 
 ```sh
-bun add @onyx-ai/opal
+bun add @orbyte-ai/opal
 ```
 
 Peer dependencies (install whichever the lib actually exercises in your usage):
@@ -26,7 +26,7 @@ bun add react react-dom next \
 In your app's root entry (e.g. Next.js `app/layout.tsx`):
 
 ```tsx
-import "@onyx-ai/opal/styles.css";
+import "@orbyte-ai/opal/styles.css";
 ```
 
 The CSS file defines the custom properties (`--text-01`, `--background-neutral-00`, etc.) that
@@ -38,10 +38,10 @@ In your `tailwind.config.js`:
 
 ```js
 module.exports = {
-  presets: [require("@onyx-ai/opal/tailwind-preset")],
+  presets: [require("@orbyte-ai/opal/tailwind-preset")],
   content: [
     "./src/**/*.{ts,tsx}",
-    "./node_modules/@onyx-ai/opal/dist/**/*.{js,mjs}",
+    "./node_modules/@orbyte-ai/opal/dist/**/*.{js,mjs}",
   ],
 };
 ```
@@ -49,15 +49,15 @@ module.exports = {
 The `content` glob ensures Tailwind picks up the classes used inside Opal components.
 
 You also need to define the underlying CSS variables (`--text-01`, etc.) in your own
-`colors.css` or import a copy from Onyx. The preset references them but does not define them —
+`colors.css` or import a copy from Orbyte. The preset references them but does not define them —
 they live with the consumer so the consumer controls the palette.
 
 ## Usage
 
 ```tsx
-import { Button, Text } from "@onyx-ai/opal/components";
-import { Content } from "@onyx-ai/opal/layouts";
-import SvgPlus from "@onyx-ai/opal/icons/plus";
+import { Button, Text } from "@orbyte-ai/opal/components";
+import { Content } from "@orbyte-ai/opal/layouts";
+import SvgPlus from "@orbyte-ai/opal/icons/plus";
 
 function MyComponent() {
   return (
@@ -76,15 +76,15 @@ function MyComponent() {
 
 | Subpath                         | Contents                                             |
 | ------------------------------- | ---------------------------------------------------- |
-| `@onyx-ai/opal/components`      | Buttons, Text, Tag, Tooltip, Popover, Table, etc.    |
-| `@onyx-ai/opal/layouts`         | Content, ContentAction, IllustrationContent, Section |
-| `@onyx-ai/opal/core`            | Interactive primitives, Hoverable, Disabled          |
-| `@onyx-ai/opal/icons`           | SVG icon components                                  |
-| `@onyx-ai/opal/illustrations`   | Larger SVG illustrations                             |
-| `@onyx-ai/opal/types`           | Shared types (`RichStr`, `IconProps`, etc.)          |
-| `@onyx-ai/opal/utils`           | `cn`, `markdown` helpers                             |
-| `@onyx-ai/opal/styles.css`      | Bundled component CSS                                |
-| `@onyx-ai/opal/tailwind-preset` | Tailwind preset with tokens                          |
+| `@orbyte-ai/opal/components`      | Buttons, Text, Tag, Tooltip, Popover, Table, etc.    |
+| `@orbyte-ai/opal/layouts`         | Content, ContentAction, IllustrationContent, Section |
+| `@orbyte-ai/opal/core`            | Interactive primitives, Hoverable, Disabled          |
+| `@orbyte-ai/opal/icons`           | SVG icon components                                  |
+| `@orbyte-ai/opal/illustrations`   | Larger SVG illustrations                             |
+| `@orbyte-ai/opal/types`           | Shared types (`RichStr`, `IconProps`, etc.)          |
+| `@orbyte-ai/opal/utils`           | `cn`, `markdown` helpers                             |
+| `@orbyte-ai/opal/styles.css`      | Bundled component CSS                                |
+| `@orbyte-ai/opal/tailwind-preset` | Tailwind preset with tokens                          |
 
 ## Structure
 
@@ -111,15 +111,15 @@ web/lib/opal/
 └── README.md
 ```
 
-## Local development (inside the Onyx repo)
+## Local development (inside the Orbyte repo)
 
 Opal reuses `/web/node_modules` — it does not have its own `node_modules`. To add a runtime
 dependency, declare it under `peerDependencies` in `web/lib/opal/package.json` AND add the
 matching version in the root `web/package.json` `dependencies` block, then run `bun install` in `/web`
-so Onyx's web app keeps building.
+so Orbyte's web app keeps building.
 
-The package is consumed by `web/` as a workspace via `web/package.json`'s `"@onyx-ai/opal":
-"./lib/opal"`. During Onyx development, `web/` resolves Opal source through the `@opal/*`
+The package is consumed by `web/` as a workspace via `web/package.json`'s `"@orbyte-ai/opal":
+"./lib/opal"`. During Orbyte development, `web/` resolves Opal source through the `@opal/*`
 TypeScript path alias (defined in `web/tsconfig.json`), so changes are picked up live without
 running `bun run build`.
 
@@ -152,7 +152,7 @@ Steps:
 
 4. The workflow runs automatically on tag push. It builds (`tsup` + CSS barrel) and runs
    `bun publish --provenance --access public`. Watch the run under the Actions tab; verify
-   the new version on https://www.npmjs.com/package/@onyx-ai/opal.
+   the new version on https://www.npmjs.com/package/@orbyte-ai/opal.
 
 The tag pattern must match `opal/v*.*.*` for the workflow to fire.
 
@@ -169,7 +169,7 @@ The tag pattern must match `opal/v*.*.*` for the workflow to fire.
 
 ## Third-party trademarks
 
-The `@onyx-ai/opal/logos` subpath ships brand marks of third-party
-products Onyx integrates with. Marks remain the property of their
-respective owners; Onyx claims no trademark over them. See
+The `@orbyte-ai/opal/logos` subpath ships brand marks of third-party
+products Orbyte integrates with. Marks remain the property of their
+respective owners; Orbyte claims no trademark over them. See
 [`NOTICE.md`](./NOTICE.md) for details.

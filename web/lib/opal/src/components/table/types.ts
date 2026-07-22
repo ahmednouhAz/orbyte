@@ -32,14 +32,14 @@ export type ColumnWidth = DataColumnWidth | FixedColumnWidth;
 
 export type QualifierContentType = "simple" | "icon" | "image";
 
-export type OnyxColumnKind = "qualifier" | "data" | "display" | "actions";
+export type OrbyteColumnKind = "qualifier" | "data" | "display" | "actions";
 
 // ---------------------------------------------------------------------------
 // Column definitions (discriminated union on `kind`)
 // ---------------------------------------------------------------------------
 
-interface OnyxColumnBase<TData> {
-  kind: OnyxColumnKind;
+interface OrbyteColumnBase<TData> {
+  kind: OrbyteColumnKind;
   /** Stable column identifier (mirrors the TanStack column ID). */
   id: string;
   def: ColumnDef<TData, any>;
@@ -47,7 +47,7 @@ interface OnyxColumnBase<TData> {
 }
 
 /** Qualifier column — leading avatar/icon/checkbox column. */
-export interface OnyxQualifierColumn<TData> extends OnyxColumnBase<TData> {
+export interface OrbyteQualifierColumn<TData> extends OrbyteColumnBase<TData> {
   kind: "qualifier";
   /** Content type for body-row `<TableQualifier>`. */
   content: QualifierContentType;
@@ -64,19 +64,19 @@ export interface OnyxQualifierColumn<TData> extends OnyxColumnBase<TData> {
 }
 
 /** Data column — accessor-based column with sorting/resizing. */
-export interface OnyxDataColumn<TData> extends OnyxColumnBase<TData> {
+export interface OrbyteDataColumn<TData> extends OrbyteColumnBase<TData> {
   kind: "data";
   /** Override the sort icon for this column. */
   icon?: (sorted: SortDirection) => IconFunctionComponent;
 }
 
 /** Display column — non-accessor column with custom rendering. */
-export interface OnyxDisplayColumn<TData> extends OnyxColumnBase<TData> {
+export interface OrbyteDisplayColumn<TData> extends OrbyteColumnBase<TData> {
   kind: "display";
 }
 
 /** Actions column — fixed column with visibility/sorting popovers. */
-export interface OnyxActionsColumn<TData> extends OnyxColumnBase<TData> {
+export interface OrbyteActionsColumn<TData> extends OrbyteColumnBase<TData> {
   kind: "actions";
   /** Show column visibility popover. @default true */
   showColumnVisibility?: boolean;
@@ -87,11 +87,11 @@ export interface OnyxActionsColumn<TData> extends OnyxColumnBase<TData> {
 }
 
 /** Discriminated union of all column types. */
-export type OnyxColumnDef<TData> =
-  | OnyxQualifierColumn<TData>
-  | OnyxDataColumn<TData>
-  | OnyxDisplayColumn<TData>
-  | OnyxActionsColumn<TData>;
+export type OrbyteColumnDef<TData> =
+  | OrbyteQualifierColumn<TData>
+  | OrbyteDataColumn<TData>
+  | OrbyteDisplayColumn<TData>
+  | OrbyteActionsColumn<TData>;
 
 // ---------------------------------------------------------------------------
 // Server-side pagination / sorting / search
@@ -137,7 +137,7 @@ export interface DataTableProps<TData> {
   /** Row data array. */
   data: TData[];
   /** Column definitions created via `createTableColumns()`. */
-  columns: OnyxColumnDef<TData>[];
+  columns: OrbyteColumnDef<TData>[];
   /** Extract a unique string ID from each row. Used for stable row identity. */
   getRowId: (row: TData) => string;
   /** Rows per page. Set `Infinity` to disable pagination. @default 10 */

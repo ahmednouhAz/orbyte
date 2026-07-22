@@ -47,7 +47,7 @@ async function navigateToUserSettings(page: Page) {
     .catch(() => {});
 
   // Click on user dropdown/settings button
-  await page.locator("#onyx-user-dropdown").click();
+  await page.locator("#orbyte-user-dropdown").click();
 
   // Click on settings option
   await page.getByText("Settings").click();

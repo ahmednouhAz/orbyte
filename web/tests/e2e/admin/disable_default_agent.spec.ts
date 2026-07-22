@@ -1,7 +1,7 @@
 import { test, expect, Page } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
 import { createAgent } from "@tests/e2e/utils/agentUtils";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 
 const MAX_SETTING_SAVE_ATTEMPTS = 5;
 const SETTING_SAVE_RETRY_DELAY_MS = 750;
@@ -103,7 +103,7 @@ test.describe("Disable Default Agent Setting @exclusive", () => {
   test.afterEach(async ({ page }) => {
     // Clean up any assistant created during the test
     if (createdAssistantId !== null) {
-      const client = new OnyxApiClient(page.request);
+      const client = new OrbyteApiClient(page.request);
       await client.deleteAgent(createdAssistantId);
       createdAssistantId = null;
     }
@@ -153,8 +153,8 @@ test.describe("Disable Default Agent Setting @exclusive", () => {
     await newSessionButton.click();
 
     // Verify the WelcomeMessage shown is NOT from the default agent
-    // Default agent shows onyx-logo, custom agents show agent-name-display
-    await expect(page.locator('[data-testid="onyx-logo"]')).not.toBeVisible();
+    // Default agent shows orbyte-logo, custom agents show agent-name-display
+    await expect(page.locator('[data-testid="orbyte-logo"]')).not.toBeVisible();
     await expect(
       page.locator('[data-testid="agent-name-display"]')
     ).toBeVisible();

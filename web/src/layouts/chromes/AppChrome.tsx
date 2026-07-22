@@ -584,7 +584,7 @@ export default function AppChrome({ children }: AppChromeProps) {
       const activeEl = document.activeElement;
       const isFocused =
         activeEl instanceof HTMLElement &&
-        activeEl.id === "onyx-chat-input-textbox";
+        activeEl.id === "orbyte-chat-input-textbox";
       const target = event.target;
       const isInteractive =
         target instanceof HTMLElement && !!target.closest(INTERACTIVE_SELECTOR);
@@ -598,7 +598,7 @@ export default function AppChrome({ children }: AppChromeProps) {
     inputWasFocused.current = false;
     const sel = window.getSelection();
     if (sel && !sel.isCollapsed) return;
-    const textarea = document.getElementById("onyx-chat-input-textbox");
+    const textarea = document.getElementById("orbyte-chat-input-textbox");
     if (textarea && document.activeElement !== textarea) {
       textarea.focus();
     }

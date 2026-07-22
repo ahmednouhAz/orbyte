@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   BaseFilters,
-  MinimalOnyxDocument,
+  MinimalOrbyteDocument,
   SourceMetadata,
 } from "@/lib/search/interfaces";
 import SearchCard from "@/ee/sections/SearchCard";
@@ -33,7 +33,7 @@ import { cn } from "@opal/utils";
 
 export interface SearchResultsProps {
   /** Callback when a document is clicked */
-  onDocumentClick: (doc: MinimalOnyxDocument) => void;
+  onDocumentClick: (doc: MinimalOrbyteDocument) => void;
 }
 
 // ============================================================================

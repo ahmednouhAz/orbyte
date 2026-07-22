@@ -23,7 +23,7 @@ import {
   shouldSubmitOnLoad,
 } from "@/app/app/services/searchParams";
 import { FilterManager } from "@/lib/hooks";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { OrbyteDocument } from "@/lib/search/interfaces";
 import {
   useChatSessionStore,
   useCurrentMessageHistory,
@@ -48,7 +48,7 @@ interface UseChatSessionControllerProps {
 
   // UI state setters
   setSelectedAgentFromId: (agentId: number | null) => void;
-  setSelectedDocuments: (documents: OnyxDocument[]) => void;
+  setSelectedDocuments: (documents: OrbyteDocument[]) => void;
   setCurrentMessageFiles: (
     files: ProjectFile[] | ((prev: ProjectFile[]) => ProjectFile[])
   ) => void;

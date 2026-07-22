@@ -4,7 +4,7 @@ import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
 import { Button } from "@opal/components";
 import { SvgArrowExchange, SvgSimpleLoader } from "@opal/icons";
-import { SvgOnyxLogo } from "@opal/logos";
+import { SvgOrbyteLogo } from "@opal/logos";
 import * as GeneralLayouts from "@/layouts/general-layouts";
 import Modal from "@/refresh-components/Modal";
 import { toast } from "@opal/layouts";
@@ -49,7 +49,7 @@ function ModalShell({ provider, isEditing, children }: ModalShellProps) {
         <Modal.Header
           icon={provider.icon}
           moreIcon1={SvgArrowExchange}
-          moreIcon2={SvgOnyxLogo}
+          moreIcon2={SvgOrbyteLogo}
           title={
             isEditing
               ? `Manage ${provider.displayName}`

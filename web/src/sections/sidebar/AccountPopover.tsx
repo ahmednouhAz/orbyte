@@ -30,7 +30,7 @@ import useAppFocus from "@/hooks/useAppFocus";
 import { useSettings } from "@/lib/settings/hooks";
 import UserAvatar from "@/refresh-components/avatars/UserAvatar";
 import { useNotificationSummary } from "@/hooks/useNotifications";
-import { SvgOnyxLogoTyped } from "@opal/logos";
+import { SvgOrbyteLogoTyped } from "@opal/logos";
 import { markdown } from "@opal/utils";
 
 interface SettingsPopoverProps {
@@ -169,7 +169,7 @@ function SettingsPopover({
         ),
         null,
         <div key="version" className="flex flex-col items-center gap-1 p-2">
-          <SvgOnyxLogoTyped className="w-[70%] h-auto" />
+          <SvgOrbyteLogoTyped className="w-[70%] h-auto" />
           <Content
             sizePreset="secondary"
             variant="body"
@@ -222,7 +222,7 @@ export default function AccountPopover({
   return (
     <Popover open={!!popupState} onOpenChange={handlePopoverOpen}>
       <Popover.Trigger asChild>
-        <div id="onyx-user-dropdown">
+        <div id="orbyte-user-dropdown">
           <SidebarTab
             icon={(props) => (
               <div className="w-[16px] flex flex-col justify-center items-center">

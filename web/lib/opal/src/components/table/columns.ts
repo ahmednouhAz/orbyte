@@ -9,10 +9,10 @@ import {
 import type {
   ColumnWidth,
   QualifierContentType,
-  OnyxQualifierColumn,
-  OnyxDataColumn,
-  OnyxDisplayColumn,
-  OnyxActionsColumn,
+  OrbyteQualifierColumn,
+  OrbyteDataColumn,
+  OrbyteDisplayColumn,
+  OrbyteActionsColumn,
 } from "@opal/components/table/types";
 import type { TableSize } from "@opal/components/table/TableSizeContext";
 import type { IconFunctionComponent } from "@opal/types";
@@ -98,26 +98,26 @@ interface ActionsConfig<TData = any> {
 
 interface TableColumnsBuilder<TData> {
   /** Create a qualifier (leading avatar/checkbox) column. */
-  qualifier(config?: QualifierConfig<TData>): OnyxQualifierColumn<TData>;
+  qualifier(config?: QualifierConfig<TData>): OrbyteQualifierColumn<TData>;
 
   /** Create a data (accessor) column. */
   column<TKey extends DeepKeys<TData>>(
     accessor: TKey,
     config: DataColumnConfig<TData, DeepValue<TData, TKey>>
-  ): OnyxDataColumn<TData>;
+  ): OrbyteDataColumn<TData>;
 
   /** Data column from an accessor function whose return value drives sorting and
    *  search — use to make a column searchable by a derived value. Needs an `id`. */
   column<TValue>(
     accessor: (row: TData) => TValue,
     config: DataColumnConfig<TData, TValue> & { id: string }
-  ): OnyxDataColumn<TData>;
+  ): OrbyteDataColumn<TData>;
 
   /** Create a display (non-accessor) column. */
-  displayColumn(config: DisplayColumnConfig<TData>): OnyxDisplayColumn<TData>;
+  displayColumn(config: DisplayColumnConfig<TData>): OrbyteDisplayColumn<TData>;
 
   /** Create an actions column (visibility/sorting popovers). */
-  actions(config?: ActionsConfig<TData>): OnyxActionsColumn<TData>;
+  actions(config?: ActionsConfig<TData>): OrbyteActionsColumn<TData>;
 }
 
 // ---------------------------------------------------------------------------
@@ -148,7 +148,7 @@ export function createTableColumns<TData>(): TableColumnsBuilder<TData> {
   const helper = createColumnHelper<TData>();
 
   return {
-    qualifier(config?: QualifierConfig<TData>): OnyxQualifierColumn<TData> {
+    qualifier(config?: QualifierConfig<TData>): OrbyteQualifierColumn<TData> {
       const content = config?.content ?? "simple";
 
       const def: ColumnDef<TData, any> = helper.display({
@@ -178,7 +178,7 @@ export function createTableColumns<TData>(): TableColumnsBuilder<TData> {
     column(
       accessor: DeepKeys<TData> | ((row: TData) => unknown),
       config: DataColumnConfig<TData, any> & { id?: string }
-    ): OnyxDataColumn<TData> {
+    ): OrbyteDataColumn<TData> {
       const {
         header,
         cell,
@@ -215,7 +215,7 @@ export function createTableColumns<TData>(): TableColumnsBuilder<TData> {
 
     displayColumn(
       config: DisplayColumnConfig<TData>
-    ): OnyxDisplayColumn<TData> {
+    ): OrbyteDisplayColumn<TData> {
       const { id, header, cell, width, enableHiding = true } = config;
 
       const def: ColumnDef<TData, any> = helper.display({
@@ -235,7 +235,7 @@ export function createTableColumns<TData>(): TableColumnsBuilder<TData> {
       };
     },
 
-    actions(config?: ActionsConfig<TData>): OnyxActionsColumn<TData> {
+    actions(config?: ActionsConfig<TData>): OrbyteActionsColumn<TData> {
       const def: ColumnDef<TData, any> = {
         id: "__actions",
         enableHiding: false,

@@ -9,7 +9,7 @@
 
 import { type Page, type Locator, expect } from "@playwright/test";
 
-const TOKEN_PREFIX = "onyx_pat_";
+const TOKEN_PREFIX = "orbyte_pat_";
 
 export class PATManagementPage {
   readonly page: Page;
@@ -32,7 +32,7 @@ export class PATManagementPage {
 
   /** Open Settings from the user dropdown and land on the access-tokens page. */
   async goto(): Promise<void> {
-    await this.page.locator("#onyx-user-dropdown").click();
+    await this.page.locator("#orbyte-user-dropdown").click();
     await this.page.getByText("Settings").first().click();
     await expect(this.page.getByText("Full Name")).toBeVisible();
     await this.page

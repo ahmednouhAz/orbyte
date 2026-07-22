@@ -55,9 +55,9 @@ export interface CreateAgentOptions {
 }
 
 /**
- * API Client for Onyx backend operations in E2E tests.
+ * API Client for Orbyte backend operations in E2E tests.
  *
- * Provides a type-safe, abstracted interface for interacting with the Onyx backend API.
+ * Provides a type-safe, abstracted interface for interacting with the Orbyte backend API.
  * All methods handle authentication via the Playwright page context and include automatic
  * error handling, logging, and polling for asynchronous operations.
  *
@@ -101,11 +101,11 @@ export interface CreateAgentOptions {
  * **Usage Example:**
  * ```typescript
  * // From a test with a Page:
- * const client = new OnyxApiClient(page.request);
+ * const client = new OrbyteApiClient(page.request);
  *
  * // From global-setup with a standalone context (pass baseURL explicitly):
  * const ctx = await request.newContext({ baseURL, storageState: "admin_auth.json" });
- * const client = new OnyxApiClient(ctx, baseURL);
+ * const client = new OrbyteApiClient(ctx, baseURL);
  * ```
  *
  * @param request - Playwright APIRequestContext with authenticated session
@@ -116,7 +116,7 @@ export interface CreateAgentOptions {
  *                  the env var (e.g. in `global-setup.ts` where the config value
  *                  is authoritative).
  */
-export class OnyxApiClient {
+export class OrbyteApiClient {
   private baseUrl: string;
 
   constructor(
@@ -221,7 +221,7 @@ export class OnyxApiClient {
     if (!response.ok()) {
       const errorText = await response.text();
       console.error(
-        `[OnyxApiClient] ${errorMessage}: ${response.status()} - ${errorText}`
+        `[OrbyteApiClient] ${errorMessage}: ${response.status()} - ${errorText}`
       );
       return false;
     }
@@ -263,10 +263,10 @@ export class OnyxApiClient {
   /**
    * Log an action with consistent formatting.
    *
-   * @param message - The message to log (will be prefixed with "[OnyxApiClient]")
+   * @param message - The message to log (will be prefixed with "[OrbyteApiClient]")
    */
   private log(message: string): void {
-    console.log(`[OnyxApiClient] ${message}`);
+    console.log(`[OrbyteApiClient] ${message}`);
   }
 
   /**

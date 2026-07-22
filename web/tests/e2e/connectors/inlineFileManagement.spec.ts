@@ -1,6 +1,6 @@
 import { test, expect, Page } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 
 /** Upload a file through the inline manager, retrying on transient failures. */
 async function uploadTestFile(
@@ -47,14 +47,14 @@ test.describe("InlineFileManagement", () => {
     await page.context().clearCookies();
     await loginAs(page, "admin");
 
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new OrbyteApiClient(page.request);
     testCcPairId = await apiClient.createFileConnector(
       `Test File Connector ${Date.now()}`
     );
   });
 
   test.afterEach(async ({ page }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new OrbyteApiClient(page.request);
 
     if (testCcPairId !== null) {
       try {

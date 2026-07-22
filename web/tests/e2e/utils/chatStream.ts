@@ -138,9 +138,9 @@ export async function sendMessageAndCaptureStreamPackets(
     if (waitForAiMessage) {
       await sendMessage(page, message);
     } else {
-      await page.locator("#onyx-chat-input-textbox").click();
-      await page.locator("#onyx-chat-input-textbox").fill(message);
-      await page.locator("#onyx-chat-input-send-button").click();
+      await page.locator("#orbyte-chat-input-textbox").click();
+      await page.locator("#orbyte-chat-input-textbox").fill(message);
+      await page.locator("#orbyte-chat-input-send-button").click();
       await page
         .waitForFunction(() => window.location.href.includes("chatId="), null, {
           timeout: 10000,

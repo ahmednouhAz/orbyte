@@ -15,7 +15,7 @@ import {
  * localStorage; starts false and hydrates in an effect so SSR and the first
  * client render agree.
  */
-const STORAGE_KEY = "onyx:fullWidthChat";
+const STORAGE_KEY = "orbyte:fullWidthChat";
 
 interface FullWidthChatContextValue {
   fullWidthChat: boolean;

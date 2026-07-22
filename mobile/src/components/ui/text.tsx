@@ -1,4 +1,4 @@
-import type { TextColor, TextFont } from "@onyx-ai/shared/contracts";
+import type { TextColor, TextFont } from "@orbyte-ai/shared/contracts";
 import * as React from "react";
 import { Text as RNText } from "react-native";
 

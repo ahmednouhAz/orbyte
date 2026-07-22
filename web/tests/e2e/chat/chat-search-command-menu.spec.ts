@@ -1,5 +1,5 @@
 import { test, expect, Page, Locator } from "@playwright/test";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 import { loginAsWorkerUser } from "@tests/e2e/utils/auth";
 import { expectScreenshot } from "@tests/e2e/utils/visualRegression";
 
@@ -37,7 +37,7 @@ test.describe("Chat Search Command Menu", () => {
     const context = await browser.newContext();
     const page = await context.newPage();
     await loginAsWorkerUser(page, workerInfo.workerIndex);
-    const client = new OnyxApiClient(page.request);
+    const client = new OrbyteApiClient(page.request);
 
     await page.goto("/app");
     await page.waitForLoadState("networkidle");
@@ -59,7 +59,7 @@ test.describe("Chat Search Command Menu", () => {
     const context = await browser.newContext();
     const page = await context.newPage();
     await loginAsWorkerUser(page, workerInfo.workerIndex);
-    const client = new OnyxApiClient(page.request);
+    const client = new OrbyteApiClient(page.request);
 
     await page.goto("/app");
     await page.waitForLoadState("networkidle");

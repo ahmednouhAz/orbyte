@@ -7,7 +7,7 @@ export { makeProvider } from "./llmProviderTestUtils";
 
 /**
  * Custom render function that wraps components with common providers
- * used throughout the Onyx application.
+ * used throughout the Orbyte application.
  */
 
 interface AllProvidersProps {

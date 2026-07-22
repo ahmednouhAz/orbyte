@@ -28,9 +28,9 @@ async function sendAndHoldResponse(
 
   await page.route(routePattern, handler);
 
-  const textarea = page.locator("#onyx-chat-input-textbox");
+  const textarea = page.locator("#orbyte-chat-input-textbox");
   await textarea.fill(message);
-  await page.locator("#onyx-chat-input-send-button").click();
+  await page.locator("#orbyte-chat-input-send-button").click();
 
   // Wait for the submit flow to process (textarea cleared by resetInputBar)
   await expect(textarea).toHaveText("", { timeout: 5000 });
@@ -41,7 +41,7 @@ async function sendAndHoldResponse(
 }
 
 async function queueMessage(page: Page, message: string) {
-  const textarea = page.locator("#onyx-chat-input-textbox");
+  const textarea = page.locator("#orbyte-chat-input-textbox");
   await textarea.fill(message);
   await textarea.press("Enter");
   await expect(textarea).toHaveText("", { timeout: 2000 });
@@ -75,7 +75,7 @@ test.describe("Queued Messages", () => {
     release();
 
     // Held response completes (2nd AI message), then queued message auto-sends (3rd)
-    await expect(page.locator('[data-testid="onyx-ai-message"]')).toHaveCount(
+    await expect(page.locator('[data-testid="orbyte-ai-message"]')).toHaveCount(
       3,
       { timeout: 30000 }
     );
@@ -101,7 +101,7 @@ test.describe("Queued Messages", () => {
     release();
 
     // 1 original + 1 held + 3 queued = 5 AI messages total
-    await expect(page.locator('[data-testid="onyx-ai-message"]')).toHaveCount(
+    await expect(page.locator('[data-testid="orbyte-ai-message"]')).toHaveCount(
       5,
       { timeout: 60000 }
     );
@@ -128,7 +128,7 @@ test.describe("Queued Messages", () => {
     release();
 
     // 1 original + 1 held + 1 remaining queued = 3 AI messages
-    await expect(page.locator('[data-testid="onyx-ai-message"]')).toHaveCount(
+    await expect(page.locator('[data-testid="orbyte-ai-message"]')).toHaveCount(
       3,
       { timeout: 30000 }
     );
@@ -144,7 +144,7 @@ test.describe("Queued Messages", () => {
     await queueMessage(page, "First queued");
     await queueMessage(page, "Second queued");
 
-    const textarea = page.locator("#onyx-chat-input-textbox");
+    const textarea = page.locator("#orbyte-chat-input-textbox");
     const queueBars = page.locator("[data-testid='queued-message-bar']");
 
     // Up arrow: highlights last bar
@@ -177,7 +177,7 @@ test.describe("Queued Messages", () => {
     await queueMessage(page, "First queued");
     await queueMessage(page, "Second queued");
 
-    const textarea = page.locator("#onyx-chat-input-textbox");
+    const textarea = page.locator("#orbyte-chat-input-textbox");
     const queueBars = page.locator("[data-testid='queued-message-bar']");
 
     // Highlight last bar and delete it
@@ -200,7 +200,7 @@ test.describe("Queued Messages", () => {
 
     await queueMessage(page, "Queued message");
 
-    const textarea = page.locator("#onyx-chat-input-textbox");
+    const textarea = page.locator("#orbyte-chat-input-textbox");
     const queueBars = page.locator("[data-testid='queued-message-bar']");
 
     // Enter navigation, then escape
@@ -221,7 +221,7 @@ test.describe("Queued Messages", () => {
 
     await queueMessage(page, "Queued message");
 
-    const textarea = page.locator("#onyx-chat-input-textbox");
+    const textarea = page.locator("#orbyte-chat-input-textbox");
     await expect(textarea).toHaveAttribute(
       "data-placeholder",
       "Press up to edit queued messages"
@@ -243,7 +243,7 @@ test.describe("Queued Messages", () => {
     await expect(queueBars).toHaveCount(5);
 
     // 6th message should NOT queue — textarea keeps the text
-    const textarea = page.locator("#onyx-chat-input-textbox");
+    const textarea = page.locator("#orbyte-chat-input-textbox");
     await textarea.fill("Message 6");
     await textarea.press("Enter");
 

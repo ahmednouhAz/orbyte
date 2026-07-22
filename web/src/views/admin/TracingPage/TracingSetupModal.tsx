@@ -3,7 +3,7 @@
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { SvgArrowExchange, SvgSimpleLoader } from "@opal/icons";
-import { SvgOnyxLogo } from "@opal/logos";
+import { SvgOrbyteLogo } from "@opal/logos";
 import { Button } from "@opal/components";
 import Modal from "@/refresh-components/Modal";
 import { useModalClose } from "@/refresh-components/contexts/ModalContext";
@@ -107,7 +107,7 @@ export function TracingSetupModal({ state, onSaved }: TracingSetupModalProps) {
               <Modal.Header
                 icon={detail.logo}
                 moreIcon1={SvgArrowExchange}
-                moreIcon2={SvgOnyxLogo}
+                moreIcon2={SvgOrbyteLogo}
                 title={
                   isEditing
                     ? `Configure ${detail.label}`

@@ -49,7 +49,7 @@ describe("sanitizeDocxHtml", () => {
 
   it("preserves https hyperlinks and basic document formatting", () => {
     const dirty =
-      '<a href="https://onyx.app">Onyx</a>' +
+      '<a href="https://onyx.app">Orbyte</a>' +
       "<table><tr><td><b>bold</b> <i>italic</i></td></tr></table>" +
       "<h1>Heading</h1>";
     const doc = parse(sanitizeDocxHtml(dirty));

@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
 import { verifyCurrentModel } from "@tests/e2e/utils/chatActions";
 import { ensureImageGenerationEnabled } from "@tests/e2e/utils/agentUtils";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 
 test.describe("LLM Ordering", () => {
   let imageGenConfigId: string | null = null;
@@ -11,7 +11,7 @@ test.describe("LLM Ordering", () => {
     await page.context().clearCookies();
     await loginAs(page, "admin");
 
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new OrbyteApiClient(page.request);
 
     // Create image generation config so the checkbox appears
     try {
@@ -24,7 +24,7 @@ test.describe("LLM Ordering", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new OrbyteApiClient(page.request);
 
     if (imageGenConfigId !== null) {
       try {
@@ -42,7 +42,7 @@ test.describe("LLM Ordering", () => {
     await ensureImageGenerationEnabled(page);
 
     await page.goto("/app");
-    await page.waitForSelector("#onyx-chat-input-textbox", { timeout: 10000 });
+    await page.waitForSelector("#orbyte-chat-input-textbox", { timeout: 10000 });
 
     const trigger = page.getByTestId("model-selector").locator("button").last();
     const originalTriggerText = (await trigger.textContent())?.trim() ?? "";

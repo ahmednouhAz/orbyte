@@ -36,7 +36,7 @@ import MoveCustomAgentChatModal from "@/sections/modals/MoveCustomAgentChatModal
 import ConfirmationModalLayout from "@/refresh-components/layouts/ConfirmationModalLayout";
 import { PopoverSearchInput } from "@/sections/sidebar/ChatButton";
 
-const LS_HIDE_MOVE_CUSTOM_AGENT_MODAL_KEY = "onyx:hideMoveCustomAgentModal";
+const LS_HIDE_MOVE_CUSTOM_AGENT_MODAL_KEY = "orbyte:hideMoveCustomAgentModal";
 
 interface ProjectChatItemProps {
   chat: ChatSession;

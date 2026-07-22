@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const STORAGE_PREFIX = "onyx:draft";
+const STORAGE_PREFIX = "orbyte:draft";
 
 export function draftKey(scope: string, entityId: string): string {
   return `${STORAGE_PREFIX}:${scope}:${entityId}`;

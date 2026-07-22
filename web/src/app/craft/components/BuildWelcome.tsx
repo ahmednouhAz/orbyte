@@ -70,13 +70,13 @@ export default function BuildWelcome({
               className="flex flex-row items-baseline gap-2 select-none"
               onClick={handleWordmarkClick}
             >
-              <Logo onyxBranded size={28} className="translate-y-[6px]" />
+              <Logo orbyteBranded size={28} className="translate-y-[6px]" />
               <Text
                 text05
                 style={{
                   fontFamily: "var(--font-kh-teka)",
                   fontWeight: 400,
-                  // Sized so the x-height matches the custom "onyx" logotype
+                  // Sized so the x-height matches the custom "orbyte" logotype
                   // (its x-height ≈ 0.595em vs KH Teka's 0.504em at size 28).
                   fontSize: "34px",
                   lineHeight: "1",

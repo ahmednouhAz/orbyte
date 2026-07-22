@@ -51,7 +51,7 @@ function UsersTable({ users }: { users: User[] }) {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `data` | `TData[]` | required | Row data array |
-| `columns` | `OnyxColumnDef<TData>[]` | required | Column definitions from `createTableColumns()` |
+| `columns` | `OrbyteColumnDef<TData>[]` | required | Column definitions from `createTableColumns()` |
 | `getRowId` | `(row: TData) => string` | required | Unique row identifier |
 | `pageSize` | `number` | `10` | Rows per page (`Infinity` disables pagination) |
 | `size` | `"md" \| "lg"` | `"lg"` | Density variant |

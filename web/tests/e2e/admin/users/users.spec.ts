@@ -12,14 +12,14 @@
 import { test, expect } from "./fixtures";
 import { TEST_ADMIN_CREDENTIALS } from "@tests/e2e/constants";
 import type { Browser } from "@playwright/test";
-import type { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import type { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 function uniqueEmail(prefix: string): string {
-  return `e2e-${prefix}-${Date.now()}@test.onyx`;
+  return `e2e-${prefix}-${Date.now()}@test.orbyte`;
 }
 
 const TEST_PASSWORD = "TestPassword123!";
@@ -35,14 +35,14 @@ async function softCleanup(fn: () => Promise<unknown>): Promise<void> {
  */
 async function withApiContext(
   browser: Browser,
-  fn: (api: OnyxApiClient) => Promise<void>
+  fn: (api: OrbyteApiClient) => Promise<void>
 ): Promise<void> {
   const context = await browser.newContext({
     storageState: "admin_auth.json",
   });
   try {
-    const { OnyxApiClient } = await import("@tests/e2e/utils/onyxApiClient");
-    const api = new OnyxApiClient(context.request);
+    const { OrbyteApiClient } = await import("@tests/e2e/utils/orbyteApiClient");
+    const api = new OrbyteApiClient(context.request);
     await fn(api);
   } finally {
     await context.close();

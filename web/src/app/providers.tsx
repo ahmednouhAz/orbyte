@@ -29,7 +29,7 @@ interface PHProviderProps {
 
 export function PHProvider({ children }: PHProviderProps) {
   useEffect(() => {
-    // Build-time key (Onyx Cloud); otherwise PostHogRuntimeInitializer handles it.
+    // Build-time key (Orbyte Cloud); otherwise PostHogRuntimeInitializer handles it.
     const buildTimeKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
     if (buildTimeKey) {
       initPostHog(buildTimeKey, process.env.NEXT_PUBLIC_POSTHOG_HOST);

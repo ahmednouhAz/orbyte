@@ -2,9 +2,9 @@ import React, { memo, JSX, useMemo, useCallback } from "react";
 import { SourceIcon } from "@/components/SourceIcon";
 import { WebResultIcon } from "@/components/WebResultIcon";
 import {
-  LoadedOnyxDocument,
-  MinimalOnyxDocument,
-  OnyxDocument,
+  LoadedOrbyteDocument,
+  MinimalOrbyteDocument,
+  OrbyteDocument,
 } from "@/lib/search/interfaces";
 import { SubQuestionDetail, CitationMap } from "../interfaces";
 import { ValidSources } from "@/lib/types";
@@ -21,8 +21,8 @@ import { openDocument } from "@/lib/search/utils";
 import { ensureHrefProtocol } from "@/lib/utils";
 
 interface DocumentCardProps {
-  document: LoadedOnyxDocument;
-  updatePresentingDocument: (document: MinimalOnyxDocument) => void;
+  document: LoadedOrbyteDocument;
+  updatePresentingDocument: (document: MinimalOrbyteDocument) => void;
   url?: string;
 }
 interface QuestionCardProps {
@@ -43,10 +43,10 @@ export const MemoizedAnchor = memo(
   }: {
     subQuestions?: SubQuestionDetail[];
     openQuestion?: (question: SubQuestionDetail) => void;
-    docs?: OnyxDocument[] | null;
+    docs?: OrbyteDocument[] | null;
     userFiles?: ProjectFile[] | null;
     citations?: CitationMap;
-    updatePresentingDocument: (doc: MinimalOnyxDocument) => void;
+    updatePresentingDocument: (doc: MinimalOrbyteDocument) => void;
     href?: string;
     children: React.ReactNode;
   }): JSX.Element => {
@@ -65,7 +65,7 @@ export const MemoizedAnchor = memo(
           // Use citation map to find the correct document
           // Citations map format: {citation_num: document_id}
           // e.g., {1: "doc_abc", 2: "doc_xyz", 3: "doc_123"}
-          let associatedDoc: OnyxDocument | null = null;
+          let associatedDoc: OrbyteDocument | null = null;
           if (isDocument && docs && citations) {
             const document_id = citations[citation_num];
             if (document_id) {
@@ -147,7 +147,7 @@ export const MemoizedLink = memo(
     // Convert document to SourceInfo for SourceTag
     const documentSourceInfo = useMemo(() => {
       if (!document) return null;
-      return documentToSourceInfo(document as OnyxDocument);
+      return documentToSourceInfo(document as OrbyteDocument);
     }, [document]);
 
     // Convert question to SourceInfo for SourceTag
@@ -159,7 +159,7 @@ export const MemoizedLink = memo(
     // Handle click on SourceTag
     const handleSourceClick = useCallback(() => {
       if (document && updatePresentingDocument) {
-        openDocument(document as OnyxDocument, updatePresentingDocument);
+        openDocument(document as OrbyteDocument, updatePresentingDocument);
       } else if (question && openQuestion) {
         openQuestion(question);
       }
@@ -174,7 +174,7 @@ export const MemoizedLink = memo(
       }
 
       const displayName = document
-        ? getDisplayNameForSource(document as OnyxDocument)
+        ? getDisplayNameForSource(document as OrbyteDocument)
         : question?.question || "Question";
 
       return (

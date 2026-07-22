@@ -1,13 +1,13 @@
 import React from "react";
-import "./onyx-loader.css";
+import "./orbyte-loader.css";
 
-interface OnyxLoaderProps {
+interface OrbyteLoaderProps {
   /** Size of the animated mark, in pixels. Default: 64 (matches the design). */
   size?: number;
 }
 
-// Onyx mark geometry (16-unit viewBox), matching the @opal/icons `onyx-octagon`
-// and `onyx-logo` paths. The stroke is defined here (rather than reusing those
+// Orbyte mark geometry (16-unit viewBox), matching the @opal/icons `orbyte-octagon`
+// and `orbyte-logo` paths. The stroke is defined here (rather than reusing those
 // icon components) so its weight can be tuned: at the default 64px size it
 // renders ~2.5px (Figma "Weight/Icon/Headline") and scales with `size`.
 const STROKE_WIDTH = 0.625;
@@ -23,17 +23,17 @@ const MARK_PATHS = [
 ];
 
 /**
- * Onyx-branded loading mark.
+ * Orbyte-branded loading mark.
  *
- * Renders the Onyx mark rotating a full turn while crossfading between the
- * octagon outline and the diamond logo (2s loop), per the Onyx UI Library
+ * Renders the Orbyte mark rotating a full turn while crossfading between the
+ * octagon outline and the diamond logo (2s loop), per the Orbyte UI Library
  * design. Both layers use `currentColor`, so the mark adapts to the
  * surrounding theme via `colors.css`.
  *
  * This is just the mark — for a full-page loading state with a "Loading …"
  * label, use `PageLoader`.
  */
-export function OnyxLoader({ size = 64 }: OnyxLoaderProps) {
+export function OrbyteLoader({ size = 64 }: OrbyteLoaderProps) {
   return (
     <div
       role="status"
@@ -41,7 +41,7 @@ export function OnyxLoader({ size = 64 }: OnyxLoaderProps) {
       className="relative shrink-0 text-border-02"
       style={{ width: size, height: size }}
     >
-      <div className="onyx-loader__rotator">
+      <div className="orbyte-loader__rotator">
         <svg
           width={size}
           height={size}
@@ -49,7 +49,7 @@ export function OnyxLoader({ size = 64 }: OnyxLoaderProps) {
           fill="none"
           stroke="currentColor"
           xmlns="http://www.w3.org/2000/svg"
-          className="onyx-loader__layer onyx-loader__outline"
+          className="orbyte-loader__layer orbyte-loader__outline"
         >
           <path
             d={OUTLINE_PATH}
@@ -65,7 +65,7 @@ export function OnyxLoader({ size = 64 }: OnyxLoaderProps) {
           fill="none"
           stroke="currentColor"
           xmlns="http://www.w3.org/2000/svg"
-          className="onyx-loader__layer onyx-loader__mark"
+          className="orbyte-loader__layer orbyte-loader__mark"
         >
           {MARK_PATHS.map((d) => (
             <path
@@ -82,4 +82,4 @@ export function OnyxLoader({ size = 64 }: OnyxLoaderProps) {
   );
 }
 
-export default OnyxLoader;
+export default OrbyteLoader;

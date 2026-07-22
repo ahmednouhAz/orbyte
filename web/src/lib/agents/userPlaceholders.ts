@@ -2,9 +2,9 @@
 // Instructions / Reminders prompts. At chat time the backend substitutes each
 // with the current user's IdP directory attribute (or basic identity).
 // MUST stay in sync with the backend allow-list (enforced by
-// backend/tests/unit/onyx/prompts/test_prompt_utils.py):
-//   - onyx/prompts/prompt_utils.py `USER_PLACEHOLDER_KEYS`
-//   - onyx/auth/oauth_claims_capture.py `_PROFILE_FIELDS`
+// backend/tests/unit/orbyte/prompts/test_prompt_utils.py):
+//   - orbyte/prompts/prompt_utils.py `USER_PLACEHOLDER_KEYS`
+//   - orbyte/auth/oauth_claims_capture.py `_PROFILE_FIELDS`
 
 export interface UserPlaceholder {
   key: string;

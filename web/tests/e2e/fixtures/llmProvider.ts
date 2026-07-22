@@ -21,7 +21,7 @@
 
 import { test as base, expect } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 
 export const test = base.extend<{
   /**
@@ -35,7 +35,7 @@ export const test = base.extend<{
     await page.context().clearCookies();
     await loginAs(page, "admin");
 
-    const client = new OnyxApiClient(page.request);
+    const client = new OrbyteApiClient(page.request);
     const createdId = await client.ensurePublicProvider();
     await use(createdId);
 

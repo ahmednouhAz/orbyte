@@ -16,7 +16,7 @@ import { useLLMProviders } from "@/lib/languageModels/hooks";
 import { useProviderStatus } from "@/components/chat/ProviderContext";
 
 function getOnboardingCompletedKey(userId: string): string {
-  return `onyx:onboardingCompleted:${userId}`;
+  return `orbyte:onboardingCompleted:${userId}`;
 }
 
 function useOnboardingState(liveAgent?: MinimalAgent): {

@@ -26,7 +26,7 @@ import type { RichStr } from "@opal/types";
 const route = ADMIN_ROUTES.SECURITY_HARDENING;
 
 // Outbound-request validation policy. Mirrors `SSRFProtectionLevel`
-// in backend/onyx/server/security/models.py.
+// in backend/orbyte/server/security/models.py.
 type SSRFProtectionLevel =
   | "validate_all"
   | "validate_llm"
@@ -35,7 +35,7 @@ type SSRFProtectionLevel =
 
 // Read shape: the effective, env-merged settings returned by GET /admin/security.
 // Every field is concrete — the backend never returns null here (see
-// `SecuritySettings` in backend/onyx/server/security/models.py).
+// `SecuritySettings` in backend/orbyte/server/security/models.py).
 interface SecuritySettings {
   user_directory_admin_only: boolean;
   track_external_idp_expiry: boolean;

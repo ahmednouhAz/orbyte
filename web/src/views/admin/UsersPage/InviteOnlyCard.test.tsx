@@ -39,7 +39,7 @@ describe("InviteOnlyCard", () => {
     mockUseSettings.mockReturnValue({
       ...baseSettings,
       enterprise: null,
-      appName: "Onyx",
+      appName: "Orbyte",
       vectorDbEnabled: true,
       isLoading: false,
       error: undefined,
@@ -67,7 +67,7 @@ describe("InviteOnlyCard", () => {
       ...baseSettings,
       invite_only_enabled: true,
       enterprise: null,
-      appName: "Onyx",
+      appName: "Orbyte",
       vectorDbEnabled: true,
       isLoading: false,
       error: undefined,

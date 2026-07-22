@@ -4,9 +4,9 @@ import { loginAsRandomUser } from "../utils/auth";
 import { expectElementScreenshot } from "../utils/visualRegression";
 
 async function sendMessageAndWaitForChat(page: Page, message: string) {
-  await page.locator("#onyx-chat-input-textbox").click();
-  await page.locator("#onyx-chat-input-textbox").fill(message);
-  await page.locator("#onyx-chat-input-send-button").click();
+  await page.locator("#orbyte-chat-input-textbox").click();
+  await page.locator("#orbyte-chat-input-textbox").fill(message);
+  await page.locator("#orbyte-chat-input-send-button").click();
 
   await page.waitForFunction(
     () => window.location.href.includes("chatId="),

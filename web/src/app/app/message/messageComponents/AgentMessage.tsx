@@ -192,7 +192,7 @@ const AgentMessage = React.memo(function AgentMessage({
   return (
     <div
       className="flex flex-col gap-3"
-      data-testid={isComplete ? "onyx-ai-message" : undefined}
+      data-testid={isComplete ? "orbyte-ai-message" : undefined}
     >
       {/* Row 1: Two-column layout for tool steps */}
 

@@ -7,7 +7,7 @@ import {
   mockChatEndpoint,
   resetTurnCounter,
 } from "@tests/e2e/utils/chatMock";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 
 const USER_MESSAGE = "Hi there";
 const AI_RESPONSE = "Hello, I'm a custom persona!";
@@ -67,7 +67,7 @@ test.describe("Chatting with a custom persona", () => {
       storageState: "admin_auth.json",
     });
     const page = await context.newPage();
-    const cleanupClient = new OnyxApiClient(page.request);
+    const cleanupClient = new OrbyteApiClient(page.request);
     await cleanupClient.deleteAgent(agentId);
     await context.close();
   });

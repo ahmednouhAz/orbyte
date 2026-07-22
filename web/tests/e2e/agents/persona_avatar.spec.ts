@@ -1,7 +1,7 @@
 import { test, expect, Browser } from "@playwright/test";
 import { loginAs, loginAsWorkerUser } from "@tests/e2e/utils/auth";
 import { CHECKERED_PNG } from "@tests/e2e/fixtures/images";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 import { expectElementScreenshot } from "@tests/e2e/utils/visualRegression";
 
 test.describe("Persona avatar", () => {
@@ -16,7 +16,7 @@ test.describe("Persona avatar", () => {
       storageState: "admin_auth.json",
     });
     const page = await context.newPage();
-    const cleanupClient = new OnyxApiClient(page.request);
+    const cleanupClient = new OrbyteApiClient(page.request);
     await cleanupClient.deleteAgent(agentId);
     await context.close();
   });

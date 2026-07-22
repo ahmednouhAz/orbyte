@@ -2,7 +2,7 @@
  * Cross-platform vocabulary for interactive surfaces (buttons, links, toggles,
  * tabs, menu items, …).
  *
- * These are the platform-agnostic *semantic* axes of Onyx's interactive color
+ * These are the platform-agnostic *semantic* axes of Orbyte's interactive color
  * system — the same on web (Opal `Interactive.Stateless`) and mobile. Each
  * platform extends this with its own event wiring + styling; the variant →
  * className color matrix is deliberately NOT shared (it stays per-platform).

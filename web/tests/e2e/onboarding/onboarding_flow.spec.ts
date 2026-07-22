@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import { loginAs, loginAsRandomUser, apiLogin } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 import { expectElementScreenshot } from "@tests/e2e/utils/visualRegression";
 
 /**
@@ -16,7 +16,7 @@ import { expectElementScreenshot } from "@tests/e2e/utils/visualRegression";
  * Marked @exclusive because scenarios 1 & 3 delete all LLM providers.
  */
 
-async function deleteAllProviders(client: OnyxApiClient): Promise<void> {
+async function deleteAllProviders(client: OrbyteApiClient): Promise<void> {
   const providers = await client.listLlmProviders();
   for (const provider of providers) {
     try {
@@ -41,7 +41,7 @@ async function createFreshAdmin(
   // Now promote the new user to admin via the existing admin
   await page.context().clearCookies();
   await loginAs(page, "admin");
-  const adminClient = new OnyxApiClient(page.request);
+  const adminClient = new OrbyteApiClient(page.request);
   await adminClient.setUserRole(email, "admin");
 
   // Log back in as the new admin
@@ -64,7 +64,7 @@ test.describe("Onboarding Flow @exclusive", () => {
       // Delete all providers first (as existing admin)
       await page.context().clearCookies();
       await loginAs(page, "admin");
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await deleteAllProviders(adminClient);
 
       // Create a fresh admin user (no chat history)
@@ -75,7 +75,7 @@ test.describe("Onboarding Flow @exclusive", () => {
       // Restore providers
       await page.context().clearCookies();
       await loginAs(page, "admin");
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await adminClient.ensurePublicProvider();
     });
 
@@ -105,7 +105,7 @@ test.describe("Onboarding Flow @exclusive", () => {
         timeout: 15000,
       });
 
-      const chatInput = page.locator("#onyx-chat-input");
+      const chatInput = page.locator("#orbyte-chat-input");
       await expect(chatInput).toBeVisible();
       // Disabled wrapper is the parent div with data-opal-disabled
       const disabledWrapper = chatInput.locator("..");
@@ -153,7 +153,7 @@ test.describe("Onboarding Flow @exclusive", () => {
       // Ensure provider exists
       await page.context().clearCookies();
       await loginAs(page, "admin");
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await adminClient.ensurePublicProvider();
 
       // Create a fresh admin user
@@ -190,11 +190,11 @@ test.describe("Onboarding Flow @exclusive", () => {
       await page.goto("/app");
       await page.waitForLoadState("networkidle");
 
-      await expect(page.locator("#onyx-chat-input")).toBeVisible({
+      await expect(page.locator("#orbyte-chat-input")).toBeVisible({
         timeout: 15000,
       });
 
-      const chatInput = page.locator("#onyx-chat-input");
+      const chatInput = page.locator("#orbyte-chat-input");
       const chatInputParent = chatInput.locator("..");
       await expect(chatInputParent).not.toHaveAttribute(
         "aria-disabled",
@@ -208,7 +208,7 @@ test.describe("Onboarding Flow @exclusive", () => {
       // Delete all providers (as existing admin)
       await page.context().clearCookies();
       await loginAs(page, "admin");
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await deleteAllProviders(adminClient);
 
       // Create a fresh non-admin user
@@ -219,7 +219,7 @@ test.describe("Onboarding Flow @exclusive", () => {
       // Restore providers
       await page.context().clearCookies();
       await loginAs(page, "admin");
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await adminClient.ensurePublicProvider();
     });
 
@@ -246,11 +246,11 @@ test.describe("Onboarding Flow @exclusive", () => {
     });
 
     test("chat input bar is disabled", async ({ page }) => {
-      await expect(page.locator("#onyx-chat-input")).toBeVisible({
+      await expect(page.locator("#orbyte-chat-input")).toBeVisible({
         timeout: 15000,
       });
 
-      const chatInput = page.locator("#onyx-chat-input");
+      const chatInput = page.locator("#orbyte-chat-input");
       // Disabled wrapper is the parent div with data-opal-disabled
       const disabledWrapper = chatInput.locator("..");
       await expect(disabledWrapper).toHaveAttribute(
@@ -282,7 +282,7 @@ test.describe("Onboarding Flow @exclusive", () => {
       // Ensure provider exists
       await page.context().clearCookies();
       await loginAs(page, "admin");
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await adminClient.ensurePublicProvider();
 
       // Create a fresh non-admin user
@@ -296,11 +296,11 @@ test.describe("Onboarding Flow @exclusive", () => {
     });
 
     test("chat input bar is enabled", async ({ page }) => {
-      await expect(page.locator("#onyx-chat-input")).toBeVisible({
+      await expect(page.locator("#orbyte-chat-input")).toBeVisible({
         timeout: 15000,
       });
 
-      const chatInput = page.locator("#onyx-chat-input");
+      const chatInput = page.locator("#orbyte-chat-input");
       const chatInputParent = chatInput.locator("..");
       await expect(chatInputParent).not.toHaveAttribute(
         "aria-disabled",

@@ -83,12 +83,12 @@ export default function Layout({ children }: LayoutProps) {
             them; the class then persists across client-side navigations. No-op
             in a browser. */}
         <Script
-          id="onyx-desktop-detector"
+          id="orbyte-desktop-detector"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               if ('__TAURI_INTERNALS__' in window || '__TAURI__' in window) {
-                document.documentElement.classList.add('onyx-desktop');
+                document.documentElement.classList.add('orbyte-desktop');
               }
             `,
           }}

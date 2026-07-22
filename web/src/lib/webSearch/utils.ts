@@ -224,7 +224,7 @@ export function getSingleConfigFieldValueForForm(
 // ── Content provider registry ─────────────────────────────────────────────────
 
 export const CONTENT_PROVIDER_DETAILS: Record<string, ContentProviderDetail> = {
-  onyx_web_crawler: {
+  orbyte_web_crawler: {
     label: "Orbyte Web Crawler",
     subtitle:
       "Built-in web crawler. Works for most pages but less performant in edge cases.",
@@ -269,7 +269,7 @@ const CONTENT_PROVIDER_CAPABILITIES: Record<
   string,
   ContentProviderCapabilities
 > = {
-  onyx_web_crawler: { requiresApiKey: false, requiredConfigKeys: [] },
+  orbyte_web_crawler: { requiresApiKey: false, requiredConfigKeys: [] },
   firecrawl: {
     requiresApiKey: true,
     requiredConfigKeys: ["base_url"],
@@ -328,10 +328,10 @@ export function getCurrentContentProviderType(
   }>
 ): WebContentProviderType {
   return (
-    providers.find((p) => p.is_active && p.provider_type !== "onyx_web_crawler")
+    providers.find((p) => p.is_active && p.provider_type !== "orbyte_web_crawler")
       ?.provider_type ??
     providers.find((p) => p.is_active)?.provider_type ??
-    "onyx_web_crawler"
+    "orbyte_web_crawler"
   );
 }
 

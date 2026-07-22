@@ -7,7 +7,7 @@ import {
   startNewChat,
   verifyCurrentModel,
 } from "@tests/e2e/utils/chatActions";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 
 type SendChatMessagePayload = {
   llm_override?: {
@@ -24,7 +24,7 @@ function uniqueName(prefix: string): string {
 async function openChat(page: Page): Promise<void> {
   await page.goto("/app");
   await page.waitForLoadState("networkidle");
-  await page.waitForSelector("#onyx-chat-input-textbox", { timeout: 15000 });
+  await page.waitForSelector("#orbyte-chat-input-textbox", { timeout: 15000 });
 }
 
 async function loginWithCleanCookies(
@@ -174,7 +174,7 @@ test.describe("LLM Runtime Selection", () => {
   test.afterEach(async ({ page }) => {
     await loginWithCleanCookies(page, "admin");
 
-    const client = new OnyxApiClient(page.request);
+    const client = new OrbyteApiClient(page.request);
     const providerIds = Array.from(new Set(providersToCleanup));
     const groupIds = Array.from(new Set(groupsToCleanup));
 
@@ -247,7 +247,7 @@ test.describe("LLM Runtime Selection", () => {
 
     await page.reload();
     await page.waitForLoadState("networkidle");
-    await page.waitForSelector("#onyx-chat-input-textbox", { timeout: 15000 });
+    await page.waitForSelector("#orbyte-chat-input-textbox", { timeout: 15000 });
 
     await verifyCurrentModel(page, selectedModelDisplay);
 
@@ -289,7 +289,7 @@ test.describe("LLM Runtime Selection", () => {
     );
     const initialModelVersion = initialPayload.llm_override?.model_version;
 
-    const aiMessage = page.locator('[data-testid="onyx-ai-message"]').first();
+    const aiMessage = page.locator('[data-testid="orbyte-ai-message"]').first();
     await aiMessage.hover();
 
     const regenerateControl = aiMessage.getByTestId("AgentMessage/regenerate");
@@ -426,7 +426,7 @@ test.describe("LLM Runtime Selection", () => {
     // Use a new session so runtime selection is not overwritten by the previous
     // chat session's persisted model override.
     await startNewChat(page);
-    await page.waitForSelector("#onyx-chat-input-textbox", { timeout: 15000 });
+    await page.waitForSelector("#orbyte-chat-input-textbox", { timeout: 15000 });
 
     await page.getByTestId("model-selector").locator("button").last().click();
     await page.waitForSelector('[role="dialog"]', { state: "visible" });
@@ -478,7 +478,7 @@ test.describe("LLM Runtime Selection", () => {
   }, testInfo) => {
     await loginWithCleanCookies(page, "admin");
 
-    const client = new OnyxApiClient(page.request);
+    const client = new OrbyteApiClient(page.request);
     const restrictedGroupName = uniqueName("PW Runtime Restricted Group");
     const restrictedModelName = `restricted-runtime-model-${Date.now()}`;
     const restrictedProviderName = uniqueName("PW Runtime Restricted Provider");

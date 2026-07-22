@@ -98,7 +98,7 @@ import { markdown } from "@opal/utils";
 
 // Inline markdown — bold, italic, links, code, strikethrough
 <Text font="main-ui-body" color="text-05">
-  {markdown("*Hello*, **world**! Visit [Onyx](https://onyx.app) and run `onyx start`.")}
+  {markdown("*Hello*, **world**! Visit [Orbyte](https://onyx.app) and run `orbyte start`.")}
 </Text>
 
 // Plain string — no markdown parsing

@@ -82,9 +82,9 @@ export function getDefaultLlmSelection(
 
 // Tracks whether the user has dismissed the craft onboarding intro so it only
 // auto-shows once per user (mirrors the main app's
-// `onyx:onboardingCompleted:{userId}`).
+// `orbyte:onboardingCompleted:{userId}`).
 function craftOnboardingSeenKey(userId: string): string {
-  return `onyx:craftOnboardingSeen:${userId}`;
+  return `orbyte:craftOnboardingSeen:${userId}`;
 }
 
 // localStorage access throws when the browser blocks site data; treat that

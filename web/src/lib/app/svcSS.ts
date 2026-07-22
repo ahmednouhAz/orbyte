@@ -13,7 +13,7 @@ async function fetchAppName(): Promise<string> {
 }
 
 export async function generateFaviconMetadata(): Promise<Metadata["icons"]> {
-  let iconSrc = "/onyx.ico";
+  let iconSrc = "/orbyte.ico";
 
   if (SERVER_SIDE_ONLY__PAID_ENTERPRISE_FEATURES_ENABLED) {
     const enterprise = await fetchEnterpriseSettingsSS();

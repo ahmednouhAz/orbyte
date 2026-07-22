@@ -205,15 +205,15 @@
       "type": "color"
     },
     "theme-primary-06": {
-      "value": "{onyx-ink-100}",
+      "value": "{orbyte-ink-100}",
       "type": "color"
     },
     "theme-primary-05": {
-      "value": "{onyx-ink-95}",
+      "value": "{orbyte-ink-95}",
       "type": "color"
     },
     "theme-primary-04": {
-      "value": "{onyx-ink-90}",
+      "value": "{orbyte-ink-90}",
       "type": "color"
     },
     "theme-gradient-05": {

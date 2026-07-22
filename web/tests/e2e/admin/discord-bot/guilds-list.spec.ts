@@ -275,9 +275,9 @@ test.describe("Guilds List Page", () => {
 
     await adminPage.goto("/admin/discord-bot");
 
-    // Should show loading indicator (OnyxLoader)
+    // Should show loading indicator (OrbyteLoader)
     // The loader should appear while data is being fetched.
-    // OnyxLoader exposes role="status" on its wrapper.
+    // OrbyteLoader exposes role="status" on its wrapper.
     const loader = adminPage.getByRole("status");
     // Give it a moment to appear
     await expect(loader).toBeVisible({ timeout: 5000 });

@@ -24,22 +24,22 @@ import {
 // Exported types
 // ---------------------------------------------------------------------------
 
-export type OnyxSortDirection = "none" | "ascending" | "descending";
-export type OnyxSelectionState = "none" | "partial" | "all";
+export type OrbyteSortDirection = "none" | "ascending" | "descending";
+export type OrbyteSelectionState = "none" | "partial" | "all";
 
 // ---------------------------------------------------------------------------
 // Exported utility
 // ---------------------------------------------------------------------------
 
 /**
- * Convert a TanStack sort direction to an Onyx sort direction string.
+ * Convert a TanStack sort direction to an Orbyte sort direction string.
  *
  * This is a **named export** (not on the return object) because it is used
  * statically inside JSX header loops, not tied to hook state.
  */
-export function toOnyxSortDirection(
+export function toOrbyteSortDirection(
   dir: false | "asc" | "desc"
-): OnyxSortDirection {
+): OrbyteSortDirection {
   if (dir === "asc") return "ascending";
   if (dir === "desc") return "descending";
   return "none";
@@ -130,7 +130,7 @@ interface UseDataTableReturn<TData extends RowData> {
   /** Full TanStack table instance for rendering. */
   table: Table<TData>;
 
-  // Pagination (1-based, matching Onyx Footer)
+  // Pagination (1-based, matching Orbyte Footer)
   /** Current page number (1-based). */
   currentPage: number;
   /** Total number of pages. */
@@ -144,9 +144,9 @@ interface UseDataTableReturn<TData extends RowData> {
   /** Whether pagination is active (pageSize is finite). */
   isPaginated: boolean;
 
-  // Selection (pre-computed for Onyx Footer)
+  // Selection (pre-computed for Orbyte Footer)
   /** Aggregate selection state for the current page. */
-  selectionState: OnyxSelectionState;
+  selectionState: OrbyteSelectionState;
   /** Number of selected rows. */
   selectedCount: number;
   /** Whether every row on the current page is selected. */
@@ -176,7 +176,7 @@ interface UseDataTableReturn<TData extends RowData> {
 // ---------------------------------------------------------------------------
 
 /**
- * Wraps TanStack `useReactTable` with Onyx-specific defaults and derived
+ * Wraps TanStack `useReactTable` with Orbyte-specific defaults and derived
  * state so that consumers only need to provide `data` + `columns`.
  *
  * @example
@@ -372,7 +372,7 @@ export default function useDataTable<TData extends RowData>(
   const isAllPageRowsSelected = table.getIsAllPageRowsSelected();
   const isSomePageRowsSelected = table.getIsSomePageRowsSelected();
 
-  const selectionState: OnyxSelectionState = isAllPageRowsSelected
+  const selectionState: OrbyteSelectionState = isAllPageRowsSelected
     ? "all"
     : isSomePageRowsSelected
       ? "partial"

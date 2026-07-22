@@ -287,7 +287,7 @@ export default function BuildMessageList({
       <Hoverable.Root key={message.id} group="craftAgentMessage" width="full">
         <div className="flex items-start gap-3 py-4">
           <div className="shrink-0 h-9 flex items-center">
-            <Logo onyxBranded folded size={24} />
+            <Logo orbyteBranded folded size={24} />
           </div>
           <div className="flex-1 flex flex-col gap-2 min-w-0">
             {visibleSavedRender ? (
@@ -374,7 +374,7 @@ export default function BuildMessageList({
         {showStreamingArea && (
           <div className="flex items-start gap-3 py-4">
             <div className="shrink-0 mt-2">
-              <Logo onyxBranded folded size={24} />
+              <Logo orbyteBranded folded size={24} />
             </div>
             <div className="flex-1 flex flex-col gap-2 min-w-0">
               {streamRender?.pinnedTodo && (

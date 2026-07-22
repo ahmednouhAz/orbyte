@@ -14,7 +14,7 @@ import {
   CODE_INTERPRETER_TOOL_TYPES,
 } from "@/app/app/services/streamingModels";
 import { CitationMap } from "@/app/app/interfaces";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { OrbyteDocument } from "@/lib/search/interfaces";
 import {
   isActualToolCallPacket,
   isToolPacket,
@@ -39,7 +39,7 @@ export interface ProcessorState {
   citationMap: CitationMap;
 
   // Documents
-  documentMap: Map<string, OnyxDocument>;
+  documentMap: Map<string, OrbyteDocument>;
 
   // Packet grouping
   groupedPacketsMap: Map<string, Packet[]>;

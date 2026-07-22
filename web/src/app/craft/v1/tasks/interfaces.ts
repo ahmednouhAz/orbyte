@@ -2,7 +2,7 @@
  * Shared types for the Scheduled Tasks feature.
  *
  * These mirror the backend Pydantic models defined in
- * ``backend/onyx/server/features/build/scheduled_tasks/api.py``.
+ * ``backend/orbyte/server/features/build/scheduled_tasks/api.py``.
  */
 
 export type ScheduledTaskStatus = "ACTIVE" | "PAUSED";

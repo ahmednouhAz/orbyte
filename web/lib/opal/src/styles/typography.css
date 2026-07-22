@@ -6,11 +6,11 @@
  *   - The `.font-main-content-body strong` weight override
  *
  * The typography PRESETS (the `@utility font-*` blocks) are now design tokens in
- * @onyx-ai/shared and are generated into `@onyx-ai/shared/typography.css`, imported
+ * @orbyte-ai/shared and are generated into `@orbyte-ai/shared/typography.css`, imported
  * via _reference.css (which leads the bundle). The font-family CSS variables and the
- * height metrics they reference also live in @onyx-ai/shared (tokens.css).
+ * height metrics they reference also live in @orbyte-ai/shared (tokens.css).
  *
- * Automatically included when consumers import `@onyx-ai/opal/root.css`.
+ * Automatically included when consumers import `@orbyte-ai/opal/root.css`.
  */
 
 @layer base {

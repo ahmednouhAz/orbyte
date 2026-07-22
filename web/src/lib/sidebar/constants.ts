@@ -14,5 +14,5 @@ export const LOCAL_STORAGE_KEYS = {
    * When `"true"`, the "move chat to project" confirmation modal is suppressed
    * and the move proceeds silently.
    */
-  HIDE_MOVE_CUSTOM_AGENT_MODAL: "onyx:hideMoveCustomAgentModal",
+  HIDE_MOVE_CUSTOM_AGENT_MODAL: "orbyte:hideMoveCustomAgentModal",
 } as const;

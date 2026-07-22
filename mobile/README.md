@@ -7,7 +7,7 @@ dependencies, lockfile, and tooling). Scaffolded with `create-expo-app` (Expo Ro
 
 - **Expo SDK 56** (managed, New Architecture) · **Expo Router** · React 19.2 / RN 0.85 · **Bun**.
 - **NativeWind v4** for styling.
-  > No design system wired yet — tokens/theme will be imported from the `@onyx-ai/shared`
+  > No design system wired yet — tokens/theme will be imported from the `@orbyte-ai/shared`
   > package later (see the `Subash-Mohan/shared-package-mobile-web` branch).
 - **TanStack Query** (MMKV-persisted) · **Zustand** · **react-native-mmkv** · **@shopify/flash-list**.
 
@@ -66,7 +66,7 @@ src/global.css  Tailwind entry stylesheet (NativeWind)
 
 ## Design system
 
-Not wired yet. Tokens, theme, and shared utilities will be imported from the `@onyx-ai/shared`
+Not wired yet. Tokens, theme, and shared utilities will be imported from the `@orbyte-ai/shared`
 package once it lands (see the `Subash-Mohan/shared-package-mobile-web` branch). Nothing is
 vendored locally — the package owns the Style Dictionary build and the design tokens.
 

@@ -7,7 +7,7 @@ const {
 
 let config = getDefaultConfig(__dirname);
 
-// @onyx-ai/shared lives outside this root (web/lib/shared), so add it to watchFolders;
+// @orbyte-ai/shared lives outside this root (web/lib/shared), so add it to watchFolders;
 // block its dev-only node_modules from the crawl to avoid Haste/duplicate-module collisions.
 const sharedRoot = path.resolve(__dirname, "../web/lib/shared");
 

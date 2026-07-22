@@ -1,7 +1,7 @@
 {
-  "name": "@onyx-ai/shared",
+  "name": "@orbyte-ai/shared",
   "version": "0.1.0",
-  "description": "Platform-agnostic shared design tokens, types, contracts, and utilities for Onyx web + mobile.",
+  "description": "Platform-agnostic shared design tokens, types, contracts, and utilities for Orbyte web + mobile.",
   "license": "MIT",
   "private": true,
   "type": "module",

@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import { loginAs, loginAsRandomUser, apiLogin } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 import { CraftWelcomePage } from "@tests/e2e/pages/CraftWelcomePage";
 
 /**
@@ -22,10 +22,10 @@ async function craftEnabled(page: Page): Promise<boolean> {
   const response = await page.request.get("/api/settings");
   if (!response.ok()) return false;
   const settings = await response.json();
-  return settings?.settings?.onyx_craft_enabled === true;
+  return settings?.settings?.orbyte_craft_enabled === true;
 }
 
-async function deleteAllProviders(client: OnyxApiClient): Promise<void> {
+async function deleteAllProviders(client: OrbyteApiClient): Promise<void> {
   const providers = await client.listLlmProviders();
   for (const provider of providers) {
     try {
@@ -46,7 +46,7 @@ async function createFreshAdmin(page: Page): Promise<void> {
 
   await page.context().clearCookies();
   await loginAs(page, "admin");
-  const adminClient = new OnyxApiClient(page.request);
+  const adminClient = new OrbyteApiClient(page.request);
   await adminClient.setUserRole(email, "admin");
 
   await page.context().clearCookies();
@@ -67,7 +67,7 @@ test.describe("Craft Provider Onboarding @exclusive", () => {
 
   test.describe("Admin WITHOUT providers", () => {
     test.beforeEach(async ({ page }) => {
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await deleteAllProviders(adminClient);
       await createFreshAdmin(page);
     });
@@ -75,7 +75,7 @@ test.describe("Craft Provider Onboarding @exclusive", () => {
     test.afterEach(async ({ page }) => {
       await page.context().clearCookies();
       await loginAs(page, "admin");
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await adminClient.ensurePublicProvider();
     });
 
@@ -106,7 +106,7 @@ test.describe("Craft Provider Onboarding @exclusive", () => {
 
   test.describe("Non-admin WITHOUT providers", () => {
     test.beforeEach(async ({ page }) => {
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await deleteAllProviders(adminClient);
       await createFreshUser(page);
     });
@@ -114,7 +114,7 @@ test.describe("Craft Provider Onboarding @exclusive", () => {
     test.afterEach(async ({ page }) => {
       await page.context().clearCookies();
       await loginAs(page, "admin");
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await adminClient.ensurePublicProvider();
     });
 
@@ -131,7 +131,7 @@ test.describe("Craft Provider Onboarding @exclusive", () => {
 
   test.describe("Admin WITH provider", () => {
     test.beforeEach(async ({ page }) => {
-      const adminClient = new OnyxApiClient(page.request);
+      const adminClient = new OrbyteApiClient(page.request);
       await adminClient.ensurePublicProvider();
       await createFreshAdmin(page);
     });

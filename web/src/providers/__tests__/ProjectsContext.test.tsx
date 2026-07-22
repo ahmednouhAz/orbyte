@@ -31,7 +31,7 @@ jest.mock("@/lib/settings/hooks", () => ({
   useSettings: () => ({
     user_file_max_upload_size_mb: 1,
     enterprise: null,
-    appName: "Onyx",
+    appName: "Orbyte",
     vectorDbEnabled: true,
     isLoading: false,
     error: undefined,

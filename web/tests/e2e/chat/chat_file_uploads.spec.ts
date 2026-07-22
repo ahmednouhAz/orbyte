@@ -21,7 +21,7 @@ const PYTHON_CODE = `def greet(name: str) -> str:
 
 
 if __name__ == "__main__":
-    print(greet("Onyx"))
+    print(greet("Orbyte"))
 `;
 
 interface UploadFile {
@@ -82,7 +82,7 @@ async function uploadFilesToChat(
   expect(uploadResponse.ok()).toBeTruthy();
 
   await page.waitForLoadState("networkidle");
-  const inputWrapper = page.locator("#onyx-chat-input");
+  const inputWrapper = page.locator("#orbyte-chat-input");
   for (const file of files) {
     const card = file.mimeType.startsWith("image/")
       ? inputWrapper.locator(`img[alt="${file.name}"]`)
@@ -120,8 +120,8 @@ test.describe("Chat File Uploads", () => {
 
       await sendMessage(page, "Summarize this file");
 
-      const userMessage = page.locator("#onyx-human-message").first();
-      const fileDisplay = userMessage.locator("#onyx-file");
+      const userMessage = page.locator("#orbyte-human-message").first();
+      const fileDisplay = userMessage.locator("#orbyte-file");
       await expect(fileDisplay).toBeVisible();
       await expect(fileDisplay.getByText(fileName)).toBeVisible();
 
@@ -143,8 +143,8 @@ test.describe("Chat File Uploads", () => {
 
       await sendMessage(page, "What's in this image?");
 
-      const userMessage = page.locator("#onyx-human-message").first();
-      const imageDisplay = userMessage.locator("#onyx-image");
+      const userMessage = page.locator("#orbyte-human-message").first();
+      const imageDisplay = userMessage.locator("#orbyte-image");
       await expect(imageDisplay).toBeVisible();
       await expect(imageDisplay.locator("img").first()).toBeVisible();
 
@@ -172,12 +172,12 @@ test.describe("Chat File Uploads", () => {
 
       await sendMessage(page, "Look at both of these");
 
-      const userMessage = page.locator("#onyx-human-message").first();
+      const userMessage = page.locator("#orbyte-human-message").first();
       await expect(
-        userMessage.locator("#onyx-file").getByText(textName)
+        userMessage.locator("#orbyte-file").getByText(textName)
       ).toBeVisible();
       await expect(
-        userMessage.locator("#onyx-image").locator("img").first()
+        userMessage.locator("#orbyte-image").locator("img").first()
       ).toBeVisible();
 
       await chat.screenshotContainer("chat-uploaded-multiple-files");
@@ -204,17 +204,17 @@ test.describe("Chat File Uploads", () => {
         page,
         buildMockImageGenStream({
           fileId,
-          revisedPrompt: "A friendly cartoon onyx stone with a smile",
+          revisedPrompt: "A friendly cartoon orbyte stone with a smile",
           message: IMAGE_GEN_AI_MESSAGE,
         })
       );
 
       await sendMessage(
         page,
-        "Generate an image of a friendly cartoon onyx stone"
+        "Generate an image of a friendly cartoon orbyte stone"
       );
 
-      const aiMessage = page.getByTestId("onyx-ai-message").first();
+      const aiMessage = page.getByTestId("orbyte-ai-message").first();
       const generatedImage = aiMessage.locator('img[alt="Chat Message Image"]');
       await expect(generatedImage).toBeVisible({ timeout: 10000 });
       await expect(generatedImage).toHaveAttribute(
@@ -256,8 +256,8 @@ test.describe("Chat File Uploads", () => {
 
       await sendMessage(page, "Review this script");
 
-      const userMessage = page.locator("#onyx-human-message").first();
-      const fileDisplay = userMessage.locator("#onyx-file");
+      const userMessage = page.locator("#orbyte-human-message").first();
+      const fileDisplay = userMessage.locator("#orbyte-file");
       await expect(fileDisplay).toBeVisible();
 
       const expandButton = fileDisplay.locator(
@@ -311,8 +311,8 @@ test.describe("Chat File Uploads", () => {
 
       await sendMessage(page, "Preview this document");
 
-      const userMessage = page.locator("#onyx-human-message").first();
-      const fileDisplay = userMessage.locator("#onyx-file");
+      const userMessage = page.locator("#orbyte-human-message").first();
+      const fileDisplay = userMessage.locator("#orbyte-file");
       await expect(fileDisplay).toBeVisible();
 
       const expandButton = fileDisplay.locator(

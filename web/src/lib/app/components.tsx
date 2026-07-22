@@ -8,28 +8,28 @@ import {
 import { cn } from "@opal/utils";
 import Text from "@/refresh-components/texts/Text";
 import Truncated from "@/refresh-components/texts/Truncated";
-import { SvgOnyxLogo, SvgOnyxLogoTyped } from "@opal/logos";
+import { SvgOrbyteLogo, SvgOrbyteLogoTyped } from "@opal/logos";
 
 export interface LogoProps {
   folded?: boolean;
   size?: number;
   className?: string;
-  // Always render the real Onyx logo, ignoring enterprise white-label settings
-  // (custom logo / application name). Used by Onyx-branded surfaces like Craft.
-  onyxBranded?: boolean;
+  // Always render the real Orbyte logo, ignoring enterprise white-label settings
+  // (custom logo / application name). Used by Orbyte-branded surfaces like Craft.
+  orbyteBranded?: boolean;
 }
 
-export function Logo({ folded, size, className, onyxBranded }: LogoProps) {
+export function Logo({ folded, size, className, orbyteBranded }: LogoProps) {
   const resolvedSize = size ?? DEFAULT_LOGO_SIZE_PX;
   const { enterprise, logoUrl } = useSettings();
   const logoDisplayStyle = enterprise?.logo_display_style;
   const applicationName = enterprise?.application_name;
 
-  if (onyxBranded) {
+  if (orbyteBranded) {
     return folded ? (
-      <SvgOnyxLogo size={resolvedSize} className={cn("shrink-0", className)} />
+      <SvgOrbyteLogo size={resolvedSize} className={cn("shrink-0", className)} />
     ) : (
-      <SvgOnyxLogoTyped size={resolvedSize} className={className} />
+      <SvgOrbyteLogoTyped size={resolvedSize} className={className} />
     );
   }
 
@@ -49,7 +49,7 @@ export function Logo({ folded, size, className, onyxBranded }: LogoProps) {
       />
     </div>
   ) : (
-    <SvgOnyxLogo size={resolvedSize} className={cn("shrink-0", className)} />
+    <SvgOrbyteLogo size={resolvedSize} className={cn("shrink-0", className)} />
   );
 
   const renderNameAndPoweredBy = (opts: {
@@ -66,7 +66,7 @@ export function Logo({ folded, size, className, onyxBranded }: LogoProps) {
               <Truncated headingH3>{applicationName}</Truncated>
             )}
             {!NEXT_PUBLIC_DO_NOT_USE_TOGGLE_OFF_DANSWER_POWERED &&
-              !enterprise?.hide_onyx_branding && (
+              !enterprise?.hide_orbyte_branding && (
                 <Text
                   secondaryBody
                   text03
@@ -96,8 +96,8 @@ export function Logo({ folded, size, className, onyxBranded }: LogoProps) {
   return applicationName ? (
     renderNameAndPoweredBy({ includeLogo: true, includeName: true })
   ) : folded ? (
-    <SvgOnyxLogo size={resolvedSize} className={cn("shrink-0", className)} />
+    <SvgOrbyteLogo size={resolvedSize} className={cn("shrink-0", className)} />
   ) : (
-    <SvgOnyxLogoTyped size={resolvedSize} className={className} />
+    <SvgOrbyteLogoTyped size={resolvedSize} className={className} />
   );
 }

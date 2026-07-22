@@ -37,7 +37,7 @@ import {
 import {
   SvgArrowExchange,
   SvgChevronDown,
-  SvgOnyxOctagon,
+  SvgOrbyteOctagon,
   SvgOrganization,
   SvgPlusCircle,
   SvgRefreshCw,
@@ -47,7 +47,7 @@ import {
   SvgX,
   SvgSimpleLoader,
 } from "@opal/icons";
-import SvgOnyxLogo from "@opal/logos/onyx-logo";
+import SvgOrbyteLogo from "@opal/logos/orbyte-logo";
 import { Card, EmptyMessageCard } from "@opal/components";
 import { ContentAction } from "@opal/layouts";
 import AgentAvatar from "@/refresh-components/avatars/AgentAvatar";
@@ -119,7 +119,7 @@ export function APIKeyField({
 // ─── APIBaseField ───────────────────────────────────────────────────────────
 
 /**
- * Sentence appended to an API Base URL `subDescription` when Onyx is detected
+ * Sentence appended to an API Base URL `subDescription` when Orbyte is detected
  * to be running inside a container — explains why the default uses
  * `host.docker.internal`.
  */
@@ -365,7 +365,7 @@ export function ModelAccessField() {
             ) : (
               <div className="w-full p-2">
                 <Content
-                  icon={SvgOnyxOctagon}
+                  icon={SvgOrbyteOctagon}
                   title="No agents added"
                   description="This provider will not be used by any agents."
                   variant="section"
@@ -891,7 +891,7 @@ function ModalWrapperInner({
           <Modal.Header
             icon={providerIcon}
             moreIcon1={SvgArrowExchange}
-            moreIcon2={SvgOnyxLogo}
+            moreIcon2={SvgOrbyteLogo}
             title={title}
             description={description}
             onClose={onClose}

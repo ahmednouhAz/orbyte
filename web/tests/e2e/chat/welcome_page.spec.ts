@@ -41,7 +41,7 @@ for (const theme of THEMES) {
     // ── Input bar element screenshot ──────────────────────────────────
 
     test("input bar element snapshot", async ({ page }) => {
-      const inputBar = page.locator("#onyx-chat-input");
+      const inputBar = page.locator("#orbyte-chat-input");
       await inputBar.waitFor({ state: "visible", timeout: 10000 });
 
       await expectElementScreenshot(inputBar, {
@@ -63,7 +63,7 @@ for (const theme of THEMES) {
     // ── Content assertions ────────────────────────────────────────────
 
     test("displays greeting from default agent", async ({ page }) => {
-      const greetingContainer = page.getByTestId("onyx-logo");
+      const greetingContainer = page.getByTestId("orbyte-logo");
       await greetingContainer.waitFor({ state: "visible", timeout: 10000 });
 
       const text = await greetingContainer.textContent();
@@ -71,7 +71,7 @@ for (const theme of THEMES) {
     });
 
     test("chat input is visible and focusable", async ({ page }) => {
-      const textarea = page.locator("#onyx-chat-input-textbox");
+      const textarea = page.locator("#orbyte-chat-input-textbox");
       await expect(textarea).toBeVisible({ timeout: 10000 });
 
       await textarea.click();
@@ -84,7 +84,7 @@ for (const theme of THEMES) {
     });
 
     test.skip("send button is visible in the input bar", async ({ page }) => {
-      const sendButton = page.locator("#onyx-chat-input-send-button");
+      const sendButton = page.locator("#orbyte-chat-input-send-button");
       await expect(sendButton).toBeVisible({ timeout: 10000 });
 
       await expectElementScreenshot(sendButton, {

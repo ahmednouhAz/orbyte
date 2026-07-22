@@ -10,7 +10,7 @@ Uses `Hoverable.Root` / `Hoverable.Item` so the copy button appears on hover wit
 import { Code } from "@opal/components";
 
 // With copy button (default)
-<Code>npm install @onyx/sdk</Code>
+<Code>npm install @orbyte/sdk</Code>
 
 // Without copy button
 <Code showCopyButton={false}>{"const x = 1;"}</Code>

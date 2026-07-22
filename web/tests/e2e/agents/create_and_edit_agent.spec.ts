@@ -1,6 +1,6 @@
 import { test, expect, Page, Browser } from "@playwright/test";
 import { loginAs, loginAsWorkerUser } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 import { expectElementScreenshot } from "@tests/e2e/utils/visualRegression";
 
 // --- Locator Helper Functions ---
@@ -128,7 +128,7 @@ test.describe("Assistant Creation and Edit Verification", () => {
           storageState: "admin_auth.json",
         });
         const page = await context.newPage();
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new OrbyteApiClient(page.request);
         await cleanupClient.deleteAgent(userFilesAssistantId);
         await context.close();
         console.log(
@@ -200,7 +200,7 @@ test.describe("Assistant Creation and Edit Verification", () => {
         storageState: "admin_auth.json",
       });
       const page = await context.newPage();
-      const cleanupClient = new OnyxApiClient(page.request);
+      const cleanupClient = new OrbyteApiClient(page.request);
 
       if (knowledgeAssistantId !== null) {
         await cleanupClient.deleteAgent(knowledgeAssistantId);
@@ -224,9 +224,9 @@ test.describe("Assistant Creation and Edit Verification", () => {
       await loginAs(page, "admin");
 
       // Create a connector and document set to enable the Knowledge toggle
-      const onyxApiClient = new OnyxApiClient(page.request);
-      ccPairId = await onyxApiClient.createFileConnector("Test Connector");
-      documentSetId = await onyxApiClient.createDocumentSet(
+      const orbyteApiClient = new OrbyteApiClient(page.request);
+      ccPairId = await orbyteApiClient.createFileConnector("Test Connector");
+      documentSetId = await orbyteApiClient.createDocumentSet(
         "Test Document Set",
         [ccPairId]
       );
@@ -321,7 +321,7 @@ test.describe("Assistant Creation and Edit Verification", () => {
 
       // Verify SearchTool is persisted in the agent's tools via API
       const createdAgent =
-        await onyxApiClient.getAssistant(knowledgeAssistantId);
+        await orbyteApiClient.getAssistant(knowledgeAssistantId);
       expect(
         createdAgent.tools.some((t) => t.in_code_tool_id === "SearchTool"),
         "Agent created with knowledge enabled should have SearchTool in tools"
@@ -374,7 +374,7 @@ test.describe("Assistant Creation and Edit Verification", () => {
       expect(page.url()).toContain(`agentId=${agentId}`);
 
       // Verify SearchTool persists after editing (knowledge still enabled)
-      const editedAgent = await onyxApiClient.getAssistant(
+      const editedAgent = await orbyteApiClient.getAssistant(
         knowledgeAssistantId!
       );
       expect(

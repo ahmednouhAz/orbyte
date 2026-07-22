@@ -4,14 +4,14 @@
  * Consumers wire this in their own tailwind.config.js:
  *
  *   module.exports = {
- *     presets: [require("@onyx-ai/opal/tailwind-preset")],
+ *     presets: [require("@orbyte-ai/opal/tailwind-preset")],
  *     content: [
  *       "./src/**\/*.{ts,tsx}",
- *       "./node_modules/@onyx-ai/opal/dist/**\/*.{js,mjs}",
+ *       "./node_modules/@orbyte-ai/opal/dist/**\/*.{js,mjs}",
  *     ],
  *   };
  *
- * Consumers must also `import "@onyx-ai/opal/styles.css"` once at the top of
+ * Consumers must also `import "@orbyte-ai/opal/styles.css"` once at the top of
  * their app (e.g. in a Next.js root layout) so the underlying CSS variables
  * referenced by these tokens are defined.
  */
@@ -172,12 +172,12 @@ module.exports = {
         "theme-magenta-05": "var(--theme-magenta-05)",
         "theme-magenta-02": "var(--theme-magenta-02)",
         "theme-magenta-01": "var(--theme-magenta-01)",
-        "onyx-ink-100": "var(--onyx-ink-100)",
-        "onyx-ink-95": "var(--onyx-ink-95)",
-        "onyx-ink-90": "var(--onyx-ink-90)",
-        "onyx-chrome-20": "var(--onyx-chrome-20)",
-        "onyx-chrome-10": "var(--onyx-chrome-10)",
-        "onyx-chrome-00": "var(--onyx-chrome-00)",
+        "orbyte-ink-100": "var(--orbyte-ink-100)",
+        "orbyte-ink-95": "var(--orbyte-ink-95)",
+        "orbyte-ink-90": "var(--orbyte-ink-90)",
+        "orbyte-chrome-20": "var(--orbyte-chrome-20)",
+        "orbyte-chrome-10": "var(--orbyte-chrome-10)",
+        "orbyte-chrome-00": "var(--orbyte-chrome-00)",
         "tint-98": "var(--tint-98)",
         "tint-95": "var(--tint-95)",
         "tint-90": "var(--tint-90)",

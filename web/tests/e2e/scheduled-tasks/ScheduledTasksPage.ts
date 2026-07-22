@@ -1,5 +1,5 @@
 /**
- * Page Object Model for the Onyx Craft Scheduled Tasks surface
+ * Page Object Model for the Orbyte Craft Scheduled Tasks surface
  * (/craft/v1/tasks, /craft/v1/tasks/new, /craft/v1/tasks/[id]).
  *
  * Encapsulates all locators and interactions so specs remain declarative.
@@ -58,7 +58,7 @@ export class ScheduledTasksPage {
 
   /**
    * Dismiss the first-visit craft intro if it appeared. Fresh e2e users have
-   * no `onyx:craftOnboardingSeen:{userId}` localStorage entry, so the intro
+   * no `orbyte:craftOnboardingSeen:{userId}` localStorage entry, so the intro
    * dialog auto-opens over any /craft/v1 route and its overlay would swallow
    * every click.
    */

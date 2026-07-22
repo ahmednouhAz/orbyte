@@ -8,7 +8,7 @@ import {
   type TextInputProps as RNTextInputProps,
   type TextStyle,
 } from "react-native";
-import { textPresets } from "@onyx-ai/shared/native";
+import { textPresets } from "@orbyte-ai/shared/native";
 
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";

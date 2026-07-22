@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 import { ConnectorSetupPage } from "@tests/e2e/admin/connector/ConnectorSetupPage";
 import { IndexingStatusPage } from "@tests/e2e/admin/connector/IndexingStatusPage";
 
@@ -24,7 +24,7 @@ test.describe("Web connector setup", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new OrbyteApiClient(page.request);
     try {
       const idToDelete =
         ccPairId ?? (await apiClient.findCCPairByName("web", connectorName));
@@ -51,7 +51,7 @@ test.describe("Web connector setup", () => {
 
     // Pause via the API as soon as the connector exists so background
     // workers don't start crawling the site while the test finishes.
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new OrbyteApiClient(page.request);
     ccPairId = await apiClient.findCCPairByName("web", connectorName);
     expect(ccPairId).not.toBeNull();
     await apiClient.pauseConnector(ccPairId!);

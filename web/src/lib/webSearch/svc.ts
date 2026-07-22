@@ -66,7 +66,7 @@ export async function deactivateSearchProvider(
 export async function activateContentProvider(
   provider: WebContentProviderView
 ): Promise<void> {
-  if (provider.provider_type === "onyx_web_crawler") {
+  if (provider.provider_type === "orbyte_web_crawler") {
     const res = await fetch(
       "/api/admin/web-search/content-providers/reset-default",
       { method: "POST", headers: { "Content-Type": "application/json" } }
@@ -117,7 +117,7 @@ export async function deactivateContentProvider(
   providerType: string
 ): Promise<void> {
   const endpoint =
-    providerType === "onyx_web_crawler" || providerId < 0
+    providerType === "orbyte_web_crawler" || providerId < 0
       ? "/api/admin/web-search/content-providers/reset-default"
       : `/api/admin/web-search/content-providers/${providerId}/deactivate`;
 

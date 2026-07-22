@@ -868,8 +868,8 @@ export const connectorConfigs: Record<
         name: "sites",
         optional: true,
         description: `• If no sites are specified, all sites in your organization will be indexed (Sites.Read.All permission required).
-• Specifying 'https://onyxai.sharepoint.com/sites/support' for example only indexes this site.
-• Specifying 'https://onyxai.sharepoint.com/sites/support/subfolder' for example only indexes this folder.
+• Specifying 'https://orbyteai.sharepoint.com/sites/support' for example only indexes this site.
+• Specifying 'https://orbyteai.sharepoint.com/sites/support/subfolder' for example only indexes this folder.
 • Specifying sites currently works for SharePoint instances using English, Spanish, or German. Contact the Orbyte team if you need another language supported.
 `,
       },
@@ -976,7 +976,7 @@ export const connectorConfigs: Record<
         label: "Teams",
         name: "teams",
         optional: true,
-        description: `Specify 0 or more Teams to index. For example, specifying the Team 'Support' for the 'onyxai' Org will cause us to only index messages sent in channels belonging to the 'Support' Team. If no Teams are specified, all Teams in your organization will be indexed.`,
+        description: `Specify 0 or more Teams to index. For example, specifying the Team 'Support' for the 'orbyteai' Org will cause us to only index messages sent in channels belonging to the 'Support' Team. If no Teams are specified, all Teams in your organization will be indexed.`,
       },
     ],
     advanced_values: [
@@ -1182,7 +1182,7 @@ For example, specifying .*-alerts as a "channel to exclude" will cause the conne
         label: "Base URL",
         name: "base_url",
         optional: false,
-        description: `Specify the base URL for your Slab team. This will look something like: https://onyx.slab.com/`,
+        description: `Specify the base URL for your Slab team. This will look something like: https://orbyte.slab.com/`,
       },
     ],
     advanced_values: [],

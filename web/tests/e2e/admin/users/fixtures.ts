@@ -3,18 +3,18 @@
  *
  * Provides:
  * - Authenticated admin page
- * - OnyxApiClient for API-level setup/teardown
+ * - OrbyteApiClient for API-level setup/teardown
  * - UsersAdminPage page object
  */
 
 import { test as base, expect, type Page } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { OrbyteApiClient } from "@tests/e2e/utils/orbyteApiClient";
 import { UsersAdminPage } from "./UsersAdminPage";
 
 export const test = base.extend<{
   adminPage: Page;
-  api: OnyxApiClient;
+  api: OrbyteApiClient;
   usersPage: UsersAdminPage;
 }>({
   adminPage: async ({ page }, use) => {
@@ -24,7 +24,7 @@ export const test = base.extend<{
   },
 
   api: async ({ adminPage }, use) => {
-    const client = new OnyxApiClient(adminPage.request);
+    const client = new OrbyteApiClient(adminPage.request);
     await use(client);
   },
 

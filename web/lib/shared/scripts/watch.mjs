@@ -1,4 +1,4 @@
-// Local dev watcher for @onyx-ai/shared. Rebuilds dist/ on edits:
+// Local dev watcher for @orbyte-ai/shared. Rebuilds dist/ on edits:
 //   - src/**         -> tsc --watch (incremental rebuild of JS + d.ts)
 //   - tokens/**.json -> Style Dictionary token build, THEN re-inlines the result
 //                       into Opal's dist (bundle-css) so the web dev server — which

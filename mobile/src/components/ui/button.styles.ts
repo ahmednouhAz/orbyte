@@ -4,7 +4,7 @@ import type {
   InteractiveProminence,
   InteractiveVariant,
   TextFont,
-} from "@onyx-ai/shared/contracts";
+} from "@orbyte-ai/shared/contracts";
 
 export type ButtonSize = "lg" | "md" | "sm" | "xs" | "2xs" | "fit";
 

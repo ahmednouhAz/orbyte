@@ -22,7 +22,7 @@ export interface VerticalShadowScrollerProps extends React.HtmlHTMLAttributes<HT
   scrollKey?: string;
 }
 
-const SCROLL_POSITION_PREFIX = "onyx-scroll-";
+const SCROLL_POSITION_PREFIX = "orbyte-scroll-";
 
 export default function OverflowDiv({
   disableMask,

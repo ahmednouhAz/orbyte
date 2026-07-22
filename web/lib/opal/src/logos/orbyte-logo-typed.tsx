@@ -1,4 +1,4 @@
-interface OnyxLogoTypedProps {
+interface OrbyteLogoTypedProps {
   size?: number;
   className?: string;
 }
@@ -7,7 +7,7 @@ interface OnyxLogoTypedProps {
 // by height without being stretched or squished.
 const ASPECT_RATIO = 806 / 197;
 
-const SvgOnyxLogoTyped = ({ size: height, className }: OnyxLogoTypedProps) => (
+const SvgOrbyteLogoTyped = ({ size: height, className }: OrbyteLogoTypedProps) => (
   // eslint-disable-next-line @next/next/no-img-element
   <img
     src="/logotype.svg"
@@ -17,4 +17,4 @@ const SvgOnyxLogoTyped = ({ size: height, className }: OnyxLogoTypedProps) => (
     alt=""
   />
 );
-export default SvgOnyxLogoTyped;
+export default SvgOrbyteLogoTyped;

@@ -2,7 +2,7 @@
 
 Hard rules for tests under `web/tests/e2e/`. Read before adding or modifying a spec.
 
-For the broader Onyx testing strategy and where Playwright fits among unit / external-dependency / integration tests, see `CLAUDE.md` ("Testing Strategy") and `backend/tests/README.md`. For Jest + React Testing Library guidance for component tests, see `web/tests/README.md`.
+For the broader Orbyte testing strategy and where Playwright fits among unit / external-dependency / integration tests, see `CLAUDE.md` ("Testing Strategy") and `backend/tests/README.md`. For Jest + React Testing Library guidance for component tests, see `web/tests/README.md`.
 
 ## 1. Use the Page Object Model
 
@@ -32,7 +32,7 @@ await expect(page.locator(".message")).toContainText("hello");
 
 **Locator priority** — when defining locators on a page object, prefer in this order:
 
-1. `data-testid` / `aria-label` (`getByTestId`, `getByLabel`) — preferred for Onyx components.
+1. `data-testid` / `aria-label` (`getByTestId`, `getByLabel`) — preferred for Orbyte components.
 2. Role-based (`getByRole`) — standard HTML elements.
 3. Text / label (`getByText`, `getByLabel`) — visible text content.
 4. CSS selectors (`locator(...)`) — last resort, only when nothing above works.

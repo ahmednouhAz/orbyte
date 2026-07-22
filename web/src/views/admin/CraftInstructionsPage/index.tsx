@@ -55,7 +55,7 @@ function BaseInstructionsPreview() {
 
 export default function CraftInstructionsPage() {
   const settings = useSettings();
-  const craftAvailable = settings?.onyx_craft_available === true;
+  const craftAvailable = settings?.orbyte_craft_available === true;
   const savedInstructions = settings?.craft_instructions ?? "";
 
   const [draft, setDraft] = useState<string | null>(null);
@@ -124,7 +124,7 @@ export default function CraftInstructionsPage() {
   );
 
   // useSettings returns a default object while loading (and on error), which
-  // lacks onyx_craft_available — don't misreport Craft as unavailable.
+  // lacks orbyte_craft_available — don't misreport Craft as unavailable.
   if (settings.isLoading || settings.error) {
     return (
       <SettingsLayouts.Root>

@@ -153,7 +153,7 @@ export const MacIcon = ({
     </svg>
   );
 };
-export const OnyxLogoTypeIcon = ({
+export const OrbyteLogoTypeIcon = ({
   size = 16,
   className = defaultTailwindCSS,
 }: IconProps) => {

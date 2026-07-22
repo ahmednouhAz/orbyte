@@ -7,8 +7,8 @@ import { SEARCH_PARAM_NAMES } from "@/app/app/services/searchParams";
 import { Section } from "@/layouts/general-layouts";
 import { useFederatedConnectors, useFilters, useLlmManager } from "@/lib/hooks";
 import { useForcedTools } from "@/lib/hooks/useForcedTools";
-import OnyxInitializingLoader from "@/components/OnyxInitializingLoader";
-import { OnyxDocument, MinimalOnyxDocument } from "@/lib/search/interfaces";
+import OrbyteInitializingLoader from "@/components/OrbyteInitializingLoader";
+import { OrbyteDocument, MinimalOrbyteDocument } from "@/lib/search/interfaces";
 import { useSettings } from "@/lib/settings/hooks";
 import Dropzone from "react-dropzone";
 import AppInputBar, { AppInputBarHandle } from "@/sections/input/AppInputBar";
@@ -228,7 +228,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
     currentProjectId === null && deepResearchEnabled;
 
   const [presentingDocument, setPresentingDocument] =
-    useState<MinimalOnyxDocument | null>(null);
+    useState<MinimalOrbyteDocument | null>(null);
 
   const llmManager = useLlmManager(currentChatSession ?? undefined, liveAgent);
 
@@ -350,7 +350,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
     };
   }, []);
 
-  const [selectedDocuments, setSelectedDocuments] = useState<OnyxDocument[]>(
+  const [selectedDocuments, setSelectedDocuments] = useState<OrbyteDocument[]>(
     []
   );
 
@@ -602,7 +602,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   }, [isNewSession, defaultAppMode, isSearch, resetInputBar, setAppMode]);
 
   const handleSearchDocumentClick = useCallback(
-    (doc: MinimalOnyxDocument) => setPresentingDocument(doc),
+    (doc: MinimalOrbyteDocument) => setPresentingDocument(doc),
     []
   );
 
@@ -712,7 +712,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
           : "1fr auto 1fr",
   };
 
-  if (!isReady) return <OnyxInitializingLoader />;
+  if (!isReady) return <OrbyteInitializingLoader />;
 
   return (
     <>

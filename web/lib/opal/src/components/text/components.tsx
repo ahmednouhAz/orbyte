@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from "react";
 // Canonical TextFont/TextColor unions, shared with mobile via the neutral
-// @onyx-ai/shared/contracts (not the RN-only /native).
-import type { TextColor, TextFont } from "@onyx-ai/shared/contracts";
+// @orbyte-ai/shared/contracts (not the RN-only /native).
+import type { TextColor, TextFont } from "@orbyte-ai/shared/contracts";
 import type { RichStr, WithoutStyles } from "@opal/types";
 import { cn } from "@opal/utils";
 import { resolveStr } from "@opal/components/text/InlineMarkdown";

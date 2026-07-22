@@ -18,7 +18,7 @@ test.describe("Message Edit and Regenerate Tests", () => {
     await sendMessage(page, "What is 2+2?");
 
     // Test cancel editing
-    let userMessage = page.locator("#onyx-human-message").first();
+    let userMessage = page.locator("#orbyte-human-message").first();
     await userMessage.hover();
     let editButton = userMessage
       .locator('[data-testid="HumanMessage/edit-button"]')
@@ -60,7 +60,7 @@ test.describe("Message Edit and Regenerate Tests", () => {
 
     // Verify edited message is displayed
     messageContent = await page
-      .locator("#onyx-human-message")
+      .locator("#orbyte-human-message")
       .first()
       .textContent();
     expect(messageContent).toContain("What is 3+3?");
@@ -71,7 +71,7 @@ test.describe("Message Edit and Regenerate Tests", () => {
     await expect(messageSwitcher).toContainText("2/2");
 
     // Edit again to create a third version
-    userMessage = page.locator("#onyx-human-message").first();
+    userMessage = page.locator("#orbyte-human-message").first();
     await userMessage.hover();
     editButton = userMessage
       .locator('[data-testid="HumanMessage/edit-button"]')
@@ -148,7 +148,7 @@ test.describe("Message Edit and Regenerate Tests", () => {
     await sendMessage(page, "hi! Respond with no more than a sentence");
 
     // Capture the original AI response text (just the message content, not buttons/switcher)
-    const aiMessage = page.locator('[data-testid="onyx-ai-message"]').first();
+    const aiMessage = page.locator('[data-testid="orbyte-ai-message"]').first();
     // Target the actual message content div (the one with select-text class)
     const messageContent = aiMessage.locator(".select-text").first();
     const originalResponseText = await messageContent.textContent();
@@ -253,7 +253,7 @@ test.describe("Message Edit and Regenerate Tests", () => {
     await sendMessage(page, "Summarize this file");
 
     // Verify the file is displayed in the sent human message
-    const humanMessage = page.locator("#onyx-human-message").first();
+    const humanMessage = page.locator("#orbyte-human-message").first();
 
     // Verify message text is displayed
     const messageContent = await humanMessage.textContent();
@@ -285,13 +285,13 @@ test.describe("Message Edit and Regenerate Tests", () => {
     });
 
     // Verify the edited message text is displayed
-    const editedHumanMessage = page.locator("#onyx-human-message").first();
+    const editedHumanMessage = page.locator("#orbyte-human-message").first();
     const editedMessageContent = await editedHumanMessage.textContent();
     expect(editedMessageContent).toContain("What does this file contain?");
     expect(editedMessageContent).not.toContain("Summarize this file");
 
     // Verify the file is still attached after editing
-    const editedFileDisplay = editedHumanMessage.locator("#onyx-file");
+    const editedFileDisplay = editedHumanMessage.locator("#orbyte-file");
     await expect(editedFileDisplay).toBeVisible();
     await expect(editedFileDisplay.getByText(testFileName)).toBeVisible();
 

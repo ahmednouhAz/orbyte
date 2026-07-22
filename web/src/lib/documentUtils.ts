@@ -1,12 +1,12 @@
-import { OnyxDocument } from "./search/interfaces";
+import { OrbyteDocument } from "./search/interfaces";
 
 export function removeDuplicateDocs(
-  documents: OnyxDocument[],
+  documents: OrbyteDocument[],
   agentic?: boolean,
   relevance?: any
 ) {
   const seen = new Set<string>();
-  const output: OnyxDocument[] = [];
+  const output: OrbyteDocument[] = [];
   documents.forEach((document) => {
     if (
       document.document_id &&

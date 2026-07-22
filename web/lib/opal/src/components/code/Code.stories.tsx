@@ -28,7 +28,7 @@ export const Default: Story = {
 
 export const WithoutCopyButton: Story = {
   args: {
-    children: `npm install @onyx/sdk`,
+    children: `npm install @orbyte/sdk`,
     showCopyButton: false,
   },
 };
