@@ -159,7 +159,7 @@ dev = [
     "types-PyYAML==6.0.12.11",
     "types-pytz==2023.3.1.1",
     "types-regex==2023.3.23.1",
-    "types-requests==2.32.0.20250328",
+    "types-requests==2.33.0.20260712",
     { include-group = "zizmor" },
 ]
 
