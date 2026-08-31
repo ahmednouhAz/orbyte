@@ -4,3 +4,4 @@
 - 2026-08-27T21:51:00: revisited approach
 - 2026-08-29T09:34:00: noted todo for later
 - 2026-08-29T21:32:00: checked edge cases
+- 2026-08-31T09:55:00: minor perf tweak
