@@ -5,3 +5,4 @@
 - 2026-08-29T09:34:00: noted todo for later
 - 2026-08-29T21:32:00: checked edge cases
 - 2026-08-31T09:55:00: minor perf tweak
+- 2026-09-01T15:32:00: reviewed logic
