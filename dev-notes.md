@@ -9,3 +9,4 @@
 - 2026-09-05T08:32:00: fixed typo
 - 2026-09-05T11:48:00: verified output
 - 2026-09-05T20:16:00: noted todo for later
+- 2026-09-06T16:29:00: refactored helper
