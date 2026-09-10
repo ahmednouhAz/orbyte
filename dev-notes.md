@@ -11,3 +11,4 @@
 - 2026-09-05T20:16:00: noted todo for later
 - 2026-09-06T16:29:00: refactored helper
 - 2026-09-06T18:32:00: adjusted thresholds
+- 2026-09-10T16:38:00: reviewed logic
