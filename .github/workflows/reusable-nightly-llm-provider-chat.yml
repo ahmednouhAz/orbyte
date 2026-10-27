@@ -83,7 +83,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           parse-json-secrets: false
           secret-ids: |
@@ -219,7 +219,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           # Keep JSON values unparsed so vertex custom config is passed as raw JSON.
           parse-json-secrets: false
