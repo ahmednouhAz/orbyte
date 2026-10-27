@@ -341,7 +341,7 @@ jobs:
 
       - name: Get AWS Secrets
         if: startsWith(matrix.platform, 'macos-')
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             APPLE_ID, deploy/apple-id
@@ -511,7 +511,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -593,7 +593,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -670,7 +670,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -745,7 +745,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -838,7 +838,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -926,7 +926,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -995,7 +995,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -1067,7 +1067,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -1134,7 +1134,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -1210,7 +1210,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -1296,7 +1296,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -1376,7 +1376,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -1459,7 +1459,7 @@ jobs:
 
       - name: Get AWS Secrets
         if: needs.determine-builds.outputs.is-test-run != 'true' && vars.DOCKER_NO_CACHE != 'true'
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -1524,7 +1524,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -1597,7 +1597,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
@@ -1665,7 +1665,7 @@ jobs:
           aws-region: us-east-2
 
       - name: Get AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88
         with:
           secret-ids: |
             DOCKER_USERNAME, deploy/docker-username
